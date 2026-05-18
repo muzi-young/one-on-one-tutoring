@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>学校体测成绩系统 - 管理端交互原型</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --panel: #fffdf9;
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: #e7dfd2;
+      --accent: #0f766e;
+      --accent-strong: #0b5f59;
+      --accent-soft: #d9f3ee;
+      --warn: #b45309;
+      --danger: #b42318;
+      --success: #147a4c;
+      --shadow: 0 18px 45px rgba(31, 41, 51, .08);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #e7f7f1 0, transparent 34%), var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(15, 118, 110, .28);
+      outline-offset: 2px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 272px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      padding: 28px 20px;
+      border-right: 1px solid rgba(231, 223, 210, .78);
+      background: rgba(255, 253, 249, .78);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: #102a2a;
+      color: #ecfdf5;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .brand strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .brand span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .nav-title {
+      color: #8a7f70;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 24px 10px 10px;
+      letter-spacing: .08em;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav button {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 14px;
+      background: transparent;
+      color: #4b5563;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .nav button:hover {
+      background: rgba(15, 118, 110, .08);
+      color: var(--ink);
+    }
+
+    .nav button.active {
+      background: #102a2a;
+      color: white;
+      box-shadow: 0 10px 24px rgba(16, 42, 42, .18);
+    }
+
+    .nav small {
+      color: inherit;
+      opacity: .7;
+    }
+
+    .server-card {
+      margin-top: 28px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #edf9f5;
+      border: 1px solid #c9ebe2;
+    }
+
+    .server-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .server-card p {
+      margin: 0;
+      color: #37615b;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    main {
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -.04em;
+    }
+
+    .subhead {
+      margin: 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 0 16px;
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      transition: .18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(31, 41, 51, .08);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-strong);
+    }
+
+    .btn.danger {
+      color: var(--danger);
+      border-color: #f3c6c1;
+      background: #fff7f6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      background: rgba(255, 253, 249, .82);
+      border: 1px solid rgba(231, 223, 210, .88);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      box-shadow: 0 8px 24px rgba(31, 41, 51, .04);
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 30px;
+      letter-spacing: -.03em;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(320px, .9fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 253, 249, .9);
+      border: 1px solid rgba(231, 223, 210, .9);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -.02em;
+    }
+
+    .panel-head p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .panel-body {
+      padding: 20px 22px 22px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      color: #475467;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 12px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .inline-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .upload {
+      border: 1.5px dashed #b8c9c5;
+      border-radius: 18px;
+      padding: 22px;
+      background: #f8fffc;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .upload strong {
+      font-size: 16px;
+    }
+
+    .upload p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid #eee6da;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: #766b5f;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      background: #fbf7f0;
+      position: sticky;
+      top: 0;
+    }
+
+    td.number, th.number {
+      text-align: right;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.good {
+      color: var(--success);
+      background: #e8f7ef;
+    }
+
+    .badge.info {
+      color: #075985;
+      background: #e7f3ff;
+    }
+
+    .badge.warn {
+      color: var(--warn);
+      background: #fff4df;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .teacher-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .teacher-card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .teacher-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 10px 0 16px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+    }
+
+    .check input {
+      min-height: auto;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      max-width: 360px;
+      background: #102a2a;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 16px;
+      box-shadow: 0 22px 50px rgba(16, 42, 42, .22);
+      display: none;
+      z-index: 10;
+    }
+
+    .toast.show {
+      display: block;
+      animation: rise .22s ease-out;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 1100px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .server-card { display: none; }
+      .content { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      main { padding: 18px; }
+      .topbar { display: grid; }
+      .actions { justify-content: flex-start; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav { grid-template-columns: 1fr; }
+      .inline-fields, .checkbox-grid { grid-template-columns: 1fr; }
+      th, td { white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand" aria-label="系统名称">
+        <div class="brand-mark">体</div>
+        <div>
+          <strong>体测成绩系统</strong>
+          <span>管理端原型 · 一期功能</span>
+        </div>
+      </div>
+
+      <div class="nav-title">管理菜单</div>
+      <nav class="nav" aria-label="管理端导航">
+        <button class="active" data-section="dashboard">数据概览 <small>01</small></button>
+        <button data-section="students">学生名单 <small>02</small></button>
+        <button data-section="teachers">老师账号 <small>03</small></button>
+        <button data-section="standards">评分标准 <small>04</small></button>
+        <button data-section="results">成绩汇总 <small>05</small></button>
+        <button data-section="deploy">部署建议 <small>06</small></button>
+      </nav>
+
+      <div class="server-card">
+        <strong>一期部署建议</strong>
+        <p>优先复用现有 4 核 8G 云服务器。NAS / 物理服务器双部署可作为增项，不放入基础报价。</p>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <h1>学校体测成绩管理端</h1>
+          <p class="subhead">用于学校管理员导入学生名单、配置老师权限、维护评分标准，并查看全校测试汇总。一期只保留核心闭环，方便控制成本和客户决策。</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="previewTeacher">查看老师端</button>
+          <button class="btn primary" data-section-jump="students">导入学生名单</button>
+        </div>
+      </header>
+
+      <section class="grid" aria-label="关键数据">
+        <article class="metric">
+          <span>学生总数</span>
+          <strong>1,246</strong>
+        </article>
+        <article class="metric">
+          <span>班级数量</span>
+          <strong>28</strong>
+        </article>
+        <article class="metric">
+          <span>老师账号</span>
+          <strong>36</strong>
+        </article>
+        <article class="metric">
+          <span>本周录入</span>
+          <strong>4,812</strong>
+        </article>
+      </section>
+
+      <section class="section active" id="dashboard">
+        <div class="content">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>近期测试记录</h2>
+                <p>展示本周各班级体测录入进度</p>
+              </div>
+              <button class="btn primary" data-section-jump="results">查看汇总</button>
+            </div>
+            <div class="panel-body">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>班级</th>
+                      <th>项目</th>
+                      <th>负责老师</th>
+                      <th class="number">已录入</th>
+                      <th>状态</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>六年级一班</td>
+                      <td>肺活量</td>
+                      <td>杨老师</td>
+                      <td class="number">42 / 46</td>
+                      <td><span class="badge warn">还有 4 人未测</span></td>
+                    </tr>
+                    <tr>
+                      <td>六年级二班</td>
+                      <td>50米跑</td>
+                      <td>杨老师</td>
+                      <td class="number">40 / 44</td>
+                      <td><span class="badge warn">还有 4 人未测</span></td>
+                    </tr>
+                    <tr>
+                      <td>五年级六班</td>
+                      <td>坐位体前屈</td>
+                      <td>张老师</td>
+                      <td class="number">48 / 48</td>
+                      <td><span class="badge good">已完成</span></td>
+                    </tr>
+                    <tr>
+                      <td>六年级一班</td>
+                      <td>立定跳远</td>
+                      <td>杨老师</td>
+                      <td class="number">12 / 46</td>
+                      <td><span class="badge warn">录入中</span></td>
+                    </tr>
+                    <tr>
+                      <td>五年级六班</td>
+                      <td>一分钟跳绳</td>
+                      <td>张老师</td>
+                      <td class="number">48 / 48</td>
+                      <td><span class="badge good">已完成</span></td>
+                    </tr>
+                    <tr>
+                      <td>四年级三班</td>
+                      <td>仰卧起坐</td>
+                      <td>陈老师</td>
+                      <td class="number">39 / 45</td>
+                      <td><span class="badge warn">录入中</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>今日待办</h2>
+                <p>确保一线老师开测前数据准备完整</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="list">
+                <div class="teacher-card">
+                  <div>
+                    <strong>补充四年级评分标准</strong>
+                    <span>仰卧起坐女生标准缺少 2 档</span>
+                  </div>
+                  <span class="badge warn">待处理</span>
+                </div>
+                <div class="teacher-card">
+                  <div>
+                    <strong>确认六年级一班未测名单</strong>
+                    <span>4 名学生尚未录入肺活量</span>
+                  </div>
+                  <span class="badge info">跟进中</span>
+                </div>
+                <div class="teacher-card">
+                  <div>
+                    <strong>导出本周成绩</strong>
+                    <span>用于向校领导汇报试点结果</span>
+                  </div>
+                  <span class="badge good">可导出</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="students">
+        <div class="content">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>学生名单导入</h2>
+                <p>一期按学校统一花名册导入，减少人工建档</p>
+              </div>
+              <button class="btn primary" id="simulateImport">模拟导入</button>
+            </div>
+            <div class="panel-body">
+              <div class="upload">
+                <strong>上传 Excel 花名册</strong>
+                <p>推荐列：年级、班级、学生姓名、学生性别。系统会校验空值和重复学生。</p>
+                <button class="btn">选择文件</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>学生姓名</th>
+                      <th>性别</th>
+                      <th>年级</th>
+                      <th>班级</th>
+                      <th>导入状态</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentRows">
+                    <tr>
+                      <td>丁若一</td>
+                      <td>男</td>
+                      <td>六年级</td>
+                      <td>一班</td>
+                      <td><span class="badge good">已入库</span></td>
+                    </tr>
+                    <tr>
+                      <td>马一萌</td>
+                      <td>女</td>
+                      <td>六年级</td>
+                      <td>一班</td>
+                      <td><span class="badge good">已入库</span></td>
+                    </tr>
+                    <tr>
+                      <td>王晓泽</td>
+                      <td>男</td>
+                      <td>六年级</td>
+                      <td>一班</td>
+                      <td><span class="badge good">已入库</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>导入规则</h2>
+                <p>客户已有统一花名册，模板越简单越好推广</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="field">
+                <label>必填列</label>
+                <input value="年级、班级、学生姓名、学生性别" readonly />
+              </div>
+              <div class="field">
+                <label>重复校验</label>
+                <input value="同一班级内姓名和性别重复时提示确认" readonly />
+              </div>
+              <div class="field">
+                <label>失败反馈</label>
+                <input value="返回错误行号，方便老师修改 Excel" readonly />
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="teachers">
+        <div class="content">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>老师账号与班级权限</h2>
+                <p>一个老师可负责多个班级，只能录入被分配班级</p>
+              </div>
+              <button class="btn primary" id="savePermission">保存权限</button>
+            </div>
+            <div class="panel-body">
+              <div class="inline-fields">
+                <div class="field">
+                  <label for="teacherName">老师姓名</label>
+                  <input id="teacherName" value="杨老师" />
+                </div>
+                <div class="field">
+                  <label for="teacherPhone">登录手机号</label>
+                  <input id="teacherPhone" value="15190812217" />
+                </div>
+              </div>
+
+              <label class="field-label">负责班级</label>
+              <div class="checkbox-grid" aria-label="负责班级">
+                <label class="check"><input type="checkbox" checked /> 六年级一班</label>
+                <label class="check"><input type="checkbox" checked /> 六年级二班</label>
+                <label class="check"><input type="checkbox" checked /> 五年级六班</label>
+                <label class="check"><input type="checkbox" /> 四年级三班</label>
+                <label class="check"><input type="checkbox" /> 三年级二班</label>
+                <label class="check"><input type="checkbox" /> 二年级五班</label>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>老师</th>
+                      <th>账号</th>
+                      <th>班级数</th>
+                      <th>权限说明</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>杨老师</td>
+                      <td>15190812217</td>
+                      <td>3</td>
+                      <td><span class="badge good">可录入</span></td>
+                    </tr>
+                    <tr>
+                      <td>张老师</td>
+                      <td>13800000001</td>
+                      <td>5</td>
+                      <td><span class="badge good">可录入</span></td>
+                    </tr>
+                    <tr>
+                      <td>陈老师</td>
+                      <td>13800000002</td>
+                      <td>4</td>
+                      <td><span class="badge info">只看本人班级</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </article>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>权限口径</h2>
+                <p>建议一期先做简单可控</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="list">
+                <div class="teacher-card">
+                  <div>
+                    <strong>管理员</strong>
+                    <span>导入名单、创建账号、配置标准、查看全校数据</span>
+                  </div>
+                </div>
+                <div class="teacher-card">
+                  <div>
+                    <strong>老师</strong>
+                    <span>只录入自己负责班级，不能修改其他班级</span>
+                  </div>
+                </div>
+                <div class="teacher-card">
+                  <div>
+                    <strong>校领导</strong>
+                    <span>一期可先由管理员导出报表，不单独做账号</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="standards">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>评分标准管理</h2>
+              <p>录入成绩后实时匹配分数和评价，支持向下兼容规则</p>
+            </div>
+            <button class="btn primary" id="addStandard">新增标准档位</button>
+          </div>
+          <div class="panel-body">
+            <div class="toolbar">
+              <select aria-label="年级">
+                <option>六年级</option>
+                <option>五年级</option>
+                <option>四年级</option>
+              </select>
+              <select aria-label="性别">
+                <option>男生</option>
+                <option>女生</option>
+              </select>
+              <select aria-label="项目">
+                <option>肺活量</option>
+                <option>一分钟跳绳</option>
+                <option>50米跑</option>
+                <option>坐位体前屈</option>
+                <option>立定跳远</option>
+                <option>仰卧起坐</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>项目</th>
+                    <th>适用范围</th>
+                    <th class="number">成绩下限</th>
+                    <th class="number">对应分数</th>
+                    <th>评价</th>
+                    <th>规则说明</th>
+                  </tr>
+                </thead>
+                <tbody id="standardRows">
+                  <tr>
+                    <td>一分钟跳绳</td>
+                    <td>六年级男生</td>
+                    <td class="number">160</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>1 分钟跳绳达到 160 次及以上匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>50米跑</td>
+                    <td>六年级男生</td>
+                    <td class="number">9.0 秒内</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>50 米跑数值越小越好，9.0 秒及以内匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>坐位体前屈</td>
+                    <td>六年级男生</td>
+                    <td class="number">12 厘米</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>坐位体前屈达到 12 厘米及以上匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>立定跳远</td>
+                    <td>六年级男生</td>
+                    <td class="number">195 厘米</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>立定跳远达到 195 厘米及以上匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>仰卧起坐</td>
+                    <td>六年级女生</td>
+                    <td class="number">38 次</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>仰卧起坐达到 38 次及以上匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>肺活量</td>
+                    <td>六年级男生</td>
+                    <td class="number">2400</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>成绩达到 2400 及以上匹配 80 分档</td>
+                  </tr>
+                  <tr>
+                    <td>肺活量</td>
+                    <td>六年级男生</td>
+                    <td class="number">2100</td>
+                    <td class="number">70</td>
+                    <td><span class="badge info">及格</span></td>
+                    <td>未达到 2400 但达到 2100 匹配本档</td>
+                  </tr>
+                  <tr>
+                    <td>肺活量</td>
+                    <td>六年级男生</td>
+                    <td class="number">1800</td>
+                    <td class="number">60</td>
+                    <td><span class="badge warn">及格线</span></td>
+                    <td>低于本档时进入下一档或待补测</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="results">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>成绩汇总与导出</h2>
+              <p>支持按班级、项目、日期筛选，并导出 Excel</p>
+            </div>
+            <button class="btn primary" id="exportExcel">导出 Excel</button>
+          </div>
+          <div class="panel-body">
+            <div class="toolbar">
+              <select aria-label="班级">
+                <option>六年级一班</option>
+                <option>五年级六班</option>
+                <option>四年级三班</option>
+              </select>
+              <select aria-label="项目">
+                <option>肺活量</option>
+                <option>一分钟跳绳</option>
+                <option>50米跑</option>
+                <option>坐位体前屈</option>
+                <option>立定跳远</option>
+                <option>仰卧起坐</option>
+              </select>
+              <select aria-label="排序">
+                <option>按名单顺序</option>
+                <option>按成绩从高到低</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>学生</th>
+                    <th>班级</th>
+                    <th>项目</th>
+                    <th class="number">原始成绩</th>
+                    <th class="number">得分</th>
+                    <th>评价</th>
+                    <th>录入老师</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>丁若一</td>
+                    <td>六年级一班</td>
+                    <td>肺活量</td>
+                    <td class="number">2400</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                  <tr>
+                    <td>李明轩</td>
+                    <td>六年级一班</td>
+                    <td>50米跑</td>
+                    <td class="number">8.6 秒</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                  <tr>
+                    <td>赵雨桐</td>
+                    <td>六年级一班</td>
+                    <td>坐位体前屈</td>
+                    <td class="number">14.8 厘米</td>
+                    <td class="number">80</td>
+                    <td><span class="badge good">良好</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                  <tr>
+                    <td>陈子涵</td>
+                    <td>六年级一班</td>
+                    <td>立定跳远</td>
+                    <td class="number">172 厘米</td>
+                    <td class="number">70</td>
+                    <td><span class="badge info">及格</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                  <tr>
+                    <td>马一萌</td>
+                    <td>六年级一班</td>
+                    <td>肺活量</td>
+                    <td class="number">2180</td>
+                    <td class="number">70</td>
+                    <td><span class="badge info">及格</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                  <tr>
+                    <td>王晓泽</td>
+                    <td>六年级一班</td>
+                    <td>肺活量</td>
+                    <td class="number">1760</td>
+                    <td class="number">待补测</td>
+                    <td><span class="badge warn">未达线</span></td>
+                    <td>杨老师</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="deploy">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>部署与报价边界</h2>
+              <p>给客户看的重点：一期够用、后续可扩展、不要一开始做重</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>事项</th>
+                    <th>一期建议</th>
+                    <th>说明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>部署方式</td>
+                    <td><span class="badge good">优先云服务器</span></td>
+                    <td>复用现有 4 核 8G 云服务器，学校试点足够；NAS 双部署可另算。</td>
+                  </tr>
+                  <tr>
+                    <td>老师数量</td>
+                    <td><span class="badge info">先按 50 人</span></td>
+                    <td>后续如果推广到区域，可增加学校、老师、分级管理。</td>
+                  </tr>
+                  <tr>
+                    <td>费用口径</td>
+                    <td><span class="badge warn">1 万起</span></td>
+                    <td>最终看小程序、双部署、评分标准数量和导出模板复杂度。</td>
+                  </tr>
+                  <tr>
+                    <td>暂缓功能</td>
+                    <td><span class="badge info">放二期</span></td>
+                    <td>家长端、家校沟通、教育局大屏、复杂图表、VIP 体系。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const sections = document.querySelectorAll(".section");
+    const navButtons = document.querySelectorAll("[data-section]");
+    const toast = document.getElementById("toast");
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    function showSection(id) {
+      sections.forEach(section => section.classList.toggle("active", section.id === id));
+      navButtons.forEach(button => button.classList.toggle("active", button.dataset.section === id));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => showSection(button.dataset.section));
+    });
+
+    document.querySelectorAll("[data-section-jump]").forEach(button => {
+      button.addEventListener("click", () => showSection(button.dataset.sectionJump));
+    });
+
+    document.getElementById("simulateImport").addEventListener("click", () => {
+      const rows = document.getElementById("studentRows");
+      rows.insertAdjacentHTML("beforeend", `
+        <tr>
+          <td>李明轩</td>
+          <td>男</td>
+          <td>六年级</td>
+          <td>一班</td>
+          <td><span class="badge good">刚刚导入</span></td>
+        </tr>
+      `);
+      showToast("已模拟导入 1 条学生数据，实际系统会读取 Excel 模板。");
+    });
+
+    document.getElementById("savePermission").addEventListener("click", () => {
+      showToast("已保存杨老师的班级权限：六年级一班、六年级二班、五年级六班。");
+    });
+
+    document.getElementById("addStandard").addEventListener("click", () => {
+      document.getElementById("standardRows").insertAdjacentHTML("afterbegin", `
+        <tr>
+          <td>一分钟跳绳</td>
+          <td>六年级男生</td>
+          <td class="number">180 次</td>
+          <td class="number">90</td>
+          <td><span class="badge good">优秀</span></td>
+          <td>新档位已加入，1 分钟跳绳达到 180 次及以上匹配 90 分。</td>
+        </tr>
+      `);
+      showToast("已新增评分档位。录入成绩时会按最高匹配档自动评分。");
+    });
+
+    document.getElementById("exportExcel").addEventListener("click", () => {
+      showToast("已生成《六年级一班-当前项目成绩.xlsx》，原型中不实际下载文件。");
+    });
+
+    document.getElementById("previewTeacher").addEventListener("click", () => {
+      window.location.href = "体测系统-老师端交互原型.html";
+    });
+  </script>
+</body>
+</html>

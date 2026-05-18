@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>副本游戏陪玩综合平台（单商户商城 + 腾讯IM/TRTC） · 产品功能方案 · 技术实施方案 · 项目报价单</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#b46a2b;
+      --primary-light:#d9a46d;
+      --primary-dark:#8b4e1e;
+      --secondary:#24404f;
+      --accent:#e8c48d;
+      --accent2:#7e9f8f;
+      --dark:#111827;
+      --text:#2f3a44;
+      --text-light:#6b7280;
+      --bg:#f7f5f2;
+      --white:#fff;
+      --border:#e7dfd5;
+      --alt:#f1ece6;
+      --gold:#d7b078;
+      --gold-soft:#f4ddbb;
+      --logo-line:#213a46;
+      --logo-word:#cc3d68;
+      --r:12px;
+      --rl:20px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Microsoft YaHei',sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.8;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{text-decoration:none}
+    @media print{
+      body{background:#fff;font-size:11pt}
+      .hero{min-height:auto;padding:110px 0 56px}
+      .m-card,.qt,.nb,.arch{break-inside:avoid;page-break-inside:avoid}
+    }
+
+    /* ===== 顶部导航栏 ===== */
+    .hero-topbar{
+      position:fixed;top:0;left:0;right:0;z-index:30;
+      background:rgba(8,14,19,.56);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .hero-topbar-inner{
+      max-width:1400px;margin:0 auto;
+      padding:14px clamp(20px,3vw,36px);
+      display:flex;align-items:center;justify-content:space-between;gap:22px;
+    }
+    .opening-line{
+      font-family:'Noto Serif SC',serif;
+      font-size:clamp(16px,1.15vw,22px);
+      font-weight:700;
+      letter-spacing:.16em;
+      color:var(--gold-soft);
+      white-space:nowrap;
+    }
+    .hero-top-meta{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .hero-top-meta span{
+      display:inline-flex;align-items:center;min-height:42px;
+      padding:10px 16px;border-radius:999px;
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+      font-size:12px;color:rgba(255,255,255,.86);
+    }
+
+    /* ===== Hero 封面（双栏布局） ===== */
+    .hero{
+      min-height:100dvh;
+      background:radial-gradient(circle at 18% 78%,rgba(215,176,120,.12),transparent 22%),
+                 radial-gradient(circle at 84% 18%,rgba(215,176,120,.08),transparent 24%),
+                 linear-gradient(135deg,#10161d 0%,#18232d 38%,#223744 100%);
+      display:flex;align-items:flex-start;justify-content:center;
+      position:relative;overflow:hidden;padding:132px 0 88px;
+    }
+    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%}
+    .hero::before{width:700px;height:700px;right:-220px;top:-280px;background:radial-gradient(circle,rgba(215,176,120,.18) 0%,transparent 68%)}
+    .hero::after{width:560px;height:560px;left:-150px;bottom:-220px;background:radial-gradient(circle,rgba(215,176,120,.12) 0%,transparent 68%)}
+    .hero-inner{position:relative;z-index:1;max-width:1440px;width:100%;padding:0 clamp(20px,4vw,56px);color:#fff}
+    .hero-shell{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,460px);gap:clamp(40px,6vw,120px);align-items:start}
+    .hero-copy{max-width:820px;text-align:left;padding-top:clamp(16px,3vw,40px)}
+    .hero-kicker{display:block;margin-bottom:20px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+    .hero h1{
+      font-family:'Noto Serif SC',serif;
+      font-size:clamp(44px,5.3vw,84px);line-height:1.08;font-weight:900;margin-bottom:18px;
+      background:linear-gradient(135deg,#fff 0%,#f7ebd8 36%,#d7b078 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{font-size:clamp(18px,1.7vw,28px);letter-spacing:.08em;color:rgba(255,255,255,.82);margin-bottom:24px}
+    .hero-note{max-width:680px;color:rgba(255,255,255,.62);font-size:clamp(14px,1vw,16px);line-height:1.95;margin-bottom:42px}
+    .hero-side{display:grid;gap:18px;padding-top:clamp(28px,6vw,72px)}
+    .hero-side-intro{padding:20px 22px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.78);font-size:14px;line-height:1.95}
+    .hero-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:100%}
+    .meta-chip,.contact-chip{padding:16px 18px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(6px);min-height:84px}
+    .meta-chip dt,.contact-chip strong{display:block;font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.44);margin-bottom:8px;text-transform:uppercase}
+    .meta-chip dd,.contact-chip span{font-size:16px;font-weight:700;color:rgba(255,255,255,.96);line-height:1.5}
+
+    /* ===== 通用布局 ===== */
+    .container{max-width:1180px;margin:0 auto;padding:0 40px}
+    .sec{padding:78px 0}
+    .sec-alt{background:var(--alt)}
+    .sec-num{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--primary);text-transform:uppercase;margin-bottom:8px}
+    .sec-title{font-family:'Noto Serif SC',serif;font-size:36px;color:var(--dark);margin-bottom:12px}
+    .sec-desc{max-width:720px;color:var(--text-light);font-size:16px}
+
+    /* ===== 目录导航 ===== */
+    .toc{background:#fff;border-bottom:1px solid var(--border);padding:54px 0}
+    .toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:28px}
+    .toc-item{
+      display:flex;align-items:center;gap:14px;
+      padding:16px 18px;border-radius:var(--r);
+      background:var(--bg);border:1px solid var(--border);
+      color:var(--text);transition:.28s;
+    }
+    .toc-item:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:0 8px 24px rgba(17,24,39,.08)}
+    .toc-n{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .toc-t{font-size:15px;font-weight:600}
+
+    /* ===== 模块卡片 ===== */
+    .m-grid{display:grid;gap:18px;margin-top:38px}
+    .m-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .m-head{display:flex;align-items:center;gap:18px;padding:26px 30px;border-bottom:1px solid var(--border)}
+    .m-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+    .m-head h3{font-size:20px;color:var(--dark)}
+    .tag{margin-left:auto;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .tag-core{background:rgba(180,106,43,.12);color:var(--primary-dark)}
+    .tag-flow{background:rgba(36,64,79,.1);color:var(--secondary)}
+    .tag-fin{background:rgba(126,159,143,.15);color:#47685a}
+    .m-body{padding:26px 30px}
+    .fg{margin-bottom:22px}.fg:last-child{margin-bottom:0}
+    .fg-title{font-size:14px;font-weight:700;color:var(--secondary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+    .fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 18px}
+    .fl li{position:relative;padding-left:18px;font-size:14px;color:var(--text)}
+    .fl li::before{content:"";position:absolute;left:2px;top:12px;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+    /* ===== 数据表格 ===== */
+    .tech-table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .tech-table thead th{background:var(--secondary);color:#fff;padding:14px 20px;text-align:left;font-size:13px;font-weight:600;letter-spacing:1px}
+    .tech-table tbody td{padding:14px 20px;font-size:14px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+    .tech-table tbody tr:hover td{background:rgba(180,106,43,.03)}
+    .tech-table tbody td:first-child{font-weight:600;color:var(--secondary);white-space:nowrap}
+
+    /* ===== 架构展示卡片 ===== */
+    .arch{background:linear-gradient(135deg,#18232d,#243845);border-radius:var(--rl);padding:42px;margin-top:34px;color:#fff}
+    .arch-row{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .arch-row:last-child{border-bottom:none}
+    .arch-label{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+    .arch-tags{display:flex;flex-wrap:wrap;gap:10px}
+    .arch-tag{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);font-size:13px;color:rgba(255,255,255,.92)}
+
+    /* ===== 信息块 ===== */
+    .nb{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:34px;margin-top:26px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .nb h4{font-size:17px;color:var(--secondary);margin-bottom:14px}
+    .nl{list-style:none;counter-reset:item}
+    .nl li{position:relative;padding:8px 0 8px 32px;color:var(--text);font-size:14px}
+    .nl li::before{counter-increment:item;content:counter(item);position:absolute;left:0;top:8px;width:20px;height:20px;border-radius:50%;background:var(--alt);font-size:11px;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;justify-content:center}
+
+    /* ===== 报价表格 ===== */
+    .qt-wrap{margin-top:32px;overflow-x:auto}
+    .qt{width:100%;min-width:920px;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .qt thead th{padding:16px 18px;background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;text-align:left;font-size:13px;letter-spacing:1px}
+    .qt thead th:last-child,.qt thead th:nth-child(5),.qt thead th:nth-child(6){text-align:right}
+    .qt tbody td{padding:14px 18px;border-bottom:1px solid var(--border);background:#fff;font-size:14px;vertical-align:top}
+    .qt tbody td:last-child,.qt tbody td:nth-child(5),.qt tbody td:nth-child(6){text-align:right;font-variant-numeric:tabular-nums}
+    .qt tbody tr:hover td{background:rgba(180,106,43,.03)}
+    .qt .gh td{background:#efe7dd;color:var(--secondary);font-weight:700;border-left:4px solid var(--primary)}
+    .qt .st td{background:#faf4ec;color:var(--primary-dark);font-weight:700}
+    .qt .gt2 td{background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;font-size:16px;font-weight:700;padding:20px 18px}
+    .amt{font-weight:700}
+
+    /* ===== 统计卡片 ===== */
+    .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:34px 0}
+    .sc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:28px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .sc .num{font-family:'Noto Serif SC',serif;font-size:34px;font-weight:900;color:var(--primary);line-height:1.2}
+    .sc .unit{font-size:16px;color:var(--text-light);font-weight:500}
+    .sc .desc{font-size:14px;color:var(--text-light);margin-top:6px}
+
+    /* ===== 时间线排期 ===== */
+    .tl{position:relative;margin-top:36px;padding-left:36px}
+    .tl::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--primary),var(--accent2))}
+    .tl-item{position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:24px 26px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .tl-item::before{content:"";position:absolute;left:-28px;top:28px;width:12px;height:12px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 4px var(--bg)}
+    .tl-phase{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--primary);text-transform:uppercase}
+    .tl-title{font-size:18px;font-weight:700;color:var(--dark);margin:4px 0 8px}
+    .tl-dur{display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(180,106,43,.1);color:var(--primary-dark);font-size:13px;font-weight:700;margin-bottom:12px}
+    .tl-tasks{list-style:none}
+    .tl-tasks li{position:relative;padding-left:18px;font-size:14px;color:var(--text);margin-bottom:4px}
+    .tl-tasks li::before{content:"→";position:absolute;left:0;color:var(--primary)}
+
+    /* ===== 页脚 ===== */
+    .footer{background:var(--dark);color:rgba(255,255,255,.58);padding:46px 0;text-align:center}
+    .footer-brand{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:10px}
+    .footer p{font-size:13px;line-height:2}
+
+    /* ===== 响应式 ===== */
+    @media(max-width:1024px){
+      .hero{padding-top:120px}
+      .hero-shell{grid-template-columns:1fr;gap:32px}
+      .hero-copy{padding-top:0;text-align:left}
+      .hero-side{padding-top:0}
+      .hero-info-grid{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr))}
+    }
+    @media(max-width:768px){
+      .container{padding:0 20px}
+      .hero{padding:138px 0 72px}
+      .hero-topbar-inner{padding:12px 16px;flex-direction:column;align-items:flex-start}
+      .opening-line{white-space:normal;line-height:1.6}
+      .hero-top-meta{justify-content:flex-start}
+      .hero-top-meta span{min-height:40px;padding:9px 13px}
+      .hero-inner{padding:0 20px}
+      .hero-kicker{margin-bottom:14px}
+      .hero h1{font-size:42px}
+      .hero-sub{font-size:18px;line-height:1.8}
+      .hero-note{font-size:14px}
+      .hero-info-grid{gap:12px}
+      .meta-chip,.contact-chip{min-height:76px;padding:14px 16px}
+      .hero-side-intro{padding:18px 18px}
+      .sec{padding:52px 0}
+      .sec-title{font-size:28px}
+      .m-head{flex-wrap:wrap}
+      .tag{margin-left:0}
+      .fl{grid-template-columns:1fr}
+      .arch-row{grid-template-columns:1fr}
+      .tl{padding-left:30px}
+    }
+    @media(max-width:560px){
+      .hero-info-grid{grid-template-columns:1fr}
+      .hero-top-meta{width:100%}
+      .hero-top-meta span{width:100%;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 顶部导航栏 ===== -->
+  <div class="hero-topbar">
+    <div class="hero-topbar-inner">
+      <div class="opening-line">铁肩担荣耀，妙手筑梦想</div>
+      <div class="hero-top-meta">
+        <span>商务：李岩</span>
+        <span>报价单位：郑州八角信息技术有限公司</span>
+        <span>联系电话：18839160628</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HERO 封面（双栏） ===== -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <span class="hero-kicker">项目方案封面</span>
+          <h1>副本游戏陪玩综合平台（单商户商城 + 腾讯IM/TRTC）</h1>
+          <p class="hero-sub">陪玩交易 · 单商户商城 · 俱乐部运营 · 售后庭案 · 腾讯IM/TRTC</p>
+          <p class="hero-note">平台覆盖陪玩下单交易、陪玩师接单履约、俱乐部运营与活动、单商户商城下单与履约、统一售后庭案闭环；沟通链路采用腾讯云IM，语音/房间类场景采用TRTC。</p>
+        </div>
+        <div class="hero-side">
+          <div class="hero-side-intro">方案覆盖用户端APP、陪玩师APP、俱乐部PC后台、平台PC管理后台、售后PC后台，并纳入腾讯IM与TRTC的接入与联调范围。</div>
+          <div class="hero-info-grid">
+            <div class="meta-chip"><dt>文档类型</dt><dd>产品方案 & 报价单</dd></div>
+            <div class="meta-chip"><dt>版本</dt><dd>V1.0</dd></div>
+            <div class="meta-chip"><dt>日期</dt><dd>2026-05-07</dd></div>
+            <div class="meta-chip"><dt>交付形态</dt><dd>APP（用户端/陪玩师端） + PC 管理后台 + 售后后台</dd></div>
+            <div class="contact-chip"><strong>报价单位</strong><span>郑州八角信息技术有限公司</span></div>
+            <div class="contact-chip"><strong>联系电话</strong><span>18839160628</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 目录导航 ===== -->
+  <section class="toc" id="toc">
+    <div class="container">
+      <div class="sec-num">CONTENTS</div>
+      <h2 class="sec-title">目录导航</h2>
+      <div class="toc-grid">
+        <a class="toc-item" href="#s1"><span class="toc-n">01</span><span class="toc-t">产品概述</span></a>
+        <a class="toc-item" href="#s2"><span class="toc-n">02</span><span class="toc-t">需求分析</span></a>
+        <a class="toc-item" href="#s3"><span class="toc-n">03</span><span class="toc-t">功能清单</span></a>
+        <a class="toc-item" href="#s4"><span class="toc-n">04</span><span class="toc-t">技术选型</span></a>
+        <a class="toc-item" href="#s5"><span class="toc-n">05</span><span class="toc-t">技术难点与方案</span></a>
+        <a class="toc-item" href="#s6"><span class="toc-n">06</span><span class="toc-t">技术实施方案</span></a>
+        <a class="toc-item" href="#s7"><span class="toc-n">07</span><span class="toc-t">实施排期</span></a>
+        <a class="toc-item" href="#s8"><span class="toc-n">08</span><span class="toc-t">项目报价清单</span></a>
+        <a class="toc-item" href="#s9"><span class="toc-n">09</span><span class="toc-t">商务条款说明</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 01 产品概述 ===== -->
+  <section class="sec" id="s1">
+    <div class="container">
+      <div class="sec-num">Part 01</div>
+      <h2 class="sec-title">产品概述</h2>
+      <p class="sec-desc" style="max-width:none">系统定位为陪玩交易 + 单商户商城 + 俱乐部运营 + 统一售后庭案的综合平台，面向用户、陪玩师、俱乐部与平台运营人员提供订单全链路与纠纷处理能力。</p>
+      <div class="sg">
+        <div class="sc"><div class="num">38<span class="unit"> 个</span></div><div class="desc">模块板块（端口/板块汇总）</div></div>
+        <div class="sc"><div class="num">111<span class="unit"> 条</span></div><div class="desc">功能点（清单行数）</div></div>
+        <div class="sc"><div class="num">45<span class="unit"> 工作日</span></div><div class="desc">预估工期（阶段交付）</div></div>
+        <div class="sc"><div class="num">18.56<span class="unit"> 万元</span></div><div class="desc">项目总价（含税）</div></div>
+      </div>
+      <div class="nb">
+        <h4>建设目标</h4>
+        <ul class="nl">
+          <li>形成陪玩交易从下单、沟通、履约到结算的闭环能力</li>
+          <li>形成单商户商城从商品、订单、物流到售后庭案的闭环能力</li>
+          <li>形成俱乐部入驻、活动与成员管理、收益结算的运营能力</li>
+          <li>形成统一售后庭案与内容/风控治理机制（含IM/音视频场景）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 02 需求分析 ===== -->
+  <section class="sec sec-alt" id="s2">
+    <div class="container">
+      <div class="sec-num">Part 02</div>
+      <h2 class="sec-title">需求分析</h2>
+      <table class="tech-table">
+        <thead><tr><th>维度</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>需求背景</td><td>陪玩交易与电竞周边购买呈现强场景联动；同时存在俱乐部运营、报名活动、售后纠纷多类型订单的统一处理诉求。</td></tr>
+          <tr><td>核心诉求</td><td>多端角色协同、订单全链路、IM沟通、可扩展的售后庭案、统一支付与结算、后台运营配置与数据视图。</td></tr>
+          <tr><td>目标用户画像</td><td>用户（下单/商城购买/活动报名）、陪玩师（入驻/接单/履约/收益）、俱乐部（入驻/活动/管理）、平台运营（审核/配置/结算/风控）、售后专员（庭案处理）。</td></tr>
+          <tr><td>交付范围（一期）</td><td>用户端APP、陪玩师APP、俱乐部PC后台、平台管理后台PC、售后PC后台；含微信支付/支付宝、腾讯云IM、腾讯云TRTC对接与联调。</td></tr>
+          <tr><td>关键假设</td><td>商城为单商户模式（不含多商户入驻结算与店铺管理）；音视频能力以TRTC房间/语音为主（不含复杂美颜/直播带货链路）。</td></tr>
+        </tbody>
+      </table>
+      <h3 style="margin:32px 0 16px;font-size:18px;color:var(--dark)">非功能性需求</h3>
+      <table class="tech-table">
+        <thead><tr><th>类别</th><th>要求</th></tr></thead>
+        <tbody>
+          <tr><td>性能</td><td>核心下单/支付链路在并发峰值下保持可用；订单列表与消息列表支持分页与增量刷新。</td></tr>
+          <tr><td>安全</td><td>登录态与接口鉴权、支付回调验签、关键操作审计；IM/音视频场景纳入风控与内容安全策略。</td></tr>
+          <tr><td>兼容</td><td>移动端适配主流安卓/iOS机型；PC后台兼容Chrome/Edge最新版。</td></tr>
+          <tr><td>合规</td><td>隐私政策与用户协议；实名认证/未成年人保护策略预留；三方服务合规开通与日志留存。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== PART 03 功能清单 ===== -->
+  <section class="sec" id="s3">
+    <div class="container">
+      <div class="sec-num">Part 03</div>
+      <h2 class="sec-title">功能清单</h2>
+      <p class="sec-desc">功能清单来自需求文档梳理，共覆盖 5 个端口、38 个板块模块、111 条功能点。</p>
+      <div class="m-grid">
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">01</div>
+            <div>
+              <h3>俱乐部入驻</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>入驻申请：俱乐部负责人可提交俱乐部名称、营业或组织资质、联系人信息、俱乐部简介和入驻类型，等待平台审核。</li>
+                <li>入驻审核进度：俱乐部可查看平台审核状态、驳回原因和补充材料要求；审核通过后开通俱乐部后台。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">02</div>
+            <div>
+              <h3>俱乐部管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>俱乐部资料维护：俱乐部可维护品牌介绍、Logo、宣传图、战队信息、联系方式和展示状态。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">03</div>
+            <div>
+              <h3>售后庭案</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>参与相关售后：俱乐部可查看与旗下陪玩订单、活动报名订单、周边商品订单相关的售后庭案，并进行评论回复。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">04</div>
+            <div>
+              <h3>战队活动</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>训练营发布：俱乐部可发布训练营名称、课程安排、教练介绍、报名价格、名额限制和报名截止时间。</li>
+                <li>赛事活动发布：俱乐部可发布线上或线下赛事活动，设置报名条件、时间地点、奖励说明和报名费用。</li>
+                <li>报名管理：俱乐部可查看训练营、赛事、组队活动的报名用户、支付状态、资格审核和签到状态。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">05</div>
+            <div>
+              <h3>收益管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-fin">FIN</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>分成规则查看：俱乐部可查看平台配置的陪玩订单分成、活动报名分成、商品销售结算规则。</li>
+                <li>收益统计：俱乐部可查看陪玩收入、活动收入、商品收入、待结算金额、售后冻结金额和提现记录。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">06</div>
+            <div>
+              <h3>服务管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>俱乐部套餐配置：俱乐部可配置上分套餐、教学套餐、陪练套餐等服务，支持按小时、按场次、按套餐计价。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">07</div>
+            <div>
+              <h3>订单管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>俱乐部陪玩订单：俱乐部可查看旗下陪玩师订单、俱乐部套餐订单、支付状态、服务状态和售后状态。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">08</div>
+            <div>
+              <h3>陪玩师管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">俱乐部 PC 后台</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>陪玩师招募：俱乐部可发布招募要求，陪玩师可提交加入申请，俱乐部审核后建立归属关系。</li>
+                <li>陪玩师审核：俱乐部可审核陪玩师申请资料、游戏能力和服务内容；审核通过后陪玩师可进入俱乐部名下接单。</li>
+                <li>陪玩师分组：俱乐部可按游戏类型、段位、服务类型对旗下陪玩师分组，便于管理和派单。</li>
+                <li>派单管理：俱乐部可将俱乐部订单分配给合适陪玩师，系统记录派单人、接单人和服务进度。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">09</div>
+            <div>
+              <h3>售后庭案</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">售后（俱乐部） PC 后台</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>庭案自动同步：用户针对商城、陪玩、训练营、赛事或活动报名发起售后后，系统自动生成售后庭案并关联来源订单。</li>
+                <li>庭案列表：售后人员可按庭案来源、处理状态、责任方、发起时间、最新回复时间筛选和查看售后庭案。</li>
+                <li>庭案详情：售后人员可查看来源订单、用户诉求、相关方信息、沟通记录、凭证材料和处理时间线。</li>
+                <li>评论回复管理：售后人员、用户、陪玩师、商家、俱乐部等相关方可在庭案内评论回复；系统记录每条内容的发布人和时间。</li>
+                <li>标记最终处理结果：平台售后可根据证据和规则标记最终处理结果，例如退款、退货、换货、补偿、重新服务、驳回申请或部分退款。</li>
+                <li>售后状态流转：售后人员可将庭案状态流转为待处理、处理中、等待用户补充、等待商家处理、等待俱乐部处理、已裁决、已关闭。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">10</div>
+            <div>
+              <h3>售后统计</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">售后（俱乐部） PC 后台</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>售后数据统计：售后人员和平台管理者可查看售后数量、处理时长、退款金额、各业务类型售后率和责任方分布。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">11</div>
+            <div>
+              <h3>售后规则</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">售后（俱乐部） PC 后台</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>售后原因配置：平台可配置商品、陪玩、训练营、赛事活动等不同业务的售后原因，方便用户发起售后时选择。</li>
+                <li>处理时限配置：平台可配置不同类型售后的响应时限、补充材料时限和自动关闭规则。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">12</div>
+            <div>
+              <h3>俱乐部管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>俱乐部入驻审核：平台审核俱乐部入驻资料、资质材料和经营范围，审核通过后开通俱乐部后台。</li>
+                <li>俱乐部运营管理：平台可查看俱乐部旗下陪玩师、活动、商品、订单、收益和售后记录。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">13</div>
+            <div>
+              <h3>内容审核</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>评价审核：平台可审核用户对陪玩师、商品、俱乐部活动的评价，隐藏违规内容或恢复正常展示。</li>
+                <li>聊天风控：平台可查看被举报的站内私信内容，对违规用户、陪玩师、商家或俱乐部进行处理。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">14</div>
+            <div>
+              <h3>平台自营商城</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>自营商品发布：平台可发布自营电竞商品，维护商品图片、价格、规格、库存、发货说明和售后政策。</li>
+                <li>自营订单发货：平台可处理自营商品订单发货，手动填写快递公司、快递单号和发货备注。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">15</div>
+            <div>
+              <h3>支付结算</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-fin">FIN</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>支付渠道配置：平台可配置微信支付和支付宝支付参数，管理支付启用状态和支付失败提示。</li>
+                <li>担保交易管理：平台可管理陪玩订单担保资金状态，包括已支付待服务、服务中、待确认、待结算、售后冻结和已结算。</li>
+                <li>分成规则配置：平台可配置陪玩师、俱乐部、商家、平台之间的佣金和分成规则，支持不同业务类型分别设置。（支付完成先进行平台 结算第一时间自动申请分账，分账后尽快到账）</li>
+                <li>提现审核：平台可审核陪玩师、俱乐部的提现申请，记录审核结果和打款状态。（有平台定 当天到账）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">16</div>
+            <div>
+              <h3>数据概览</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>经营数据看板：平台可查看用户数、陪玩师数、俱乐部数、商家数、陪玩订单、商城订单、活动报名、GMV和售后数量。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">17</div>
+            <div>
+              <h3>游戏与分类</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>游戏分类管理：平台可维护平台支持的游戏名称、图标、排序、启用状态和对应陪玩服务分类。</li>
+                <li>商城分类管理：平台可维护电竞商城商品分类，例如外设、周边、战队周边、礼包等。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">18</div>
+            <div>
+              <h3>用户管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>用户列表：平台可查看用户基础信息、注册时间、消费金额、订单数量、售后记录和账户状态。</li>
+                <li>用户状态管理：平台可对违规用户进行禁言、限制下单、冻结账户或解除限制。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">19</div>
+            <div>
+              <h3>系统权限</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>后台账号管理：平台可创建运营、客服、财务、售后等后台账号，并分配不同菜单和操作权限。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">20</div>
+            <div>
+              <h3>订单管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>陪玩订单管理：平台可查看陪玩订单支付、接单、服务、确认完成、超时自动完成、结算和售后状态。</li>
+                <li>商城订单管理：平台可查看平台自营、商家、俱乐部周边的商城订单状态，并支持订单查询和异常处理。</li>
+                <li>活动订单管理：平台可查看训练营、赛事、组队活动报名订单，跟踪支付、报名、退款和售后状态。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">21</div>
+            <div>
+              <h3>运营配置</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>首页推荐配置：平台可配置首页推荐的陪玩师、商品、俱乐部、活动和运营 Banner。</li>
+                <li>公告管理：平台可发布平台公告、活动通知、规则说明，并控制展示端口和展示时间。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">22</div>
+            <div>
+              <h3>陪玩师管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>陪玩师审核：平台审核陪玩师身份资料、游戏能力资料和服务内容，决定通过、驳回或要求补充资料。</li>
+                <li>陪玩师运营管理：平台可查看陪玩师接单数据、评分、投诉记录、所属俱乐部和收益状态。</li>
+                <li>设置陪玩师配置：俱乐部可配置按小时、按场次、按套餐的服务项目，填写游戏、价格、服务说明和可接单时间。（俱乐部设置陪玩师的价格）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">23</div>
+            <div>
+              <h3>陪玩服务管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">平台管理后台 PC</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>服务套餐审核：平台可审核陪玩师或俱乐部发布的服务项目、价格、说明和展示内容，防止违规服务。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">24</div>
+            <div>
+              <h3>个人中心</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>个人资料管理：用户可维护头像、昵称、性别、生日、游戏偏好等资料，用于个性化推荐和订单沟通。</li>
+                <li>我的订单：用户可统一查看陪玩订单、商城订单、俱乐部活动订单，并按订单状态筛选。</li>
+                <li>我的收藏：用户可收藏陪玩师、商品、俱乐部和活动，方便后续快速访问。</li>
+                <li>开通VIP：vip 可以自定义气泡 聊天背景 等装饰  svip可以把访客记录给关闭 可以设置隐身在线或者不隐身</li>
+                <li>账户安全：用户可管理手机号绑定、登录设备、密码或支付安全设置，保障账户安全。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">25</div>
+            <div>
+              <h3>俱乐部</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>俱乐部列表：用户可浏览入驻俱乐部，查看俱乐部名称、简介、认证状态、旗下陪玩师、活动数量和评分。</li>
+                <li>俱乐部详情：用户可查看俱乐部介绍、战队信息、旗下陪玩师、赛事活动、训练营、俱乐部周边和联系方式。</li>
+                <li>俱乐部陪玩下单：用户可从俱乐部详情选择旗下陪玩师或俱乐部套餐下单；订单归属俱乐部并参与俱乐部分成规则。</li>
+                <li>训练营报名：用户可查看训练营课程安排、教练信息、价格、报名人数和服务说明，并提交报名订单。</li>
+                <li>赛事活动报名：用户可查看俱乐部发布的赛事或组队活动，填写报名信息并支付报名费用。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">26</div>
+            <div>
+              <h3>售后庭案（公共区域）</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>发起商品售后：用户可针对商城订单发起退款、退货、换货、商品质量问题等售后；提交后自动同步到售后庭案板块。</li>
+                <li>发起陪玩售后：用户可针对陪玩订单发起未履约、服务质量、服务时长争议等售后；提交后自动生成售后庭案。</li>
+                <li>发起活动售后：用户可针对训练营、赛事或活动报名订单发起退款、改期、资格争议等售后；提交后进入售后庭案。</li>
+                <li>售后庭案列表：用户可查看自己发起或参与的售后庭案，列表展示来源订单、庭案状态、最新回复时间和处理结果。</li>
+                <li>售后评论回复：用户可在售后庭案详情中发布评论、回复相关方内容、上传凭证图片，便于平台售后判断责任。</li>
+                <li>查看最终结果：用户可查看平台售后标记的最终处理结果，包括退款、驳回、补偿、重新服务、退换货等结论。（用户和俱乐部处理的结果）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">27</div>
+            <div>
+              <h3>注册登录</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>手机号注册登录：用户可使用手机号获取验证码完成注册或登录；系统校验验证码有效性，登录成功后进入首页，并生成用户基础账户。</li>
+                <li>第三方快捷登录：用户可通过微信或支付宝授权登录；系统读取授权信息后绑定手机号，未绑定手机号时引导用户补充手机号。</li>
+                <li>用户协议与隐私授权：用户首次注册或登录时需勾选用户协议和隐私政策；未同意时系统不允许进入平台核心功能。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">28</div>
+            <div>
+              <h3>游戏陪玩</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>游戏分类浏览：用户可按游戏分类查看陪玩服务，例如王者荣耀、英雄联盟、和平精英等；每个分类展示可下单陪玩师和服务套餐。</li>
+                <li>陪玩师列表：用户可查看陪玩师头像、昵称、擅长游戏、段位、评分、接单状态、价格和所属俱乐部；支持按价格、评分、在线状态筛选。</li>
+                <li>陪玩师详情：用户可查看陪玩师资料、服务项目、价格、可预约时间、用户评价、所属俱乐部和服务说明，作为下单决策依据。</li>
+                <li>按小时下单：用户选择陪玩师、游戏、开始时间和服务时长后提交订单；系统按小时单价计算费用并进入支付流程。</li>
+                <li>按场次下单：用户选择陪玩师、游戏和服务场次数量后提交订单；系统按场次价格计算费用并记录应完成场次。</li>
+                <li>按套餐下单：用户可购买陪玩师或俱乐部配置的上分套餐、教学套餐、语音陪玩套餐等；系统按套餐规则生成服务订单。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">29</div>
+            <div>
+              <h3>电竞商城（自营）</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>商品分类浏览：用户可按电竞外设、游戏周边、战队周边、训练营礼包等分类浏览商品，支持查看平台自营、商家商品和俱乐部商品。</li>
+                <li>商品列表筛选：用户可按价格、销量、上新时间、店铺类型、商品分类筛选商品，提升选购效率。</li>
+                <li>商品详情：用户可查看商品图片、标题、价格、规格、库存、发货方、售后说明、评价和店铺信息。</li>
+                <li>加入购物车：用户可将不同规格商品加入购物车；系统记录商品数量、规格和店铺来源，库存不足时提示用户调整。</li>
+                <li>立即购买：用户可从商品详情直接选择规格和数量下单；系统跳转订单确认页并计算商品金额。</li>
+                <li>购物车结算：用户可勾选购物车商品统一结算；不同商家或俱乐部商品按店铺拆单处理，方便后续发货和售后。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">30</div>
+            <div>
+              <h3>站内消息</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>私信会话：用户可与陪玩师、俱乐部、商家客服、平台售后进行站内文字私信沟通，不提供 APP 内语音通话。</li>
+                <li>订单留言：用户可在陪玩订单、商城订单、活动报名订单中留言说明需求；相关服务方可在订单内查看并回复。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">31</div>
+            <div>
+              <h3>首页</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">用户端 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>首页推荐：首页展示陪玩师推荐、热门游戏、电竞商城入口、俱乐部活动入口、售后庭案入口和平台公告，帮助用户快速进入主要业务场景。</li>
+                <li>搜索功能：用户可按陪玩师昵称、游戏名称、商品名称、俱乐部名称进行搜索；系统展示分类结果并支持跳转详情。</li>
+                <li>消息提醒：首页展示订单状态、聊天消息、售后回复、活动通知等未读提醒，用户点击后进入对应详情。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">32</div>
+            <div>
+              <h3>个人中心</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>资料维护：陪玩师可维护头像、昵称、简介、服务标签、展示图片和接单偏好。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">33</div>
+            <div>
+              <h3>入驻认证</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>陪玩师注册：陪玩师可使用手机号注册并提交基础资料，系统创建陪玩师账户并进入认证流程。</li>
+                <li>身份认证：陪玩师需提交真实姓名、身份证信息和认证材料；平台审核通过后才允许接单。</li>
+                <li>游戏能力认证：陪玩师可上传游戏段位、战绩截图、擅长位置和服务说明；平台审核后展示在用户端。</li>
+                <li>加入俱乐部申请：陪玩师可搜索俱乐部并申请加入；俱乐部审核通过后陪玩师归属该俱乐部管理。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">34</div>
+            <div>
+              <h3>售后庭案</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>参与陪玩售后：陪玩师可查看与自己相关的陪玩售后庭案，并在庭案内评论、回复和上传服务凭证。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#cc3d68,#d7b078)">35</div>
+            <div>
+              <h3>收益管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-fin">FIN</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>收益明细：陪玩师可查看已结算、待结算、售后冻结、平台抽佣和俱乐部分成等收益明细。</li>
+                <li>提现申请：陪玩师可对可提现余额发起提现申请；平台审核后打款，提现规则由平台后台配置。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#1f6f8b,#e8c48d)">36</div>
+            <div>
+              <h3>服务管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-core">CORE</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>接单状态设置：陪玩师可设置在线接单、忙碌、休息等状态；用户端根据状态决定是否可立即下单。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">37</div>
+            <div>
+              <h3>消息中心</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>用户私信：陪玩师可与下单用户进行站内文字沟通，确认游戏账号、开局时间和服务需求。（聊天一对一可以视频和语音，可以续火花 24多小时 这个时间可以设置，后台可以设置连续火花🈵多少天可以领到vip 后台设置时间）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">38</div>
+            <div>
+              <h3>订单管理</h3>
+              <div style="margin-top:4px;font-size:12px;color:var(--text-light)">陪玩师 APP</div>
+            </div>
+            <span class="tag tag-flow">FLOW</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">功能点（摘要）</div>
+              <ul class="fl">
+                <li>订单接收：陪玩师收到用户下单后可查看订单内容、服务时间、用户需求和支付状态，并决定是否接单。</li>
+                <li>订单服务确认：陪玩师完成服务后可提交完成申请；用户确认或超时后订单进入结算流程。</li>
+                <li>异常订单反馈：陪玩师遇到用户失联、需求变更、恶意投诉等情况时可提交异常说明，供平台售后介入。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+        <!-- 按需添加更多模块卡片，交替使用不同渐变色 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 04 技术选型 ===== -->
+  <section class="sec sec-alt" id="s4">
+    <div class="container">
+      <div class="sec-num">Part 04</div>
+      <h2 class="sec-title">技术选型</h2>
+      <p class="sec-desc">按功能清单与对接要求，系统采用前后端分离形态，后端与多端前端通过API与消息体系协同；三方能力优先适配国内合规供应商。</p>
+      <table class="tech-table">
+        <thead><tr><th>层级</th><th>选型</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>后端</td><td>PHP</td><td>覆盖交易/订单/结算/内容治理等通用业务能力；对接腾讯云IM/TRTC与支付回调链路成熟；交付效率与运维成本可控。</td></tr>
+          <tr><td>前端（移动端）</td><td>JavaScript</td><td>覆盖交易/订单/结算/内容治理等通用业务能力；对接腾讯云IM/TRTC与支付回调链路成熟；交付效率与运维成本可控。</td></tr>
+          <tr><td>管理后台（PC Web）</td><td>JavaScript</td><td>覆盖交易/订单/结算/内容治理等通用业务能力；对接腾讯云IM/TRTC与支付回调链路成熟；交付效率与运维成本可控。</td></tr>
+          <tr><td>UI 设计</td><td>全套视觉稿</td><td>覆盖交易/订单/结算/内容治理等通用业务能力；对接腾讯云IM/TRTC与支付回调链路成熟；交付效率与运维成本可控。</td></tr>
+        </tbody>
+      </table>
+      <h3 style="margin:32px 0 16px;font-size:18px;color:var(--dark)">三方服务集成（仅列出本项目涉及的服务）</h3>
+      <table class="tech-table">
+        <thead><tr><th>服务类别</th><th>推荐厂商</th><th>备选厂商</th><th>推荐理由</th></tr></thead>
+        <tbody>
+          <tr><td>即时通讯（IM聊天）</td><td>腾讯云TRTC</td><td>声网Agora、阿里云RTC</td><td>低延迟，多端覆盖；房间/语音场景可与IM信令配合实现通话流程。</td></tr>
+          <tr><td>音视频通话（RTC）</td><td>腾讯云TRTC</td><td>声网Agora、阿里云RTC</td><td>低延迟，多端覆盖；房间/语音场景可与IM信令配合实现通话流程。</td></tr>
+        </tbody>
+      </table>
+      <div class="nb">
+        <h4>三方服务费用说明</h4>
+        <ul class="nl">
+          <li>以上三方服务的<strong>按量/套餐实付费用</strong>不含在本开发报价内，由甲方直接向供应商开通并支付。</li>
+          <li>本报价<strong>已包含</strong>上述三方服务的接口对接开发工时。</li>
+          <li>最终选用厂商可在项目启动时协商确定，推荐方案仅供参考。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 05 技术难点与解决方案 ===== -->
+  <section class="sec" id="s5">
+    <div class="container">
+      <div class="sec-num">Part 05</div>
+      <h2 class="sec-title">技术难点与解决方案</h2>
+      <table class="tech-table">
+        <thead><tr><th>难点</th><th>解决方案要点</th></tr></thead>
+        <tbody>
+          <tr><td>陪玩订单履约与沟通链路（IM + TRTC）的状态一致性</td><td>以订单为主线建立状态机；IM用于消息与信令，TRTC用于媒体通道；服务端统一下发房间参数与鉴权，异常断线具备重连与兜底结算策略。</td></tr>
+          <tr><td>统一售后庭案覆盖多类型订单（商城/陪玩/活动报名）</td><td>庭案抽象为统一模型：关联订单/证据/协商记录/裁决结果；按订单类型配置规则与处理流；支持后台模板化处理与统计。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== PART 06 技术实施方案 ===== -->
+  <section class="sec sec-alt" id="s6">
+    <div class="container">
+      <div class="sec-num">Part 06</div>
+      <h2 class="sec-title">技术实施方案</h2>
+      <p class="sec-desc" style="max-width:none">系统采用前后端分离架构。移动端与后台通过统一API接入业务服务；消息与音视频能力由腾讯云IM/TRTC提供，服务端负责鉴权、回调处理、风控与业务状态一致性。</p>
+      <div class="arch">
+        <div class="arch-row">
+          <div class="arch-label">表现层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">移动端（用户端/陪玩师端）</span>
+            <span class="arch-tag">PC 管理后台/售后后台</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">服务层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">业务服务（订单/商品/活动/结算/售后）</span>
+            <span class="arch-tag">IM/TRTC 接入服务</span>
+            <span class="arch-tag">风控与内容审核策略</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">数据层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">关系型数据库（业务数据）</span>
+            <span class="arch-tag">对象存储（图片/证据）</span>
+            <span class="arch-tag">缓存（热点数据/限流）</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">交付层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">可运行部署包与环境配置说明</span>
+            <span class="arch-tag">产品原型/视觉稿与交互说明</span>
+            <span class="arch-tag">接口文档、测试用例与验收清单</span>
+          </div>
+        </div>
+      </div>
+      <div class="nb">
+        <h4>方案边界说明</h4>
+        <ul class="nl">
+          <li>商城按单商户模式交付，不含多商户入驻与分账结算</li>
+          <li>TRTC范围为语音/房间类场景接入与联调，不含直播带货链路</li>
+          <li>三方平台按量费用由甲方自行开通与支付</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 07 实施排期 ===== -->
+  <section class="sec" id="s7">
+    <div class="container">
+      <div class="sec-num">Part 07</div>
+      <h2 class="sec-title">实施排期</h2>
+      <p class="sec-desc">总体工期按 45 个工作日（约 9 周）估算，采用阶段性交付与验收。</p>
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-phase">Phase 1</div>
+          <div class="tl-title">需求澄清与原型/视觉基线</div>
+          <div class="tl-dur">第 1-10 个工作日</div>
+          <ul class="tl-tasks">
+            <li>功能边界澄清：单商户商城范围、IM/TRTC接入边界、售后庭案处理规则</li>
+            <li>原型与视觉基线：关键链路原型、组件规范、交互状态与异常场景定义</li>
+            <li>技术准备：接口清单、数据模型草案、三方平台开通与环境联调准备</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 2</div>
+          <div class="tl-title">核心交易链路（陪玩 + 商城）</div>
+          <div class="tl-dur">第 11-30 个工作日</div>
+          <ul class="tl-tasks">
+            <li>陪玩下单履约：服务发布、下单/支付、接单、履约、评价与收益相关接口</li>
+            <li>商城交易：商品/订单/物流、支付回调、订单状态流转与基础营销配置</li>
+            <li>沟通链路：腾讯IM消息与系统通知接入，TRTC房间/语音入口与鉴权联调</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 3</div>
+          <div class="tl-title">后台运营/审核/结算 + 售后庭案</div>
+          <div class="tl-dur">第 31-40 个工作日</div>
+          <ul class="tl-tasks">
+            <li>平台/俱乐部后台：用户/陪玩师/俱乐部管理、审核与运营配置、订单与结算视图</li>
+            <li>统一售后庭案：多类型订单接入、处理流/裁决、证据材料、统计与规则配置</li>
+            <li>内容治理：IM内容审核策略对接、敏感词/举报/封禁等运营工具与审计</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 4</div>
+          <div class="tl-title">联调验收与上线支持</div>
+          <div class="tl-dur">第 41-45 个工作日</div>
+          <ul class="tl-tasks">
+            <li>全链路联调：支付、订单状态、IM/TRTC回调、售后庭案跨端协同验证</li>
+            <li>验收支持：回归测试、缺陷修复、验收清单与交付物整理</li>
+            <li>上线支持：部署协助、基础安全配置、上线巡检与问题快速响应</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 08 项目报价清单 ===== -->
+  <section class="sec sec-alt" id="s8">
+    <div class="container">
+      <div class="sec-num">Part 08</div>
+      <h2 class="sec-title">项目报价清单</h2>
+      <p class="sec-desc">报价按人天核算并分项包干，覆盖约定交付范围内的设计、开发、联调、验收与上线支持。</p>
+      <div class="qt-wrap">
+        <table class="qt">
+          <thead>
+            <tr>
+              <th style="width:55px">序号</th>
+              <th>功能模块 / 工作项</th>
+              <th>工作内容说明</th>
+              <th style="width:80px">人天</th>
+              <th style="width:100px">单价（元/天）</th>
+              <th style="width:130px">报价（元）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ===== A. UI 设计 ===== -->
+            <tr class="gh"><td colspan="6">A. UI 设计（全套）</td></tr>
+            <tr>
+              <td>A1</td>
+              <td>信息架构与交互原型/视觉规范</td>
+              <td>覆盖主要端口的信息架构、关键流程原型、视觉基线与组件规范</td>
+              <td>18.0</td><td>1,000</td><td class="amt">18,000</td>
+            </tr>
+            <tr class="st"><td></td><td colspan="4">小计 · UI 设计</td><td class="amt">18,000</td></tr>
+
+            <!-- ===== B. 后端开发 ===== -->
+            <tr class="gh"><td colspan="6">B. 后端服务开发（PHP）</td></tr>
+            <tr>
+              <td>B1</td>
+              <td>核心业务与三方对接（订单/支付/IM/TRTC/售后）</td>
+              <td>订单/商品/活动/结算/售后等核心接口开发；含微信/支付宝、腾讯IM、腾讯TRTC对接与联调</td>
+              <td>70.0</td><td>1,200</td><td class="amt">84,000</td>
+            </tr>
+            <tr class="st"><td></td><td colspan="4">小计 · 后端开发</td><td class="amt">84,000</td></tr>
+
+            <!-- ===== C. 用户端前端 ===== -->
+            <tr class="gh"><td colspan="6">C. 用户端前端开发（JavaScript）</td></tr>
+            <tr>
+              <td>C1</td>
+              <td>用户端与陪玩师端核心页面与交互</td>
+              <td>用户端APP、陪玩师端APP核心页面与交互实现（含IM与通话入口）</td>
+              <td>40.0</td><td>1,200</td><td class="amt">48,000</td>
+            </tr>
+            <tr class="st"><td></td><td colspan="4">小计 · 用户端前端</td><td class="amt">48,000</td></tr>
+
+            <!-- ===== D. 管理后台前端（如有） ===== -->
+            <tr class="gh"><td colspan="6">D. PC 管理后台前端开发（JavaScript）</td></tr>
+            <tr>
+              <td>D1</td>
+              <td>平台/俱乐部/售后后台核心页面与交互</td>
+              <td>平台/俱乐部/售后PC后台核心页面与交互实现（含审核/结算/庭案处理）</td>
+              <td>20.0</td><td>1,200</td><td class="amt">24,000</td>
+            </tr>
+            <tr class="st"><td></td><td colspan="4">小计 · 管理后台前端</td><td class="amt">24,000</td></tr>
+
+            <!-- ===== E. 测试部署 ===== -->
+            <tr class="gh"><td colspan="6">E. 测试、部署与项目管理</td></tr>
+            <tr>
+              <td>E1</td>
+              <td>联调测试与修复</td>
+              <td>核心流程回归、移动端抽检、缺陷修复与验收支持</td>
+              <td>—</td><td>—</td><td class="amt">8,120</td>
+            </tr>
+            <tr>
+              <td>E2</td>
+              <td>部署与上线协助</td>
+              <td>服务器部署、HTTPS/基础安全配置协助、上线支持</td>
+              <td>—</td><td>—</td><td class="amt">3,480</td>
+            </tr>
+            <tr class="st"><td></td><td colspan="4">小计 · 测试部署与 PM</td><td class="amt">11,600</td></tr>
+
+            <!-- ===== 汇总 ===== -->
+            <tr class="st"><td></td><td colspan="4">软件开发小计（A+B+C+D+E）</td><td class="amt">185,600</td></tr>
+            <tr class="gt2">
+              <td></td>
+              <td colspan="4">项目总价（含税）</td>
+              <td>¥ 185,600</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nb">
+        <h4>费用说明</h4>
+        <ul class="nl">
+          <li>本报价覆盖需求分析中列示的一期交付范围；项目总价（含税）为 <strong>¥ 185,600</strong>，以本表分项合计为准。</li>
+          <li>本报价按分项包干列示，<strong>不另设</strong>风险准备金或类似加价项。</li>
+          <li><strong>含</strong>第三方能力的接口对接开发工时；<strong>不含</strong>云资源与三方平台按量/套餐实付费用。</li>
+          <li>报价有效期 30 天，自文档出具日起计算；范围变更或新增流程将重新核价。</li>
+        </ul>
+      </div>
+
+      <div class="sg">
+        <div class="sc"><div class="num">18.56<span class="unit"> 万元</span></div><div class="desc">项目总价（含税）</div></div>
+        <div class="sc"><div class="num">45<span class="unit"> 工作日</span></div><div class="desc">预计总工期</div></div>
+        <div class="sc"><div class="num">4<span class="unit"> 人</span></div><div class="desc">建议投入团队</div></div>
+        <div class="sc"><div class="num">3<span class="unit"> 个月</span></div><div class="desc">免费质保期</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PART 09 商务条款说明 ===== -->
+  <section class="sec" id="s9">
+    <div class="container">
+      <div class="sec-num">Part 09</div>
+      <h2 class="sec-title">商务条款说明</h2>
+      <p class="sec-desc">以下为参考条款，以双方签订的正式合同为准。分期金额按<strong>总价 ¥ 185,600</strong>计算。</p>
+      <div class="nb">
+        <h4>一、付款方式（分三期）</h4>
+        <ul class="nl">
+          <li><strong>合同签订时：</strong>支付项目总额的 <strong>50%</strong> 作为项目启动款 — <strong>¥ 92,800</strong>。</li>
+          <li><strong>功能开发完成 / 内测版交付：</strong>支付项目总额的 <strong>30%</strong> — <strong>¥ 55,680</strong>。</li>
+          <li><strong>项目上线验收通过：</strong>支付项目总额的 <strong>20%</strong> 作为尾款 — <strong>¥ 37,120</strong>。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>二、知识产权</h4>
+        <ul class="nl">
+          <li>尾款结清后，约定交付范围内的源代码、设计稿、文档等知识产权归<strong>甲方</strong>所有。</li>
+          <li>开源组件遵循原协议；乙方不得将甲方定制源码用于其他商业项目。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>三、质保与售后</h4>
+        <ul class="nl">
+          <li>上线后提供 <strong>3 个月</strong>免费质保，修复约定范围内的开发缺陷。</li>
+          <li>需求变更与新功能不在质保范围内，另行评估报价。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>四、交付清单（摘要）</h4>
+        <ul class="nl">
+          <li>可运行部署包与环境配置说明</li>
+          <li>产品原型/视觉稿与交互说明</li>
+          <li>接口文档、测试用例与验收清单</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 页脚 ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">郑州八角信息技术有限公司</div>
+      <p>副本游戏陪玩综合平台（单商户商城 + 腾讯IM/TRTC） · 产品方案与报价单</p>
+      <p>报价单位：郑州八角信息技术有限公司 · 商务：李岩 · 联系电话：18839160628</p>
+      <p>文档版本 V1.0 ｜ 2026-05-07 ｜ 报价有效期 30 天</p>
+    </div>
+  </footer>
+</body>
+</html>

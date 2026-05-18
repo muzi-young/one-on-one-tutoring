@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>安心陪护 · 平台管理后台原型（PC 端 1920×1080）</title>
+<style>
+  :root{
+    --bg:#f4f7fa; --panel:#ffffff; --ink:#152226; --muted:#6b7a80;
+    --line:#e6ecf2; --line-2:#eef2f6;
+    --green:#1f8a70; --green-2:#e3f4ee;
+    --blue:#2f6fed; --blue-2:#e8f0ff; --blue-3:#1e4ec0;
+    --orange:#f59e0b; --orange-2:#fff5e0;
+    --red:#e45454; --red-2:#fde7e7;
+    --purple:#7c3aed; --purple-2:#ede4ff;
+    --shadow:0 2px 8px rgba(31,42,46,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    color:var(--ink);min-height:100vh;
+    background:var(--bg);
+    font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    font-size:14px;
+  }
+  button,input,textarea,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:transparent}
+  a{color:inherit;text-decoration:none}
+  /* 顶部品牌切换 */
+  .topbar{
+    position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);
+    padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;color:var(--blue)}
+  .topbar .brand .logo{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),#78a4ff);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+  .topbar .nav{display:flex;gap:6px;align-items:center}
+  .topbar .nav a{padding:8px 14px;border-radius:99px;font-size:13px;font-weight:600;color:var(--muted)}
+  .topbar .nav a.active{background:var(--blue);color:#fff}
+  .topbar .right{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:13px}
+  .topbar .right .badge{position:relative;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);font-size:16px}
+  .topbar .right .badge::after{content:"";position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid #fff}
+  .topbar .right .me{display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid var(--line);border-radius:99px}
+  .topbar .right .avatar{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#78a4ff);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+
+  /* 主体布局 */
+  .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 56px)}
+  .sidebar{background:#fff;border-right:1px solid var(--line);padding:14px 12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow:auto}
+  .sidebar .group{padding:10px 8px 6px;font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+  .sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--ink);font-size:14px;font-weight:500;margin-bottom:2px;transition:.15s ease;cursor:pointer}
+  .sidebar a:hover{background:var(--blue-2);color:var(--blue)}
+  .sidebar a.active{background:var(--blue);color:#fff;font-weight:700}
+  .sidebar a .ico{width:20px;text-align:center;font-size:16px}
+  .sidebar a .pill{margin-left:auto;background:var(--red);color:#fff;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:700}
+  .sidebar a.active .pill{background:rgba(255,255,255,.25)}
+
+  /* 内容区 */
+  .main{padding:20px 28px;overflow-x:hidden}
+  .page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .page-head h1{margin:0;font-size:22px;letter-spacing:-.02em}
+  .page-head .breadcrumb{font-size:12px;color:var(--muted);margin-top:4px}
+  .page-head .actions{display:flex;gap:8px;align-items:center}
+  .btn{min-height:36px;padding:0 16px;border-radius:8px;background:var(--blue);color:#fff;font-weight:600;display:inline-flex;align-items:center;gap:6px;font-size:13px;transition:.15s ease}
+  .btn:hover{background:var(--blue-3)}
+  .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.secondary:hover{border-color:var(--blue);color:var(--blue);background:#fff}
+  .btn.danger{background:var(--red)}
+  .btn.danger:hover{background:#c14444}
+  .btn.success{background:var(--green)}
+  .btn.warn{background:var(--orange)}
+  .btn.ghost{background:transparent;color:var(--blue);box-shadow:none}
+  .btn.sm{min-height:30px;padding:0 10px;font-size:12px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card .card-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+  .card .card-title h3{margin:0;font-size:15px}
+  .card .card-title .actions{display:flex;gap:6px;align-items:center}
+
+  /* metric */
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+  .metric .label{color:var(--muted);font-size:12px;display:flex;align-items:center;gap:6px}
+  .metric .value{font-size:28px;font-weight:900;margin:8px 0 4px;letter-spacing:-.02em}
+  .metric .delta{font-size:12px;display:flex;align-items:center;gap:4px}
+  .metric .delta.up{color:var(--green)}
+  .metric .delta.down{color:var(--red)}
+  .metric .ico{width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;float:right}
+  .metric.blue .ico{background:var(--blue-2);color:var(--blue)}
+  .metric.green .ico{background:var(--green-2);color:var(--green)}
+  .metric.orange .ico{background:var(--orange-2);color:var(--orange)}
+  .metric.purple .ico{background:var(--purple-2);color:var(--purple)}
+
+  /* table */
+  .table{width:100%;border-collapse:collapse;font-size:13px}
+  .table th,.table td{padding:12px;text-align:left;border-bottom:1px solid var(--line-2)}
+  .table th{background:#fafbfd;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .table tr:hover td{background:#fafbfd}
+  .table .actions-cell{display:flex;gap:6px;flex-wrap:wrap}
+  .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700}
+  .pill.green{background:var(--green-2);color:var(--green)}
+  .pill.blue{background:var(--blue-2);color:var(--blue)}
+  .pill.orange{background:var(--orange-2);color:var(--orange)}
+  .pill.red{background:var(--red-2);color:var(--red)}
+  .pill.gray{background:#f1f5f4;color:var(--muted)}
+  .pill.purple{background:var(--purple-2);color:var(--purple)}
+
+  /* form */
+  .filter-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+  .filter-bar .field{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+  .filter-bar input,.filter-bar select{min-height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;background:#fff;outline:none;font-size:13px;min-width:140px}
+  .filter-bar input:focus,.filter-bar select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+  .tabs button{padding:10px 16px;font-size:13px;color:var(--muted);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tabs button.active{color:var(--blue);border-color:var(--blue)}
+
+  /* charts (CSS-only) */
+  .chart-area{height:240px;position:relative;padding:20px 0 30px;border-bottom:1px solid var(--line-2)}
+  .chart-area .grid{position:absolute;inset:20px 0 30px;background:repeating-linear-gradient(0deg,transparent 0,transparent 47px,var(--line-2) 47px,var(--line-2) 48px)}
+  .chart-bars{position:relative;display:flex;align-items:flex-end;justify-content:space-around;height:100%;gap:4px;padding:0 20px;z-index:2}
+  .chart-bars .bar-group{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+  .chart-bars .bars{display:flex;align-items:flex-end;gap:4px;height:100%;width:100%;justify-content:center}
+  .chart-bars .bar{width:14px;border-radius:4px 4px 0 0;position:relative;transition:.3s ease}
+  .chart-bars .bar:hover{opacity:.85}
+  .chart-bars .bar.b1{background:linear-gradient(180deg,var(--blue),#9bb9ff)}
+  .chart-bars .bar.b2{background:linear-gradient(180deg,var(--green),#78c4a8)}
+  .chart-bars .bar.b3{background:linear-gradient(180deg,var(--orange),#fcd07c)}
+  .chart-bars .lbl{font-size:11px;color:var(--muted);position:absolute;bottom:8px}
+  .chart-legend{display:flex;gap:14px;justify-content:center;margin-top:8px;font-size:12px;color:var(--muted)}
+  .chart-legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+  .donut{position:relative;width:160px;height:160px;border-radius:50%;background:conic-gradient(var(--blue) 0 45%,var(--green) 45% 75%,var(--orange) 75% 100%);display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .donut::before{content:"";position:absolute;inset:24px;background:#fff;border-radius:50%}
+  .donut .center{position:relative;text-align:center;font-size:13px;color:var(--muted)}
+  .donut .center b{font-size:22px;color:var(--ink);display:block}
+  .legend-list{margin-top:14px}
+  .legend-list .item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line-2);font-size:13px}
+  .legend-list .item:last-child{border:0}
+  .legend-list .dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* line chart */
+  .line-chart{height:240px;position:relative;padding:14px 14px 26px}
+  .line-chart svg{width:100%;height:100%}
+
+  /* drawer/modal (PC) */
+  .mask{position:fixed;inset:0;background:rgba(14,26,29,.45);opacity:0;pointer-events:none;transition:.2s ease;z-index:80}
+  .mask.show{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:480px;background:#fff;box-shadow:-12px 0 40px rgba(0,0,0,.12);z-index:90;transform:translateX(100%);transition:.3s ease;overflow:auto}
+  .drawer.show{transform:translateX(0)}
+  .drawer .head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .drawer .head h3{margin:0;font-size:16px}
+  .drawer .body{padding:18px 22px}
+  .drawer .footer{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 22px;display:flex;gap:8px;justify-content:flex-end}
+  .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(14,26,29,.45);opacity:0;pointer-events:none;transition:.2s ease;z-index:100}
+  .modal.show{opacity:1;pointer-events:auto}
+  .modal-card{background:#fff;border-radius:14px;padding:26px;width:100%;max-width:440px;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+  .toast{position:fixed;top:80px;right:30px;padding:13px 18px;border-radius:10px;background:#0e1a1d;color:#fff;box-shadow:0 16px 32px rgba(0,0,0,.22);transform:translateX(20px);opacity:0;pointer-events:none;transition:.25s ease;font-size:13px;z-index:120}
+  .toast.show{transform:translateX(0);opacity:1}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;color:var(--muted);font-weight:600}
+  .field input,.field select,.field textarea{min-height:36px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;outline:none;font-size:13px;background:#fff}
+  .field textarea{min-height:80px;resize:vertical}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)}
+
+  .alert{padding:10px 14px;border-radius:10px;background:var(--orange-2);color:var(--orange);font-size:13px;display:flex;align-items:center;gap:8px;margin-bottom:14px;border:1px solid #fce7b5}
+  .map-mock{height:160px;border-radius:14px;background:linear-gradient(135deg,#dde9f3,#f1f5fb);position:relative;overflow:hidden;border:1px solid var(--line);background-image:repeating-linear-gradient(45deg,rgba(47,111,237,.06) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(47,111,237,.06) 0 2px,transparent 2px 14px);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+  .ratio-bar{height:8px;background:var(--line-2);border-radius:99px;overflow:hidden;display:flex}
+  .ratio-bar span{height:100%}
+  /* heatmap */
+  .heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+  .heatmap .cell{aspect-ratio:1;border-radius:3px;background:var(--line-2)}
+  .empty{padding:60px 0;text-align:center;color:var(--muted)}
+  .empty .ico{font-size:48px;margin-bottom:8px;opacity:.6}
+  @media (max-width:1100px){
+    .layout{grid-template-columns:200px 1fr}
+    .grid-4{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">🛎️</div>
+    安心陪护 · 平台管理后台
+  </div>
+  <nav class="nav">
+    <a href="index.html">总览</a>
+    <a href="01-用户端小程序原型.html">用户端</a>
+    <a href="02-陪诊师端小程序原型.html">陪诊师端</a>
+    <a class="active">PC 后台</a>
+  </nav>
+  <div class="right">
+    <span>📍 杭州运营中心</span>
+    <button class="badge" onclick="toast('您有 3 条新消息')">🔔</button>
+    <div class="me"><div class="avatar">运</div>运营经理 · 周经理</div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- 侧边导航 -->
+  <aside class="sidebar">
+    <div class="group">数据 · 概览</div>
+    <a id="nav-dashboard" onclick="go('dashboard')"><span class="ico">📊</span>数据概览</a>
+    <a id="nav-revenue" onclick="go('revenue')"><span class="ico">💰</span>营收统计</a>
+
+    <div class="group">住宿管理</div>
+    <a id="nav-hotels" onclick="go('hotels')"><span class="ico">🏠</span>住宿房源管理</a>
+    <a id="nav-hotel-orders" onclick="go('hotel-orders')"><span class="ico">📋</span>住宿订单管理 <span class="pill">5</span></a>
+
+    <div class="group">陪诊管理</div>
+    <a id="nav-nurses" onclick="go('nurses')"><span class="ico">👩‍⚕️</span>陪诊师管理 <span class="pill">2</span></a>
+    <a id="nav-care-orders" onclick="go('care-orders')"><span class="ico">🩺</span>陪诊订单管理</a>
+
+    <div class="group">系统</div>
+    <a onclick="toast('用户管理已规划')"><span class="ico">👤</span>用户管理</a>
+    <a onclick="toast('系统设置已规划')"><span class="ico">⚙</span>系统设置</a>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main" id="main"></main>
+</div>
+
+<div class="mask" id="mask" onclick="closeAll()"></div>
+<div class="drawer" id="drawer"></div>
+<div class="modal" id="modal"><div class="modal-card" id="modalCard"></div></div>
+<div class="toast" id="toast">操作成功</div>
+
+<script>
+const state = { page:'dashboard' };
+const $=(id)=>document.getElementById(id);
+
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(window.__t); window.__t=setTimeout(()=>el.classList.remove('show'),2200); }
+function showDrawer(html){ $('drawer').innerHTML=html; $('mask').classList.add('show'); $('drawer').classList.add('show'); }
+function closeDrawer(){ $('mask').classList.remove('show'); $('drawer').classList.remove('show'); }
+function showModal(html){ $('modalCard').innerHTML=html; $('modal').classList.add('show'); }
+function closeModal(){ $('modal').classList.remove('show'); }
+function closeAll(){ closeDrawer(); closeModal(); }
+
+function go(page){
+  state.page = page;
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  const active = document.getElementById('nav-'+page);
+  active && active.classList.add('active');
+  closeAll();
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const pages = {};
+
+/* ===========================================================
+ *  1. 数据概览 dashboard
+ * =========================================================== */
+pages.dashboard = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>数据概览</h1>
+      <div class="breadcrumb">首页 / 数据概览</div>
+    </div>
+    <div class="actions">
+      <select class="btn secondary" onchange="toast('已切换时段')"><option>今日</option><option>近 7 日</option><option>本月</option><option>近 30 日</option></select>
+      <button class="btn secondary" onclick="toast('已切换运营中心')">📍 杭州中心</button>
+      <button class="btn" onclick="toast('数据已导出 Excel')">📤 导出报表</button>
+    </div>
+  </div>
+
+  <div class="alert">
+    <span>🔔</span>
+    <div>有 <b>2 位陪诊师待审核</b>、<b>3 单陪诊待派单</b>、<b>5 单住宿待入住确认</b>，请及时处理 · <a style="color:var(--blue);font-weight:700;cursor:pointer" onclick="go('care-orders')">立即查看</a></div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric blue">
+      <span class="ico">📋</span>
+      <div class="label">今日订单总量</div>
+      <div class="value">88</div>
+      <div class="delta up">↑ 11.4% vs 昨日</div>
+    </div>
+    <div class="metric green">
+      <span class="ico">💰</span>
+      <div class="label">今日营收 (元)</div>
+      <div class="value">¥30,664</div>
+      <div class="delta up">↑ 16.8% vs 昨日</div>
+    </div>
+    <div class="metric orange">
+      <span class="ico">⏳</span>
+      <div class="label">待处理事项</div>
+      <div class="value">10</div>
+      <div class="delta down">↑ 2 较昨日</div>
+    </div>
+    <div class="metric purple">
+      <span class="ico">👥</span>
+      <div class="label">活跃用户</div>
+      <div class="value">2,486</div>
+      <div class="delta up">↑ 6.3% vs 昨日</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title">
+        <h3>📈 近 7 日订单趋势（按业务）</h3>
+        <div class="actions">
+          <select class="btn secondary sm" onchange="toast('已切换 维度')"><option>按订单量</option><option>按营收</option></select>
+        </div>
+      </div>
+      <div class="chart-area">
+        <div class="grid"></div>
+        <div class="chart-bars">
+          ${[
+            ['5/4',38,52],['5/5',45,48],['5/6',52,58],['5/7',48,62],
+            ['5/8',56,68],['5/9',62,72],['今日',58,82]
+          ].map(([d,a,b])=>`
+            <div class="bar-group">
+              <div class="bars">
+                <div class="bar b1" style="height:${a}%"></div>
+                <div class="bar b2" style="height:${b}%"></div>
+              </div>
+              <span style="font-size:11px;color:var(--muted)">${d}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="chart-legend">
+        <span><span class="dot" style="background:var(--blue)"></span>住宿订单</span>
+        <span><span class="dot" style="background:var(--green)"></span>陪诊订单</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h3>🥧 业务结构占比（本月）</h3>
+        <span class="muted" style="font-size:12px">总营收 ¥777,315</span>
+      </div>
+      <div class="grid-2" style="align-items:center;gap:24px">
+        <div class="donut" style="background:conic-gradient(var(--blue) 0 60%,var(--green) 60% 100%)"><div class="center"><b>¥77.7w</b>本月总营收</div></div>
+        <div>
+          <div class="legend-list">
+            <div class="item"><span><span class="dot" style="background:var(--blue)"></span>陪诊服务</span><b>¥466,389 · 60%</b></div>
+            <div class="item"><span><span class="dot" style="background:var(--green)"></span>住宿预订</span><b>¥310,926 · 40%</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title">
+        <h3>🔥 待处理事项</h3>
+        <button class="btn ghost sm" onclick="toast('全部标记已读')">全部标记已读</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>类型</th><th>事项</th><th>时间</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill blue">陪诊</span></td><td>订单 CR202605100066 待派单</td><td>5 分钟前</td><td><button class="btn sm" onclick="toast('已派单给王护理师')">分派</button></td></tr>
+          <tr><td><span class="pill blue">陪诊</span></td><td>订单 CR202605100068 待派单</td><td>8 分钟前</td><td><button class="btn sm" onclick="toast('已派单给刘陪诊师')">分派</button></td></tr>
+          <tr><td><span class="pill purple">审核</span></td><td>陪诊师"张护理师"待资质审核</td><td>15 分钟前</td><td><button class="btn sm secondary" onclick="go('nurses')">去审核</button></td></tr>
+          <tr><td><span class="pill orange">入住</span></td><td>住宿订单 HT202605100018 待入住确认</td><td>20 分钟前</td><td><button class="btn sm secondary" onclick="go('hotel-orders')">查看</button></td></tr>
+          <tr><td><span class="pill green">退款</span></td><td>住宿订单 HT2026050900* 退款待审核</td><td>32 分钟前</td><td><button class="btn sm secondary" onclick="toast('已批准退款')">批准</button></td></tr>
+          <tr><td><span class="pill red">差评</span></td><td>陪诊师"陈陪诊"获 3★ 差评，待跟进</td><td>1 小时前</td><td><button class="btn sm secondary" onclick="toast('已联系处理')">处理</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h3>📊 服务质量监控</h3>
+        <span class="muted" style="font-size:12px">本月数据</span>
+      </div>
+      <div class="grid-2">
+        <div class="metric"><div class="label">订单完成率</div><div class="value" style="font-size:22px">98.7%</div><div class="ratio-bar" style="margin-top:8px"><span style="width:98.7%;background:var(--green)"></span></div></div>
+        <div class="metric"><div class="label">平均评分</div><div class="value" style="font-size:22px">4.86 ★</div><div class="ratio-bar" style="margin-top:8px"><span style="width:97%;background:var(--orange)"></span></div></div>
+        <div class="metric"><div class="label">投诉率</div><div class="value" style="font-size:22px">0.42%</div><div class="ratio-bar" style="margin-top:8px"><span style="width:5%;background:var(--red)"></span></div></div>
+        <div class="metric"><div class="label">陪诊准时率</div><div class="value" style="font-size:22px">96.2%</div><div class="ratio-bar" style="margin-top:8px"><span style="width:96.2%;background:var(--blue)"></span></div></div>
+      </div>
+      <div style="margin-top:14px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:6px">📅 近 30 日服务热力图</div>
+        <div class="heatmap">
+          ${Array.from({length:35}).map((_,i)=>{
+            const colors=['var(--line-2)','#cfe9dc','#9bd1b9','#54b399','var(--green)'];
+            const lvl = Math.floor(Math.random()*5);
+            return `<div class="cell" style="background:${colors[lvl]}" title="${lvl} 单"></div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+/* ===========================================================
+ *  2. 住宿房源管理
+ * =========================================================== */
+pages.hotels = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>住宿房源管理</h1>
+      <div class="breadcrumb">首页 / 住宿管理 / 房源管理</div>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" onclick="toast('已批量同步房态到用户端')">🔄 同步房态</button>
+      <button class="btn" onclick="openHotelDrawer()">+ 新增房源</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric"><div class="label">房源总数</div><div class="value">26</div><div class="delta">已上架 24 / 下架 2</div></div>
+    <div class="metric"><div class="label">今日可订</div><div class="value">68</div><div class="delta">间次 · 占比 78%</div></div>
+    <div class="metric"><div class="label">本月入住率</div><div class="value">82.6%</div><div class="delta up">↑ 5.2%</div></div>
+    <div class="metric"><div class="label">本月房费营收</div><div class="value">¥310,926</div><div class="delta up">↑ 12.8%</div></div>
+  </div>
+
+  <div class="filter-bar" style="margin-top:16px">
+    <div class="field"><span>🔍</span><input placeholder="搜索房源名 / 商家"></div>
+    <div class="field">所属医院 <select><option>全部</option><option>省人民医院</option><option>邵逸夫医院</option><option>浙大二院</option></select></div>
+    <div class="field">类型 <select><option>全部</option><option>家庭套房</option><option>单人间</option><option>无障碍</option></select></div>
+    <div class="field">状态 <select><option>全部</option><option>已上架</option><option>已下架</option></select></div>
+    <button class="btn secondary sm" onclick="toast('已重置筛选')">重置</button>
+    <button class="btn sm" onclick="toast('已查询')">查询</button>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="active">全部 (26)</button>
+      <button onclick="toast('筛选 已上架')">已上架 (24)</button>
+      <button onclick="toast('筛选 已下架')">已下架 (2)</button>
+      <button onclick="toast('筛选 满房')">满房 (3)</button>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th><input type="checkbox" onclick="document.querySelectorAll('.row-check').forEach(c=>c.checked=this.checked)"></th>
+          <th>房源 ID</th><th>房源信息</th><th>所属医院 / 距离</th>
+          <th>价格</th><th>今日房态</th><th>评分</th><th>状态</th><th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${[
+          {id:'H0001',name:'陪护家庭套房',img:'🏡',hospital:'省人民医院',dist:'680m',price:238,total:8,booked:6,rating:4.9,status:'green'},
+          {id:'H0002',name:'康养单人间',img:'🛏️',hospital:'邵逸夫医院',dist:'1.2km',price:168,total:5,booked:2,rating:4.8,status:'green'},
+          {id:'H0003',name:'家属双床房',img:'🏨',hospital:'省人民医院',dist:'850m',price:198,total:6,booked:1,rating:4.7,status:'green'},
+          {id:'H0004',name:'适老化无障碍房',img:'♿',hospital:'省人民医院',dist:'500m',price:288,total:3,booked:1,rating:5.0,status:'green'},
+          {id:'H0005',name:'月租公寓 A',img:'🏘️',hospital:'浙大二院',dist:'1.8km',price:128,total:4,booked:4,rating:4.6,status:'orange'},
+          {id:'H0006',name:'医院旁标间',img:'🛌',hospital:'邵逸夫医院',dist:'320m',price:218,total:0,booked:0,rating:4.8,status:'gray'},
+        ].map(h=>`
+          <tr>
+            <td><input class="row-check" type="checkbox"></td>
+            <td><b>${h.id}</b></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:42px;height:42px;background:linear-gradient(135deg,#cfe9dc,#edf8f2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">${h.img}</div>
+                <div><b>${h.name}</b><div class="muted" style="font-size:12px">商家：康养之家</div></div>
+              </div>
+            </td>
+            <td>${h.hospital}<div class="muted" style="font-size:12px">距离 ${h.dist}</div></td>
+            <td><b>¥${h.price}</b><div class="muted" style="font-size:12px">/晚</div></td>
+            <td>
+              <div>${h.total-h.booked}/${h.total} 间可订</div>
+              <div class="ratio-bar" style="width:80px;margin-top:4px"><span style="width:${h.booked/Math.max(h.total,1)*100}%;background:${h.booked===h.total?'var(--red)':'var(--green)'}"></span></div>
+            </td>
+            <td><span style="color:var(--orange)">★</span> ${h.rating}</td>
+            <td><span class="pill ${h.status}">${h.status==='green'?'已上架':h.status==='orange'?'满房':'已下架'}</span></td>
+            <td class="actions-cell">
+              <button class="btn sm secondary" onclick="openHotelDrawer()">编辑</button>
+              <button class="btn sm secondary" onclick="toast('已调整房态')">房态</button>
+              <button class="btn sm ghost" onclick="toast('${h.status==='gray'?'已上架':'已下架'}')">${h.status==='gray'?'上架':'下架'}</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;color:var(--muted)">
+      <span>共 26 条 · 显示 1-6</span>
+      <div style="display:flex;gap:4px">
+        <button class="btn secondary sm">‹</button>
+        <button class="btn sm">1</button>
+        <button class="btn secondary sm" onclick="toast('翻页')">2</button>
+        <button class="btn secondary sm" onclick="toast('翻页')">3</button>
+        <button class="btn secondary sm">›</button>
+      </div>
+    </div>
+  </div>
+`;
+
+window.openHotelDrawer = ()=>showDrawer(`
+  <div class="head"><h3>新增 / 编辑房源</h3><button class="btn secondary sm" onclick="closeDrawer()">✕</button></div>
+  <div class="body">
+    <div class="form-grid">
+      <div class="field"><label>房源名称 *</label><input value="陪护家庭套房"></div>
+      <div class="field"><label>所属商家</label><input value="康养之家"></div>
+      <div class="field"><label>房型</label><select><option>家庭套房</option><option>单人间</option><option>双床房</option><option>无障碍房</option></select></div>
+      <div class="field"><label>面积 (㎡)</label><input value="45"></div>
+      <div class="field"><label>所属医院 *</label><select><option>省人民医院</option><option>邵逸夫医院</option><option>浙大二院</option></select></div>
+      <div class="field"><label>距离 (m)</label><input value="680"></div>
+      <div class="field"><label>价格 (元/晚)</label><input value="238"></div>
+      <div class="field"><label>月租优惠 (%)</label><input value="10"></div>
+      <div class="field"><label>总房间数</label><input value="8"></div>
+      <div class="field"><label>状态</label><select><option>上架</option><option>下架</option></select></div>
+    </div>
+    <div class="field" style="margin-top:14px"><label>配套（多选）</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <span class="pill green">独卫</span><span class="pill green">厨房</span><span class="pill green">洗衣机</span><span class="pill green">电梯</span><span class="pill gray">无障碍</span><span class="pill gray">含早</span>
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>房源描述</label><textarea>距省人民医院 680m，可步行 8 分钟到达。配独立厨房、洗衣机、电梯，适合长期陪护家庭。</textarea></div>
+    <div class="field" style="margin-top:10px"><label>位置预览</label><div class="map-mock">📍 房源位置 · 省人民医院 680m</div></div>
+  </div>
+  <div class="footer">
+    <button class="btn secondary" onclick="closeDrawer()">取消</button>
+    <button class="btn" onclick="closeDrawer();toast('房源已保存并自动同步至用户端')">保存房源</button>
+  </div>
+`);
+
+/* ===========================================================
+ *  3. 住宿订单管理
+ * =========================================================== */
+pages['hotel-orders'] = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>住宿订单管理</h1>
+      <div class="breadcrumb">首页 / 住宿管理 / 订单管理</div>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" onclick="toast('已导出 Excel')">📤 导出</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric blue"><span class="ico">📋</span><div class="label">本月订单</div><div class="value">412</div><div class="delta up">↑ 18.5%</div></div>
+    <div class="metric orange"><span class="ico">⏳</span><div class="label">待入住</div><div class="value">28</div><div class="delta">需提前确认</div></div>
+    <div class="metric green"><span class="ico">✅</span><div class="label">已完成</div><div class="value">368</div><div class="delta up">完成率 98.6%</div></div>
+    <div class="metric purple"><span class="ico">↩️</span><div class="label">退款待审</div><div class="value">5</div><div class="delta down">需在 24h 内</div></div>
+  </div>
+
+  <div class="filter-bar" style="margin-top:16px">
+    <div class="field"><span>🔍</span><input placeholder="订单号 / 联系人 / 手机"></div>
+    <div class="field">订单状态 <select><option>全部</option><option>待支付</option><option>待入住</option><option>已入住</option><option>已完成</option><option>已退款</option></select></div>
+    <div class="field">入住日期 <input type="date" value="2026-05-10"></div>
+    <div class="field">房源 <select><option>全部</option><option>陪护家庭套房</option><option>康养单人间</option></select></div>
+    <button class="btn secondary sm" onclick="toast('已重置')">重置</button>
+    <button class="btn sm" onclick="toast('已查询')">查询</button>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="active">全部 (412)</button>
+      <button onclick="toast('待支付')">待支付 (8)</button>
+      <button onclick="toast('待入住')">待入住 (28)</button>
+      <button onclick="toast('已入住')">已入住 (15)</button>
+      <button onclick="toast('已完成')">已完成 (368)</button>
+      <button onclick="toast('退款待审')">退款待审 (5)</button>
+    </div>
+    <table class="table">
+      <thead><tr>
+        <th>订单号</th><th>联系人 / 手机</th><th>房源</th><th>入住-退房</th><th>金额</th><th>下单时间</th><th>状态</th><th>操作</th>
+      </tr></thead>
+      <tbody>
+        ${[
+          {id:'HT202605100018',name:'李女士',phone:'138****6688',room:'陪护家庭套房',dates:'5/12 → 5/18 · 6晚',amt:1315.20,time:'2026-05-10 19:24',pill:'orange',status:'待入住'},
+          {id:'HT202605100015',name:'王先生',phone:'139****2256',room:'康养单人间',dates:'5/11 → 5/14 · 3晚',amt:504.00,time:'2026-05-10 16:08',pill:'orange',status:'待入住'},
+          {id:'HT202605100012',name:'陈女士',phone:'137****1102',room:'家属双床房',dates:'5/10 → 5/15 · 5晚',amt:891.00,time:'2026-05-10 12:33',pill:'blue',status:'已入住'},
+          {id:'HT202605100008',name:'刘先生',phone:'138****0099',room:'适老化无障碍房',dates:'5/10 → 5/12 · 2晚',amt:518.40,time:'2026-05-10 09:20',pill:'green',status:'已完成'},
+          {id:'HT202605100003',name:'吴女士',phone:'135****6688',room:'月租公寓 A',dates:'5/9 → 6/8 · 30晚',amt:3456.00,time:'2026-05-09 22:45',pill:'red',status:'退款待审'},
+          {id:'HT202605090092',name:'周大爷',phone:'139****8800',room:'康养单人间',dates:'5/1 → 5/3 · 2晚',amt:336.00,time:'2026-05-09 18:30',pill:'green',status:'已完成'},
+        ].map(o=>`
+          <tr>
+            <td><b style="font-family:monospace">${o.id}</b></td>
+            <td>${o.name}<div class="muted" style="font-size:12px">${o.phone}</div></td>
+            <td>${o.room}</td>
+            <td><b>${o.dates}</b></td>
+            <td><b style="color:var(--blue)">¥${o.amt.toFixed(2)}</b></td>
+            <td class="muted" style="font-size:12px">${o.time}</td>
+            <td><span class="pill ${o.pill}">${o.status}</span></td>
+            <td class="actions-cell">
+              <button class="btn sm" onclick="openOrderDetail('${o.id}')">详情</button>
+              ${o.status==='退款待审' ? `<button class="btn sm danger" onclick="toast('已批准退款 ¥'+'${o.amt}')">批准</button><button class="btn sm secondary" onclick="toast('已驳回')">驳回</button>` : `<button class="btn sm secondary" onclick="toast('已联系商家')">商家</button>`}
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:13px;color:var(--muted)">
+      <span>共 412 条 · 显示 1-6</span>
+      <div style="display:flex;gap:4px"><button class="btn secondary sm">‹</button><button class="btn sm">1</button><button class="btn secondary sm">2</button><button class="btn secondary sm">3</button><button class="btn secondary sm">›</button></div>
+    </div>
+  </div>
+`;
+
+window.openOrderDetail = (id)=>showDrawer(`
+  <div class="head"><h3>订单详情 · ${id}</h3><button class="btn secondary sm" onclick="closeDrawer()">✕</button></div>
+  <div class="body">
+    <div style="background:var(--blue-2);padding:14px;border-radius:10px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:16px">陪护家庭套房</b><span class="pill orange">待入住</span></div>
+      <div class="muted" style="font-size:12px;margin-top:4px">5月12日 入住 · 5月18日 退房 · 共 6 晚</div>
+    </div>
+    <h4 style="margin:14px 0 8px">联系人信息</h4>
+    <div class="form-grid">
+      <div class="field"><label>姓名</label><input value="李女士" readonly></div>
+      <div class="field"><label>手机</label><input value="138****6688" readonly></div>
+      <div class="field"><label>身份证</label><input value="3301**********0928" readonly></div>
+      <div class="field"><label>就诊医院</label><input value="浙江省人民医院" readonly></div>
+    </div>
+    <h4 style="margin:14px 0 8px">特殊需求</h4>
+    <div style="background:#fafbfd;padding:10px;border-radius:8px;font-size:13px">需轮椅可上下楼，希望靠近电梯</div>
+    <h4 style="margin:14px 0 8px">费用明细</h4>
+    <table class="table">
+      <tr><td>房费 (¥238 × 6晚)</td><td style="text-align:right">¥1,428.00</td></tr>
+      <tr><td>清洁费</td><td style="text-align:right">¥30.00</td></tr>
+      <tr><td>月租优惠</td><td style="text-align:right;color:var(--orange)">-¥142.80</td></tr>
+      <tr><td><b>实付合计</b></td><td style="text-align:right"><b style="color:var(--blue)">¥1,315.20</b></td></tr>
+    </table>
+    <h4 style="margin:14px 0 8px">订单时间线</h4>
+    <ul style="font-size:13px;padding-left:18px;color:var(--muted);line-height:1.9">
+      <li>2026-05-10 19:24 · 用户提交订单</li>
+      <li>2026-05-10 19:25 · 微信支付成功 ¥1,315.20</li>
+      <li>2026-05-10 19:25 · 系统自动锁定房态</li>
+      <li>2026-05-10 19:26 · 商家已确认订单</li>
+    </ul>
+  </div>
+  <div class="footer">
+    <button class="btn secondary" onclick="closeDrawer()">关闭</button>
+    <button class="btn secondary" onclick="toast('已联系用户')">📞 联系用户</button>
+    <button class="btn" onclick="closeDrawer();toast('已发送入住提醒短信')">📩 发送提醒</button>
+  </div>
+`);
+
+/* ===========================================================
+ *  4. 陪诊师管理
+ * =========================================================== */
+pages.nurses = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>陪诊师管理</h1>
+      <div class="breadcrumb">首页 / 陪诊管理 / 陪诊师管理</div>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" onclick="toast('已导出陪诊师列表')">📤 导出</button>
+      <button class="btn" onclick="toast('已发起短信招募')">+ 发起招募</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric blue"><span class="ico">👥</span><div class="label">陪诊师总数</div><div class="value">36</div><div class="delta up">↑ 4 本月</div></div>
+    <div class="metric orange"><span class="ico">📝</span><div class="label">待审核</div><div class="value">2</div><div class="delta">需 24h 内处理</div></div>
+    <div class="metric green"><span class="ico">⭐</span><div class="label">平均评分</div><div class="value">4.86</div><div class="delta up">↑ 0.06</div></div>
+    <div class="metric purple"><span class="ico">📊</span><div class="label">本月指派履约率</div><div class="value">92.4%</div><div class="delta up">↑ 4.2%</div></div>
+  </div>
+
+  <div class="filter-bar" style="margin-top:16px">
+    <div class="field"><span>🔍</span><input placeholder="姓名 / 手机 / ID"></div>
+    <div class="field">状态 <select><option>全部</option><option>在职</option><option>待审核</option><option>已暂停</option></select></div>
+    <div class="field">服务类型 <select><option>全部</option><option>全程陪诊</option><option>检查陪同</option><option>住院陪护</option></select></div>
+    <div class="field">评分 <select><option>全部</option><option>4.9+</option><option>4.5-4.9</option><option>低于 4.5</option></select></div>
+    <button class="btn secondary sm" onclick="toast('已重置')">重置</button>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="active">全部 (36)</button>
+      <button onclick="toast('在职')">在职 (32)</button>
+      <button onclick="toast('待审核')">待审核 (2)</button>
+      <button onclick="toast('已暂停')">已暂停 (2)</button>
+    </div>
+    <table class="table">
+      <thead><tr>
+        <th>陪诊师</th><th>服务类型</th><th>价格</th><th>已服务</th><th>评分</th><th>本月派单</th><th>状态</th><th>操作</th>
+      </tr></thead>
+      <tbody>
+        ${[
+          {avatar:'👩‍⚕️',name:'王护理师',phone:'138****6688',exp:'6 年',serv:'全程陪诊 / 检查陪同',price:268,orders:326,rating:4.9,monthly:32,pill:'green',status:'在职'},
+          {avatar:'🧑‍⚕️',name:'刘陪诊师',phone:'139****1122',exp:'4 年',serv:'全程陪诊 / 代办取药',price:228,orders:212,rating:4.8,monthly:28,pill:'green',status:'在职'},
+          {avatar:'👩‍⚕️',name:'张护理师',phone:'137****8809',exp:'8 年',serv:'住院陪护 / 全程陪诊',price:328,orders:421,rating:5.0,monthly:36,pill:'green',status:'在职'},
+          {avatar:'🧑‍⚕️',name:'陈陪诊师',phone:'135****2003',exp:'3 年',serv:'代办取药 / 检查陪同',price:198,orders:152,rating:4.7,monthly:21,pill:'green',status:'在职'},
+          {avatar:'👩‍⚕️',name:'李护理师',phone:'132****5566',exp:'5 年',serv:'全程陪诊',price:258,orders:0,rating:'-',monthly:0,pill:'orange',status:'待审核'},
+          {avatar:'🧑‍⚕️',name:'赵护理师',phone:'131****9988',exp:'2 年',serv:'代办取药',price:168,orders:0,rating:'-',monthly:0,pill:'orange',status:'待审核'},
+        ].map(n=>`
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:42px;height:42px;background:linear-gradient(135deg,#cfdcf3,#edf2fb);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">${n.avatar}</div>
+                <div><b>${n.name}</b><div class="muted" style="font-size:12px">${n.phone} · ${n.exp}</div></div>
+              </div>
+            </td>
+            <td><span class="muted" style="font-size:12px">${n.serv}</span></td>
+            <td><b>¥${n.price}</b><div class="muted" style="font-size:12px">/次</div></td>
+            <td>${n.orders} 单</td>
+            <td>${n.rating==='-'?'<span class="muted">-</span>':`<span style="color:var(--orange)">★</span> ${n.rating}`}</td>
+            <td>${n.monthly} 单</td>
+            <td><span class="pill ${n.pill}">${n.status}</span></td>
+            <td class="actions-cell">
+              ${n.status==='待审核' ? `
+                <button class="btn sm success" onclick="openNurseAudit('${n.name}')">审核</button>
+                <button class="btn sm secondary" onclick="toast('已拒绝 ${n.name}')">驳回</button>
+              ` : `
+                <button class="btn sm secondary" onclick="toast('查看详情：${n.name}')">详情</button>
+                <button class="btn sm secondary" onclick="toast('已调整 ${n.name} 价格')">定价</button>
+                <button class="btn sm ghost" style="color:var(--red)" onclick="toast('已暂停向其派单')">暂停</button>
+              `}
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+`;
+
+window.openNurseAudit = (name)=>showDrawer(`
+  <div class="head"><h3>陪诊师审核 · ${name}</h3><button class="btn secondary sm" onclick="closeDrawer()">✕</button></div>
+  <div class="body">
+    <div style="display:flex;align-items:center;gap:14px;background:var(--orange-2);padding:14px;border-radius:10px;margin-bottom:14px">
+      <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#cfdcf3,#edf2fb);display:flex;align-items:center;justify-content:center;font-size:32px">👩‍⚕️</div>
+      <div style="flex:1">
+        <b style="font-size:16px">${name}</b>
+        <div class="muted" style="font-size:12px;margin-top:4px">132****5566 · 申请于 2026-05-09 18:22</div>
+      </div>
+      <span class="pill orange">待审核</span>
+    </div>
+
+    <h4 style="margin:14px 0 8px">个人基本信息</h4>
+    <div class="form-grid">
+      <div class="field"><label>真实姓名</label><input value="${name}" readonly></div>
+      <div class="field"><label>身份证号</label><input value="3301**********0928" readonly></div>
+      <div class="field"><label>性别 / 年龄</label><input value="女 / 32岁" readonly></div>
+      <div class="field"><label>常驻城市</label><input value="杭州市 上城区" readonly></div>
+    </div>
+
+    <h4 style="margin:14px 0 8px">专业经历</h4>
+    <div class="form-grid">
+      <div class="field"><label>护理经验</label><input value="5 年" readonly></div>
+      <div class="field"><label>擅长服务</label><input value="全程陪诊" readonly></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>个人简介</label><textarea readonly>5 年护理经验，曾在省人民医院护理部，普通话标准，擅长老年慢性病陪诊。</textarea></div>
+
+    <h4 style="margin:14px 0 8px">资质证书</h4>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="border:1px solid var(--line);border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;background:#fafbfd;font-size:32px;cursor:pointer" onclick="toast('放大查看 护士证')">📜</div>
+      <div style="border:1px solid var(--line);border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;background:#fafbfd;font-size:32px;cursor:pointer" onclick="toast('放大查看 健康证')">🏥</div>
+      <div style="border:1px solid var(--line);border-radius:10px;height:90px;display:flex;align-items:center;justify-content:center;background:#fafbfd;font-size:32px;cursor:pointer" onclick="toast('放大查看 身份证')">🆔</div>
+    </div>
+    <p class="muted" style="font-size:12px;margin-top:8px">点击图片放大；如证书模糊或不全，可驳回并要求补充。</p>
+
+    <h4 style="margin:14px 0 8px">建议定价（可调整）</h4>
+    <div class="form-grid">
+      <div class="field"><label>服务价格 (元/次)</label><input value="258"></div>
+      <div class="field"><label>每日服务上限（派单）</label><input value="2"></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label>审核备注（可选）</label><textarea placeholder="如有备注请填写，将在审核结果中告知陪诊师"></textarea></div>
+  </div>
+  <div class="footer">
+    <button class="btn secondary" onclick="closeDrawer()">取消</button>
+    <button class="btn danger" onclick="closeDrawer();toast('已驳回 · 短信通知陪诊师')">驳回</button>
+    <button class="btn success" onclick="closeDrawer();toast('审核通过 · 可接收平台派单')">✅ 审核通过</button>
+  </div>
+`);
+
+/* ===========================================================
+ *  5. 陪诊订单管理
+ * =========================================================== */
+pages['care-orders'] = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>陪诊订单管理</h1>
+      <div class="breadcrumb">首页 / 陪诊管理 / 订单管理</div>
+    </div>
+    <div class="actions">
+      <button class="btn secondary" onclick="toast('已批量打印订单')">🖨 批量打印</button>
+      <button class="btn secondary" onclick="toast('已导出 Excel')">📤 导出</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric blue"><span class="ico">🩺</span><div class="label">本月订单</div><div class="value">486</div><div class="delta up">↑ 22.3%</div></div>
+    <div class="metric orange"><span class="ico">⏳</span><div class="label">待派单</div><div class="value">3</div><div class="delta">5 分钟内待处理</div></div>
+    <div class="metric green"><span class="ico">✅</span><div class="label">服务中</div><div class="value">15</div><div class="delta">实时位置同步中</div></div>
+    <div class="metric purple"><span class="ico">⭐</span><div class="label">平均评分</div><div class="value">4.88</div><div class="delta up">好评率 98.2%</div></div>
+  </div>
+
+  <div class="filter-bar" style="margin-top:16px">
+    <div class="field"><span>🔍</span><input placeholder="订单号 / 就诊人 / 陪诊师"></div>
+    <div class="field">状态 <select><option>全部</option><option>待支付</option><option>待派单</option><option>服务中</option><option>已完成</option><option>退款</option></select></div>
+    <div class="field">服务类型 <select><option>全部</option><option>全程陪诊</option><option>检查陪同</option><option>代办取药</option><option>住院陪护</option></select></div>
+    <div class="field">日期 <input type="date" value="2026-05-10"></div>
+    <div class="field">医院 <select><option>全部</option><option>省人民医院</option><option>邵逸夫医院</option></select></div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="active">全部 (486)</button>
+      <button onclick="toast('待派单')">待派单 (3)</button>
+      <button onclick="toast('服务中')">服务中 (15)</button>
+      <button onclick="toast('已完成')">已完成 (462)</button>
+      <button onclick="toast('待评价')">待评价 (12)</button>
+      <button onclick="toast('退款')">退款 (1)</button>
+    </div>
+    <table class="table">
+      <thead><tr>
+        <th>订单号</th><th>就诊人</th><th>服务</th><th>陪诊师</th><th>预约时间 · 医院</th><th>金额</th><th>状态</th><th>操作</th>
+      </tr></thead>
+      <tbody>
+        ${[
+          {id:'CR202605100066',patient:'张先生 67岁',serv:'全程陪诊 4h',nurse:'王护理师',time:'5/11 08:30',hosp:'省人民医院 心内科',amt:268,pill:'blue',status:'服务中'},
+          {id:'CR202605100065',patient:'李女士 72岁',serv:'检查陪同 2h',nurse:'未派单',time:'5/11 14:00',hosp:'浙大二院 影像科',amt:158,pill:'orange',status:'待派单'},
+          {id:'CR202605100064',patient:'王先生 58岁',serv:'代办取药 1h',nurse:'未派单',time:'5/11 16:00',hosp:'邵逸夫医院 西药房',amt:88,pill:'orange',status:'待派单'},
+          {id:'CR202605100063',patient:'陈先生 65岁',serv:'住院陪护 12h',nurse:'张护理师',time:'5/10 20:00',hosp:'省人民医院 肿瘤科',amt:398,pill:'blue',status:'服务中'},
+          {id:'CR202605100050',patient:'刘女士 70岁',serv:'全程陪诊 4h',nurse:'刘陪诊师',time:'5/10 09:00',hosp:'省人民医院 神经科',amt:228,pill:'green',status:'已完成'},
+          {id:'CR202604280018',patient:'张先生 67岁',serv:'检查陪同 2h',nurse:'刘陪诊师',time:'4/28 09:00',hosp:'省人民医院 心内科',amt:158,pill:'purple',status:'待评价'},
+        ].map(o=>`
+          <tr>
+            <td><b style="font-family:monospace">${o.id}</b></td>
+            <td>${o.patient}</td>
+            <td>${o.serv}</td>
+            <td>${o.nurse==='未派单'?'<span class="pill orange">未派单</span>':`<b>${o.nurse}</b>`}</td>
+            <td><b>${o.time}</b><div class="muted" style="font-size:12px">${o.hosp}</div></td>
+            <td><b style="color:var(--blue)">¥${o.amt}</b></td>
+            <td><span class="pill ${o.pill}">${o.status}</span></td>
+            <td class="actions-cell">
+              ${o.status==='待派单' ? `<button class="btn sm" onclick="openDispatch('${o.id}')">派单</button>` : `<button class="btn sm secondary" onclick="toast('查看进度')">进度</button>`}
+              <button class="btn sm secondary" onclick="toast('订单详情')">详情</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+`;
+
+window.openDispatch = (id)=>showDrawer(`
+  <div class="head"><h3>订单派单 · ${id}</h3><button class="btn secondary sm" onclick="closeDrawer()">✕</button></div>
+  <div class="body">
+    <div style="background:var(--blue-2);padding:12px;border-radius:10px;margin-bottom:14px">
+      <b>检查陪同 2 小时</b>
+      <div class="muted" style="font-size:12px;margin-top:4px">就诊人：李女士 72岁 · 浙大二院 影像科 · 5/11 14:00</div>
+    </div>
+    <h4 style="margin:0 0 8px">系统智能推荐（综合距离 / 评分 / 履约表现）</h4>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${[
+        {avatar:'👩‍⚕️',name:'王护理师',distance:'2.4km',rating:4.9,recommend:true},
+        {avatar:'🧑‍⚕️',name:'刘陪诊师',distance:'3.8km',rating:4.8,recommend:false},
+        {avatar:'👩‍⚕️',name:'张护理师',distance:'5.2km',rating:5.0,recommend:false},
+      ].map(n=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid ${n.recommend?'var(--blue)':'var(--line)'};border-radius:10px;background:${n.recommend?'var(--blue-2)':'#fff'}">
+          <div style="width:42px;height:42px;background:linear-gradient(135deg,#cfdcf3,#edf2fb);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px">${n.avatar}</div>
+          <div style="flex:1">
+            <b>${n.name}</b> ${n.recommend?'<span class="pill blue">推荐</span>':''}
+            <div class="muted" style="font-size:12px">距医院 ${n.distance} · ★ ${n.rating} · 履约率 92%</div>
+          </div>
+          <button class="btn sm" onclick="closeDrawer();toast('已派单给 ${n.name}，已通知')">派单</button>
+        </div>
+      `).join('')}
+    </div>
+    <div style="margin-top:14px">
+      <h4 style="margin:0 0 8px">手动指派</h4>
+      <div class="field"><select><option>选择陪诊师...</option><option>陈陪诊师</option><option>李护理师</option></select></div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn secondary" onclick="closeDrawer()">取消</button>
+    <button class="btn" onclick="closeDrawer();toast('已派单给王护理师 · 通知已发送')">派单给推荐陪诊师</button>
+  </div>
+`);
+
+/* ===========================================================
+ *  6. 营收统计
+ * =========================================================== */
+pages.revenue = ()=>`
+  <div class="page-head">
+    <div>
+      <h1>营收统计</h1>
+      <div class="breadcrumb">首页 / 数据 / 营收统计</div>
+    </div>
+    <div class="actions">
+      <select class="btn secondary" onchange="toast('已切换时段')"><option>本月</option><option>近 30 日</option><option>近 90 日</option><option>本年度</option></select>
+      <button class="btn secondary" onclick="toast('已导出 Excel 报表')">📤 导出 Excel</button>
+      <button class="btn secondary" onclick="toast('已导出 PDF 报告')">📄 导出 PDF</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric blue"><span class="ico">💰</span><div class="label">本月总营收</div><div class="value">¥777,315</div><div class="delta up">↑ 19.2% vs 上月</div></div>
+    <div class="metric green"><span class="ico">📦</span><div class="label">订单总量</div><div class="value">2,308</div><div class="delta up">↑ 16.5%</div></div>
+    <div class="metric orange"><span class="ico">📊</span><div class="label">客单价</div><div class="value">¥337</div><div class="delta up">↑ 4.2%</div></div>
+    <div class="metric purple"><span class="ico">↩️</span><div class="label">退款金额</div><div class="value">¥6,158</div><div class="delta down">退款率 0.79%</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title">
+        <h3>📈 近 30 日营收趋势</h3>
+        <div class="muted" style="font-size:12px">日均 ¥25,910</div>
+      </div>
+      <div class="line-chart">
+        <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#2f6fed" stop-opacity=".25"/>
+              <stop offset="100%" stop-color="#2f6fed" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <g stroke="#eef2f6" stroke-width="1">
+            <line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="80" x2="600" y2="80"/>
+            <line x1="0" y1="120" x2="600" y2="120"/><line x1="0" y1="160" x2="600" y2="160"/>
+          </g>
+          <path d="M0,150 L40,140 L80,135 L120,120 L160,125 L200,110 L240,95 L280,100 L320,80 L360,75 L400,60 L440,55 L480,50 L520,40 L560,30 L600,20 L600,200 L0,200 Z" fill="url(#g1)"/>
+          <path d="M0,150 L40,140 L80,135 L120,120 L160,125 L200,110 L240,95 L280,100 L320,80 L360,75 L400,60 L440,55 L480,50 L520,40 L560,30 L600,20" fill="none" stroke="#2f6fed" stroke-width="2.5"/>
+          <g fill="#2f6fed">
+            <circle cx="120" cy="120" r="3"/><circle cx="240" cy="95" r="3"/><circle cx="360" cy="75" r="3"/><circle cx="480" cy="50" r="3"/><circle cx="600" cy="20" r="3"/>
+          </g>
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px;padding:0 10px">
+          <span>4/11</span><span>4/16</span><span>4/21</span><span>4/26</span><span>5/1</span><span>5/6</span><span>今日</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h3>🥧 营收结构（按业务）</h3>
+        <span class="muted" style="font-size:12px">本月</span>
+      </div>
+      <div class="grid-2" style="align-items:center;gap:24px">
+        <div class="donut" style="background:conic-gradient(var(--blue) 0 60%,var(--green) 60% 100%)"><div class="center"><b>¥77.7w</b>本月</div></div>
+        <div class="legend-list">
+          <div class="item"><span><span class="dot" style="background:var(--blue)"></span>陪诊服务</span><b>¥466,389 · 60%</b></div>
+          <div class="item"><span><span class="dot" style="background:var(--green)"></span>住宿预订</span><b>¥310,926 · 40%</b></div>
+        </div>
+      </div>
+      <table class="table" style="margin-top:14px">
+        <thead><tr><th>业务</th><th>订单数</th><th>客单价</th><th>同比</th></tr></thead>
+        <tbody>
+          <tr><td>🩺 陪诊服务</td><td>1,896</td><td>¥246</td><td><span style="color:var(--green)">↑ 22.3%</span></td></tr>
+          <tr><td>🏠 住宿预订</td><td>412</td><td>¥755</td><td><span style="color:var(--green)">↑ 18.5%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card">
+      <div class="card-title">
+        <h3>🏆 陪诊师营收排行（本月）</h3>
+        <button class="btn ghost sm" onclick="toast('查看全部')">查看全部 ›</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>排名</th><th>陪诊师</th><th>订单</th><th>评分</th><th>营收</th><th>结算</th></tr></thead>
+        <tbody>
+          ${[
+            {rank:1,avatar:'👩‍⚕️',name:'张护理师',orders:36,rating:5.0,rev:'¥11,808',pay:'¥10,863'},
+            {rank:2,avatar:'👩‍⚕️',name:'王护理师',orders:32,rating:4.9,rev:'¥8,576',pay:'¥7,890'},
+            {rank:3,avatar:'🧑‍⚕️',name:'刘陪诊师',orders:28,rating:4.8,rev:'¥6,384',pay:'¥5,873'},
+            {rank:4,avatar:'🧑‍⚕️',name:'陈陪诊师',orders:21,rating:4.7,rev:'¥4,158',pay:'¥3,825'},
+          ].map(n=>`
+            <tr>
+              <td><b style="color:${n.rank<=3?'var(--orange)':'var(--muted)'};font-size:16px">${n.rank<=3?'🏅':''} ${n.rank}</b></td>
+              <td><span style="font-size:18px">${n.avatar}</span> ${n.name}</td>
+              <td>${n.orders}</td>
+              <td><span style="color:var(--orange)">★</span> ${n.rating}</td>
+              <td><b>${n.rev}</b></td>
+              <td>${n.pay}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <h3>🏠 房源营收排行（本月）</h3>
+        <button class="btn ghost sm" onclick="toast('查看全部')">查看全部 ›</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>排名</th><th>房源</th><th>入住率</th><th>订单</th><th>营收</th></tr></thead>
+        <tbody>
+          ${[
+            {rank:1,name:'陪护家庭套房',rate:96,orders:42,rev:'¥56,896'},
+            {rank:2,name:'适老化无障碍房',rate:88,orders:24,rev:'¥38,592'},
+            {rank:3,name:'康养单人间',rate:82,orders:36,rev:'¥36,288'},
+            {rank:4,name:'家属双床房',rate:75,orders:28,rev:'¥33,264'},
+          ].map(h=>`
+            <tr>
+              <td><b style="color:${h.rank<=3?'var(--orange)':'var(--muted)'};font-size:16px">${h.rank<=3?'🏅':''} ${h.rank}</b></td>
+              <td>${h.name}</td>
+              <td>
+                <div>${h.rate}%</div>
+                <div class="ratio-bar" style="margin-top:4px;width:90px"><span style="width:${h.rate}%;background:var(--green)"></span></div>
+              </td>
+              <td>${h.orders}</td>
+              <td><b>${h.rev}</b></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <h3>💰 营收明细 / 资金流水</h3>
+      <div class="actions">
+        <select class="btn secondary sm" onchange="toast('已切换')"><option>全部业务</option><option>陪诊</option><option>住宿</option></select>
+        <button class="btn secondary sm" onclick="toast('已导出明细')">导出</button>
+      </div>
+    </div>
+    <table class="table">
+      <thead><tr><th>日期</th><th>业务</th><th>订单数</th><th>营收</th><th>退款</th><th>平台抽成</th><th>商家/陪诊师结算</th><th>净利润</th></tr></thead>
+      <tbody>
+        <tr><td>5/10</td><td>🩺 陪诊</td><td>72</td><td>¥17,856</td><td>¥0</td><td>¥1,428</td><td>¥16,428</td><td><b style="color:var(--green)">¥1,428</b></td></tr>
+        <tr><td>5/10</td><td>🏠 住宿</td><td>16</td><td>¥12,808</td><td>¥0</td><td>¥1,025</td><td>¥11,783</td><td><b style="color:var(--green)">¥1,025</b></td></tr>
+        <tr><td>5/9</td><td>🩺 陪诊</td><td>68</td><td>¥16,728</td><td>¥158</td><td>¥1,338</td><td>¥15,232</td><td><b style="color:var(--green)">¥1,338</b></td></tr>
+        <tr><td>5/9</td><td>🏠 住宿</td><td>14</td><td>¥10,584</td><td>¥0</td><td>¥847</td><td>¥9,737</td><td><b style="color:var(--green)">¥847</b></td></tr>
+        <tr><td>5/8</td><td>🩺 陪诊</td><td>64</td><td>¥15,744</td><td>¥0</td><td>¥1,260</td><td>¥14,484</td><td><b style="color:var(--green)">¥1,260</b></td></tr>
+      </tbody>
+      <tfoot>
+        <tr style="background:#fafbfd;font-weight:700">
+          <td colspan="2">合计 (本月累计)</td>
+          <td>2,308</td>
+          <td style="color:var(--blue)">¥777,315</td>
+          <td style="color:var(--red)">¥6,158</td>
+          <td>¥62,185</td>
+          <td>¥708,972</td>
+          <td style="color:var(--green)">¥62,185</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+`;
+
+function render(){
+  const fn = pages[state.page];
+  $('main').innerHTML = fn ? fn() : '<div class="empty"><div class="ico">🚧</div>页面建设中</div>';
+}
+
+go('dashboard');
+</script>
+</body>
+</html>

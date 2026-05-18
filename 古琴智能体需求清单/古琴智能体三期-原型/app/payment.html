@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>支付确认 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div style="background:#fff;padding:8px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;">
+      <a href="course.html" style="font-size:20px;color:#333;">‹</a>
+      <h3 style="margin:0;font-size:16px;">确认订单</h3>
+    </div>
+    <div class="app-body">
+      <!-- 商品 -->
+      <div class="section">
+        <div style="background:#fff;border-radius:10px;padding:14px;display:flex;gap:12px;">
+          <div style="width:60px;height:60px;border-radius:8px;background:linear-gradient(135deg,#d6b06b,#8b6a36);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:24px;">琴</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">《流水》系统课 · 直播专享</div>
+            <div style="font-size:11px;color:#888;margin-top:4px;">14 节正课 + 名家答疑 + 永久回看</div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;">
+              <span style="color:#e74c3c;font-weight:bold;font-size:16px;">¥896</span>
+              <span style="font-size:11px;color:#888;">x1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 优惠 -->
+      <div class="section" style="padding-top:0;">
+        <div style="background:#fff;border-radius:10px;overflow:hidden;font-size:13px;">
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1ead7;">
+            <span>🎟 优惠券</span>
+            <span style="color:#e74c3c;">- ¥50 <span style="color:#bbb;font-size:12px;">›</span></span>
+          </div>
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f1ead7;">
+            <span>🏆 会员积分</span>
+            <span style="color:#888;">可抵 ¥20 <span style="color:#bbb;font-size:12px;">›</span></span>
+          </div>
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+            <span>💰 直播专属优惠</span>
+            <span style="color:#e74c3c;">已享 7 折</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 支付方式 -->
+      <div class="section" style="padding-top:0;">
+        <h4 class="ink-title" style="font-size:14px;margin:0 0 8px;">支付方式</h4>
+        <div style="background:#fff;border-radius:10px;overflow:hidden;font-size:13px;">
+          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #f1ead7;">
+            <span style="font-size:22px;color:#1aad19;">💚</span>
+            <span style="flex:1;">微信支付</span>
+            <input type="radio" name="pay" checked style="width:auto;"/>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #f1ead7;">
+            <span style="font-size:22px;color:#1296db;">🅰</span>
+            <span style="flex:1;">支付宝</span>
+            <input type="radio" name="pay" style="width:auto;"/>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;">
+            <span style="font-size:22px;">💳</span>
+            <span style="flex:1;">银行卡 (建行 **8723)</span>
+            <input type="radio" name="pay" style="width:auto;"/>
+          </label>
+        </div>
+      </div>
+
+      <!-- 协议 -->
+      <div class="section" style="padding-top:0;font-size:11px;color:#888;">
+        <label style="display:flex;gap:6px;align-items:flex-start;">
+          <input type="checkbox" checked style="width:auto;margin-top:2px;"/>
+          <span>我已阅读并同意《课程购买协议》《用户隐私政策》</span>
+        </label>
+      </div>
+
+      <div style="height:100px;"></div>
+    </div>
+
+    <!-- 底部支付栏 -->
+    <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:10px 14px 24px;display:flex;justify-content:space-between;align-items:center;z-index:5;">
+      <div>
+        <div style="font-size:12px;color:#888;">应付金额</div>
+        <div style="color:#e74c3c;font-size:22px;font-weight:bold;">¥846</div>
+      </div>
+      <a href="reserve.html" style="background:linear-gradient(90deg,#d6b06b,#b08949);color:#fff;padding:12px 36px;border-radius:99px;font-weight:600;font-size:15px;">立即支付</a>
+    </div>
+  </div></div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="app/payment.html" data-crumbs="用户端APP / <b>支付确认</b>" data-depth="1"></script>
+</body></html>

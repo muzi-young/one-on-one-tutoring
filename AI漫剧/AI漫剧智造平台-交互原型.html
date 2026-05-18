@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 漫剧智造平台 · 交互原型 v1.0</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#fff; --line:#e6ecf5; --text:#1a2332;
+    --muted:#6b7a90; --primary:#2563eb; --primary-soft:#eaf1ff;
+    --accent:#10b981; --warn:#f59e0b; --danger:#ef4444;
+    --shadow:0 6px 24px rgba(20,40,80,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  /* Page header */
+  .top{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#06b6d4 100%);
+    color:#fff;padding:48px 24px 64px;text-align:center;position:relative;overflow:hidden}
+  .top::before{content:"";position:absolute;left:50%;top:-100px;width:520px;height:520px;
+    background:radial-gradient(circle,rgba(16,185,129,.4),transparent 60%);
+    border-radius:50%;transform:translateX(-50%)}
+  .top h1{font-size:36px;font-weight:700;letter-spacing:-.5px;position:relative;z-index:2}
+  .top p{font-size:15px;opacity:.85;margin-top:10px;position:relative;z-index:2}
+  .top .tag{display:inline-block;margin-top:18px;padding:6px 18px;background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.3);border-radius:999px;font-size:13px;letter-spacing:1px;
+    position:relative;z-index:2}
+  /* Tab bar */
+  .tabs{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;
+    position:sticky;top:0;z-index:99;display:flex;gap:8px;justify-content:center;
+    box-shadow:0 2px 12px rgba(0,0,0,.04);flex-wrap:wrap}
+  .tabs button{background:#f0f4fa;border:1px solid transparent;color:#54657d;
+    padding:8px 18px;border-radius:999px;cursor:pointer;font-size:13.5px;
+    font-weight:500;transition:.2s}
+  .tabs button:hover{background:#e3eaf5;color:#1a2332}
+  .tabs button.active{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+  /* Group title */
+  .group{max-width:1400px;margin:48px auto 0;padding:0 24px}
+  .group-title{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+  .group-title .pill{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:1px}
+  .group-title .pill.audience{background:#fef3c7;color:#b45309}
+  .group-title .pill.creator{background:#eaf1ff;color:#2563eb}
+  .group-title .pill.admin{background:#dcfce7;color:#15803d}
+  .group-title h2{font-size:22px;font-weight:700}
+  .group-title p{color:var(--muted);font-size:14px;margin-left:auto}
+  /* Phone grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:30px 24px;padding-bottom:24px}
+  .phone-wrap{display:flex;flex-direction:column;align-items:center}
+  .phone-name{font-size:14px;font-weight:600;color:#1f2a44;margin-top:14px;text-align:center}
+  .phone-desc{font-size:12px;color:var(--muted);margin-top:4px;text-align:center}
+  /* iPhone 15 Pro Max frame: 393x852 logical points (we use scaled 280x600) */
+  .phone{
+    width:300px;height:640px;background:#0a0a0a;border-radius:46px;
+    padding:14px;position:relative;box-shadow:0 18px 48px rgba(20,40,80,.18),
+    inset 0 0 0 2px #1f2a44;
+    transition:transform .25s ease,box-shadow .25s ease;cursor:pointer;
+  }
+  .phone:hover{transform:translateY(-4px);box-shadow:0 24px 56px rgba(20,40,80,.25)}
+  .phone .notch{position:absolute;left:50%;top:24px;transform:translateX(-50%);
+    width:100px;height:30px;background:#000;border-radius:99px;z-index:10}
+  .phone .screen{
+    width:100%;height:100%;background:#fff;border-radius:34px;overflow:hidden;
+    position:relative;display:flex;flex-direction:column
+  }
+  .phone .status{
+    height:30px;display:flex;justify-content:space-between;align-items:center;
+    padding:8px 22px 0;font-size:12px;font-weight:600;color:#1a2332;flex-shrink:0
+  }
+  .phone .status.dark{color:#fff}
+  .phone .body{flex:1;overflow-y:auto;background:#fff;-webkit-overflow-scrolling:touch}
+  .phone .body::-webkit-scrollbar{width:0}
+  .phone .home-bar{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+    width:120px;height:4px;background:#000;border-radius:99px;opacity:.6;z-index:10}
+
+  /* Common UI in phone */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+    background:#fff;border-bottom:1px solid #f0f3f8}
+  .nav .ttl{font-size:16px;font-weight:600}
+  .nav .ic{width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;
+    color:#54657d;border-radius:6px;cursor:pointer}
+  .nav .ic:hover{background:#f0f4fa;color:var(--primary)}
+  .tabbar{display:flex;background:#fff;border-top:1px solid #f0f3f8;padding:6px 0 4px;flex-shrink:0}
+  .tabbar .item{flex:1;text-align:center;font-size:11px;color:#8a99b3;padding:4px 0;cursor:pointer}
+  .tabbar .item .ico{font-size:18px;margin-bottom:1px;display:block}
+  .tabbar .item.active{color:var(--primary);font-weight:600}
+  .btn{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:8px;
+    font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+  .btn:hover{background:#1d4ed8}
+  .btn-block{display:block;width:100%}
+  .btn-ghost{background:#f0f4fa;color:var(--primary)}
+  .btn-warn{background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff}
+  .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
+  .badge.hot{background:#fee2e2;color:#b91c1c}
+  .badge.vip{background:linear-gradient(135deg,#fbbf24,#dc2626);color:#fff}
+  .badge.new{background:#dbeafe;color:#1d4ed8}
+  .badge.free{background:#dcfce7;color:#15803d}
+
+  /* Audience: feed */
+  .feed{position:relative;height:100%;background:#000;overflow:hidden}
+  .feed .poster{position:absolute;inset:0;
+    background:linear-gradient(135deg,#7c2d12,#1e1b4b 60%,#0c0a09);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;
+    overflow:hidden}
+  .feed .poster::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 30%,rgba(244,63,94,.4),transparent 50%),
+              radial-gradient(circle at 70% 70%,rgba(99,102,241,.4),transparent 50%)}
+  .feed .right-bar{position:absolute;right:10px;bottom:120px;display:flex;flex-direction:column;
+    gap:18px;align-items:center;color:#fff;z-index:5}
+  .feed .right-bar .ic{display:flex;flex-direction:column;align-items:center;gap:2px;
+    cursor:pointer;font-size:11px}
+  .feed .right-bar .ic .num{font-size:11px;opacity:.9}
+  .feed .right-bar .ic svg{width:30px;height:30px}
+  .feed .info{position:absolute;left:14px;right:80px;bottom:80px;color:#fff;z-index:5}
+  .feed .info .au{font-size:13px;font-weight:600;opacity:.9;margin-bottom:4px}
+  .feed .info .ttl{font-size:16px;font-weight:700}
+  .feed .info .desc{font-size:12px;opacity:.85;margin-top:6px;line-height:1.5}
+  .feed .info .play-bar{margin-top:14px;height:3px;background:rgba(255,255,255,.25);border-radius:2px}
+  .feed .info .play-bar i{display:block;height:100%;width:60%;background:#fff;border-radius:2px}
+  .feed .top-bar{position:absolute;left:0;right:0;top:34px;display:flex;justify-content:space-between;
+    padding:8px 16px;color:#fff;z-index:5;font-size:13px}
+  .feed .top-bar .grp{display:flex;gap:14px}
+  .feed .top-bar .grp span{opacity:.7;cursor:pointer}
+  .feed .top-bar .grp span.on{opacity:1;font-weight:700;border-bottom:2px solid #fff;padding-bottom:2px}
+
+  /* List items */
+  .list-item{display:flex;align-items:center;gap:10px;padding:12px 16px;
+    border-bottom:1px solid #f0f3f8;cursor:pointer}
+  .list-item:hover{background:#f9fbfe}
+  .list-item .cover{width:60px;height:80px;border-radius:6px;
+    background:linear-gradient(135deg,#3b82f6,#06b6d4);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
+  .list-item .info{flex:1;min-width:0}
+  .list-item .info h4{font-size:13px;font-weight:600;margin-bottom:4px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .list-item .info p{font-size:11px;color:var(--muted);
+    overflow:hidden;text-overflow:ellipsis;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .list-item .info .meta{font-size:10px;color:var(--muted);margin-top:4px}
+
+  /* Card */
+  .ph-card{background:#fff;border-radius:10px;padding:14px;margin:12px 14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);border:1px solid #f0f3f8}
+  .ph-card h4{font-size:13px;font-weight:600;margin-bottom:8px}
+  .ph-card .row{display:flex;justify-content:space-between;font-size:11px;color:#54657d;margin:4px 0}
+
+  /* Chips */
+  .chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px;margin:8px 0}
+  .chips span{padding:5px 12px;border-radius:99px;background:#f0f4fa;
+    font-size:11px;color:#54657d;cursor:pointer}
+  .chips span.active{background:var(--primary);color:#fff}
+
+  /* Big banner */
+  .banner{margin:14px;padding:16px;border-radius:12px;color:#fff;
+    background:linear-gradient(135deg,#7c3aed,#06b6d4);position:relative;overflow:hidden}
+  .banner::before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;
+    background:radial-gradient(circle,rgba(255,255,255,.25),transparent);border-radius:50%}
+  .banner h3{font-size:14px;font-weight:700;margin-bottom:4px}
+  .banner p{font-size:11px;opacity:.85}
+  .banner .b-btn{margin-top:10px;background:#fff;color:var(--primary);
+    padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;display:inline-block}
+
+  /* Drama detail */
+  .drama-cover{height:180px;background:linear-gradient(135deg,#1e1b4b,#7c2d12);
+    position:relative;color:#fff;display:flex;align-items:flex-end;padding:14px}
+  .drama-cover::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 50%,rgba(244,63,94,.4),transparent 60%)}
+  .drama-cover .info{position:relative;z-index:2}
+  .drama-cover h2{font-size:20px;font-weight:700;letter-spacing:1px}
+  .drama-cover .meta{font-size:11px;opacity:.85;margin-top:4px}
+  .drama-cover .meta span{margin-right:8px}
+  .stat-row{display:flex;justify-content:space-around;padding:14px 0;
+    background:#fff;border-bottom:1px solid #f0f3f8}
+  .stat-row .stat{text-align:center}
+  .stat-row .stat .v{font-size:14px;font-weight:700;color:var(--primary)}
+  .stat-row .stat .k{font-size:10px;color:var(--muted);margin-top:2px}
+  .ep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:12px 14px}
+  .ep-grid .ep{background:#f0f4fa;text-align:center;padding:10px 0;border-radius:6px;
+    font-size:12px;font-weight:600;cursor:pointer;position:relative}
+  .ep-grid .ep:hover{background:var(--primary-soft);color:var(--primary)}
+  .ep-grid .ep.lock::after{content:"";position:absolute;right:4px;top:4px;width:12px;height:12px;
+    background:#f59e0b;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='M12 2a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7a5 5 0 0 0-5-5zm-3 5a3 3 0 0 1 6 0v3H9V7z'/%3E%3C/svg%3E") center/contain no-repeat;background-color:#f59e0b}
+  .ep-grid .ep.played{background:var(--primary);color:#fff}
+
+  /* Player */
+  .player{position:relative;background:#000;height:100%;display:flex;flex-direction:column;color:#fff}
+  .player .video{flex:1;background:linear-gradient(135deg,#1e1b4b,#0c0a09);position:relative;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .player .video::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 40%,rgba(99,102,241,.5),transparent 70%)}
+  .player .play-ic{width:60px;height:60px;background:rgba(0,0,0,.4);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;
+    border:1px solid rgba(255,255,255,.3)}
+  .player .play-ic svg{width:24px;height:24px;color:#fff}
+  .player .top-cl{position:absolute;left:0;right:0;top:34px;display:flex;justify-content:space-between;
+    padding:8px 16px;z-index:3;font-size:13px}
+  .player .danmaku{position:absolute;left:0;right:0;top:30%;z-index:2;
+    pointer-events:none;font-size:11px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .player .danmaku div{position:absolute;white-space:nowrap;animation:dm 14s linear infinite}
+  .player .danmaku div:nth-child(2){top:24px;animation-delay:-3s}
+  .player .danmaku div:nth-child(3){top:48px;animation-delay:-6s}
+  @keyframes dm{from{left:100%}to{left:-100%}}
+  .player .ctrl{padding:14px 16px 16px;background:linear-gradient(0deg,rgba(0,0,0,.8),transparent);
+    z-index:3;flex-shrink:0}
+  .player .ctrl .progress{height:3px;background:rgba(255,255,255,.25);border-radius:2px;margin-bottom:12px}
+  .player .ctrl .progress i{display:block;height:100%;width:35%;background:var(--primary);border-radius:2px}
+  .player .ctrl .ic-row{display:flex;justify-content:space-around;font-size:11px}
+  .player .ctrl .ic-row div{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;opacity:.85}
+
+  /* Login */
+  .login-bg{height:100%;background:linear-gradient(180deg,#1e3a8a,#06b6d4);
+    color:#fff;padding:60px 28px 32px;display:flex;flex-direction:column}
+  .login-bg .logo{width:60px;height:60px;background:#fff;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px;
+    color:var(--primary);font-weight:700}
+  .login-bg h2{font-size:28px;margin-bottom:8px}
+  .login-bg p{font-size:13px;opacity:.85;margin-bottom:24px}
+  .login-bg input{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+    color:#fff;padding:13px 16px;border-radius:10px;width:100%;margin-bottom:12px;font-size:14px}
+  .login-bg input::placeholder{color:rgba(255,255,255,.6)}
+  .login-bg .btn-w{background:#fff;color:var(--primary);padding:13px;border-radius:10px;
+    text-align:center;font-weight:600;margin-top:8px;cursor:pointer}
+  .login-bg .alt{margin-top:auto;text-align:center;font-size:12px;opacity:.8}
+
+  /* Creator: workspace */
+  .ws-hero{padding:18px 16px 24px;background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;
+    border-radius:0 0 16px 16px;margin-bottom:14px}
+  .ws-hero .greet{font-size:13px;opacity:.85}
+  .ws-hero h2{font-size:18px;font-weight:700;margin-top:2px}
+  .ws-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .ws-stat .it{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);
+    border-radius:8px;padding:8px;text-align:center}
+  .ws-stat .it .v{font-size:14px;font-weight:700}
+  .ws-stat .it .k{font-size:10px;opacity:.85}
+  .grid-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px}
+  .grid-tools .tool{background:#fff;border:1px solid #f0f3f8;border-radius:12px;
+    padding:14px 8px;text-align:center;cursor:pointer;transition:.2s}
+  .grid-tools .tool:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(20,40,80,.08);
+    border-color:var(--primary)}
+  .grid-tools .tool .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;
+    justify-content:center;margin:0 auto 6px;font-size:16px;color:#fff;font-weight:700}
+  .grid-tools .tool .nm{font-size:11px;font-weight:600;color:#1f2a44}
+  .grid-tools .tool .ds{font-size:10px;color:var(--muted);margin-top:2px}
+
+  /* Script editor */
+  .ed-toolbar{display:flex;gap:6px;padding:10px 14px;background:#f9fbfe;border-bottom:1px solid #f0f3f8;
+    overflow-x:auto;flex-shrink:0}
+  .ed-toolbar span{padding:5px 10px;background:#fff;border:1px solid #e6ecf5;border-radius:6px;
+    font-size:11px;color:#54657d;white-space:nowrap;cursor:pointer}
+  .ed-toolbar span.ai{background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;border:none}
+  .ed-content{padding:14px;font-size:12.5px;line-height:1.8;color:#1f2a44}
+  .ed-content .speaker{color:var(--primary);font-weight:600}
+  .ed-content .scene{color:var(--muted);font-style:italic;font-size:11px;margin:6px 0}
+  .ed-content p{margin:8px 0}
+  .ai-bubble{background:#eaf1ff;border-left:3px solid var(--primary);padding:10px 12px;
+    margin:14px;border-radius:0 8px 8px 0;font-size:11px;color:#1f2a44}
+  .ai-bubble .lbl{color:var(--primary);font-weight:600;font-size:10px;margin-bottom:4px}
+
+  /* Character library */
+  .char-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:12px 14px}
+  .char{background:#fff;border:1px solid #f0f3f8;border-radius:10px;overflow:hidden;cursor:pointer}
+  .char:hover{border-color:var(--primary)}
+  .char .av{height:120px;background:linear-gradient(135deg,#fbbf24,#7c3aed);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:36px;font-weight:700}
+  .char.female .av{background:linear-gradient(135deg,#f472b6,#7c3aed)}
+  .char.bg2 .av{background:linear-gradient(135deg,#06b6d4,#1e3a8a)}
+  .char.bg3 .av{background:linear-gradient(135deg,#10b981,#1e3a8a)}
+  .char .info{padding:8px}
+  .char .info h4{font-size:12px;font-weight:600;margin-bottom:2px}
+  .char .info p{font-size:10px;color:var(--muted)}
+
+  /* Storyboard */
+  .sb-track{display:flex;gap:8px;overflow-x:auto;padding:14px;scroll-snap-type:x mandatory;flex-wrap:nowrap}
+  .sb-track::-webkit-scrollbar{height:0}
+  .sb-shot{flex-shrink:0;width:140px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;
+    overflow:hidden;cursor:pointer;scroll-snap-align:start}
+  .sb-shot.active{border:2px solid var(--primary);box-shadow:0 4px 12px rgba(37,99,235,.2)}
+  .sb-shot .preview{height:90px;background:linear-gradient(135deg,#1e1b4b,#06b6d4);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+  .sb-shot .preview .num{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.5);
+    color:#fff;padding:1px 6px;border-radius:99px;font-size:10px}
+  .sb-shot .info{padding:8px}
+  .sb-shot .info .desc{font-size:10px;color:#1f2a44;line-height:1.4;
+    overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .sb-shot .info .meta{font-size:9px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between}
+
+  /* Video workshop */
+  .vid-models{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 14px;margin-top:12px}
+  .vid-models .m{background:#fff;border:1px solid #f0f3f8;border-radius:8px;padding:8px 4px;text-align:center;
+    cursor:pointer;font-size:10px}
+  .vid-models .m.on{border:2px solid var(--primary);background:var(--primary-soft);font-weight:600;color:var(--primary)}
+  .vid-models .m .nm{font-weight:600;font-size:11px;color:#1f2a44}
+  .vid-models .m .ds{font-size:9px;color:var(--muted);margin-top:1px}
+  .vid-preview{margin:14px;background:#0a0a0a;border-radius:10px;height:140px;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;position:relative;overflow:hidden}
+  .vid-preview::before{content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 50%,rgba(124,58,237,.6),transparent 60%),
+              radial-gradient(circle at 70% 50%,rgba(6,182,212,.6),transparent 60%)}
+  .vid-preview .gen-progress{position:absolute;bottom:0;left:0;right:0;
+    background:rgba(0,0,0,.5);padding:6px 10px;font-size:10px;display:flex;justify-content:space-between}
+  .vid-form{padding:0 14px;margin-bottom:14px}
+  .vid-form label{font-size:11px;color:var(--muted);display:block;margin-bottom:4px;margin-top:8px}
+  .vid-form input,.vid-form select,.vid-form textarea{width:100%;padding:8px 10px;border:1px solid #e6ecf5;
+    border-radius:8px;font-size:12px;color:#1f2a44;background:#fff}
+
+  /* Voice */
+  .voice-pick{padding:0 14px}
+  .voice-pick .vc{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fff;
+    border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer}
+  .voice-pick .vc.on{border:2px solid var(--primary);background:var(--primary-soft)}
+  .voice-pick .vc .av{width:36px;height:36px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;display:flex;
+    align-items:center;justify-content:center;font-weight:700}
+  .voice-pick .vc .info{flex:1}
+  .voice-pick .vc .info h4{font-size:12px;font-weight:600}
+  .voice-pick .vc .info p{font-size:10px;color:var(--muted)}
+  .voice-pick .vc .play{background:#f0f4fa;width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;color:var(--primary)}
+
+  /* Project list */
+  .proj-card{background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin:8px 14px;padding:12px;cursor:pointer}
+  .proj-card:hover{border-color:var(--primary)}
+  .proj-card .h{display:flex;justify-content:space-between;align-items:flex-start}
+  .proj-card .h h4{font-size:13px;font-weight:600}
+  .proj-card .h .stat{padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
+  .proj-card .h .stat.draft{background:#f0f4fa;color:#54657d}
+  .proj-card .h .stat.work{background:#fef3c7;color:#b45309}
+  .proj-card .h .stat.done{background:#dcfce7;color:#15803d}
+  .proj-card .desc{font-size:11px;color:var(--muted);margin-top:6px}
+  .proj-card .progress{height:4px;background:#f0f4fa;border-radius:2px;margin-top:8px}
+  .proj-card .progress i{display:block;height:100%;background:var(--primary);border-radius:2px}
+  .proj-card .meta{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:6px}
+
+  /* My profile */
+  .my-hero{padding:24px 16px;background:linear-gradient(135deg,#7c3aed,#dc2626);color:#fff;
+    border-radius:0 0 16px 16px}
+  .my-hero .a-row{display:flex;align-items:center;gap:12px}
+  .my-hero .av{width:50px;height:50px;border-radius:50%;background:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--primary);font-weight:700}
+  .my-hero h3{font-size:15px;font-weight:600}
+  .my-hero p{font-size:11px;opacity:.85;margin-top:2px}
+  .my-vip{margin-top:14px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.2);
+    border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center}
+  .my-vip .l{font-size:12px}
+  .my-vip .l h5{font-weight:700;font-size:13px}
+  .my-vip .l p{opacity:.85;font-size:10px;margin-top:2px}
+  .my-vip .b{background:#fbbf24;color:#7c2d12;padding:5px 12px;border-radius:99px;
+    font-size:11px;font-weight:700;cursor:pointer}
+  .menu-list{margin:14px}
+  .menu-row{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;
+    border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer}
+  .menu-row:hover{border-color:var(--primary)}
+  .menu-row .ic{width:32px;height:32px;border-radius:8px;background:var(--primary-soft);
+    color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:16px}
+  .menu-row .nm{flex:1;font-size:13px;font-weight:500}
+  .menu-row .arrow{color:var(--muted);font-size:14px}
+
+  /* VIP */
+  .vip-pkgs{padding:14px;display:flex;gap:10px;overflow-x:auto}
+  .vip-pkg{flex-shrink:0;width:140px;background:linear-gradient(135deg,#fef3c7,#fde68a);
+    border:2px solid transparent;border-radius:12px;padding:12px;cursor:pointer;text-align:center;color:#7c2d12;position:relative}
+  .vip-pkg.on{border-color:#dc2626;background:linear-gradient(135deg,#fbbf24,#dc2626);color:#fff}
+  .vip-pkg.on::before{content:"推荐";position:absolute;top:-8px;right:-4px;background:#dc2626;
+    color:#fff;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700}
+  .vip-pkg .nm{font-size:13px;font-weight:700}
+  .vip-pkg .pr{font-size:22px;font-weight:800;margin:6px 0}
+  .vip-pkg .pr small{font-size:11px;font-weight:500;opacity:.8}
+  .vip-pkg .desc{font-size:10px;opacity:.85}
+  .vip-rights{padding:0 14px}
+  .vip-rights h4{font-size:13px;font-weight:600;margin:14px 0 8px}
+  .vip-rights .row{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:12px}
+  .vip-rights .row .ic{width:28px;height:28px;border-radius:8px;background:var(--primary-soft);
+    color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+
+  /* Admin */
+  .admin-h{padding:14px;background:#1e3a8a;color:#fff}
+  .admin-h h2{font-size:15px;font-weight:600}
+  .admin-h p{font-size:11px;opacity:.85;margin-top:2px}
+  .admin-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px}
+  .admin-stat{background:#fff;border:1px solid #f0f3f8;border-radius:10px;padding:12px}
+  .admin-stat .v{font-size:18px;font-weight:700;color:var(--primary)}
+  .admin-stat .k{font-size:11px;color:var(--muted);margin-top:2px}
+  .admin-stat .delta{font-size:10px;color:#15803d;margin-top:2px}
+  .admin-stat .delta.down{color:#dc2626}
+  .audit-row{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid #f0f3f8}
+  .audit-row .cv{width:50px;height:60px;border-radius:6px;flex-shrink:0;
+    background:linear-gradient(135deg,#7c2d12,#1e1b4b);color:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:18px}
+  .audit-row .info{flex:1}
+  .audit-row .info h4{font-size:12px;font-weight:600}
+  .audit-row .info p{font-size:10px;color:var(--muted);margin-top:2px}
+  .audit-row .actions{display:flex;flex-direction:column;gap:4px}
+  .audit-row .actions button{padding:4px 10px;border-radius:6px;border:none;font-size:10px;
+    font-weight:600;cursor:pointer}
+  .audit-row .actions .pass{background:#10b981;color:#fff}
+  .audit-row .actions .reject{background:#ef4444;color:#fff}
+
+  /* Modal */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
+    align-items:center;justify-content:center;padding:24px}
+  .modal-overlay.show{display:flex}
+  .modal{background:#fff;border-radius:18px;padding:24px;max-width:380px;width:100%;
+    text-align:center;animation:pop .25s ease}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal h3{font-size:18px;margin-bottom:8px}
+  .modal p{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .modal .actions{display:flex;gap:8px;justify-content:center;margin-top:14px}
+  .modal .actions button{flex:1;padding:10px;border-radius:8px;font-weight:600;font-size:13px;
+    border:none;cursor:pointer}
+  .modal .actions .ok{background:var(--primary);color:#fff}
+  .modal .actions .cancel{background:#f0f4fa;color:#1f2a44}
+  .modal .price-big{font-size:30px;color:var(--primary);font-weight:700;margin:6px 0}
+  .modal .price-big small{font-size:14px;color:var(--muted)}
+
+  /* Toast */
+  .toast{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    background:rgba(0,0,0,.85);color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;z-index:1100;
+    animation:fade .3s ease}
+  .toast.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translateX(-50%)}}
+
+  /* Footer note */
+  .foot{max-width:1200px;margin:60px auto 30px;padding:24px;background:#fff;
+    border:1px solid var(--line);border-radius:14px;text-align:center;color:var(--muted);font-size:13px}
+  .foot strong{color:var(--primary)}
+
+  /* Hide groups */
+  .group.hide{display:none}
+
+  @media (max-width:780px){
+    .grid{grid-template-columns:1fr 1fr;gap:24px 16px}
+    .phone{transform:scale(.85);transform-origin:top center;margin:-30px}
+    .top h1{font-size:26px}
+  }
+  @media (max-width:520px){
+    .grid{grid-template-columns:1fr}
+    .phone{transform:scale(.95);margin:0}
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="tag">PROTOTYPE · MOBILE INTERACTIVE</span>
+  <h1>AI 漫剧智造平台 · 交互原型</h1>
+  <p>基于 iPhone 15 Pro Max（393×852）尺寸 · 三端共 18 个核心交互页面 · 支持点击跳转 / 弹窗 / 表单 / Toast 提示</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="active" data-filter="all">全部（18 屏）</button>
+  <button data-filter="audience">观众端（6）</button>
+  <button data-filter="creator">创作者端（9）</button>
+  <button data-filter="admin">管理后台（3）</button>
+</div>
+
+<!-- 观众端 -->
+<div class="group" data-group="audience">
+  <div class="group-title">
+    <span class="pill audience">AUDIENCE</span>
+    <h2>观众端</h2>
+    <p>仿抖音沉浸式漫剧消费体验，含推荐流 / 详情 / 播放 / 解锁 / VIP / 个人中心</p>
+  </div>
+  <div class="grid">
+
+    <!-- A1 启动登录 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status dark"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body">
+          <div class="login-bg">
+            <div class="logo">漫</div>
+            <h2>AI 漫剧</h2>
+            <p>每天追剧，发现你的爱</p>
+            <input placeholder="手机号" />
+            <input placeholder="验证码" />
+            <div class="btn-w" onclick="showToast('登录成功，欢迎回来！')">立即登录</div>
+            <div class="alt">
+              微信 / QQ / 抖音 一键登录<br/>
+              新人享免费看 3 集 + 7 天 VIP
+            </div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A1 · 启动登录</div>
+      <div class="phone-desc">合规弹窗 · 新人福利</div>
+    </div>
+
+    <!-- A2 推荐流 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status dark"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="feed">
+            <div class="poster">🎬</div>
+            <div class="top-bar">
+              <div class="grp">
+                <span>关注</span>
+                <span class="on">推荐</span>
+                <span>玄幻</span>
+                <span>都市</span>
+              </div>
+              <div>🔍</div>
+            </div>
+            <div class="right-bar">
+              <div class="ic" onclick="showToast('已点赞')">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span class="num">12.5w</span>
+              </div>
+              <div class="ic" onclick="showToast('已添加到我的')">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                <span class="num">收藏</span>
+              </div>
+              <div class="ic" onclick="showToast('已分享')">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+                <span class="num">分享</span>
+              </div>
+              <div class="ic" onclick="showToast('打开评论区')">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+                <span class="num">3.2k</span>
+              </div>
+            </div>
+            <div class="info">
+              <div class="au">@剑修盟主官方</div>
+              <div class="ttl">《九霄修仙录》第 12 集</div>
+              <div class="desc">少年踏入修仙界，一柄破剑斩苍穹...</div>
+              <div class="play-bar"><i></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A2 · 推荐流（首页）</div>
+      <div class="phone-desc">沉浸式竖屏 · 上下滑切集</div>
+    </div>
+
+    <!-- A3 剧详情 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="drama-cover">
+            <div class="info">
+              <div class="badge hot" style="margin-bottom:6px">🔥 热播第 1</div>
+              <h2>九霄修仙录</h2>
+              <div class="meta">
+                <span>玄幻</span><span>·</span><span>30 集</span><span>·</span><span>更新中</span>
+              </div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat"><div class="v">9.6</div><div class="k">评分</div></div>
+            <div class="stat"><div class="v">2.4亿</div><div class="k">总播放</div></div>
+            <div class="stat"><div class="v">12.5w</div><div class="k">追剧</div></div>
+            <div class="stat"><div class="v">3.2k</div><div class="k">评论</div></div>
+          </div>
+          <div style="padding:14px;font-size:12px;color:#54657d;line-height:1.6">
+            少年陈寒因家族剧变误入修仙之地，得上古传承，从凡尘中崛起，斩妖魔、破苍穹...
+          </div>
+          <div style="padding:0 14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0">
+              <span style="font-size:13px;font-weight:600">选集</span>
+              <span style="font-size:11px;color:var(--muted)">已更 12 / 30 集</span>
+            </div>
+          </div>
+          <div class="ep-grid">
+            <div class="ep played" onclick="showToast('正在播放第 1 集')">01</div>
+            <div class="ep played" onclick="showToast('正在播放第 2 集')">02</div>
+            <div class="ep" onclick="showToast('开始播放第 3 集')">03</div>
+            <div class="ep lock" onclick="openModal('unlock')">04</div>
+            <div class="ep lock" onclick="openModal('unlock')">05</div>
+            <div class="ep lock" onclick="openModal('unlock')">06</div>
+            <div class="ep lock" onclick="openModal('unlock')">07</div>
+            <div class="ep lock" onclick="openModal('unlock')">08</div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block btn-warn" onclick="openModal('unlock')">
+              开通 VIP · 全集免费看
+            </button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A3 · 剧详情</div>
+      <div class="phone-desc">选集 · 解锁 · 评论</div>
+    </div>
+
+    <!-- A4 播放器 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status dark"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="player">
+            <div class="top-cl">
+              <span style="cursor:pointer" onclick="showToast('返回')">← 第 12 集</span>
+              <span style="cursor:pointer">⋯</span>
+            </div>
+            <div class="video">
+              <div class="danmaku">
+                <div>哥哥太帅了 ❤️</div>
+                <div>这剧情绝了！</div>
+                <div>追到现在终于来了！</div>
+              </div>
+              <div class="play-ic" onclick="showToast('已暂停')">
+                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+            </div>
+            <div class="ctrl">
+              <div class="progress"><i></i></div>
+              <div class="ic-row">
+                <div onclick="showToast('已点赞')">❤️<br/><span>12w</span></div>
+                <div onclick="showToast('收藏成功')">⭐<br/><span>2.3w</span></div>
+                <div onclick="showToast('打开评论')">💬<br/><span>3.2k</span></div>
+                <div onclick="showToast('分享面板')">↗️<br/><span>分享</span></div>
+                <div onclick="showToast('上一集')">⏮<br/><span>上集</span></div>
+                <div onclick="showToast('下一集')">⏭<br/><span>下集</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A4 · 沉浸式播放器</div>
+      <div class="phone-desc">弹幕 · 互动 · 进度</div>
+    </div>
+
+    <!-- A5 个人中心 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="my-hero">
+            <div class="a-row">
+              <div class="av">L</div>
+              <div>
+                <h3>影迷小李</h3>
+                <p>已追剧 23 部 · 在看 7 部</p>
+              </div>
+            </div>
+            <div class="my-vip">
+              <div class="l">
+                <h5>👑 VIP 体验中</h5>
+                <p>剩余 3 天，续费享 8 折</p>
+              </div>
+              <div class="b" onclick="switchToScreen('vip')">续费</div>
+            </div>
+          </div>
+          <div class="menu-list">
+            <div class="menu-row" onclick="showToast('打开追剧列表')">
+              <div class="ic">📺</div><div class="nm">我的追剧</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开历史记录')">
+              <div class="ic">🕒</div><div class="nm">观看历史</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开收藏')">
+              <div class="ic">⭐</div><div class="nm">我的收藏</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开充值中心')">
+              <div class="ic">💰</div><div class="nm">充值记录</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开消息')">
+              <div class="ic">🔔</div><div class="nm">消息通知</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开客服')">
+              <div class="ic">💬</div><div class="nm">在线客服</div><div class="arrow">›</div>
+            </div>
+            <div class="menu-row" onclick="showToast('打开设置')">
+              <div class="ic">⚙️</div><div class="nm">设置</div><div class="arrow">›</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item" onclick="showToast('返回首页')"><span class="ico">🏠</span>首页</div>
+          <div class="item" onclick="showToast('打开发现')"><span class="ico">🔍</span>发现</div>
+          <div class="item" onclick="showToast('打开追剧')"><span class="ico">📺</span>追剧</div>
+          <div class="item active"><span class="ico">👤</span>我的</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A5 · 个人中心</div>
+      <div class="phone-desc">追剧 · VIP · 设置</div>
+    </div>
+
+    <!-- A6 VIP -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div style="background:linear-gradient(135deg,#fbbf24,#dc2626);padding:24px 16px;color:#fff;border-radius:0 0 16px 16px">
+            <div style="font-size:11px;opacity:.85">尊享会员</div>
+            <h2 style="font-size:22px;margin-top:4px">解锁 VIP 全部特权</h2>
+            <p style="font-size:12px;opacity:.85;margin-top:6px">全场免费看 · 抢先看 · 无广告 · 1080P 画质</p>
+          </div>
+          <div class="vip-pkgs">
+            <div class="vip-pkg">
+              <div class="nm">月卡</div>
+              <div class="pr">¥39<small>/月</small></div>
+              <div class="desc">日均 1.3 元</div>
+            </div>
+            <div class="vip-pkg on" onclick="showToast('已选择季卡')">
+              <div class="nm">季卡</div>
+              <div class="pr">¥99<small>/季</small></div>
+              <div class="desc">日均 1.1 元</div>
+            </div>
+            <div class="vip-pkg">
+              <div class="nm">年卡</div>
+              <div class="pr">¥365<small>/年</small></div>
+              <div class="desc">日均 1.0 元</div>
+            </div>
+          </div>
+          <div class="vip-rights">
+            <h4>VIP 8 大特权</h4>
+            <div class="row"><div class="ic">🎬</div><div>全场漫剧免费看 / 无限刷剧</div></div>
+            <div class="row"><div class="ic">🚀</div><div>新剧抢先看 · 早 7 天提前更新</div></div>
+            <div class="row"><div class="ic">🚫</div><div>全程零广告 · 沉浸观看</div></div>
+            <div class="row"><div class="ic">📺</div><div>1080P 蓝光画质</div></div>
+            <div class="row"><div class="ic">🎁</div><div>每月 100 金币赠送</div></div>
+            <div class="row"><div class="ic">💬</div><div>专属客服优先响应</div></div>
+            <div style="padding:14px 0">
+              <button class="btn btn-block btn-warn" onclick="openModal('paySuccess')">
+                ¥99 立即开通季卡 VIP
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">A6 · VIP 会员</div>
+      <div class="phone-desc">套餐 · 权益 · 支付</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 创作者端 -->
+<div class="group" data-group="creator">
+  <div class="group-title">
+    <span class="pill creator">CREATOR</span>
+    <h2>创作者端</h2>
+    <p>AI 漫剧创作完整工坊：剧本 / 角色 / 分镜 / 视频 / 配音 / 项目协同</p>
+  </div>
+  <div class="grid">
+
+    <!-- C1 工作台 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="ws-hero">
+            <div class="greet">早安，创作者</div>
+            <h2>张导演</h2>
+            <div class="ws-stat">
+              <div class="it"><div class="v">7</div><div class="k">在制项目</div></div>
+              <div class="it"><div class="v">23</div><div class="k">已完成</div></div>
+              <div class="it"><div class="v">¥38万</div><div class="k">本月收益</div></div>
+            </div>
+          </div>
+          <div style="padding:0 14px;display:flex;justify-content:space-between;margin-bottom:8px">
+            <span style="font-size:13px;font-weight:600">创作工坊</span>
+            <span style="font-size:11px;color:var(--muted)">11 个工具</span>
+          </div>
+          <div class="grid-tools">
+            <div class="tool" onclick="showToast('打开 AI 剧本助手')">
+              <div class="ico" style="background:linear-gradient(135deg,#7c3aed,#06b6d4)">📝</div>
+              <div class="nm">AI 剧本</div>
+              <div class="ds">一键生成</div>
+            </div>
+            <div class="tool" onclick="showToast('打开角色库')">
+              <div class="ico" style="background:linear-gradient(135deg,#f59e0b,#dc2626)">👤</div>
+              <div class="nm">角色库</div>
+              <div class="ds">一致性</div>
+            </div>
+            <div class="tool" onclick="showToast('打开分镜板')">
+              <div class="ico" style="background:linear-gradient(135deg,#10b981,#06b6d4)">🎬</div>
+              <div class="nm">分镜板</div>
+              <div class="ds">智能拆分</div>
+            </div>
+            <div class="tool" onclick="showToast('打开图生视频')">
+              <div class="ico" style="background:linear-gradient(135deg,#2563eb,#7c3aed)">🎥</div>
+              <div class="nm">图生视频</div>
+              <div class="ds">5 模型</div>
+            </div>
+            <div class="tool" onclick="showToast('打开配音中心')">
+              <div class="ico" style="background:linear-gradient(135deg,#ef4444,#fbbf24)">🎙️</div>
+              <div class="nm">AI 配音</div>
+              <div class="ds">200+ 音色</div>
+            </div>
+            <div class="tool" onclick="showToast('打开剪辑合成')">
+              <div class="ico" style="background:linear-gradient(135deg,#06b6d4,#1e3a8a)">✂️</div>
+              <div class="nm">自动剪辑</div>
+              <div class="ds">一键合成</div>
+            </div>
+          </div>
+          <div class="ai-bubble" style="margin:14px">
+            <div class="lbl">AI 助理 · 提示</div>
+            <div>《九霄修仙录》第 13 集分镜已完成，等待视频生成（2 个镜头）。</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item active"><span class="ico">⚒️</span>工作台</div>
+          <div class="item" onclick="switchToScreen('proj')"><span class="ico">📂</span>项目</div>
+          <div class="item" onclick="showToast('打开市场')"><span class="ico">🛒</span>市场</div>
+          <div class="item" onclick="showToast('打开我的')"><span class="ico">👤</span>我的</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C1 · 工作台</div>
+      <div class="phone-desc">数据概览 · 11 大工具入口</div>
+    </div>
+
+    <!-- C2 AI 剧本助手 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">AI 剧本助手</div>
+            <div class="ic">⋯</div>
+          </div>
+          <div style="padding:14px">
+            <div style="font-size:12px;color:#54657d;margin-bottom:8px">选择题材</div>
+            <div class="chips" style="padding:0">
+              <span class="active">玄幻修仙</span>
+              <span>都市霸总</span>
+              <span>穿越重生</span>
+              <span>古风武侠</span>
+              <span>悬疑末世</span>
+            </div>
+          </div>
+          <div style="padding:0 14px">
+            <div style="font-size:12px;color:#54657d;margin:8px 0">输入主题</div>
+            <textarea style="width:100%;padding:10px;border:1px solid #e6ecf5;border-radius:8px;font-size:12px;height:60px;resize:none"
+              placeholder="例：少年得到上古传承，从凡尘崛起斩妖魔">少年陈寒得到上古剑谱传承，与神秘师傅一同闯荡修仙界，斩妖魔、破苍穹...</textarea>
+          </div>
+          <div style="padding:0 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0">
+            <div>
+              <label style="font-size:11px;color:var(--muted)">集数</label>
+              <select style="width:100%;padding:8px;border:1px solid #e6ecf5;border-radius:8px;font-size:12px;margin-top:4px">
+                <option>30 集</option><option>50 集</option><option>100 集</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--muted)">单集字数</label>
+              <select style="width:100%;padding:8px;border:1px solid #e6ecf5;border-radius:8px;font-size:12px;margin-top:4px">
+                <option>1500-2000</option><option>2000-3000</option>
+              </select>
+            </div>
+          </div>
+          <div class="ai-bubble">
+            <div class="lbl">AI 提示</div>
+            <div>预计耗时 90 秒，将生成全集大纲 + 第 1 集完整剧本。</div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block" onclick="showToast('🤖 正在生成剧本...预计 90 秒')">
+              ✨ AI 一键生成剧本
+            </button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C2 · AI 剧本助手</div>
+      <div class="phone-desc">题材 · 主题 · 一键生成</div>
+    </div>
+
+    <!-- C3 剧本编辑器 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">第 13 集 · 编辑</div>
+            <div class="ic" onclick="showToast('已保存')">💾</div>
+          </div>
+          <div class="ed-toolbar">
+            <span class="ai" onclick="showToast('AI 已优化对白')">✨ AI 优化</span>
+            <span onclick="showToast('AI 续写中')">续写</span>
+            <span onclick="showToast('已撤销')">撤销</span>
+            <span>插入分镜</span>
+            <span>历史</span>
+            <span>导出</span>
+          </div>
+          <div class="ed-content">
+            <div class="scene">【场景：仙峰雪夜，月光皎洁】</div>
+            <p><span class="speaker">陈寒：</span>师傅，弟子已悟透《凌天剑诀》第三重境界。</p>
+            <p><span class="speaker">老人：</span>(抚须微笑) 不错，但比起天劫，这只是开始。</p>
+            <div class="scene">【场景：天空忽现紫色雷云】</div>
+            <p><span class="speaker">陈寒：</span>师傅！这是......</p>
+            <p><span class="speaker">老人：</span>(神色凝重) 你的天劫提前来了！</p>
+          </div>
+          <div class="ai-bubble">
+            <div class="lbl">AI 建议</div>
+            <div>建议在天劫前增加 1 个回忆性蒙太奇，增强戏剧张力。点击应用。</div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C3 · 剧本编辑器</div>
+      <div class="phone-desc">AI 续写/优化 · 协同编辑</div>
+    </div>
+
+    <!-- C4 角色库 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">角色库</div>
+            <div class="ic" onclick="showToast('新增角色')">+</div>
+          </div>
+          <div class="chips">
+            <span class="active">全部 (8)</span>
+            <span>主角 (3)</span>
+            <span>配角 (4)</span>
+            <span>反派 (1)</span>
+          </div>
+          <div class="char-grid">
+            <div class="char" onclick="showToast('已选择「陈寒」')">
+              <div class="av">寒</div>
+              <div class="info"><h4>陈寒 · 主角</h4><p>玄幻 · 16 岁少年</p></div>
+            </div>
+            <div class="char female bg2" onclick="showToast('已选择「苏雪」')">
+              <div class="av">雪</div>
+              <div class="info"><h4>苏雪 · 女主</h4><p>仙派 · 18 岁少女</p></div>
+            </div>
+            <div class="char bg3" onclick="showToast('已选择「玄阳真人」')">
+              <div class="av">玄</div>
+              <div class="info"><h4>玄阳真人</h4><p>师傅 · 老者</p></div>
+            </div>
+            <div class="char female" onclick="showToast('已选择「林雪儿」')">
+              <div class="av">林</div>
+              <div class="info"><h4>林雪儿</h4><p>反派 · 妖女</p></div>
+            </div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block" onclick="showToast('🤖 正在训练 LoRA，预计 60 分钟')">
+              + 训练新角色 LoRA
+            </button>
+          </div>
+          <div class="ai-bubble">
+            <div class="lbl">角色一致性引擎</div>
+            <div>已锁定 8 个角色 ID，跨 30 集生成的角色五官一致性 ≥ 95%。</div>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C4 · 角色库</div>
+      <div class="phone-desc">角色资产 · LoRA 训练</div>
+    </div>
+
+    <!-- C5 分镜板 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">分镜板 · 第 13 集</div>
+            <div class="ic" onclick="showToast('已保存')">💾</div>
+          </div>
+          <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;font-weight:600">共 18 个镜头</span>
+            <button class="btn" style="padding:6px 12px;font-size:11px" onclick="showToast('🤖 AI 自动分镜中')">✨ AI 自动分镜</button>
+          </div>
+          <div class="sb-track">
+            <div class="sb-shot active">
+              <div class="preview"><div class="num">01</div>🌙</div>
+              <div class="info">
+                <div class="desc">仙峰雪夜，陈寒立于山巅</div>
+                <div class="meta"><span>3.5s</span><span>远景</span></div>
+              </div>
+            </div>
+            <div class="sb-shot">
+              <div class="preview"><div class="num">02</div>👤</div>
+              <div class="info">
+                <div class="desc">陈寒抬头望月，眼神坚定</div>
+                <div class="meta"><span>2.0s</span><span>特写</span></div>
+              </div>
+            </div>
+            <div class="sb-shot">
+              <div class="preview"><div class="num">03</div>👴</div>
+              <div class="info">
+                <div class="desc">玄阳真人轻抚白须</div>
+                <div class="meta"><span>2.5s</span><span>近景</span></div>
+              </div>
+            </div>
+            <div class="sb-shot">
+              <div class="preview"><div class="num">04</div>⚡</div>
+              <div class="info">
+                <div class="desc">天空紫雷暴起</div>
+                <div class="meta"><span>1.5s</span><span>全景</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:0 14px">
+            <h4 style="font-size:13px;font-weight:600;margin:8px 0">镜头详情</h4>
+            <div style="background:#f9fbfe;padding:12px;border-radius:10px;border:1px solid #f0f3f8">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">镜头 01 · 远景</div>
+              <p style="font-size:12px;color:#1f2a44;line-height:1.6">
+                仙峰雪夜，月光皎洁，陈寒身穿白色道袍，立于山巅，手握长剑，气势凌人。
+              </p>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <span class="badge new">角色: 陈寒</span>
+                <span class="badge free">场景: 仙峰</span>
+                <span class="badge hot">运镜: 推</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block" onclick="switchToScreen('vid')">→ 进入图生视频工坊</button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C5 · 分镜板</div>
+      <div class="phone-desc">AI 分镜 · 镜头编排</div>
+    </div>
+
+    <!-- C6 图生视频工坊 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">图生视频 · 镜头 01</div>
+            <div class="ic">⋯</div>
+          </div>
+          <div class="vid-preview">
+            🎬
+            <div class="gen-progress">
+              <span>生成中... 65%</span>
+              <span>预计 12s</span>
+            </div>
+          </div>
+          <div style="padding:0 14px;font-size:12px;font-weight:600;margin-bottom:6px">选择 AI 模型</div>
+          <div class="vid-models">
+            <div class="m on">
+              <div class="nm">可灵 2.0</div>
+              <div class="ds">★★★★★</div>
+            </div>
+            <div class="m" onclick="showToast('已切换至即梦 3.0')">
+              <div class="nm">即梦 3.0</div>
+              <div class="ds">★★★★★</div>
+            </div>
+            <div class="m" onclick="showToast('已切换至海螺 02')">
+              <div class="nm">海螺 02</div>
+              <div class="ds">★★★★★</div>
+            </div>
+            <div class="m" onclick="showToast('已切换至 Vidu')">
+              <div class="nm">Vidu 2.0</div>
+              <div class="ds">★★★★☆</div>
+            </div>
+            <div class="m" onclick="showToast('已切换至通义')">
+              <div class="nm">通义万相</div>
+              <div class="ds">★★★☆☆</div>
+            </div>
+            <div class="m" onclick="showToast('🤖 智能选择最优模型')">
+              <div class="nm">🪄 智能</div>
+              <div class="ds">推荐</div>
+            </div>
+          </div>
+          <div class="vid-form">
+            <label>提示词</label>
+            <textarea style="height:60px;resize:none">仙峰雪夜，月光皎洁，少年道袍立山巅，手握长剑，气势凌人，云雾缭绕，电影感构图</textarea>
+            <label>时长 / 运镜</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <select><option>3.5 秒</option></select>
+              <select><option>缓推</option></select>
+            </div>
+          </div>
+          <div style="padding:0 14px 14px">
+            <button class="btn btn-block" onclick="showToast('🎬 开始生成视频...')">
+              🪄 立即生成（消耗 6 算力）
+            </button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C6 · 图生视频工坊</div>
+      <div class="phone-desc">5 模型聚合 · 智能调度</div>
+    </div>
+
+    <!-- C7 配音中心 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">AI 配音中心</div>
+            <div class="ic">⋯</div>
+          </div>
+          <div class="chips">
+            <span class="active">男声</span>
+            <span>女声</span>
+            <span>童声</span>
+            <span>老者</span>
+            <span>声音克隆</span>
+          </div>
+          <div class="voice-pick">
+            <div class="vc on">
+              <div class="av">少</div>
+              <div class="info"><h4>少年陈寒（绑定主角）</h4><p>清亮 · 16 岁少年 · 豆包 V3</p></div>
+              <div class="play" onclick="event.stopPropagation();showToast('播放试听')">▶</div>
+            </div>
+            <div class="vc" onclick="showToast('已选择')">
+              <div class="av" style="background:linear-gradient(135deg,#10b981,#06b6d4)">男</div>
+              <div class="info"><h4>磁性大叔</h4><p>沉稳 · 35 岁 · 火山 TTS</p></div>
+              <div class="play" onclick="event.stopPropagation();showToast('播放试听')">▶</div>
+            </div>
+            <div class="vc" onclick="showToast('已选择')">
+              <div class="av" style="background:linear-gradient(135deg,#fbbf24,#dc2626)">老</div>
+              <div class="info"><h4>仙风道骨老者</h4><p>苍劲 · 60 岁 · 讯飞 X3</p></div>
+              <div class="play" onclick="event.stopPropagation();showToast('播放试听')">▶</div>
+            </div>
+            <div class="vc" onclick="showToast('已选择')">
+              <div class="av" style="background:linear-gradient(135deg,#7c3aed,#dc2626)">克</div>
+              <div class="info"><h4>+ 上传 30 秒声音克隆</h4><p>CosyVoice 2 · 仅授权使用</p></div>
+              <div class="play">⊕</div>
+            </div>
+          </div>
+          <div class="ai-bubble">
+            <div class="lbl">口型对齐</div>
+            <div>已自动调用海螺 02 原生中文对口型，多角色对话准确率 95%+。</div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block" onclick="showToast('🎙️ 全集配音生成中...')">
+              🪄 一键生成全集配音（30 集）
+            </button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C7 · AI 配音中心</div>
+      <div class="phone-desc">音色绑定 · 一键配音</div>
+    </div>
+
+    <!-- C8 项目列表 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">我的项目（7）</div>
+            <div class="ic" onclick="showToast('新建项目')">+</div>
+          </div>
+          <div class="chips">
+            <span class="active">全部</span>
+            <span>制作中（5）</span>
+            <span>已完成（2）</span>
+            <span>草稿</span>
+          </div>
+          <div class="proj-card" onclick="showToast('打开《九霄修仙录》')">
+            <div class="h">
+              <h4>九霄修仙录</h4>
+              <span class="stat work">制作中</span>
+            </div>
+            <div class="desc">玄幻 · 30 集 · 已完成 12 集</div>
+            <div class="progress"><i style="width:40%"></i></div>
+            <div class="meta">
+              <span>👥 团队 4 人</span>
+              <span>更新于 2 小时前</span>
+            </div>
+          </div>
+          <div class="proj-card" onclick="showToast('打开《重生之都市霸总》')">
+            <div class="h">
+              <h4>重生之都市霸总</h4>
+              <span class="stat work">制作中</span>
+            </div>
+            <div class="desc">都市 · 50 集 · 已完成 23 集</div>
+            <div class="progress"><i style="width:46%"></i></div>
+            <div class="meta">
+              <span>👥 团队 6 人</span>
+              <span>更新于昨天</span>
+            </div>
+          </div>
+          <div class="proj-card" onclick="showToast('打开《兴安诡事》')">
+            <div class="h">
+              <h4>兴安诡事</h4>
+              <span class="stat done">已完成</span>
+            </div>
+            <div class="desc">悬疑 · 12 集 · 全网播放 2.1 亿</div>
+            <div class="progress"><i style="width:100%;background:#10b981"></i></div>
+            <div class="meta">
+              <span>💰 分账 ¥165 万</span>
+              <span>2 周前完成</span>
+            </div>
+          </div>
+          <div class="proj-card" onclick="showToast('打开《古风武侠》草稿')">
+            <div class="h">
+              <h4>古风武侠 · 仗剑江湖</h4>
+              <span class="stat draft">草稿</span>
+            </div>
+            <div class="desc">古风 · 大纲已完成 · 等待开工</div>
+            <div class="progress"><i style="width:8%"></i></div>
+            <div class="meta">
+              <span>👤 单人</span>
+              <span>3 天前</span>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item" onclick="showToast('打开工作台')"><span class="ico">⚒️</span>工作台</div>
+          <div class="item active"><span class="ico">📂</span>项目</div>
+          <div class="item"><span class="ico">🛒</span>市场</div>
+          <div class="item"><span class="ico">👤</span>我的</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C8 · 项目列表</div>
+      <div class="phone-desc">协同 · 进度 · 收益</div>
+    </div>
+
+    <!-- C9 一键分发 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">一键分发</div>
+            <div class="ic">⋯</div>
+          </div>
+          <div style="padding:14px">
+            <div style="background:#f9fbfe;padding:14px;border-radius:10px;border:1px solid #f0f3f8">
+              <h4 style="font-size:13px;font-weight:600">《九霄修仙录》第 13 集</h4>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">2 分 38 秒 · 1080P · 已通过 AI 审核</div>
+            </div>
+          </div>
+          <div style="padding:0 14px;font-size:13px;font-weight:600;margin-bottom:8px">选择分发渠道</div>
+          <div style="padding:0 14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:2px solid var(--primary);border-radius:10px;margin-bottom:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:8px;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">抖</div>
+                <div><h4 style="font-size:13px;font-weight:600">抖音剧场 / 红果短剧</h4><p style="font-size:11px;color:var(--muted)">已授权 · 字节系</p></div>
+              </div>
+              <div style="background:var(--primary);color:#fff;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600">已选</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:2px solid var(--primary);border-radius:10px;margin-bottom:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:8px;background:#fb7299;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">快</div>
+                <div><h4 style="font-size:13px;font-weight:600">快手 / 星芽短剧</h4><p style="font-size:11px;color:var(--muted)">已授权 · 快手系</p></div>
+              </div>
+              <div style="background:var(--primary);color:#fff;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600">已选</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('已选择视频号')">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:8px;background:#1aad19;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">微</div>
+                <div><h4 style="font-size:13px;font-weight:600">微信视频号</h4><p style="font-size:11px;color:var(--muted)">需登录授权</p></div>
+              </div>
+              <div style="color:var(--muted);font-size:14px">＋</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('已选择自有 App')">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">漫</div>
+                <div><h4 style="font-size:13px;font-weight:600">自有漫剧 App</h4><p style="font-size:11px;color:var(--muted)">100% 收益</p></div>
+              </div>
+              <div style="color:var(--muted);font-size:14px">＋</div>
+            </div>
+          </div>
+          <div style="padding:14px">
+            <button class="btn btn-block" onclick="openModal('publishSuccess')">🚀 立即一键分发</button>
+          </div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">C9 · 一键分发</div>
+      <div class="phone-desc">多平台授权 · 一键发布</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 管理后台 -->
+<div class="group" data-group="admin">
+  <div class="group-title">
+    <span class="pill admin">ADMIN</span>
+    <h2>管理后台 · 移动端简版</h2>
+    <p>管理员随时随地审核 / 看数据 / 处理告警，PC 端为完整功能</p>
+  </div>
+  <div class="grid">
+
+    <!-- M1 数据看板 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status dark"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="admin-h">
+            <h2>👋 早安，运营管理员</h2>
+            <p>今日已审核 28 部 · 处理告警 3 条</p>
+          </div>
+          <div class="admin-stats">
+            <div class="admin-stat">
+              <div class="v">¥ 86.5万</div>
+              <div class="k">今日总收入</div>
+              <div class="delta">↑ 12.3% vs 昨日</div>
+            </div>
+            <div class="admin-stat">
+              <div class="v">2.4万</div>
+              <div class="k">新增用户</div>
+              <div class="delta">↑ 8.6%</div>
+            </div>
+            <div class="admin-stat">
+              <div class="v">128万</div>
+              <div class="k">日活用户</div>
+              <div class="delta">↑ 3.2%</div>
+            </div>
+            <div class="admin-stat">
+              <div class="v">8,432</div>
+              <div class="k">VIP 转化</div>
+              <div class="delta down">↓ 2.1%</div>
+            </div>
+          </div>
+          <div style="padding:14px">
+            <h4 style="font-size:13px;font-weight:600;margin-bottom:8px">🔥 今日 TOP 5 热剧</h4>
+            <div style="background:#fff;border:1px solid #f0f3f8;border-radius:10px;overflow:hidden">
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f3f8;font-size:12px"><span>🥇 九霄修仙录</span><span style="color:var(--primary);font-weight:600">¥18.6万</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f3f8;font-size:12px"><span>🥈 重生之都市霸总</span><span style="color:var(--primary);font-weight:600">¥12.4万</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f3f8;font-size:12px"><span>🥉 古风仗剑江湖</span><span style="color:var(--primary);font-weight:600">¥8.9万</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f0f3f8;font-size:12px"><span>4️⃣ 兴安诡事</span><span style="color:var(--primary);font-weight:600">¥6.5万</span></div>
+              <div style="display:flex;justify-content:space-between;padding:10px 12px;font-size:12px"><span>5️⃣ 末世重生录</span><span style="color:var(--primary);font-weight:600">¥4.8万</span></div>
+            </div>
+          </div>
+          <div class="ai-bubble">
+            <div class="lbl">⚠️ 告警提示</div>
+            <div>有 3 部新作品命中敏感词，请优先处理。</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item active"><span class="ico">📊</span>看板</div>
+          <div class="item" onclick="switchToScreen('audit')"><span class="ico">🔎</span>审核</div>
+          <div class="item"><span class="ico">👥</span>创作者</div>
+          <div class="item"><span class="ico">⚙️</span>设置</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">M1 · 数据看板</div>
+      <div class="phone-desc">收入 · 用户 · TOP 热剧</div>
+    </div>
+
+    <!-- M2 内容审核 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">内容审核（待 28）</div>
+            <div class="ic">⋯</div>
+          </div>
+          <div class="chips">
+            <span class="active">全部</span>
+            <span class="" onclick="showToast('AI 拦截')">AI 拦截 (3)</span>
+            <span>疑似 (12)</span>
+            <span>申诉 (4)</span>
+          </div>
+          <div class="audit-row">
+            <div class="cv">🎬</div>
+            <div class="info">
+              <h4>九霄修仙录 · 第 13 集</h4>
+              <p>张导演 · 2 小时前提交 · AI 评分 98</p>
+              <p style="color:#15803d;margin-top:4px">✓ 无敏感内容</p>
+            </div>
+            <div class="actions">
+              <button class="pass" onclick="showToast('已通过审核')">通过</button>
+              <button class="reject" onclick="showToast('已打回')">打回</button>
+            </div>
+          </div>
+          <div class="audit-row">
+            <div class="cv" style="background:linear-gradient(135deg,#ef4444,#7c2d12)">⚠️</div>
+            <div class="info">
+              <h4>末世重生录 · 第 8 集</h4>
+              <p>李创作 · 30 分钟前提交</p>
+              <p style="color:#dc2626;margin-top:4px">⚠ AI 检出：暴力镜头 2 处</p>
+            </div>
+            <div class="actions">
+              <button class="pass" onclick="showToast('已通过')">通过</button>
+              <button class="reject" onclick="showToast('已打回，已标注')">打回</button>
+            </div>
+          </div>
+          <div class="audit-row">
+            <div class="cv">🎬</div>
+            <div class="info">
+              <h4>都市霸总 · 第 23 集</h4>
+              <p>王工作室 · 4 小时前</p>
+              <p style="color:#b45309;margin-top:4px">⚠ 疑似撞脸明星</p>
+            </div>
+            <div class="actions">
+              <button class="pass" onclick="showToast('已通过')">通过</button>
+              <button class="reject" onclick="showToast('已打回')">打回</button>
+            </div>
+          </div>
+          <div class="audit-row">
+            <div class="cv">🎬</div>
+            <div class="info">
+              <h4>古风仗剑 · 第 5 集</h4>
+              <p>刘导演 · 6 小时前</p>
+              <p style="color:#15803d;margin-top:4px">✓ 已通过初审</p>
+            </div>
+            <div class="actions">
+              <button class="pass" onclick="showToast('已通过')">通过</button>
+              <button class="reject" onclick="showToast('已打回')">打回</button>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item"><span class="ico">📊</span>看板</div>
+          <div class="item active"><span class="ico">🔎</span>审核</div>
+          <div class="item"><span class="ico">👥</span>创作者</div>
+          <div class="item"><span class="ico">⚙️</span>设置</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">M2 · 内容审核</div>
+      <div class="phone-desc">AI 双闸 · 一键过审</div>
+    </div>
+
+    <!-- M3 创作者管理 -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="notch"></div><div class="screen">
+        <div class="status"><span>9:41</span><span>● ▌▌ 100%</span></div>
+        <div class="body" style="padding:0">
+          <div class="nav">
+            <div class="ic" onclick="showToast('返回')">←</div>
+            <div class="ttl">创作者管理</div>
+            <div class="ic">🔍</div>
+          </div>
+          <div class="chips">
+            <span class="active">已签约（83）</span>
+            <span>申请中（12）</span>
+            <span>黑名单（2）</span>
+          </div>
+          <div style="padding:0 14px">
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('张导演详情')">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#dc2626);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">张</div>
+              <div style="flex:1">
+                <h4 style="font-size:13px;font-weight:600">张导演 <span class="badge vip" style="margin-left:4px">S 级</span></h4>
+                <p style="font-size:11px;color:var(--muted)">23 部完结 · ¥1,250 万累计收益</p>
+              </div>
+              <span style="color:#15803d;font-size:13px;font-weight:700">🔥</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('李创作详情')">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#06b6d4,#1e3a8a);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">李</div>
+              <div style="flex:1">
+                <h4 style="font-size:13px;font-weight:600">李创作 <span class="badge new" style="margin-left:4px">A 级</span></h4>
+                <p style="font-size:11px;color:var(--muted)">8 部完结 · ¥420 万累计</p>
+              </div>
+              <span style="color:#1d4ed8;font-size:13px;font-weight:700">↑</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('王工作室详情')">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">王</div>
+              <div style="flex:1">
+                <h4 style="font-size:13px;font-weight:600">王工作室 <span class="badge new" style="margin-left:4px">B 级</span></h4>
+                <p style="font-size:11px;color:var(--muted)">12 部 · 团队 8 人 · ¥680 万</p>
+              </div>
+              <span style="color:#1d4ed8;font-size:13px;font-weight:700">→</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px;background:#fff;border:1px solid #f0f3f8;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="showToast('新申请审批')">
+              <div style="width:42px;height:42px;border-radius:50%;background:#f0f4fa;color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700">新</div>
+              <div style="flex:1">
+                <h4 style="font-size:13px;font-weight:600">12 位创作者待审批</h4>
+                <p style="font-size:11px;color:var(--muted)">查看申请详情 →</p>
+              </div>
+              <button class="btn" style="padding:5px 10px;font-size:11px">审批</button>
+            </div>
+          </div>
+          <div style="padding:14px">
+            <h4 style="font-size:13px;font-weight:600;margin-bottom:8px">分账规则</h4>
+            <div style="background:#f9fbfe;padding:12px;border-radius:10px;border:1px solid #f0f3f8;font-size:12px;line-height:1.7">
+              <div>S 级：分成 70% · 月度激励 ¥3-10 万</div>
+              <div>A 级：分成 60% · 月度激励 ¥1-3 万</div>
+              <div>B 级：分成 50% · 阶梯激励</div>
+              <div>新人：分成 40% · 首部保底 ¥2 万</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="item"><span class="ico">📊</span>看板</div>
+          <div class="item"><span class="ico">🔎</span>审核</div>
+          <div class="item active"><span class="ico">👥</span>创作者</div>
+          <div class="item"><span class="ico">⚙️</span>设置</div>
+        </div>
+        <div class="home-bar"></div>
+      </div></div>
+      <div class="phone-name">M3 · 创作者管理</div>
+      <div class="phone-desc">分级 · 收益 · 分账规则</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: unlock -->
+<div class="modal-overlay" id="modal-unlock">
+  <div class="modal">
+    <div style="font-size:36px">🔒</div>
+    <h3>解锁本集观看</h3>
+    <div class="price-big">¥ 1.99<small>/集</small></div>
+    <p>开通 VIP 还可享所有剧集免费看，年卡日均仅 1 元</p>
+    <div class="actions">
+      <button class="cancel" onclick="closeModal('unlock')">稍后再说</button>
+      <button class="ok" onclick="closeModal('unlock');showToast('解锁成功，开始播放')">立即解锁</button>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-warn btn-block" onclick="closeModal('unlock');switchToScreen('vip')">
+        👑 开通 VIP（¥99/季 · 全场免费看）
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: pay success -->
+<div class="modal-overlay" id="modal-paySuccess">
+  <div class="modal">
+    <div style="font-size:48px;color:#10b981">✓</div>
+    <h3>支付成功</h3>
+    <p>恭喜你成为 VIP 季卡会员，有效期至 2026-08-08</p>
+    <div class="actions">
+      <button class="ok" style="flex:none;padding:10px 24px" onclick="closeModal('paySuccess')">开始畅享</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: publish success -->
+<div class="modal-overlay" id="modal-publishSuccess">
+  <div class="modal">
+    <div style="font-size:48px;color:#10b981">🚀</div>
+    <h3>分发成功</h3>
+    <p>已成功发布到抖音剧场、星芽短剧 2 个平台。预计 30 分钟内审核上线，首小时数据将在 60 分钟后显示。</p>
+    <div class="actions">
+      <button class="ok" style="flex:none;padding:10px 24px" onclick="closeModal('publishSuccess')">查看分发记录</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="foot">
+  <p><strong>AI 漫剧智造平台 · 交互原型 v1.0</strong></p>
+  <p style="margin-top:8px">基于 iPhone 15 Pro Max（393×852）适配 · 共 18 屏交互页面</p>
+  <p style="margin-top:6px">操作指引：点击顶部 Tab 切换端 · 点击各屏内按钮/列表/弹窗触发交互 · 支持 Modal / Toast / 切屏</p>
+  <p style="margin-top:6px;color:#10b981">已兼容 Chrome / Safari / Firefox / Edge 主流浏览器，可直接双击打开 HTML 文件运行</p>
+</div>
+
+<script>
+  // tab filter
+  const tabs=document.querySelectorAll('.tabs button');
+  const groups=document.querySelectorAll('.group');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const f=t.dataset.filter;
+    groups.forEach(g=>{
+      g.classList.toggle('hide',f!=='all'&&g.dataset.group!==f);
+    });
+    window.scrollTo({top:document.querySelector('.tabs').offsetTop-10,behavior:'smooth'});
+  }));
+
+  // toast
+  let toastTimer;
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+  }
+
+  // modal
+  function openModal(id){
+    document.getElementById('modal-'+id).classList.add('show');
+  }
+  function closeModal(id){
+    document.getElementById('modal-'+id).classList.remove('show');
+  }
+
+  // switch to screen (scroll to phone with name match)
+  function switchToScreen(key){
+    const map={
+      'vip':'A6 · VIP 会员',
+      'proj':'C8 · 项目列表',
+      'vid':'C6 · 图生视频工坊',
+      'audit':'M2 · 内容审核'
+    };
+    const name=map[key];
+    if(!name)return;
+    const all=document.querySelectorAll('.phone-name');
+    for(const el of all){
+      if(el.textContent.includes(name)){
+        el.scrollIntoView({behavior:'smooth',block:'center'});
+        const phone=el.previousElementSibling;
+        phone.style.transform='translateY(-8px) scale(1.04)';
+        phone.style.boxShadow='0 32px 80px rgba(37,99,235,.35)';
+        setTimeout(()=>{phone.style.transform='';phone.style.boxShadow=''},1800);
+        break;
+      }
+    }
+  }
+
+  // close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(o=>{
+    o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show')});
+  });
+</script>
+</body>
+</html>

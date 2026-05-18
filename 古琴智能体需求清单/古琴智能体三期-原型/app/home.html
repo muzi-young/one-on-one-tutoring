@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>APP 首页 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar dark" style="background:linear-gradient(180deg,#2a1d0f 0%,#5b3a18 100%);color:#fff;">
+      <span>9:41</span>
+      <span style="display:flex;gap:5px;align-items:center;"><span>●●●●</span><span>📶</span><span>🔋</span></span>
+    </div>
+    <div class="app-body" style="background:#f7f3e9;">
+      <!-- 顶部头图 -->
+      <div style="background:linear-gradient(180deg,#5b3a18 0%,#2a1d0f 100%);color:#fff;padding:0 20px 24px;margin-top:-8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+          <div>
+            <div style="font-size:12px;opacity:.7;">📍 北京</div>
+            <div style="font-size:13px;margin-top:2px;">您好，琴友 ✦</div>
+          </div>
+          <div style="display:flex;gap:14px;font-size:20px;">
+            <a href="message.html" style="color:#fff;position:relative;">🔔<span style="position:absolute;top:-4px;right:-6px;background:#e74c3c;color:#fff;font-size:9px;padding:1px 5px;border-radius:9px;">3</span></a>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;">
+          <span style="opacity:.7;">🔍</span><span style="opacity:.7;">搜曲目 / 课程 / 名家</span>
+        </div>
+        <!-- 入口图标 -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px;text-align:center;font-size:11px;">
+          <a href="course.html" style="color:inherit;cursor:pointer;"><div style="background:rgba(255,255,255,.15);height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:5px;">🎼</div>课程</a>
+          <a href="humming.html" style="color:inherit;cursor:pointer;"><div style="background:rgba(255,255,255,.15);height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:5px;">🎙</div>哼唱识曲</a>
+          <a href="score.html" style="color:inherit;cursor:pointer;"><div style="background:rgba(255,255,255,.15);height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:5px;">📚</div>曲谱库</a>
+          <a href="qa.html" style="color:inherit;cursor:pointer;"><div style="background:rgba(255,255,255,.15);height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:5px;">💬</div>智能问答</a>
+        </div>
+      </div>
+
+      <!-- 正在直播 -->
+      <div class="section">
+        <div class="section-title"><h4 class="ink-title">🔴 正在直播</h4><a>查看全部 ›</a></div>
+        <a class="live-card" href="live.html" style="display:block;color:inherit;">
+          <div class="live-cover" style="background:linear-gradient(135deg,#3a2f1e 0%,#7a5a2c 60%,#a86d2c 100%);">
+            <span class="badge"><span class="pulse"></span>LIVE</span>
+            <span class="views">👁 1,243</span>
+            <div>
+              <div class="ink-title" style="font-size:18px;font-weight:bold;">《流水》技法直播课</div>
+              <div style="font-size:12px;opacity:.9;margin-top:3px;">数字人 · 师姐 阿琴 · 名家授课 7折</div>
+            </div>
+          </div>
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:12px;color:#888;">⏱ 已开播 18 分钟 · 23 人正在咨询</div>
+            <span style="background:var(--gold);color:#fff;padding:5px 14px;border-radius:99px;font-size:12px;">进入 →</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 直播预告 -->
+      <div class="section">
+        <div class="section-title"><h4 class="ink-title">⏰ 直播预告</h4><a>更多</a></div>
+        <a href="reserve.html" style="display:flex;background:#fff;border-radius:12px;padding:12px;gap:12px;color:inherit;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);margin-bottom:8px;">
+          <div style="width:60px;height:60px;border-radius:10px;background:linear-gradient(135deg,#d6b06b,#8b6a36);color:#fff;text-align:center;font-size:11px;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:18px;font-weight:bold;">17</div>5月
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">《广陵散》赏析夜话</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;">明晚 20:00 · 名家 张老师</div>
+            <div style="font-size:11px;color:var(--gold);margin-top:3px;">⭐ 328 人已预约</div>
+          </div>
+          <button class="btn sm primary">预约</button>
+        </a>
+        <div style="display:flex;background:#fff;border-radius:12px;padding:12px;gap:12px;color:inherit;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);">
+          <div style="width:60px;height:60px;border-radius:10px;background:linear-gradient(135deg,#a8c0e0,#5b7ba6);color:#fff;text-align:center;font-size:11px;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:18px;font-weight:bold;">19</div>5月
+          </div>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:14px;">琴弦保养答疑直播</div>
+            <div style="font-size:11px;color:#888;margin-top:3px;">5/19 19:30 · 数字人主持</div>
+            <div style="font-size:11px;color:var(--gold);margin-top:3px;">⭐ 102 人已预约</div>
+          </div>
+          <button class="btn sm">预约</button>
+        </div>
+      </div>
+
+      <!-- 精选回放 -->
+      <div class="section">
+        <div class="section-title"><h4 class="ink-title">📺 精选回放</h4><a href="replay.html">更多</a></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <a href="replay.html" style="background:#fff;border-radius:12px;overflow:hidden;color:inherit;">
+            <div style="height:90px;background:linear-gradient(135deg,#e9d3a0,#b08949);position:relative;">
+              <span style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;">42:18</span>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;line-height:1.3;">《阳关三叠》入门</div>
+              <div style="font-size:10px;color:#888;margin-top:3px;">👁 8.2k · 3天前</div>
+            </div>
+          </a>
+          <a href="replay.html" style="background:#fff;border-radius:12px;overflow:hidden;color:inherit;">
+            <div style="height:90px;background:linear-gradient(135deg,#f0c2a0,#c5836d);position:relative;">
+              <span style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;">28:46</span>
+            </div>
+            <div style="padding:8px 10px;">
+              <div style="font-size:12px;font-weight:600;line-height:1.3;">琴弦保养答疑</div>
+              <div style="font-size:10px;color:#888;margin-top:3px;">👁 5.6k · 1周前</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <a class="on"><span class="ic">🏠</span>首页</a>
+      <a href="course.html"><span class="ic">🎼</span>课程</a>
+      <a href="humming.html"><span class="ic">🎙</span>识曲</a>
+      <a href="message.html"><span class="ic">💬</span>消息</a>
+      <a href="mine.html"><span class="ic">👤</span>我的</a>
+    </div>
+  </div></div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="app/home.html" data-crumbs="用户端APP / <b>APP 首页</b>" data-depth="1"></script>
+</body></html>

@@ -1,0 +1,1683 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>听书APP用户交互原型 Demo</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --phone: #ffffff;
+      --text: #182230;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --soft: #f2f4f7;
+      --primary: #2563eb;
+      --primary-dark: #1749b8;
+      --primary-soft: #eaf1ff;
+      --green: #12b76a;
+      --amber: #f79009;
+      --red: #f04438;
+      --shadow: 0 24px 70px rgba(15, 23, 42, .18);
+      --radius: 22px;
+      --tabbar: 76px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Microsoft YaHei", "PingFang SC", "Source Han Sans SC", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(37, 99, 235, .18), transparent 32%),
+        radial-gradient(circle at 88% 30%, rgba(18, 183, 106, .12), transparent 34%),
+        var(--bg);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .demo-shell {
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr 430px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .side-note {
+      position: sticky;
+      top: 28px;
+      color: #344054;
+    }
+
+    .side-note h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .side-note p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .flow-list {
+      padding: 14px;
+      border: 1px solid rgba(37, 99, 235, .14);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .7);
+      backdrop-filter: blur(10px);
+    }
+
+    .flow-list strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .flow-list span {
+      display: block;
+      margin: 7px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .phone {
+      width: 430px;
+      height: 932px;
+      overflow: hidden;
+      position: relative;
+      border: 12px solid #111827;
+      border-radius: 48px;
+      background: var(--phone);
+      box-shadow: var(--shadow);
+    }
+
+    .island {
+      position: absolute;
+      z-index: 30;
+      top: 14px;
+      left: 50%;
+      width: 126px;
+      height: 34px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: #101828;
+    }
+
+    .statusbar {
+      height: 54px;
+      padding: 18px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #f8fbff 0%, #fff 30%);
+    }
+
+    .view {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 0 18px calc(var(--tabbar) + 24px);
+      scrollbar-width: none;
+    }
+
+    .view::-webkit-scrollbar {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .top {
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .top h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+      letter-spacing: -.04em;
+    }
+
+    .top small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      color: var(--text);
+      background: var(--soft);
+      display: grid;
+      place-items: center;
+      transition: .18s ease;
+    }
+
+    .icon-btn:hover,
+    .icon-btn:focus-visible {
+      background: var(--primary-soft);
+      color: var(--primary);
+      outline: 2px solid rgba(37, 99, 235, .22);
+    }
+
+    .search {
+      margin: 18px 0;
+      min-height: 50px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 28px rgba(16, 24, 40, .05);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .banner {
+      padding: 20px;
+      border-radius: 28px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, .95), rgba(37, 99, 235, .88)),
+        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, .35), transparent 30%);
+      box-shadow: 0 22px 38px rgba(37, 99, 235, .24);
+    }
+
+    .banner .kicker {
+      color: rgba(255, 255, 255, .72);
+      font-size: 12px;
+    }
+
+    .banner h3 {
+      margin: 8px 0 8px;
+      font-size: 24px;
+      letter-spacing: -.04em;
+    }
+
+    .banner p {
+      margin: 0 0 16px;
+      color: rgba(255, 255, 255, .78);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 42px;
+      padding: 0 16px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--primary);
+      font-weight: 700;
+      font-size: 14px;
+      transition: .18s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      background: var(--primary-dark);
+      outline: 2px solid rgba(37, 99, 235, .25);
+    }
+
+    .btn.secondary {
+      color: var(--text);
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .btn.ghost {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .btn.danger {
+      color: #fff;
+      background: var(--red);
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-head {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -.03em;
+    }
+
+    .section-head button {
+      color: var(--primary);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chips {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      white-space: nowrap;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #344054;
+      background: var(--soft);
+      font-size: 13px;
+      transition: .18s ease;
+    }
+
+    .chip.active,
+    .chip:hover,
+    .chip:focus-visible {
+      color: #fff;
+      background: var(--primary);
+      outline: none;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .book-card,
+    .list-card,
+    .message-card,
+    .setting-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 12px 28px rgba(16, 24, 40, .05);
+    }
+
+    .book-card {
+      padding: 12px;
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .book-card:hover,
+    .book-card:focus-visible,
+    .list-card:hover,
+    .message-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 99, 235, .35);
+      outline: none;
+    }
+
+    .cover {
+      height: 126px;
+      border-radius: 18px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #fff;
+      background: linear-gradient(135deg, #1d2939, #2563eb);
+    }
+
+    .cover.alt {
+      background: linear-gradient(135deg, #14532d, #12b76a);
+    }
+
+    .cover.warm {
+      background: linear-gradient(135deg, #7c2d12, #f79009);
+    }
+
+    .cover.purple {
+      background: linear-gradient(135deg, #312e81, #7c3aed);
+    }
+
+    .cover span {
+      font-size: 12px;
+      opacity: .82;
+    }
+
+    .cover strong {
+      font-size: 20px;
+      letter-spacing: -.04em;
+    }
+
+    .book-card h4,
+    .list-card h4 {
+      margin: 10px 0 5px;
+      font-size: 15px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .list-card {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 12px;
+      text-align: left;
+      margin-bottom: 12px;
+    }
+
+    .mini-cover {
+      width: 74px;
+      height: 92px;
+      border-radius: 17px;
+      color: #fff;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 8px;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 7px;
+      overflow: hidden;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: var(--soft);
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      border-radius: inherit;
+      background: var(--primary);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 5px;
+      border-radius: 18px;
+      background: var(--soft);
+    }
+
+    .tab {
+      height: 38px;
+      border-radius: 14px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tab.active {
+      color: var(--text);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(16, 24, 40, .08);
+    }
+
+    .detail-hero {
+      margin-top: 14px;
+      padding: 18px;
+      border-radius: 28px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .detail-main {
+      display: grid;
+      grid-template-columns: 116px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .detail-cover {
+      height: 154px;
+      border-radius: 24px;
+      color: #fff;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 12px;
+      font-weight: 900;
+      font-size: 20px;
+      box-shadow: 0 18px 32px rgba(37, 99, 235, .18);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 9px 0;
+    }
+
+    .badge {
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .intro {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .chapter {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 14px;
+      margin-bottom: 8px;
+      border-radius: 16px;
+      color: var(--text);
+      background: var(--soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+    }
+
+    .chapter span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .player-page {
+      text-align: center;
+    }
+
+    .player-cover {
+      width: 252px;
+      height: 252px;
+      margin: 28px auto 22px;
+      border-radius: 50%;
+      color: #fff;
+      background:
+        radial-gradient(circle at center, #0b1220 0 16%, #2563eb 17% 20%, #0f172a 21% 100%);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 24px 50px rgba(37, 99, 235, .28);
+      animation: spin 12s linear infinite;
+      animation-play-state: paused;
+    }
+
+    .playing .player-cover {
+      animation-play-state: running;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .player-controls {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .play {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-size: 24px;
+      box-shadow: 0 16px 28px rgba(37, 99, 235, .26);
+    }
+
+    .tool-row {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .tool {
+      min-height: 58px;
+      border-radius: 18px;
+      color: #344054;
+      background: var(--soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .message-card {
+      padding: 14px;
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 10px;
+      align-items: start;
+      text-align: left;
+    }
+
+    .dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .unread {
+      width: 8px;
+      height: 8px;
+      margin-top: 8px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .profile-head {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 28px;
+      color: #fff;
+      background: linear-gradient(135deg, #111827, #2563eb);
+    }
+
+    .avatar-line {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .avatar {
+      width: 66px;
+      height: 66px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .16);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 900;
+      border: 1px solid rgba(255, 255, 255, .28);
+    }
+
+    .profile-head h3 {
+      margin: 0 0 4px;
+    }
+
+    .profile-stats {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      text-align: center;
+    }
+
+    .profile-stats div {
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .14);
+    }
+
+    .profile-stats strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .profile-stats span {
+      color: rgba(255, 255, 255, .72);
+      font-size: 12px;
+    }
+
+    .setting-card {
+      width: 100%;
+      min-height: 56px;
+      padding: 0 14px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+      color: var(--text);
+    }
+
+    .switch {
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      padding: 3px;
+      background: #d0d5dd;
+      transition: .18s ease;
+    }
+
+    .switch i {
+      display: block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: .18s ease;
+    }
+
+    .switch.on {
+      background: var(--primary);
+    }
+
+    .switch.on i {
+      transform: translateX(20px);
+    }
+
+    .tabbar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      height: var(--tabbar);
+      padding: 8px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .92);
+      border: 1px solid rgba(228, 231, 236, .9);
+      box-shadow: 0 18px 42px rgba(16, 24, 40, .13);
+      backdrop-filter: blur(18px);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      z-index: 20;
+    }
+
+    .nav {
+      border-radius: 20px;
+      color: var(--muted);
+      background: transparent;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 700;
+      transition: .18s ease;
+    }
+
+    .nav b {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .nav.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    .modal-backdrop,
+    .toast-wrap {
+      position: absolute;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .modal-backdrop {
+      inset: 0;
+      display: none;
+      align-items: end;
+      background: rgba(15, 23, 42, .38);
+      pointer-events: auto;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .sheet {
+      width: 100%;
+      max-height: 78%;
+      overflow: auto;
+      padding: 18px;
+      border-radius: 30px 30px 0 0;
+      background: #fff;
+      box-shadow: 0 -16px 48px rgba(16, 24, 40, .22);
+    }
+
+    .sheet h3 {
+      margin: 0 0 8px;
+    }
+
+    .field {
+      margin: 13px 0;
+      text-align: left;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      outline: none;
+      resize: none;
+      min-height: 46px;
+    }
+
+    .field textarea {
+      min-height: 100px;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    }
+
+    .error-text {
+      display: none;
+      margin-top: 6px;
+      color: var(--red);
+      font-size: 12px;
+    }
+
+    .field.invalid .error-text {
+      display: block;
+    }
+
+    .toast-wrap {
+      top: 72px;
+      left: 18px;
+      right: 18px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: #fff;
+      background: rgba(16, 24, 40, .92);
+      box-shadow: 0 12px 26px rgba(16, 24, 40, .18);
+      animation: toastIn .25s ease;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+    }
+
+    .empty {
+      padding: 26px 18px;
+      text-align: center;
+      border: 1px dashed #d0d5dd;
+      border-radius: 22px;
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .chat-list {
+      padding: 14px;
+      border-radius: 22px;
+      background: var(--soft);
+      min-height: 250px;
+    }
+
+    .bubble {
+      width: fit-content;
+      max-width: 78%;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border-radius: 16px;
+      color: #344054;
+      background: #fff;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .bubble.me {
+      margin-left: auto;
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 920px) {
+      .demo-shell {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .side-note {
+        position: static;
+        max-width: 430px;
+      }
+
+      .side-note.right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .demo-shell {
+        padding: 0;
+      }
+
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      .island {
+        display: none;
+      }
+
+      .side-note {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="demo-shell">
+    <aside class="side-note">
+      <h1>听书APP用户交互原型</h1>
+      <p>基于当前需求清单制作的移动端 Demo，聚焦用户端浏览、搜索、详情、播放、书架、消息、个人中心、反馈与客服闭环。</p>
+      <div class="flow-list">
+        <strong>建议演示路径</strong>
+        <span>1. 首页点击“立即播放”进入播放器</span>
+        <span>2. 进入搜索，筛选分类并打开书籍详情</span>
+        <span>3. 在详情页加入书架、播放章节</span>
+        <span>4. 查看书架进度、消息通知、个人中心</span>
+        <span>5. 提交反馈或进入人工客服</span>
+      </div>
+    </aside>
+
+    <section class="phone" aria-label="移动端原型">
+      <div class="island" aria-hidden="true"></div>
+      <div class="app" id="app">
+        <div class="statusbar">
+          <span>9:41</span>
+          <span>5G 100%</span>
+        </div>
+
+        <section class="view active" data-view="home">
+          <div class="top">
+            <div>
+              <h2>首页</h2>
+              <small>精选好书与热门播放</small>
+            </div>
+            <button class="icon-btn" data-action="openMessages" aria-label="打开消息">铃</button>
+          </div>
+
+          <button class="search" data-go="discover" aria-label="进入搜索">
+            <span>搜</span>
+            <input value="" placeholder="搜索书名、作者、主播、分类" readonly>
+          </button>
+
+          <div class="banner">
+            <span class="kicker">今日推荐 · 历史人文</span>
+            <h3>中国通史精讲</h3>
+            <p>系统讲解朝代脉络、人物故事与时代背景，适合通勤、睡前和碎片化学习。</p>
+            <div class="btn-row">
+              <button class="btn secondary" data-action="playNow">立即播放</button>
+              <button class="btn" data-action="openDetail" data-book="0">查看详情</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3>分类导航</h3>
+              <button data-go="discover">全部分类</button>
+            </div>
+            <div class="chips" id="homeChips"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3>热门大字版</h3>
+              <button data-action="fontLarge">一键放大</button>
+            </div>
+            <div class="grid-two" id="hotBooks"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3>继续收听</h3>
+              <button data-go="shelf">去书架</button>
+            </div>
+            <button class="list-card" data-action="playNow">
+              <div class="mini-cover">红楼梦<br>精读</div>
+              <div>
+                <h4>红楼梦人物关系导读</h4>
+                <p class="meta">上次听到：第 12 讲 · 宝黛初会</p>
+                <div class="progress" style="--w: 46%"><i></i></div>
+              </div>
+            </button>
+          </div>
+        </section>
+
+        <section class="view" data-view="discover">
+          <div class="top">
+            <div>
+              <h2>搜索</h2>
+              <small>支持关键词、分类和排序筛选</small>
+            </div>
+            <button class="icon-btn" data-action="clearSearch" aria-label="清空搜索">清</button>
+          </div>
+
+          <label class="search">
+            <span>搜</span>
+            <input id="searchInput" placeholder="输入书名、作者、主播">
+          </label>
+
+          <div class="tabs" role="tablist" aria-label="搜索分组">
+            <button class="tab active" data-search-tab="hot">热门</button>
+            <button class="tab" data-search-tab="category">分类</button>
+            <button class="tab" data-search-tab="history">历史</button>
+          </div>
+
+          <div class="section" data-search-panel="hot">
+            <div class="chips" id="filterChips"></div>
+            <div class="section-head">
+              <h3>搜索结果</h3>
+              <button data-action="sortResults">按热度排序</button>
+            </div>
+            <div id="searchResults"></div>
+          </div>
+
+          <div class="section hidden" data-search-panel="category">
+            <div class="grid-two" id="categoryGrid"></div>
+          </div>
+
+          <div class="section hidden" data-search-panel="history">
+            <div class="empty">
+              <strong>搜索历史</strong>
+              <p>中国通史、三体、睡前故事、财经入门</p>
+              <button class="btn ghost" data-action="clearHistory">清空历史</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" data-view="detail">
+          <div class="top">
+            <button class="icon-btn" data-go="home" aria-label="返回首页">返</button>
+            <div>
+              <h2>详情页</h2>
+              <small>书籍信息、章节与评论</small>
+            </div>
+            <button class="icon-btn" data-action="share">享</button>
+          </div>
+
+          <div class="detail-hero">
+            <div class="detail-main">
+              <div class="detail-cover" id="detailCover">中国通史<br>精讲</div>
+              <div>
+                <h3 id="detailTitle">中国通史精讲</h3>
+                <p class="meta" id="detailMeta">历史 · 86集 · 12.8万人在听</p>
+                <div class="badge-row" id="detailBadges"></div>
+                <div class="btn-row">
+                  <button class="btn" data-action="playNow">开始播放</button>
+                  <button class="btn ghost" data-action="addShelf">加入书架</button>
+                </div>
+              </div>
+            </div>
+            <p class="intro" id="detailIntro">以人物和事件为线索，串联中国历史发展脉络，适合系统化听书学习。</p>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3>目录章节</h3>
+              <button data-action="toggleAllChapters">展开全部</button>
+            </div>
+            <div id="chapterList"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h3>听友评论</h3>
+              <button data-action="openComment">写评论</button>
+            </div>
+            <div class="message-card">
+              <div class="dot">评</div>
+              <div>
+                <strong>用户A</strong>
+                <p class="meta">讲得很清楚，章节时长也适合上下班路上听。</p>
+              </div>
+              <span class="meta">2赞</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="view player-page" data-view="player">
+          <div class="top">
+            <button class="icon-btn" data-go="detail" aria-label="返回详情">返</button>
+            <div>
+              <h2>播放页</h2>
+              <small id="playSub">第 1 讲 · 文明起源</small>
+            </div>
+            <button class="icon-btn" data-action="openPlaylist" aria-label="打开播放列表">列</button>
+          </div>
+
+          <div class="player-cover">
+            <strong id="playerTitle">中国通史精讲</strong>
+          </div>
+          <h3 id="playerChapter">第 1 讲：文明起源</h3>
+          <p class="meta">主播：知行讲堂 · 支持断点续播</p>
+
+          <div class="progress" style="--w: 38%"><i></i></div>
+          <div class="btn-row" style="justify-content: space-between; margin-top: 8px;">
+            <span class="meta">08:24</span>
+            <span class="meta">22:10</span>
+          </div>
+
+          <div class="player-controls">
+            <button class="icon-btn" data-action="prevChapter">上</button>
+            <button class="play" data-action="togglePlay" aria-label="播放或暂停">播</button>
+            <button class="icon-btn" data-action="nextChapter">下</button>
+          </div>
+
+          <div class="tool-row">
+            <button class="tool" data-action="changeSpeed">倍速<br><span id="speedText">1.0x</span></button>
+            <button class="tool" data-action="sleepTimer">定时<br>关闭</button>
+            <button class="tool" data-action="addShelf">书架<br>收藏</button>
+            <button class="tool" data-action="openComment">评论<br>互动</button>
+          </div>
+        </section>
+
+        <section class="view" data-view="shelf">
+          <div class="top">
+            <div>
+              <h2>书架</h2>
+              <small>收藏、播放历史与进度同步</small>
+            </div>
+            <button class="icon-btn" data-action="manageShelf" aria-label="管理书架">管</button>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-shelf-tab="all">全部</button>
+            <button class="tab" data-shelf-tab="recent">最近</button>
+            <button class="tab" data-shelf-tab="download">缓存</button>
+          </div>
+
+          <div class="section" id="shelfList"></div>
+        </section>
+
+        <section class="view" data-view="messages">
+          <div class="top">
+            <div>
+              <h2>消息</h2>
+              <small>系统通知、互动消息与客服回复</small>
+            </div>
+            <button class="icon-btn" data-action="readAll" aria-label="全部已读">读</button>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-msg-tab="all">全部</button>
+            <button class="tab" data-msg-tab="system">系统</button>
+            <button class="tab" data-msg-tab="service">客服</button>
+          </div>
+
+          <div class="section" id="messageList"></div>
+        </section>
+
+        <section class="view" data-view="profile">
+          <div class="top">
+            <div>
+              <h2>我的</h2>
+              <small>个人资料、设置、反馈与帮助</small>
+            </div>
+            <button class="icon-btn" data-action="settings">设</button>
+          </div>
+
+          <div class="profile-head">
+            <div class="avatar-line">
+              <div class="avatar">听</div>
+              <div>
+                <h3>听书用户</h3>
+                <p class="meta" style="color: rgba(255,255,255,.76)">手机号已绑定 · 连续收听 12 天</p>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div><strong>18</strong><span>收藏</span></div>
+              <div><strong>46h</strong><span>时长</span></div>
+              <div><strong>9</strong><span>评论</span></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <button class="setting-card" data-action="editProfile"><span>个人中心与资料编辑</span><strong>›</strong></button>
+            <button class="setting-card" data-action="openFeedback"><span>意见反馈</span><strong>›</strong></button>
+            <button class="setting-card" data-action="openService"><span>人工客服</span><strong>›</strong></button>
+            <button class="setting-card" data-action="privacy"><span>隐私协议与用户协议</span><strong>›</strong></button>
+            <button class="setting-card" data-action="toggleEyeMode">
+              <span>大字与护眼模式</span>
+              <span class="switch" id="eyeSwitch"><i></i></span>
+            </button>
+            <button class="setting-card" data-action="about"><span>关于我们</span><strong>›</strong></button>
+          </div>
+        </section>
+
+        <nav class="tabbar" aria-label="底部导航">
+          <button class="nav active" data-go="home"><b>首</b><span>首页</span></button>
+          <button class="nav" data-go="discover"><b>搜</b><span>搜索</span></button>
+          <button class="nav" data-go="shelf"><b>架</b><span>书架</span></button>
+          <button class="nav" data-go="messages"><b>信</b><span>消息</span></button>
+          <button class="nav" data-go="profile"><b>我</b><span>我的</span></button>
+        </nav>
+
+        <div class="modal-backdrop" id="modal">
+          <div class="sheet" id="sheet"></div>
+        </div>
+        <div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <aside class="side-note right">
+      <div class="flow-list">
+        <strong>已覆盖的交互</strong>
+        <span>底部导航切换</span>
+        <span>搜索输入、分类筛选、空状态</span>
+        <span>详情页、加入书架、章节播放</span>
+        <span>播放器播放/暂停、倍速、定时</span>
+        <span>消息已读、反馈校验、客服对话</span>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const books = [
+      {
+        title: "中国通史精讲",
+        category: "历史人文",
+        author: "知行讲堂",
+        episodes: 86,
+        listens: "12.8万人",
+        tags: ["大字版", "热门", "可收藏"],
+        cover: "中国通史<br>精讲",
+        color: "",
+        intro: "以人物和事件为线索，串联中国历史发展脉络，适合系统化听书学习。",
+        progress: 38
+      },
+      {
+        title: "红楼梦人物关系导读",
+        category: "文学名著",
+        author: "古典书房",
+        episodes: 42,
+        listens: "8.6万人",
+        tags: ["名著", "精读", "睡前"],
+        cover: "红楼梦<br>精读",
+        color: "warm",
+        intro: "从人物关系、情节线索和经典片段入手，帮助用户轻松听懂红楼梦。",
+        progress: 46
+      },
+      {
+        title: "三体宇宙入门",
+        category: "科幻故事",
+        author: "星河电台",
+        episodes: 31,
+        listens: "6.2万人",
+        tags: ["科幻", "故事", "连载"],
+        cover: "三体<br>宇宙",
+        color: "purple",
+        intro: "用清晰的讲述方式梳理三体世界观、人物线和关键设定。",
+        progress: 18
+      },
+      {
+        title: "睡前轻故事",
+        category: "放松助眠",
+        author: "晚安FM",
+        episodes: 120,
+        listens: "21.4万人",
+        tags: ["助眠", "短篇", "治愈"],
+        cover: "睡前<br>故事",
+        color: "alt",
+        intro: "精选短篇故事与温和配乐，适合睡前放松和休息时收听。",
+        progress: 72
+      }
+    ];
+
+    const categories = ["推荐", "历史", "文学", "儿童", "财经", "健康", "国学", "科幻", "助眠"];
+    const messages = [
+      { type: "system", title: "系统通知", text: "你收藏的《中国通史精讲》已更新 3 个章节。", unread: true },
+      { type: "service", title: "客服回复", text: "您好，关于播放失败的问题，我们已为您记录并排查。", unread: true },
+      { type: "comment", title: "互动消息", text: "用户A赞了你在《红楼梦人物关系导读》下的评论。", unread: false }
+    ];
+
+    let currentBook = books[0];
+    let currentChapter = 1;
+    let isPlaying = false;
+    let speedIndex = 0;
+    const speeds = ["1.0x", "1.25x", "1.5x", "2.0x"];
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function renderHome() {
+      $("#homeChips").innerHTML = categories.map((item, index) =>
+        `<button class="chip ${index === 0 ? "active" : ""}" data-go="discover">${item}</button>`
+      ).join("");
+
+      $("#hotBooks").innerHTML = books.map((book, index) => `
+        <button class="book-card" data-action="openDetail" data-book="${index}">
+          <div class="cover ${book.color}">
+            <span>${book.category}</span>
+            <strong>${book.cover}</strong>
+          </div>
+          <h4>${book.title}</h4>
+          <p class="meta">${book.episodes}集 · ${book.listens}在听</p>
+        </button>
+      `).join("");
+    }
+
+    function renderSearch(list = books) {
+      $("#filterChips").innerHTML = categories.map((item, index) =>
+        `<button class="chip ${index === 0 ? "active" : ""}" data-filter="${item}">${item}</button>`
+      ).join("");
+      renderSearchResults(list);
+      $("#categoryGrid").innerHTML = categories.slice(1).map((item) => `
+        <button class="book-card" data-filter="${item}" data-search-tab="hot">
+          <div class="cover alt"><span>分类</span><strong>${item}</strong></div>
+          <h4>${item}专区</h4>
+          <p class="meta">点击查看相关有声内容</p>
+        </button>
+      `).join("");
+    }
+
+    function renderSearchResults(list) {
+      if (!list.length) {
+        $("#searchResults").innerHTML = `
+          <div class="empty">
+            <strong>暂无结果</strong>
+            <p>请更换关键词，或点击上方分类继续筛选。</p>
+          </div>
+        `;
+        return;
+      }
+      $("#searchResults").innerHTML = list.map((book, index) => `
+        <button class="list-card" data-action="openDetail" data-book="${books.indexOf(book)}">
+          <div class="mini-cover">${book.cover}</div>
+          <div>
+            <h4>${book.title}</h4>
+            <p class="meta">${book.category} · ${book.author}</p>
+            <p class="meta">${book.episodes}集 · ${book.listens}在听</p>
+            <div class="badge-row">${book.tags.map(tag => `<span class="badge">${tag}</span>`).join("")}</div>
+          </div>
+        </button>
+      `).join("");
+    }
+
+    function renderDetail(book = currentBook) {
+      currentBook = book;
+      $("#detailCover").innerHTML = book.cover;
+      $("#detailTitle").textContent = book.title;
+      $("#detailMeta").textContent = `${book.category} · ${book.episodes}集 · ${book.listens}在听`;
+      $("#detailIntro").textContent = book.intro;
+      $("#detailBadges").innerHTML = book.tags.map(tag => `<span class="badge">${tag}</span>`).join("");
+      $("#chapterList").innerHTML = [1, 2, 3, 4].map(num => `
+        <button class="chapter" data-action="playChapter" data-chapter="${num}">
+          <strong>第 ${num} 讲：${["文明起源", "王朝更迭", "人物故事", "制度与生活"][num - 1]}</strong>
+          <span>${num === 1 ? "已听38%" : "22分钟"}</span>
+        </button>
+      `).join("");
+    }
+
+    function renderShelf() {
+      $("#shelfList").innerHTML = books.map((book, index) => `
+        <button class="list-card" data-action="openDetail" data-book="${index}">
+          <div class="mini-cover">${book.cover}</div>
+          <div>
+            <h4>${book.title}</h4>
+            <p class="meta">收听进度 ${book.progress}% · 最近更新</p>
+            <div class="progress" style="--w:${book.progress}%"><i></i></div>
+          </div>
+        </button>
+      `).join("");
+    }
+
+    function renderMessages(type = "all") {
+      const list = type === "all" ? messages : messages.filter(item => item.type === type);
+      $("#messageList").innerHTML = list.map((item) => `
+        <button class="message-card" data-action="${item.type === "service" ? "openService" : "messageDetail"}">
+          <div class="dot">${item.title.slice(0, 1)}</div>
+          <div>
+            <strong>${item.title}</strong>
+            <p class="meta">${item.text}</p>
+          </div>
+          <i class="${item.unread ? "unread" : ""}"></i>
+        </button>
+      `).join("");
+    }
+
+    function showView(name) {
+      $$(".view").forEach(view => view.classList.toggle("active", view.dataset.view === name));
+      $$(".nav").forEach(nav => nav.classList.toggle("active", nav.dataset.go === name));
+      if (name === "player") {
+        $("#app").classList.toggle("playing", isPlaying);
+      }
+    }
+
+    function toast(text) {
+      const node = document.createElement("div");
+      node.className = "toast";
+      node.textContent = text;
+      $("#toastWrap").appendChild(node);
+      setTimeout(() => node.remove(), 2600);
+    }
+
+    function openSheet(html) {
+      $("#sheet").innerHTML = html;
+      $("#modal").classList.add("show");
+    }
+
+    function closeSheet() {
+      $("#modal").classList.remove("show");
+    }
+
+    function syncPlayer() {
+      $("#playerTitle").textContent = currentBook.title;
+      $("#playerChapter").textContent = `第 ${currentChapter} 讲：${["文明起源", "王朝更迭", "人物故事", "制度与生活"][currentChapter - 1] || "精彩章节"}`;
+      $("#playSub").textContent = `第 ${currentChapter} 讲 · 正在播放`;
+      $(".play").textContent = isPlaying ? "停" : "播";
+      $("#app").classList.toggle("playing", isPlaying);
+    }
+
+    function openFeedback() {
+      openSheet(`
+        <h3>意见反馈</h3>
+        <p class="meta">请填写问题类型和具体描述，提交后系统给出成功反馈。</p>
+        <div class="field" id="feedbackType">
+          <label>反馈类型</label>
+          <input value="播放问题" aria-label="反馈类型">
+          <span class="error-text">请选择反馈类型</span>
+        </div>
+        <div class="field" id="feedbackContent">
+          <label>问题描述</label>
+          <textarea placeholder="请描述你遇到的问题"></textarea>
+          <span class="error-text">请至少输入 5 个字</span>
+        </div>
+        <div class="btn-row">
+          <button class="btn" data-action="submitFeedback">提交反馈</button>
+          <button class="btn secondary" data-action="closeSheet">取消</button>
+        </div>
+      `);
+    }
+
+    function openService() {
+      openSheet(`
+        <h3>人工客服</h3>
+        <p class="meta">模拟在线客服会话，展示问题提交和客服回复。</p>
+        <div class="chat-list" id="chatList">
+          <div class="bubble">您好，请问有什么可以帮您？</div>
+          <div class="bubble me">音频播放到一半会中断。</div>
+          <div class="bubble">已收到，我们建议先切换网络或重新进入播放页，问题会同步给技术人员排查。</div>
+        </div>
+        <label class="search">
+          <span>问</span>
+          <input id="chatInput" placeholder="输入要咨询的问题">
+        </label>
+        <div class="btn-row">
+          <button class="btn" data-action="sendChat">发送</button>
+          <button class="btn secondary" data-action="closeSheet">关闭</button>
+        </div>
+      `);
+    }
+
+    function handleAction(action, target) {
+      if (action === "openDetail") {
+        renderDetail(books[Number(target.dataset.book || 0)]);
+        showView("detail");
+      }
+      if (action === "playNow") {
+        isPlaying = true;
+        syncPlayer();
+        showView("player");
+        toast("已开始播放，支持断点续播");
+      }
+      if (action === "playChapter") {
+        currentChapter = Number(target.dataset.chapter || 1);
+        isPlaying = true;
+        syncPlayer();
+        showView("player");
+      }
+      if (action === "togglePlay") {
+        isPlaying = !isPlaying;
+        syncPlayer();
+        toast(isPlaying ? "继续播放" : "已暂停");
+      }
+      if (action === "prevChapter") {
+        currentChapter = Math.max(1, currentChapter - 1);
+        syncPlayer();
+        toast("已切换上一讲");
+      }
+      if (action === "nextChapter") {
+        currentChapter += 1;
+        syncPlayer();
+        toast("已切换下一讲");
+      }
+      if (action === "changeSpeed") {
+        speedIndex = (speedIndex + 1) % speeds.length;
+        $("#speedText").textContent = speeds[speedIndex];
+        toast(`播放倍速切换为 ${speeds[speedIndex]}`);
+      }
+      if (action === "sleepTimer") {
+        openSheet(`
+          <h3>定时关闭</h3>
+          <p class="meta">选择后播放器将在指定时间自动停止。</p>
+          <div class="grid-two">
+            ${["15分钟", "30分钟", "60分钟", "播完本集"].map(item => `<button class="setting-card" data-action="setTimer">${item}<strong>›</strong></button>`).join("")}
+          </div>
+          <button class="btn secondary" data-action="closeSheet" style="width:100%; margin-top:12px;">取消</button>
+        `);
+      }
+      if (action === "setTimer") {
+        closeSheet();
+        toast("定时关闭已设置");
+      }
+      if (action === "addShelf") {
+        toast("已加入书架");
+      }
+      if (action === "share") {
+        toast("分享面板已唤起");
+      }
+      if (action === "openPlaylist") {
+        openSheet(`
+          <h3>播放列表</h3>
+          ${[1, 2, 3, 4, 5].map(num => `<button class="chapter" data-action="playChapter" data-chapter="${num}"><strong>第 ${num} 讲</strong><span>点击播放</span></button>`).join("")}
+        `);
+      }
+      if (action === "openComment") {
+        openSheet(`
+          <h3>写评论</h3>
+          <div class="field">
+            <label>评论内容</label>
+            <textarea id="commentInput" placeholder="写下你的收听感受"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn" data-action="submitComment">发布评论</button>
+            <button class="btn secondary" data-action="closeSheet">取消</button>
+          </div>
+        `);
+      }
+      if (action === "submitComment") {
+        closeSheet();
+        toast("评论已发布，等待展示");
+      }
+      if (action === "openFeedback") openFeedback();
+      if (action === "openService") openService();
+      if (action === "submitFeedback") {
+        const field = $("#feedbackContent");
+        const textarea = field.querySelector("textarea");
+        if (textarea.value.trim().length < 5) {
+          field.classList.add("invalid");
+          return;
+        }
+        closeSheet();
+        toast("反馈已提交，我们会尽快处理");
+      }
+      if (action === "sendChat") {
+        const input = $("#chatInput");
+        if (!input.value.trim()) {
+          toast("请输入咨询内容");
+          return;
+        }
+        $("#chatList").insertAdjacentHTML("beforeend", `<div class="bubble me">${input.value}</div><div class="bubble">客服已收到，请稍候。</div>`);
+        input.value = "";
+      }
+      if (action === "closeSheet") closeSheet();
+      if (action === "readAll") {
+        messages.forEach(item => item.unread = false);
+        renderMessages();
+        toast("全部消息已读");
+      }
+      if (action === "messageDetail") {
+        openSheet(`<h3>消息详情</h3><p class="meta">这里展示通知正文、关联书籍入口和已读状态。</p><button class="btn" data-action="closeSheet">知道了</button>`);
+      }
+      if (action === "clearSearch") {
+        $("#searchInput").value = "";
+        renderSearchResults(books);
+        toast("搜索内容已清空");
+      }
+      if (action === "sortResults") {
+        renderSearchResults([...books].reverse());
+        toast("已按热度重新排序");
+      }
+      if (action === "clearHistory") {
+        toast("搜索历史已清空");
+      }
+      if (action === "manageShelf") {
+        toast("进入书架管理状态，可批量移除收藏");
+      }
+      if (action === "fontLarge" || action === "toggleEyeMode") {
+        $("#eyeSwitch").classList.toggle("on");
+        document.documentElement.style.setProperty("--text", $("#eyeSwitch").classList.contains("on") ? "#101828" : "#182230");
+        toast("已切换大字/护眼模式");
+      }
+      if (["editProfile", "settings", "privacy", "about"].includes(action)) {
+        toast("该入口已配置，可进入二级页面");
+      }
+      if (action === "openMessages") showView("messages");
+      if (action === "toggleAllChapters") toast("已展开全部章节");
+    }
+
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      if (target.dataset.go) showView(target.dataset.go);
+      if (target.dataset.action) handleAction(target.dataset.action, target);
+      if (target.dataset.searchTab) {
+        $$("[data-search-tab]").forEach(tab => tab.classList.toggle("active", tab === target));
+        $$("[data-search-panel]").forEach(panel => panel.classList.toggle("hidden", panel.dataset.searchPanel !== target.dataset.searchTab));
+      }
+      if (target.dataset.msgTab) {
+        $$("[data-msg-tab]").forEach(tab => tab.classList.toggle("active", tab === target));
+        renderMessages(target.dataset.msgTab);
+      }
+      if (target.dataset.filter) {
+        const filter = target.dataset.filter;
+        $$(".chip").forEach(chip => chip.classList.toggle("active", chip === target));
+        renderSearchResults(filter === "推荐" ? books : books.filter(book => book.category.includes(filter) || book.title.includes(filter)));
+      }
+    });
+
+    $("#searchInput").addEventListener("input", (event) => {
+      const keyword = event.target.value.trim();
+      const list = books.filter(book =>
+        book.title.includes(keyword) ||
+        book.category.includes(keyword) ||
+        book.author.includes(keyword)
+      );
+      renderSearchResults(keyword ? list : books);
+    });
+
+    $("#modal").addEventListener("click", (event) => {
+      if (event.target.id === "modal") closeSheet();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeSheet();
+    });
+
+    renderHome();
+    renderSearch();
+    renderDetail();
+    renderShelf();
+    renderMessages();
+    syncPlayer();
+  </script>
+</body>
+</html>

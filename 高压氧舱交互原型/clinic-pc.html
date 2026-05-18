@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clinic Portal — HBOT</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --surface: #fff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --accent: #0ea5e9;
+      --accent-soft: #e0f2fe;
+      --danger: #dc2626;
+      --warn: #d97706;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 32px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    header h1 { margin: 0; font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; }
+    .tog button:focus-visible, .tabs button:focus-visible, button.btn:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    header .sub { margin: 4px 0 0; font-size: 0.8rem; color: var(--muted); }
+    .hdr-right { display: flex; align-items: center; gap: 14px; }
+    .hdr-right a { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+    .tog { display: flex; background: #f8fafc; border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
+    .tog button { border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; color: var(--muted); }
+    .tog button.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .wrap { max-width: 1400px; margin: 0 auto; padding: 24px 32px 60px; }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .tabs::-webkit-scrollbar { height: 6px; }
+    .tabs button {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+    .tabs button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    .panel h2 { margin: 0 0 14px; font-size: 1rem; font-weight: 600; }
+    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+    th { font-size: 0.72rem; text-transform: uppercase; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; align-items: center; }
+    select, input, textarea, button.btn {
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    textarea { width: 100%; min-height: 100px; resize: vertical; }
+    button.btn { background: var(--surface); cursor: pointer; }
+    button.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+    label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+    .err { color: var(--danger); font-size: 0.8rem; margin: 4px 0 0; display: none; }
+    .err.show { display: block; }
+    input.invalid, textarea.invalid { border-color: var(--danger); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 20px;
+    }
+    .modal.show { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      width: min(440px, 100%);
+      text-align: center;
+    }
+    .modal-box h3 { margin: 0 0 8px; }
+    .modal-box p { color: var(--muted); margin: 0 0 20px; font-size: 0.9rem; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 60;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
+    .drawer-back {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      z-index: 45;
+    }
+    .drawer-back.show { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(440px, 100%);
+      height: 100%;
+      background: #fff;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.1);
+      z-index: 46;
+      padding: 24px 28px;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.2s ease;
+    }
+    .drawer-back.show .drawer { transform: translateX(0); }
+    .drawer h2 { margin: 0 0 12px; font-size: 1.05rem; }
+    .drawer .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 16px; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(100px, 1fr));
+      gap: 10px;
+      font-size: 0.78rem;
+    }
+    .board .slot {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 72px;
+    }
+    .board .slot strong { display: block; margin-bottom: 4px; }
+
+    .live-split { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+    .live-split .main-t { flex: 1 1 420px; }
+    .queue-side {
+      flex: 0 0 260px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 14px; padding: 14px; font-size: 0.82rem;
+    }
+    .queue-side h3 { margin: 0 0 10px; font-size: 0.9rem; }
+    .queue-side li { padding: 8px 0; border-bottom: 1px solid var(--line); list-style: none; }
+    .queue-side ul { margin: 0; padding: 0; }
+
+    .intake-sec { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 12px; background: #fafbfc; }
+    .intake-sec h3 { margin: 0 0 10px; font-size: 0.88rem; }
+
+    .stepper { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .stepper b {
+      padding: 4px 10px; border-radius: 999px; font-size: 0.72rem; background: #e2e8f0; color: var(--muted);
+    }
+    .stepper b.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .vit-panel { display: none; }
+    .vit-panel.show { display: block; }
+
+    .code-list { text-align: left; max-height: 200px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; }
+    .code-list button { display: block; width: 100%; text-align: left; padding: 10px 12px; border: 0; border-bottom: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 0.85rem; }
+    .code-list button:hover { background: #f8fafc; }
+    .code-list button:last-child { border-bottom: 0; }
+
+    .sk-ln { height: 10px; border-radius: 6px; background: linear-gradient(90deg,#f1f5f9,#e2e8f0,#f1f5f9); background-size:200% 100%; animation: clin 1s linear infinite; margin-bottom: 8px; }
+    @keyframes clin { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .panel.loading .sk-ln { display: block; }
+    .panel.loading table { display: none; }
+    .panel:not(.loading) .sk-only { display: none; }
+    .panel.loading .sk-only { display: block; }
+
+    .week-strip {
+      display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px;
+      margin-bottom: 8px; border-bottom: 1px solid var(--line);
+    }
+    .week-strip button {
+      flex: 0 0 auto; min-width: 56px; padding: 10px 8px; border-radius: 10px;
+      border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 0.75rem; color: var(--muted);
+    }
+    .week-strip button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .inv-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .inv-tabs button {
+      padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff;
+      font-size: 0.8rem; cursor: pointer; color: var(--muted);
+    }
+    .inv-tabs button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .rev-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+    .rev-tabs button {
+      padding: 8px 12px; border: 0; background: transparent; font-size: 0.85rem; cursor: pointer; color: var(--muted);
+      border-bottom: 2px solid transparent; margin-bottom: -9px;
+    }
+    .rev-tabs button.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+
+    .receipt-preview {
+      font-family: ui-serif, Georgia, serif; text-align: left; border: 1px dashed var(--line); border-radius: 12px;
+      padding: 20px; background: #fafafa; font-size: 0.82rem; line-height: 1.55;
+    }
+    .receipt-preview h4 { margin: 0 0 12px; font-size: 1rem; }
+    .receipt-preview .r-row { display: flex; justify-content: space-between; margin: 6px 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1 data-i18n="cl_title">Clinic partner portal</h1>
+      <p class="sub" data-i18n="cl_sub">Bay Hyperbaric Center · data scoped to this clinic</p>
+    </div>
+    <div class="hdr-right">
+      <a href="index.html" data-i18n="hub">Hub</a>
+      <div class="tog">
+        <button type="button" id="ce">EN</button>
+        <button type="button" id="cz">中文</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs" id="main-tabs">
+      <button type="button" data-v="intake" data-i18n="tab_intake">Intake & vitals</button>
+      <button type="button" class="active" data-v="dash" data-i18n="tab_dash">Workbench</button>
+      <button type="button" data-v="roster" data-i18n="tab_roster">Patients</button>
+      <button type="button" data-v="schedule" data-i18n="tab_sch">Schedule</button>
+      <button type="button" data-v="checklist" data-i18n="tab_chk">Session checklist</button>
+      <button type="button" data-v="inv" data-i18n="tab_inv">Inventory</button>
+      <button type="button" data-v="handoff" data-i18n="tab_ho">Shift handoff</button>
+      <button type="button" data-v="staff" data-i18n="tab_staff">Staff shifts</button>
+      <button type="button" data-v="live" data-i18n="tab_live">Live sessions</button>
+      <button type="button" data-v="alerts" data-i18n="tab_al">Alerts</button>
+      <button type="button" data-v="rev" data-i18n="tab_rev">Revenue & statements</button>
+      <button type="button" data-v="quality" data-i18n="tab_qual">Quality & approvals</button>
+      <button type="button" data-v="dispute" data-i18n="tab_disp">Disputes</button>
+    </div>
+
+    <section class="view active" id="view-dash">
+      <div class="grid2">
+        <div class="panel">
+          <h2 data-i18n="my_dev">My devices</h2>
+          <table>
+            <thead><tr><th data-i18n="th_dev">Device</th><th data-i18n="th_st">Status</th><th data-i18n="th_loc">Map</th></tr></thead>
+            <tbody>
+              <tr><td>HBOT-BAY-01</td><td style="color:#059669;" data-i18n="st_run">Running</td><td><button type="button" class="btn btn-map" data-i18n="btn_map">Mini map</button></td></tr>
+              <tr><td>HBOT-BAY-02</td><td style="color:#64748b;" data-i18n="st_idle">Idle</td><td><button type="button" class="btn btn-map" data-i18n="btn_map">Mini map</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="sum_title">At a glance</h2>
+          <p style="margin:0;color:var(--muted);font-size:0.9rem;" data-i18n="sum_body">Today's sessions: 42 · Utilization 68% (demo)</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-roster">
+      <div class="panel">
+        <h2 data-i18n="rost_title">Patient roster (mock)</h2>
+        <div class="toolbar">
+          <input type="search" id="rost-q" data-i18n-ph="rost_ph" placeholder="" style="min-width:200px;" />
+          <button type="button" class="btn" id="rost-filter" data-i18n="rost_go">Filter</button>
+        </div>
+        <table id="tbl-rost">
+          <thead><tr><th data-i18n="rost_id">MRN</th><th data-i18n="rost_name">Name</th><th data-i18n="rost_ins">Payer</th><th data-i18n="rost_next">Next HBOT</th><th data-i18n="rost_last">Last visit</th><th data-i18n="th_st">Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>MRN-10021</td><td>A. Chen</td><td data-i18n="rost_p1">PPO · NorthStar</td><td>2026-05-16 · 09:00</td><td>2026-05-12</td><td data-i18n="rost_act">Active</td><td><button type="button" class="btn rost-view" data-i18n="rost_view">Chart</button></td></tr>
+            <tr><td>MRN-10088</td><td>B. Patel</td><td data-i18n="rost_p2">Medicare adv.</td><td>—</td><td>2026-05-10</td><td data-i18n="rost_hold">On hold</td><td><button type="button" class="btn rost-view" data-i18n="rost_view">Chart</button></td></tr>
+            <tr><td>MRN-10102</td><td>C. Rivera</td><td data-i18n="rost_p3">Self-pay pkg</td><td>2026-05-15 · 15:30</td><td>2026-05-01</td><td data-i18n="rost_act">Active</td><td><button type="button" class="btn rost-view" data-i18n="rost_view">Chart</button></td></tr>
+          </tbody>
+        </table>
+        <p id="rost-empty" style="display:none;color:var(--muted);font-size:0.88rem;" data-i18n="rost_empty">No patients match.</p>
+      </div>
+    </section>
+
+    <section class="view" id="view-schedule">
+      <div class="panel">
+        <h2 data-i18n="sch_title">Appointment board</h2>
+        <p class="meta" style="color:var(--muted);font-size:0.85rem;margin-top:0;" data-i18n="sch_sub">Bay rooms · drag-free demo</p>
+        <div class="week-strip" id="wk-strip" aria-label="Week">
+          <button type="button" class="on" data-day="0">Mon 12</button>
+          <button type="button" data-day="1">Tue 13</button>
+          <button type="button" data-day="2">Wed 14</button>
+          <button type="button" data-day="3">Thu 15</button>
+          <button type="button" data-day="4">Fri 16</button>
+        </div>
+        <div class="board" id="sch-board">
+          <div class="slot"><strong data-i18n="sch_r1">Bay-01</strong><span data-i18n="sch_a1">09:00 A.Chen</span></div>
+          <div class="slot"><strong data-i18n="sch_r2">Bay-02</strong><span data-i18n="sch_a2">10:30 B.Patel</span></div>
+          <div class="slot"><strong data-i18n="sch_r3">Bay-03</strong><span data-i18n="sch_free">Free</span></div>
+          <div class="slot"><strong data-i18n="sch_r4">Bay-04</strong><span data-i18n="sch_free">Free</span></div>
+          <div class="slot"><strong data-i18n="sch_r5">Bay-05</strong><span data-i18n="sch_blk">Blocked</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-checklist">
+      <div class="panel">
+        <h2 data-i18n="chk_title">Treatment session checklist</h2>
+        <label class="meta"><input type="checkbox" id="chk1" /> <span data-i18n="chk1">Consent on file</span></label><br/><br/>
+        <label class="meta"><input type="checkbox" id="chk2" /> <span data-i18n="chk2">Device self-test OK</span></label><br/><br/>
+        <label class="meta"><input type="checkbox" id="chk3" /> <span data-i18n="chk3">Staff present ≥2</span></label><br/><br/>
+        <span class="err" id="chk-err" data-i18n="chk_err">Complete checklist</span>
+        <button type="button" class="btn btn-primary" style="margin-top:14px;" id="chk-save" data-i18n="chk_save">Sign session</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-inv">
+      <div class="panel">
+        <h2 data-i18n="inv_title">Consumables inventory</h2>
+        <div class="inv-tabs" id="inv-tabs">
+          <button type="button" class="on" data-it="con" data-i18n="inv_tab_con">Consumables</button>
+          <button type="button" data-it="dev" data-i18n="inv_tab_dev">Device kits</button>
+          <button type="button" data-it="exp" data-i18n="inv_tab_exp">Expiry watch</button>
+        </div>
+        <div id="inv-pane-con">
+        <table>
+          <thead><tr><th data-i18n="inv_sku">SKU</th><th data-i18n="inv_name">Item</th><th data-i18n="inv_qty">Qty</th><th data-i18n="inv_min">Reorder at</th><th></th></tr></thead>
+          <tbody>
+            <tr data-min="10"><td>O2-CAN-1L</td><td>O₂ canister 1L</td><td>24</td><td>10</td><td><button type="button" class="btn ord-btn" data-i18n="inv_ord">Reorder</button></td></tr>
+            <tr data-min="12"><td>MASK-AD</td><td>Adult mask</td><td>8</td><td>12</td><td><button type="button" class="btn ord-btn" data-i18n="inv_ord">Reorder</button></td></tr>
+          </tbody>
+        </table>
+        <p style="color:var(--warn);font-size:0.85rem;margin-top:12px;" data-i18n="inv_warn">Low stock: Adult mask near threshold.</p>
+        </div>
+        <div id="inv-pane-dev" style="display:none;">
+          <p class="meta" style="color:var(--muted);" data-i18n="inv_dev_sub">Serialized accessories tied to chamber installs.</p>
+          <table>
+            <thead><tr><th data-i18n="inv_kit">Kit ID</th><th data-i18n="th_dev">Device</th><th data-i18n="th_st">Status</th></tr></thead>
+            <tbody>
+              <tr><td>KIT-BAY-01</td><td>HBOT-BAY-01</td><td data-i18n="inv_ok">Sealed</td></tr>
+              <tr><td>KIT-BAY-03</td><td>HBOT-BAY-03</td><td data-i18n="inv_open">Opened · QA</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="inv-pane-exp" style="display:none;">
+          <p class="meta" style="color:var(--muted);" data-i18n="inv_exp_sub">Lot tracking stub · FIFO picks highlighted.</p>
+          <table>
+            <thead><tr><th data-i18n="inv_lot">Lot</th><th data-i18n="inv_expires">Expires</th><th data-i18n="inv_loc">Bin</th></tr></thead>
+            <tbody>
+              <tr><td>L-9912-O2</td><td>2026-11-02</td><td>A-14</td></tr>
+              <tr><td>L-7741-MSK</td><td>2026-07-18</td><td>B-02</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-handoff">
+      <div class="panel">
+        <h2 data-i18n="ho_title">Shift handoff notes</h2>
+        <label data-i18n="ho_lbl">Outgoing notes</label>
+        <textarea id="ho-ta" data-i18n-ph="ho_ph" placeholder=""></textarea>
+        <span class="err" id="ho-err" data-i18n="ho_err">Min 10 characters</span>
+        <button type="button" class="btn btn-primary" style="margin-top:12px;" id="ho-save" data-i18n="ho_save">Submit handoff</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-staff">
+      <div class="panel">
+        <h2 data-i18n="stf_title">Staff coverage</h2>
+        <p class="meta" style="color:var(--muted);" data-i18n="stf_sub">RN / tech pairing · swap requests roll to supervisor (demo).</p>
+        <table>
+          <thead><tr><th data-i18n="stf_shift">Shift</th><th data-i18n="stf_rn">Charge RN</th><th data-i18n="stf_tech">HBOT tech</th><th data-i18n="th_st">Status</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="stf_d">Day · 07:00–19:00</td><td>M. Lopez</td><td>J. Kim</td><td data-i18n="stf_ok">Staffed</td></tr>
+            <tr><td data-i18n="stf_e">Evening · 19:00–23:00</td><td>A. Singh</td><td>—</td><td data-i18n="stf_need">Needs tech</td></tr>
+            <tr><td data-i18n="stf_n">Night · on-call</td><td>Pager pool</td><td>Pager pool</td><td data-i18n="stf_ok">Staffed</td></tr>
+          </tbody>
+        </table>
+        <button type="button" class="btn" style="margin-top:14px;" id="btn-stf-swap" data-i18n="stf_swap">Request swap</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-intake">
+      <div class="panel" id="intake-panel">
+        <h2 data-i18n="in_title">Patient intake</h2>
+        <p class="meta" style="font-size:0.85rem;color:var(--muted);" data-i18n="in_sub">Multi-section form · autosave simulated.</p>
+        <div class="intake-sec">
+          <h3 data-i18n="in_a">A. Demographics & referral</h3>
+          <label data-i18n="in_mrn">MRN</label>
+          <input type="text" id="in-mrn" data-i18n-ph="in_mrn_ph" placeholder="" />
+          <label data-i18n="in_ref">Referring physician</label>
+          <input type="text" id="in-ref" />
+        </div>
+        <div class="intake-sec">
+          <h3 data-i18n="in_b">B. Clinical notes</h3>
+          <label data-i18n="in_dx">Indication / diagnosis (short)</label>
+          <textarea id="in-dx" rows="3"></textarea>
+        </div>
+        <div class="intake-sec">
+          <h3 data-i18n="in_c">C. Billing</h3>
+          <button type="button" class="btn" id="btn-pick-code" data-i18n="in_pick">Pick procedure code</button>
+          <p class="meta" id="code-picked" style="margin-top:10px;"></p>
+        </div>
+        <div class="intake-sec">
+          <h3 data-i18n="vit_title">Vitals (stepper)</h3>
+          <div class="stepper" id="vit-stepper">
+            <b class="on" data-vs="1">1</b><b data-vs="2">2</b><b data-vs="3">3</b>
+          </div>
+          <div class="vit-panel show" id="vp1">
+            <label data-i18n="vit1">Blood pressure</label>
+            <input type="text" id="vit-bp" placeholder="120/80" />
+          </div>
+          <div class="vit-panel" id="vp2">
+            <label data-i18n="vit2">SpO₂</label>
+            <input type="text" id="vit-spo" placeholder="98%" />
+          </div>
+          <div class="vit-panel" id="vp3">
+            <label data-i18n="vit3">Heart rate</label>
+            <input type="text" id="vit-hr" placeholder="72" />
+          </div>
+          <div class="toolbar" style="margin-top:10px;">
+            <button type="button" class="btn" id="vit-prev" data-i18n="vit_prev">Back</button>
+            <button type="button" class="btn btn-primary" id="vit-next" data-i18n="vit_next">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-live">
+      <div class="panel live-split" id="live-panel">
+        <div class="main-t">
+          <h2 data-i18n="live_title">Live treatment board</h2>
+          <div class="sk-only"><div class="sk-ln" style="width:60%"></div><div class="sk-ln" style="width:90%"></div></div>
+          <table>
+            <thead><tr><th data-i18n="th_pat">Room / unit</th><th data-i18n="th_start">Started</th><th data-i18n="th_eta">ETA end</th><th data-i18n="th_el">Elapsed</th></tr></thead>
+            <tbody>
+              <tr><td>Bay-01</td><td>13:40</td><td>14:40</td><td id="el-1">38 min</td></tr>
+              <tr><td>Bay-03</td><td>13:55</td><td>14:25</td><td id="el-2">23 min</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="queue-side">
+          <h3 data-i18n="q_title">Patient queue</h3>
+          <ul>
+            <li data-i18n="q1">MRN-10021 · Waiting · Bay next</li>
+            <li data-i18n="q2">MRN-10088 · Prep</li>
+            <li data-i18n="q3">Walk-in · triage</li>
+          </ul>
+          <button type="button" class="btn btn-primary" style="width:100%;margin-top:8px;" id="btn-refresh-live" data-i18n="btn_refresh">Refresh board</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="view" id="view-alerts">
+      <div class="panel">
+        <h2 data-i18n="loc_al">Localized alerts</h2>
+        <div class="toolbar">
+          <select id="al-f">
+            <option value="all" data-i18n="f_all">All types</option>
+            <option value="off" data-i18n="f_off">Offline</option>
+            <option value="move" data-i18n="f_move">Geofence</option>
+          </select>
+        </div>
+        <table id="tbl-al">
+          <thead><tr><th data-i18n="th_time">Time</th><th data-i18n="th_msg">Message</th></tr></thead>
+          <tbody>
+            <tr data-type="off"><td>08:12</td><td data-i18n="al1">HBOT-BAY-02 offline &gt; 15m</td></tr>
+            <tr data-type="move"><td>Yesterday</td><td data-i18n="al2">HBOT-BAY-01 geofence warning</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-rev">
+      <div class="panel">
+        <div class="rev-tabs" id="rev-tabs">
+          <button type="button" class="on" data-rv="log" data-i18n="rev_tab_log">Treatment log</button>
+          <button type="button" data-rv="hq" data-i18n="rev_tab_hq">HQ reconciliation</button>
+          <button type="button" data-rv="ex" data-i18n="rev_tab_ex">Exceptions</button>
+        </div>
+        <div id="rev-pane-log">
+        <h2 data-i18n="rev_title">Treatment log</h2>
+        <div class="toolbar">
+          <select id="period">
+            <option data-i18n="p7">Last 7 days</option>
+            <option data-i18n="p30">Last 30 days</option>
+          </select>
+          <button type="button" class="btn" id="btn-q" data-i18n="btn_q">Query</button>
+        </div>
+        <table>
+          <thead><tr><th data-i18n="th_start">Start</th><th data-i18n="th_end">End</th><th data-i18n="th_dur">Duration</th><th data-i18n="th_val">Valid</th></tr></thead>
+          <tbody>
+            <tr><td>2026-05-14 09:00:02</td><td>2026-05-14 09:58:10</td><td>56m 8s</td><td>Yes</td></tr>
+            <tr><td>2026-05-13 18:12:00</td><td>2026-05-13 18:45:00</td><td>33m</td><td data-i18n="short">Short</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div id="rev-pane-hq" style="display:none;">
+          <h2 data-i18n="rec_hq_title">HQ vs clinic ledger</h2>
+          <p class="meta" style="color:var(--muted);" data-i18n="rec_hq_sub">Variance within tolerance unless flagged.</p>
+          <table>
+            <thead><tr><th data-i18n="rec_col_p">Period</th><th data-i18n="rec_col_loc">Clinic count</th><th data-i18n="rec_col_hq">HQ roll-up</th><th data-i18n="rec_col_var">Δ</th></tr></thead>
+            <tbody>
+              <tr><td>Apr 2026</td><td>418</td><td>420</td><td style="color:#b45309;">-2</td></tr>
+              <tr><td>Mar 2026</td><td>402</td><td>402</td><td style="color:#059669;">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="rev-pane-ex" style="display:none;">
+          <h2 data-i18n="rec_ex_title">Exception queue</h2>
+          <p class="meta" style="color:var(--muted);" data-i18n="rec_ex_sub">Sessions missing telemetry hand-shake.</p>
+          <table>
+            <thead><tr><th data-i18n="th_start">Start</th><th data-i18n="th_pat">Bay</th><th data-i18n="rec_ex_r">Reason</th></tr></thead>
+            <tbody>
+              <tr><td>2026-05-11 16:10</td><td>Bay-02</td><td data-i18n="rec_ex1">Partial upload</td></tr>
+              <tr><td>2026-05-09 11:02</td><td>Bay-05</td><td data-i18n="rec_ex2">Manual override</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 data-i18n="stmt_title">Monthly statement</h2>
+        <p style="color:var(--muted);font-size:0.9rem;" data-i18n="stmt_hint">April 2026 — PDF/Excel export mocked.</p>
+        <button type="button" class="btn" id="btn-dl" data-i18n="btn_dl">Download PDF</button>
+        <button type="button" class="btn" style="margin-left:8px;" id="btn-export-open" data-i18n="btn_export">Export report…</button>
+        <button type="button" class="btn" style="margin-left:8px;" id="btn-rcpt-open" data-i18n="btn_rcpt">Printable receipt…</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-quality">
+      <div class="panel">
+        <h2 data-i18n="nm_title">Near-miss report</h2>
+        <p style="color:var(--muted);font-size:0.88rem;" data-i18n="nm_sub">Capture close calls — routed to supervisor queue (demo).</p>
+        <label data-i18n="nm_lbl">What almost happened?</label>
+        <textarea id="nm-ta"></textarea>
+        <button type="button" class="btn btn-primary" style="margin-top:12px;" id="nm-submit" data-i18n="nm_go">Submit near-miss</button>
+      </div>
+      <div class="panel">
+        <h2 data-i18n="ap_title">Supervisor approval queue</h2>
+        <table>
+          <thead><tr><th data-i18n="ap_id">Request</th><th data-i18n="th_st">Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="ap_r1">Override pressure cap · Bay-02</td><td data-i18n="ap_pend">Pending</td><td><button type="button" class="btn btn-ap" data-i18n="ap_open">Review</button></td></tr>
+            <tr><td data-i18n="ap_r2">After-hours session · nurse on call</td><td data-i18n="ap_pend">Pending</td><td><button type="button" class="btn btn-ap" data-i18n="ap_open">Review</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-dispute">
+      <div class="panel">
+        <h2 data-i18n="disp_list_title">Open disputes</h2>
+        <table id="tbl-disp">
+          <thead><tr><th data-i18n="disp_id">Case ID</th><th data-i18n="disp_amt">Amount</th><th data-i18n="th_st">Status</th></tr></thead>
+          <tbody>
+            <tr class="disp-row" data-did="DSP-001" style="cursor:pointer;"><td>DSP-001</td><td>$220</td><td data-i18n="disp_st1">Review</td></tr>
+            <tr class="disp-row" data-did="DSP-002" style="cursor:pointer;"><td>DSP-002</td><td>$90</td><td data-i18n="disp_st2">Evidence</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2 data-i18n="disp_title">Open a dispute</h2>
+        <p style="color:var(--muted);font-size:0.88rem;margin-top:0;" data-i18n="disp_sub">For questionable settlements — flows to HQ review (per Excel).</p>
+        <label for="stmt-id" data-i18n="lbl_stmt">Statement ID</label>
+        <input id="stmt-id" type="text" placeholder="ST-2026-04-BAY" />
+        <span class="err" id="e-stmt" data-i18n="err_stmt">Required</span>
+        <label for="reason" data-i18n="lbl_reas">Reason</label>
+        <textarea id="reason" placeholder=""></textarea>
+        <span class="err" id="e-reas" data-i18n="err_reas">Min 20 characters</span>
+        <button type="button" class="btn btn-primary" style="margin-top:14px;" id="btn-submit" data-i18n="btn_sub">Submit dispute</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="modal-export">
+    <div class="modal-box" style="text-align:left;">
+      <h3 data-i18n="exp_title">Export report</h3>
+      <p style="color:var(--muted);font-size:0.88rem;" data-i18n="exp_sub">Choose format (demo).</p>
+      <label data-i18n="exp_fmt">Format</label>
+      <select id="exp-fmt" style="width:100%;margin-bottom:12px;">
+        <option>PDF</option>
+        <option>Excel</option>
+        <option>CSV</option>
+      </select>
+      <label data-i18n="exp_range">Date range</label>
+      <input type="text" id="exp-range" value="2026-05-01 — 2026-05-15" style="width:100%;margin-bottom:12px;" />
+      <span class="err" id="exp-err" data-i18n="exp_err">Enter range</span>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button type="button" class="btn" id="exp-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="exp-go" data-i18n="exp_go">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-back" id="disp-drawer-back"><div class="drawer" id="disp-drawer">
+    <h2 id="disp-d-title">Case</h2>
+    <p class="meta" id="disp-d-body"></p>
+    <table style="font-size:0.85rem;width:100%;">
+      <tbody>
+        <tr><td data-i18n="d_line1">Statement</td><td id="disp-d-st">ST-2026-04-BAY</td></tr>
+        <tr><td data-i18n="d_line2">Opened</td><td>2026-05-08</td></tr>
+        <tr><td data-i18n="d_line3">Owner</td><td>HQ Finance</td></tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" style="margin-top:20px;width:100%;" id="disp-d-close" data-i18n="btn_close_d">Close</button>
+  </div></div>
+
+  <div class="modal" id="modal-ok">
+    <div class="modal-box">
+      <h3 data-i18n="ok_title">Submitted</h3>
+      <p data-i18n="ok_sub">HQ will review with audit trail (demo).</p>
+      <button type="button" class="btn btn-primary" id="btn-ok-close" data-i18n="btn_ok">OK</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-code">
+    <div class="modal-box" style="text-align:left;max-width:420px;">
+      <h3 data-i18n="code_title">Procedure codes</h3>
+      <input type="search" id="code-q" style="width:100%;margin-bottom:10px;" data-i18n-ph="code_ph" placeholder="" />
+      <div class="code-list" id="code-list"></div>
+      <button type="button" class="btn" style="margin-top:12px;width:100%;" id="code-close" data-i18n="cancel">Cancel</button>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-ord">
+    <div class="modal-box" style="text-align:left;">
+      <h3 data-i18n="ord_title">Supplier reorder</h3>
+      <p class="meta" id="ord-sku" style="font-size:0.85rem;"></p>
+      <label data-i18n="ord_qty">Order quantity</label>
+      <input type="number" id="ord-qty" min="1" value="20" />
+      <span class="err" id="ord-err" data-i18n="ord_err">Must be above reorder threshold</span>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button type="button" class="btn" id="ord-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="ord-go" data-i18n="ord_go">Place order</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-ap">
+    <div class="modal-box" style="text-align:left;max-width:440px;">
+      <h3 data-i18n="ap_modal_t">Decision</h3>
+      <label data-i18n="ap_rs">Reason</label>
+      <textarea id="ap-reason" rows="3"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button type="button" class="btn" id="ap-rej" style="border-color:var(--danger);color:var(--danger);" data-i18n="ap_rej">Reject</button>
+        <button type="button" class="btn btn-primary" id="ap-app" data-i18n="ap_app">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-rcpt">
+    <div class="modal-box" style="text-align:left;max-width:520px;width:min(520px,96vw);">
+      <h3 data-i18n="rcpt_title">Receipt preview</h3>
+      <p style="color:var(--muted);font-size:0.88rem;margin-top:0;" data-i18n="rcpt_sub">Thermal layout stub · patient-paid oxygen surcharge.</p>
+      <div class="receipt-preview" id="rcpt-body">
+        <h4>Bay Hyperbaric Center</h4>
+        <div class="r-row"><span data-i18n="rcpt_ln1">Receipt #</span><span>RCP-2026-0514-02</span></div>
+        <div class="r-row"><span data-i18n="rcpt_ln2">MRN</span><span>MRN-10021</span></div>
+        <div class="r-row"><span data-i18n="rcpt_ln3">Service</span><span>HBOT · 60 min</span></div>
+        <div class="r-row"><span data-i18n="rcpt_ln4">Amount</span><strong>$185.00</strong></div>
+        <p style="margin:16px 0 0;color:var(--muted);font-size:0.78rem;font-family:ui-sans-serif,system-ui,sans-serif;" data-i18n="rcpt_foot">Demo document · not legally binding.</p>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button type="button" class="btn" id="rcpt-close" data-i18n="rcpt_close">Close</button>
+        <button type="button" class="btn btn-primary" id="rcpt-print" data-i18n="rcpt_print">Print</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const C = {
+      en: {
+        cl_title: "Clinic partner portal",
+        cl_sub: "Bay Hyperbaric Center · data scoped to this clinic",
+        hub: "Hub",
+        tab_dash: "Workbench", tab_roster: "Patients", tab_sch: "Schedule", tab_chk: "Session checklist",
+        tab_inv: "Inventory", tab_ho: "Shift handoff", tab_staff: "Staff shifts", tab_live: "Live sessions", tab_al: "Alerts",
+        tab_rev: "Revenue & statements", tab_disp: "Disputes",
+        my_dev: "My devices", th_dev: "Device", th_st: "Status", th_loc: "Location", st_run: "Running", st_idle: "Idle",
+        btn_map: "Focus on map", sum_title: "At a glance",
+        sum_body: "Today's sessions: 42 · Utilization 68% (demo)",
+        live_title: "Live treatment board", th_pat: "Room / unit", th_start: "Started", th_eta: "ETA end", th_el: "Elapsed",
+        loc_al: "Localized alerts", f_all: "All types", f_off: "Offline", f_move: "Geofence", th_time: "Time", th_msg: "Message",
+        al1: "HBOT-BAY-02 offline > 15m", al2: "HBOT-BAY-01 geofence warning",
+        rev_title: "Treatment log", p7: "Last 7 days", p30: "Last 30 days", btn_q: "Query",
+        th_end: "End", th_dur: "Duration", th_val: "Valid", short: "Short",
+        stmt_title: "Monthly statement", stmt_hint: "April 2026 — PDF/Excel export mocked.",
+        btn_dl: "Download PDF", btn_export: "Export report…", btn_rcpt: "Printable receipt…",
+        rost_title: "Patient roster (mock)", rost_ph: "Search MRN or name", rost_go: "Filter", rost_id: "MRN",
+        rost_name: "Name", rost_last: "Last visit", rost_ins: "Payer", rost_next: "Next HBOT",
+        rost_p1: "PPO · NorthStar", rost_p2: "Medicare adv.", rost_p3: "Self-pay bundle",
+        rost_act: "Active", rost_hold: "On hold", rost_empty: "No patients match.", rost_view: "Chart",
+        sch_title: "Appointment board", sch_sub: "Bay rooms · static demo", sch_r1: "Bay-01", sch_r2: "Bay-02", sch_r3: "Bay-03",
+        sch_r4: "Bay-04", sch_r5: "Bay-05", sch_a1: "09:00 A.Chen", sch_a2: "10:30 B.Patel", sch_free: "Free", sch_blk: "Blocked",
+        chk_title: "Treatment session checklist", chk1: "Consent on file", chk2: "Device self-test OK", chk3: "Staff present ≥2",
+        chk_err: "Complete checklist", chk_save: "Sign session",
+        inv_title: "Consumables inventory", inv_sku: "SKU", inv_name: "Item", inv_qty: "Qty", inv_min: "Reorder at",
+        inv_tab_con: "Consumables", inv_tab_dev: "Device kits", inv_tab_exp: "Expiry watch",
+        inv_dev_sub: "Serialized accessories tied to installs.", inv_kit: "Kit ID", inv_ok: "Sealed", inv_open: "Opened · QA",
+        inv_exp_sub: "Lot tracking stub · FIFO picks highlighted.", inv_lot: "Lot", inv_expires: "Expires", inv_loc: "Bin",
+        inv_warn: "Low stock: Adult mask near threshold.",
+        ho_title: "Shift handoff notes", ho_lbl: "Outgoing notes", ho_ph: "Notable events, device quirks…", ho_err: "Min 10 characters", ho_save: "Submit handoff",
+        stf_title: "Staff coverage",
+        stf_sub: "RN / tech pairing · swap requests route to supervisor (demo).",
+        stf_shift: "Shift", stf_rn: "Charge RN", stf_tech: "HBOT tech",
+        stf_d: "Day · 07:00–19:00", stf_e: "Evening · 19:00–23:00", stf_n: "Night · on-call",
+        stf_ok: "Staffed", stf_need: "Needs tech", stf_swap: "Request swap",
+        rev_tab_log: "Treatment log", rev_tab_hq: "HQ reconciliation", rev_tab_ex: "Exceptions",
+        rec_hq_title: "HQ vs clinic ledger",
+        rec_hq_sub: "Variance inside tolerance unless flagged.",
+        rec_col_p: "Period", rec_col_loc: "Clinic sessions", rec_col_hq: "HQ roll-up", rec_col_var: "Δ",
+        rec_ex_title: "Exception queue",
+        rec_ex_sub: "Sessions missing telemetry handshake.",
+        rec_ex_r: "Reason", rec_ex1: "Partial upload", rec_ex2: "Manual override",
+        disp_list_title: "Open disputes", disp_id: "Case ID", disp_amt: "Amount", disp_st1: "Review", disp_st2: "Evidence",
+        disp_d1: "Mismatch on session count vs clinic log.", disp_d2: "Tax line rounding on April invoice.",
+        exp_title: "Export report", exp_sub: "Choose format (demo).", exp_fmt: "Format", exp_range: "Date range",
+        exp_err: "Enter a date range", exp_go: "Export", cancel: "Cancel",
+        d_line1: "Statement", d_line2: "Opened", d_line3: "Owner", btn_close_d: "Close",
+        disp_title: "Open a dispute", disp_sub: "Questionable settlements — sent to HQ review.",
+        lbl_stmt: "Statement ID", err_stmt: "Statement ID is required",
+        lbl_reas: "Reason & evidence notes", err_reas: "Enter at least 20 characters",
+        btn_sub: "Submit dispute",
+        ok_title: "Submitted", ok_sub: "HQ will review with audit trail (demo).", btn_ok: "OK",
+        toast_q: "Query executed", toast_dl: "Download started (demo)", toast_map: "Map focus (demo)",
+        toast_chk: "Checklist signed (demo)", toast_ho: "Handoff saved", toast_exp: "Export queued (demo)",
+        tab_intake: "Intake & vitals", tab_qual: "Quality & approvals", btn_refresh: "Refresh board",
+        in_title: "Patient intake", in_sub: "Multi-section · autosave toast (demo).",
+        in_a: "A. Demographics & referral", in_mrn: "MRN", in_mrn_ph: "MRN-#####", in_ref: "Referring physician",
+        in_b: "B. Clinical notes", in_dx: "Indication / diagnosis (short)",
+        in_c: "C. Billing", in_pick: "Pick procedure code",
+        vit_title: "Vitals (stepper)", vit1: "Blood pressure", vit2: "SpO₂", vit3: "Heart rate",
+        vit_prev: "Back", vit_next: "Next",
+        q_title: "Patient queue", q1: "MRN-10021 · Waiting · next bay", q2: "MRN-10088 · Prep", q3: "Walk-in · triage",
+        code_title: "Procedure codes", code_ph: "Search CPT / local codes",
+        nm_title: "Near-miss report", nm_sub: "Close calls for supervisor review (demo).", nm_lbl: "What almost happened?",
+        nm_go: "Submit near-miss",
+        ap_title: "Supervisor approval queue", ap_id: "Request", ap_r1: "Override pressure cap · Bay-02", ap_r2: "After-hours session", ap_pend: "Pending", ap_open: "Review",
+        ap_modal_t: "Decision", ap_rs: "Reason (required)", ap_rej: "Reject", ap_app: "Approve",
+        inv_ord: "Reorder", ord_title: "Supplier reorder", ord_qty: "Order quantity",
+        ord_err: "Quantity must exceed reorder threshold (demo rule)", ord_go: "Place order",
+        toast_save: "Draft saved (demo)", toast_nm: "Near-miss logged", toast_ord: "PO queued (demo)",
+        toast_ap: "Decision recorded (demo)",
+        toast_rost: "Opening chart snapshot (demo)",
+        toast_stf: "Swap request sent (demo)",
+        toast_rcpt: "Opening print dialog (demo)",
+        toast_wk: "Schedule focus updated",
+        rcpt_title: "Receipt preview",
+        rcpt_sub: "Thermal layout stub · oxygen surcharge line item.",
+        rcpt_ln1: "Receipt #", rcpt_ln2: "MRN", rcpt_ln3: "Service", rcpt_ln4: "Amount",
+        rcpt_foot: "Demo document · not legally binding.",
+        rcpt_close: "Close", rcpt_print: "Print",
+      },
+      zh: {
+        cl_title: "诊所合作端",
+        cl_sub: "海湾高压氧中心 · 数据仅限本院",
+        hub: "入口",
+        tab_dash: "工作台", tab_roster: "患者名册", tab_sch: "排班", tab_chk: "治疗核对单",
+        tab_inv: "耗材库存", tab_ho: "交接班", tab_staff: "人力排班", tab_live: "实时治疗", tab_al: "告警", tab_rev: "收益与对账", tab_disp: "争议申诉",
+        my_dev: "我的设备", th_dev: "设备", th_st: "状态", th_loc: "位置", st_run: "治疗中", st_idle: "闲置",
+        btn_map: "地图定位", sum_title: "概览",
+        sum_body: "今日治疗 42 次 · 设备利用率 68%（演示）",
+        live_title: "实时治疗看板", th_pat: "房间/单元", th_start: "开始", th_eta: "预计结束", th_el: "已进行",
+        loc_al: "本地化告警", f_all: "全部类型", f_off: "离线", f_move: "围栏", th_time: "时间", th_msg: "内容",
+        al1: "HBOT-BAY-02 离线超过 15 分钟",
+        al2: "HBOT-BAY-01 围栏预警",
+        rev_title: "治疗记录明细", p7: "近 7 天", p30: "近 30 天", btn_q: "查询",
+        th_end: "结束", th_dur: "时长", th_val: "有效性", short: "偏短",
+        stmt_title: "月度结算单", stmt_hint: "2026年4月 — PDF/Excel 导出为演示。",
+        btn_dl: "下载 PDF", btn_export: "导出报表…", btn_rcpt: "打印收据预览…",
+        rost_title: "患者名册（演示）", rost_ph: "搜索病历号或姓名", rost_go: "筛选", rost_id: "病历号",
+        rost_name: "姓名", rost_last: "最近到院", rost_ins: "支付方", rost_next: "下次 HBOT",
+        rost_p1: "商业险 · NorthStar", rost_p2: "Medicare 优势计划", rost_p3: "自费套餐",
+        rost_act: "在治", rost_hold: "暂停", rost_empty: "无匹配患者。", rost_view: "病历摘要",
+        sch_title: "预约看板", sch_sub: "房间示意 · 静态演示", sch_r1: "Bay-01", sch_r2: "Bay-02", sch_r3: "Bay-03",
+        sch_r4: "Bay-04", sch_r5: "Bay-05", sch_a1: "09:00 A.Chen", sch_a2: "10:30 B.Patel", sch_free: "空闲", sch_blk: "封舱",
+        chk_title: "治疗会话核对单", chk1: "同意书已归档", chk2: "设备自检通过", chk3: "在场人员≥2",
+        chk_err: "请完成核对", chk_save: "签字确认",
+        inv_title: "耗材库存", inv_sku: "SKU", inv_name: "物料", inv_qty: "数量", inv_min: "补货线",
+        inv_tab_con: "耗材", inv_tab_dev: "设备套件", inv_tab_exp: "效期预警",
+        inv_dev_sub: "与装机绑定的序列化附件。", inv_kit: "套件编号", inv_ok: "封存", inv_open: "已拆 · QA",
+        inv_exp_sub: "批次追溯占位 · FIFO 推荐。", inv_lot: "批次", inv_expires: "到期", inv_loc: "库位",
+        inv_warn: "库存预警：成人面罩接近阈值。",
+        ho_title: "交接班记录", ho_lbl: "交班说明", ho_ph: "事件、设备异常等…", ho_err: "至少 10 字", ho_save: "提交交接",
+        stf_title: "人力与班次",
+        stf_sub: "护士/技师配对 · 换班请求转主管（演示）。",
+        stf_shift: "班次", stf_rn: "责任护士", stf_tech: "HBOT 技师",
+        stf_d: "白班 · 07:00–19:00", stf_e: "晚班 · 19:00–23:00", stf_n: "夜间 · 呼叫值班",
+        stf_ok: "已排班", stf_need: "缺技师", stf_swap: "申请换班",
+        rev_tab_log: "治疗明细", rev_tab_hq: "总部对账", rev_tab_ex: "异常清单",
+        rec_hq_title: "总部 vs 本院台账",
+        rec_hq_sub: "差异在容差内则不提示。",
+        rec_col_p: "账期", rec_col_loc: "本院次数", rec_col_hq: "总部汇总", rec_col_var: "Δ",
+        rec_ex_title: "异常队列",
+        rec_ex_sub: "遥测握手缺失的治疗。",
+        rec_ex_r: "原因", rec_ex1: "上报不完整", rec_ex2: "人工覆盖",
+        disp_list_title: "进行中的争议", disp_id: "工单号", disp_amt: "金额", disp_st1: "审核中", disp_st2: "待补充材料",
+        disp_d1: "治疗次数与诊所日志不一致。", disp_d2: "四月发票税额进位差异。",
+        exp_title: "导出报表", exp_sub: "选择格式（演示）。", exp_fmt: "格式", exp_range: "日期范围",
+        exp_err: "请填写日期范围", exp_go: "导出", cancel: "取消",
+        d_line1: "结算单", d_line2: "发起时间", d_line3: "负责人", btn_close_d: "关闭",
+        disp_title: "发起争议", disp_sub: "对结算有疑问时提交，由总部审核（按需求）。",
+        lbl_stmt: "结算单编号", err_stmt: "必填",
+        lbl_reas: "原因与证据说明", err_reas: "至少 20 字",
+        btn_sub: "提交申诉",
+        ok_title: "已提交", ok_sub: "总部将审核并保留审计轨迹（演示）。", btn_ok: "好的",
+        toast_q: "查询已执行", toast_dl: "已开始下载（演示）", toast_map: "地图聚焦（演示）",
+        toast_chk: "核对单已签署（演示）", toast_ho: "交接已保存", toast_exp: "导出任务已排队（演示）",
+        tab_intake: "接诊与体征", tab_qual: "质量与审批", btn_refresh: "刷新看板",
+        in_title: "患者接诊", in_sub: "多段表单 · 自动保存提示（演示）。",
+        in_a: "A. 基本信息与转诊", in_mrn: "病历号", in_mrn_ph: "MRN-#####", in_ref: "转诊医师",
+        in_b: "B. 病历摘要", in_dx: "适应症 / 诊断（简）",
+        in_c: "C. 计费", in_pick: "选择术式编码",
+        vit_title: "体征（分步）", vit1: "血压", vit2: "血氧", vit3: "心率",
+        vit_prev: "上一步", vit_next: "下一步",
+        q_title: "候诊队列", q1: "MRN-10021 · 等候 · 下一舱", q2: "MRN-10088 · 准备", q3: "Walk-in · 分诊",
+        code_title: "术式编码", code_ph: "搜索 CPT / 本院编码",
+        nm_title: "未遂事件上报", nm_sub: "近乎差错 · 进入主管队列（演示）。", nm_lbl: "几乎发生什么？",
+        nm_go: "提交未遂",
+        ap_title: "主管审批队列", ap_id: "事项", ap_r1: "突破压力上限 · Bay-02", ap_r2: "非工作时间开舱 · 值班护士", ap_pend: "待处理", ap_open: "处理",
+        ap_modal_t: "审批", ap_rs: "原因（必填）", ap_rej: "驳回", ap_app: "同意",
+        inv_ord: "补货", ord_title: "供应商下单", ord_qty: "采购数量",
+        ord_err: "数量需高于补货阈值（演示规则）", ord_go: "提交采购",
+        toast_save: "草稿已保存（演示）", toast_nm: "未遂事件已记录", toast_ord: "采购单已排队（演示）",
+        toast_ap: "审批已记录（演示）",
+        toast_rost: "打开病历摘要（演示）",
+        toast_stf: "换班请求已发送（演示）",
+        toast_rcpt: "正在打开打印（演示）",
+        toast_wk: "已切换日程焦点",
+        rcpt_title: "收据预览",
+        rcpt_sub: "热敏布局占位 · 含氧附加费行。",
+        rcpt_ln1: "收据编号", rcpt_ln2: "病历号", rcpt_ln3: "项目", rcpt_ln4: "金额",
+        rcpt_foot: "演示文档 · 不具有法律效力。",
+        rcpt_close: "关闭", rcpt_print: "打印",
+      }
+    };
+    const lg = () => localStorage.getItem("hbot_lang") || "en";
+    function apply() {
+      const L = C[lg()];
+      document.documentElement.lang = lg() === "zh" ? "zh-Hans" : "en";
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const k = el.getAttribute("data-i18n");
+        if (L[k]) el.textContent = L[k];
+      });
+      document.getElementById("ce").classList.toggle("active", lg() === "en");
+      document.getElementById("cz").classList.toggle("active", lg() === "zh");
+      document.querySelectorAll("#period option").forEach((op) => {
+        const k = op.getAttribute("data-i18n");
+        if (k && L[k]) op.textContent = L[k];
+      });
+      document.querySelectorAll("#al-f option").forEach((op) => {
+        const k = op.getAttribute("data-i18n");
+        if (k && L[k]) op.textContent = L[k];
+      });
+      document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+        const k = el.getAttribute("data-i18n-ph");
+        if (k && L[k]) el.setAttribute("placeholder", L[k]);
+      });
+    }
+    document.getElementById("ce").onclick = () => { localStorage.setItem("hbot_lang", "en"); apply(); };
+    document.getElementById("cz").onclick = () => { localStorage.setItem("hbot_lang", "zh"); apply(); };
+    apply();
+
+    function toast(k) {
+      const t = document.getElementById("toast");
+      t.textContent = C[lg()][k];
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    document.getElementById("main-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-v]");
+      if (!b) return;
+      document.querySelectorAll("#main-tabs button").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      const v = b.dataset.v;
+      document.querySelectorAll(".view").forEach((view) => view.classList.toggle("active", view.id === "view-" + v));
+    });
+
+    document.getElementById("btn-q").onclick = () => toast("toast_q");
+    document.getElementById("btn-dl").onclick = () => toast("toast_dl");
+    document.querySelectorAll(".btn-map").forEach((b) => (b.onclick = () => toast("toast_map")));
+
+    document.getElementById("al-f").onchange = () => {
+      const f = document.getElementById("al-f").value;
+      document.querySelectorAll("#tbl-al tbody tr").forEach((r) => {
+        r.style.display = f === "all" || r.dataset.type === f ? "" : "none";
+      });
+    };
+
+    document.getElementById("btn-submit").onclick = () => {
+      const sid = document.getElementById("stmt-id").value.trim();
+      const reas = document.getElementById("reason").value.trim();
+      const okS = sid.length > 0;
+      const okR = reas.length >= 20;
+      document.getElementById("e-stmt").classList.toggle("show", !okS);
+      document.getElementById("e-reas").classList.toggle("show", !okR);
+      document.getElementById("stmt-id").classList.toggle("invalid", !okS);
+      document.getElementById("reason").classList.toggle("invalid", !okR);
+      if (!okS || !okR) return;
+      document.getElementById("modal-ok").classList.add("show");
+    };
+    document.getElementById("btn-ok-close").onclick = () => {
+      document.getElementById("modal-ok").classList.remove("show");
+      document.getElementById("stmt-id").value = "";
+      document.getElementById("reason").value = "";
+    };
+
+    const modalExp = document.getElementById("modal-export");
+    document.getElementById("btn-export-open").onclick = () => {
+      modalExp.classList.add("show");
+      document.getElementById("exp-err").classList.remove("show");
+    };
+    document.getElementById("exp-cancel").onclick = () => modalExp.classList.remove("show");
+    document.getElementById("exp-go").onclick = () => {
+      const v = document.getElementById("exp-range").value.trim();
+      document.getElementById("exp-err").classList.toggle("show", v.length < 5);
+      if (v.length < 5) return;
+      modalExp.classList.remove("show");
+      toast("toast_exp");
+    };
+    modalExp.addEventListener("click", (e) => { if (e.target === modalExp) modalExp.classList.remove("show"); });
+
+    const ddb = document.getElementById("disp-drawer-back");
+    document.getElementById("disp-d-close").onclick = () => ddb.classList.remove("show");
+    ddb.addEventListener("click", (e) => { if (e.target === ddb) ddb.classList.remove("show"); });
+    document.querySelectorAll(".disp-row").forEach((r) => {
+      r.onclick = () => {
+        const id = r.getAttribute("data-did");
+        const L = C[lg()];
+        document.getElementById("disp-d-title").textContent = id;
+        document.getElementById("disp-d-body").textContent = id === "DSP-001" ? L.disp_d1 : L.disp_d2;
+        document.getElementById("disp-d-st").textContent = id === "DSP-001" ? "ST-2026-04-BAY" : "ST-2026-03-BAY";
+        ddb.classList.add("show");
+      };
+    });
+
+    document.getElementById("rost-filter").onclick = () => {
+      const q = document.getElementById("rost-q").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#tbl-rost tbody tr");
+      let n = 0;
+      rows.forEach((row) => {
+        const show = !q || row.innerText.toLowerCase().includes(q);
+        row.style.display = show ? "" : "none";
+        if (show) n++;
+      });
+      document.getElementById("rost-empty").style.display = n ? "none" : "block";
+      toast("toast_q");
+    };
+
+    document.getElementById("chk-save").onclick = () => {
+      const ok = ["chk1", "chk2", "chk3"].every((id) => document.getElementById(id).checked);
+      document.getElementById("chk-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      toast("toast_chk");
+    };
+
+    document.getElementById("ho-save").onclick = () => {
+      const t = document.getElementById("ho-ta").value.trim();
+      const ok = t.length >= 10;
+      document.getElementById("ho-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      toast("toast_ho");
+      document.getElementById("ho-ta").value = "";
+    };
+
+    let saveT = null;
+    document.getElementById("intake-panel").addEventListener("input", () => {
+      clearTimeout(saveT);
+      saveT = setTimeout(() => toast("toast_save"), 900);
+    });
+
+    const CODES = [
+      { k: "99183", t: "HBOT · monoplace, first hour" },
+      { k: "99184", t: "HBOT · each additional hour" },
+      { k: "E1390", t: "Oxygen concentrator rental bundle" },
+      { k: "LOCAL-OC", t: "Clinic package · 10-pack sessions" }
+    ];
+    function renderCodes(q) {
+      const qq = (q || "").toLowerCase();
+      const el = document.getElementById("code-list");
+      el.innerHTML = "";
+      CODES.filter((c) => !qq || c.k.toLowerCase().includes(qq) || c.t.toLowerCase().includes(qq)).forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = c.k + " — " + c.t;
+        b.onclick = () => {
+          document.getElementById("code-picked").textContent = c.k + " — " + c.t;
+          document.getElementById("modal-code").classList.remove("show");
+          toast("toast_save");
+        };
+        el.appendChild(b);
+      });
+    }
+    const modalCode = document.getElementById("modal-code");
+    document.getElementById("btn-pick-code").onclick = () => {
+      modalCode.classList.add("show");
+      document.getElementById("code-q").value = "";
+      renderCodes("");
+    };
+    document.getElementById("code-q").oninput = (e) => renderCodes(e.target.value);
+    document.getElementById("code-close").onclick = () => modalCode.classList.remove("show");
+    modalCode.addEventListener("click", (e) => { if (e.target === modalCode) modalCode.classList.remove("show"); });
+
+    let vitStep = 1;
+    function syncVit() {
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById("vp" + i).classList.toggle("show", vitStep === i);
+      }
+      document.querySelectorAll("#vit-stepper b").forEach((b) => b.classList.toggle("on", +b.dataset.vs === vitStep));
+    }
+    document.getElementById("vit-next").onclick = () => { if (vitStep < 3) { vitStep++; syncVit(); } };
+    document.getElementById("vit-prev").onclick = () => { if (vitStep > 1) { vitStep--; syncVit(); } };
+    document.querySelectorAll("#vit-stepper b").forEach((b) => {
+      b.onclick = () => { vitStep = +b.dataset.vs; syncVit(); };
+    });
+    syncVit();
+
+    document.getElementById("btn-refresh-live").onclick = () => {
+      const lp = document.getElementById("live-panel");
+      lp.classList.add("loading");
+      setTimeout(() => lp.classList.remove("loading"), 700);
+    };
+
+    const modalOrd = document.getElementById("modal-ord");
+    let ordRow = null;
+    document.querySelectorAll(".ord-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ordRow = e.target.closest("tr");
+        const sku = ordRow.cells[0].textContent;
+        document.getElementById("ord-sku").textContent = sku;
+        const min = +ordRow.getAttribute("data-min");
+        document.getElementById("ord-qty").value = String(min + 5);
+        document.getElementById("ord-err").classList.remove("show");
+        modalOrd.classList.add("show");
+      });
+    });
+    document.getElementById("ord-cancel").onclick = () => modalOrd.classList.remove("show");
+    document.getElementById("ord-go").onclick = () => {
+      const min = ordRow ? +ordRow.getAttribute("data-min") : 0;
+      const q = +document.getElementById("ord-qty").value;
+      const ok = q > min;
+      document.getElementById("ord-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      modalOrd.classList.remove("show");
+      toast("toast_ord");
+    };
+    modalOrd.addEventListener("click", (e) => { if (e.target === modalOrd) modalOrd.classList.remove("show"); });
+
+    document.getElementById("nm-submit").onclick = () => {
+      if (document.getElementById("nm-ta").value.trim().length < 8) return;
+      toast("toast_nm");
+      document.getElementById("nm-ta").value = "";
+    };
+
+    const modalAp = document.getElementById("modal-ap");
+    document.querySelectorAll(".btn-ap").forEach((b) => {
+      b.onclick = () => {
+        document.getElementById("ap-reason").value = "";
+        modalAp.classList.add("show");
+      };
+    });
+    function closeAp() { modalAp.classList.remove("show"); }
+    document.getElementById("ap-app").onclick = () => {
+      if (document.getElementById("ap-reason").value.trim().length < 6) return;
+      closeAp();
+      toast("toast_ap");
+    };
+    document.getElementById("ap-rej").onclick = () => {
+      if (document.getElementById("ap-reason").value.trim().length < 6) return;
+      closeAp();
+      toast("toast_ap");
+    };
+    modalAp.addEventListener("click", (e) => { if (e.target === modalAp) modalAp.classList.remove("show"); });
+
+    document.getElementById("inv-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-it]");
+      if (!b) return;
+      document.querySelectorAll("#inv-tabs button").forEach((x) => x.classList.remove("on"));
+      b.classList.add("on");
+      const t = b.dataset.it;
+      document.getElementById("inv-pane-con").style.display = t === "con" ? "block" : "none";
+      document.getElementById("inv-pane-dev").style.display = t === "dev" ? "block" : "none";
+      document.getElementById("inv-pane-exp").style.display = t === "exp" ? "block" : "none";
+    });
+
+    document.getElementById("rev-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-rv]");
+      if (!b) return;
+      document.querySelectorAll("#rev-tabs button").forEach((x) => x.classList.remove("on"));
+      b.classList.add("on");
+      const t = b.dataset.rv;
+      document.getElementById("rev-pane-log").style.display = t === "log" ? "block" : "none";
+      document.getElementById("rev-pane-hq").style.display = t === "hq" ? "block" : "none";
+      document.getElementById("rev-pane-ex").style.display = t === "ex" ? "block" : "none";
+    });
+
+    document.getElementById("wk-strip").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-day]");
+      if (!b) return;
+      document.querySelectorAll("#wk-strip button").forEach((x) => x.classList.remove("on"));
+      b.classList.add("on");
+      toast("toast_wk");
+    });
+
+    document.querySelectorAll(".rost-view").forEach((x) => {
+      x.onclick = () => toast("toast_rost");
+    });
+
+    document.getElementById("btn-stf-swap").onclick = () => toast("toast_stf");
+
+    const modalRcpt = document.getElementById("modal-rcpt");
+    document.getElementById("btn-rcpt-open").onclick = () => modalRcpt.classList.add("show");
+    document.getElementById("rcpt-close").onclick = () => modalRcpt.classList.remove("show");
+    document.getElementById("rcpt-print").onclick = () => {
+      toast("toast_rcpt");
+      window.print();
+    };
+    modalRcpt.addEventListener("click", (e) => { if (e.target === modalRcpt) modalRcpt.classList.remove("show"); });
+  </script>
+</body>
+</html>

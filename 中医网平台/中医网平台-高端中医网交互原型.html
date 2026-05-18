@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>中医网 · 高端中医健康电商交互原型</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#18211d;
+      --ink2:#314139;
+      --paper:#f7f1e5;
+      --paper2:#efe4cf;
+      --card:#fffaf0;
+      --line:#e4d6be;
+      --cinnabar:#b83224;
+      --cinnabar2:#8e241b;
+      --jade:#1d6b55;
+      --jade2:#6f947f;
+      --gold:#c9a45d;
+      --muted:#7d7061;
+      --shadow:0 24px 70px rgba(24,33,29,.18);
+      --r:22px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 8% 12%, rgba(201,164,93,.20), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(29,107,85,.16), transparent 30%),
+        linear-gradient(135deg,#efe2c9 0%,#f7f1e5 42%,#e8d4b5 100%);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;inset:0;pointer-events:none;opacity:.22;z-index:-1;
+      background-image:
+        linear-gradient(rgba(24,33,29,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24,33,29,.04) 1px, transparent 1px);
+      background-size:34px 34px;
+      mask-image:radial-gradient(circle at center,#000 0%,transparent 80%);
+    }
+    a{text-decoration:none;color:inherit}
+    button,input,select,textarea{font:inherit}
+    button{border:0;cursor:pointer}
+    .shell{max-width:1480px;margin:auto;padding:24px}
+    .hero{
+      display:grid;
+      grid-template-columns:minmax(360px,1.05fr) minmax(820px,1.55fr);
+      gap:28px;
+      align-items:stretch;
+    }
+    .brand-panel{
+      min-height:850px;
+      border-radius:32px;
+      padding:34px;
+      background:
+        linear-gradient(180deg,rgba(24,33,29,.86),rgba(24,33,29,.92)),
+        url("https://images.unsplash.com/photo-1615485500704-8e990f9900f7?auto=format&fit=crop&w=1200&q=80") center/cover;
+      color:#fff8ea;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .brand-panel::after{
+      content:"中医网";
+      position:absolute;right:-18px;top:150px;
+      writing-mode:vertical-rl;
+      font-family:"Noto Serif SC",serif;
+      font-size:96px;font-weight:900;letter-spacing:.2em;
+      color:rgba(255,248,234,.045);
+    }
+    .logo-row{display:flex;align-items:center;gap:16px;position:relative;z-index:1}
+    .seal{
+      width:62px;height:62px;border-radius:18px;
+      background:linear-gradient(135deg,var(--cinnabar),#df5b43);
+      display:grid;place-items:center;
+      font-family:"Noto Serif SC",serif;
+      font-size:28px;font-weight:900;color:#fff;
+      box-shadow:0 12px 28px rgba(184,50,36,.34);
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .logo-row h1{font-family:"Noto Serif SC",serif;font-size:28px;letter-spacing:.08em}
+    .logo-row p{font-size:12px;color:rgba(255,248,234,.62);margin-top:3px;letter-spacing:.16em;text-transform:uppercase}
+    .hero-copy{position:relative;z-index:1}
+    .kicker{font-size:13px;color:var(--gold);letter-spacing:.22em;font-weight:700;margin-bottom:18px}
+    .hero-copy h2{
+      font-family:"Noto Serif SC",serif;
+      font-size:60px;
+      line-height:1.08;
+      letter-spacing:.02em;
+      margin-bottom:22px;
+    }
+    .hero-copy h2 span{display:block;color:var(--gold)}
+    .hero-copy p{font-size:16px;line-height:2;color:rgba(255,248,234,.72);max-width:520px}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;z-index:1}
+    .metric{background:rgba(255,248,234,.08);border:1px solid rgba(255,248,234,.12);border-radius:18px;padding:16px;backdrop-filter:blur(14px)}
+    .metric b{font-family:"Noto Serif SC";font-size:26px;color:#fff;display:block;line-height:1.1}
+    .metric span{font-size:12px;color:rgba(255,248,234,.58)}
+    .notes{position:relative;z-index:1;background:rgba(255,248,234,.08);border:1px solid rgba(255,248,234,.14);border-radius:22px;padding:20px}
+    .notes h3{font-family:"Noto Serif SC";font-size:18px;margin-bottom:10px;color:var(--gold)}
+    .notes li{font-size:13px;color:rgba(255,248,234,.72);line-height:1.9;list-style:none;padding-left:18px;position:relative}
+    .notes li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);position:absolute;left:0;top:12px}
+    .demo-panel{
+      border-radius:32px;
+      background:rgba(255,250,240,.72);
+      border:1px solid rgba(255,255,255,.65);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(24px);
+      padding:22px;
+      min-height:850px;
+    }
+    .demo-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .demo-head h2{font-family:"Noto Serif SC";font-size:24px;color:var(--ink)}
+    .demo-head p{font-size:13px;color:var(--muted)}
+    .switch{display:flex;gap:8px;background:#eadcc4;border:1px solid var(--line);border-radius:999px;padding:5px}
+    .switch button{padding:9px 16px;border-radius:999px;background:transparent;color:var(--muted);font-size:13px;font-weight:700;transition:.2s}
+    .switch button.active{background:var(--ink);color:#fff7e8;box-shadow:0 10px 18px rgba(24,33,29,.14)}
+    .workbench{display:none;gap:22px}
+    .workbench.active{display:grid}
+    .workbench.consumer{grid-template-columns:390px 1fr}
+    .workbench.merchant,.workbench.admin{grid-template-columns:1fr}
+    .phone{
+      width:390px;height:760px;border-radius:46px;background:#111814;padding:14px;
+      box-shadow:0 28px 60px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.08);
+      position:relative;
+    }
+    .phone::before{content:"";position:absolute;left:50%;top:26px;transform:translateX(-50%);width:120px;height:26px;border-radius:18px;background:#080b09;z-index:4}
+    .screen{height:100%;border-radius:34px;background:var(--paper);overflow:hidden;display:flex;flex-direction:column;position:relative}
+    .status{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font-size:13px;font-weight:900;color:var(--ink);position:relative;z-index:3}
+    .m-scroll{flex:1;overflow:auto;padding-bottom:82px}
+    .m-scroll::-webkit-scrollbar,.desk-scroll::-webkit-scrollbar{width:0;height:0}
+    .page{display:none;animation:rise .24s ease}
+    .page.active{display:block}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .app-top{
+      position:sticky;top:0;z-index:2;
+      padding:8px 18px 14px;
+      background:linear-gradient(180deg,rgba(247,241,229,.98),rgba(247,241,229,.86));
+      backdrop-filter:blur(18px);
+    }
+    .location{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:10px}
+    .search{height:42px;border-radius:999px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;padding:0 15px;gap:9px;color:var(--muted);font-size:13px;box-shadow:0 10px 24px rgba(24,33,29,.06)}
+    .banner{
+      margin:12px 16px 0;border-radius:24px;min-height:178px;padding:20px;
+      background:
+        linear-gradient(90deg,rgba(24,33,29,.78),rgba(24,33,29,.18)),
+        url("https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=900&q=85") center/cover;
+      color:#fff8ea;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;
+      box-shadow:0 18px 36px rgba(24,33,29,.18);
+    }
+    .banner .tag{position:absolute;top:16px;left:16px;background:rgba(255,248,234,.18);border:1px solid rgba(255,248,234,.24);padding:5px 10px;border-radius:999px;font-size:11px;backdrop-filter:blur(10px)}
+    .banner h3{font-family:"Noto Serif SC";font-size:26px;line-height:1.22;margin-bottom:6px}
+    .banner p{font-size:12px;color:rgba(255,248,234,.78)}
+    .quick{margin:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .qitem{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 6px;text-align:center;box-shadow:0 10px 24px rgba(24,33,29,.04)}
+    .qicon{width:38px;height:38px;margin:0 auto 7px;border-radius:14px;display:grid;place-items:center;background:#f2e6cf;color:var(--jade);font-weight:900}
+    .qitem:nth-child(1) .qicon{background:#fde7df;color:var(--cinnabar)}
+    .qitem:nth-child(3) .qicon{background:#e3f0ea;color:var(--jade)}
+    .qitem span{font-size:11px;font-weight:700;color:var(--ink2)}
+    .section{padding:0 16px;margin-top:18px}
+    .sec-title{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
+    .sec-title h3{font-family:"Noto Serif SC";font-size:19px}
+    .sec-title small{font-size:12px;color:var(--muted)}
+    .coupon-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .coupon{background:#fff7ee;border:1px dashed rgba(184,50,36,.4);border-radius:18px;padding:13px;display:flex;gap:10px;align-items:center}
+    .coupon b{font-family:"Noto Serif SC";font-size:24px;color:var(--cinnabar)}
+    .coupon div{flex:1}
+    .coupon p{font-size:12px;font-weight:900}
+    .coupon span{font-size:10px;color:var(--muted)}
+    .coupon button{background:var(--cinnabar);color:#fff;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900}
+    .media-card{
+      border-radius:22px;overflow:hidden;background:#fff;border:1px solid var(--line);
+      box-shadow:0 14px 30px rgba(24,33,29,.08);cursor:pointer;
+    }
+    .media-card img{width:100%;height:150px;object-fit:cover;display:block}
+    .media-card .body{padding:12px}
+    .media-card .body h4{font-size:14px;line-height:1.45;margin-bottom:6px}
+    .price{display:flex;align-items:center;justify-content:space-between}
+    .price b{font-family:"Noto Serif SC";color:var(--cinnabar);font-size:20px}
+    .price span{font-size:11px;color:var(--muted)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .doctor-card{margin:16px;background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 34px rgba(24,33,29,.08)}
+    .doctor-card img{width:100%;height:155px;object-fit:cover}
+    .doctor-card .body{padding:14px}
+    .doctor-card h3{font-family:"Noto Serif SC";font-size:20px;margin-bottom:4px}
+    .doctor-card p{font-size:12px;color:var(--muted);line-height:1.7}
+    .video{
+      margin:16px;border-radius:24px;overflow:hidden;position:relative;background:#111;height:190px;box-shadow:0 18px 34px rgba(24,33,29,.15)
+    }
+    .video video,.video img{width:100%;height:100%;object-fit:cover;display:block;opacity:.86}
+    .play{
+      position:absolute;inset:0;display:grid;place-items:center;color:#fff;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,.42));
+    }
+    .play span{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.18);backdrop-filter:blur(12px);display:grid;place-items:center;border:1px solid rgba(255,255,255,.32);font-size:22px}
+    .tabbar{position:absolute;left:0;right:0;bottom:0;height:74px;background:rgba(255,250,240,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 8px 10px;z-index:5}
+    .tabbar button{border-radius:18px;background:transparent;color:var(--muted);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+    .tabbar button b{font-size:18px;line-height:1}
+    .tabbar button.active{color:var(--cinnabar);background:#fff3e8}
+    .detail-img{height:330px;position:relative;background:#ddd}
+    .detail-img img{width:100%;height:100%;object-fit:cover}
+    .back{position:absolute;left:16px;top:16px;width:38px;height:38px;border-radius:50%;background:rgba(255,250,240,.85);display:grid;place-items:center;z-index:3}
+    .detail-info{margin-top:-26px;position:relative;z-index:2;background:var(--paper);border-radius:28px 28px 0 0;padding:22px 18px}
+    .detail-info h2{font-family:"Noto Serif SC";font-size:24px;line-height:1.35;margin:8px 0}
+    .pills{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .pill{font-size:11px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--muted)}
+    .buybar{position:absolute;left:0;right:0;bottom:0;height:72px;background:#fffaf0;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 16px;z-index:6}
+    .buybar .mini{width:46px;color:var(--muted);font-size:11px;text-align:center}
+    .primary{background:linear-gradient(135deg,var(--cinnabar),#d34c39);color:#fff;border-radius:999px;padding:13px 18px;font-weight:900;box-shadow:0 12px 22px rgba(184,50,36,.22)}
+    .secondary{background:#f1e2c8;color:var(--ink);border-radius:999px;padding:13px 18px;font-weight:900}
+    .cart-card{margin:14px 16px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;gap:12px}
+    .cart-card img{width:84px;height:84px;border-radius:16px;object-fit:cover}
+    .cart-card h4{font-size:14px;line-height:1.45;margin-bottom:6px}
+    .stepper{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+    .stepper button,.stepper span{width:30px;height:28px;display:grid;place-items:center;font-weight:900;color:var(--ink)}
+    .topline{display:flex;align-items:center;gap:10px;padding:14px 18px;background:rgba(247,241,229,.9);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:4}
+    .topline h2{font-family:"Noto Serif SC";font-size:19px;flex:1;text-align:center;margin-right:28px}
+    .desk{
+      height:760px;border-radius:26px;background:#f9f4ea;border:1px solid var(--line);overflow:hidden;box-shadow:0 18px 38px rgba(24,33,29,.09)
+    }
+    .desk-layout{height:100%;display:grid;grid-template-columns:238px 1fr}
+    .side{background:linear-gradient(180deg,#17211d,#26352e);color:#f9ecd4;padding:24px 18px}
+    .side-logo{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+    .side-logo .seal{width:46px;height:46px;border-radius:14px;font-size:21px}
+    .side-logo h3{font-family:"Noto Serif SC";font-size:18px}
+    .menu{display:grid;gap:7px}
+    .menu button{height:44px;border-radius:14px;background:transparent;color:rgba(249,236,212,.68);text-align:left;padding:0 14px;font-weight:700}
+    .menu button.active{background:rgba(201,164,93,.18);color:#fff;border:1px solid rgba(201,164,93,.24)}
+    .desk-main{display:flex;flex-direction:column;min-width:0}
+    .desk-top{height:68px;background:#fffaf0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+    .desk-top h2{font-family:"Noto Serif SC";font-size:22px}
+    .desk-top .user{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+    .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--jade),var(--gold));display:grid;place-items:center;color:#fff;font-weight:900}
+    .desk-scroll{flex:1;overflow:auto;padding:24px}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 10px 22px rgba(24,33,29,.05)}
+    .kpi span{font-size:12px;color:var(--muted)}
+    .kpi b{font-family:"Noto Serif SC";font-size:30px;margin-top:6px;display:block}
+    .kpi small{color:var(--jade);font-size:12px;font-weight:700}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 12px 28px rgba(24,33,29,.06);overflow:hidden;margin-bottom:16px}
+    .panel-h{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line)}
+    .panel-h h3{font-family:"Noto Serif SC";font-size:18px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:14px 16px;text-align:left;border-bottom:1px solid #eee4d4;font-size:13px;vertical-align:middle}
+    th{background:#fbf4e7;color:var(--muted);font-size:12px;font-weight:900}
+    tr:hover td{background:#fff8ed}
+    .badge{display:inline-flex;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900}
+    .ok{background:#e5f1eb;color:var(--jade)}
+    .wait{background:#fff0d4;color:#a66a00}
+    .bad{background:#fde6e1;color:var(--cinnabar)}
+    .actions{display:flex;gap:8px;justify-content:flex-end}
+    .ghost{background:#f3e7d1;color:var(--ink);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:900}
+    .chart{height:210px;padding:20px;display:flex;align-items:end;gap:16px;background:linear-gradient(180deg,#fffdf8,#fbf2e3)}
+    .bar{flex:1;border-radius:999px 999px 0 0;background:linear-gradient(180deg,var(--gold),#d9bd7f);position:relative;min-width:28px}
+    .bar.red{background:linear-gradient(180deg,#d34c39,var(--cinnabar))}
+    .bar::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:900;color:var(--ink)}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:18px}
+    label{display:grid;gap:7px;font-size:12px;color:var(--muted);font-weight:900}
+    input,select,textarea{border:1px solid var(--line);border-radius:14px;background:#fffaf4;padding:12px;color:var(--ink);outline:none}
+    input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,164,93,.16)}
+    .show{display:block}
+    .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);background:#17211d;color:#fff8ea;border:1px solid rgba(201,164,93,.3);border-radius:999px;padding:12px 20px;box-shadow:0 16px 40px rgba(0,0,0,.22);opacity:0;pointer-events:none;transition:.25s;z-index:20;font-size:13px}
+    .toast.active{opacity:1;bottom:48px}
+    @media(max-width:1180px){
+      .hero{grid-template-columns:1fr}
+      .brand-panel{min-height:560px}
+      .workbench.consumer{grid-template-columns:1fr}
+      .phone{margin:auto}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+    }
+  </style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <aside class="brand-panel">
+      <div class="logo-row">
+        <div class="seal">医</div>
+        <div>
+          <h1>中医网</h1>
+          <p>Traditional Chinese Medicine Mall</p>
+        </div>
+      </div>
+      <div class="hero-copy">
+        <div class="kicker">高端中医健康电商 · 多商户平台 Demo</div>
+        <h2>真正有中医质感的<span>健康消费入口</span></h2>
+        <p>以“可信中医馆 + 道地好物 + 到店调理服务”为主轴，重构首页、商品、预约、商户经营与平台后台，让客户一眼看到这不是普通商城换皮，而是一个有行业气质、有经营闭环的中医网平台。</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><b>4000+</b><span>意向入驻商户</span></div>
+        <div class="metric"><b>3端</b><span>消费者 / 商户 / 平台</span></div>
+        <div class="metric"><b>1级</b><span>合规分销机制</span></div>
+      </div>
+      <div class="notes">
+        <h3>演示重点</h3>
+        <ul>
+          <li>首页采用真实药材、艾灸、养生馆图片，去掉廉价图标感。</li>
+          <li>消费者端体现“商品 + 服务 + 内容 + 活动”一体化。</li>
+          <li>商户端与平台端保留交易、核销、结算、营销、审核关键闭环。</li>
+        </ul>
+      </div>
+    </aside>
+
+    <section class="demo-panel">
+      <div class="demo-head">
+        <div>
+          <h2>中医网交互 Demo</h2>
+          <p>点击右侧标签切换端侧；手机内底部导航、商品卡、预约、后台菜单均可交互。</p>
+        </div>
+        <div class="switch" id="scopeSwitch">
+          <button class="active" data-scope="consumer">消费者端</button>
+          <button data-scope="merchant">商户端</button>
+          <button data-scope="admin">平台后台</button>
+        </div>
+      </div>
+
+      <div class="workbench consumer active" id="consumer">
+        <div class="phone">
+          <div class="screen">
+            <div class="status"><span>9:41</span><span>5G  88%</span></div>
+            <div class="m-scroll" id="mobilePages">
+              <section class="page active" data-page="home">
+                <div class="app-top">
+                  <div class="location">⌖ 郑州 · 为你推荐附近中医馆</div>
+                  <div class="search">⌕ 搜索艾灸、刮痧、三伏贴、养肝茶</div>
+                </div>
+                <div class="banner" onclick="mPage('detail')">
+                  <span class="tag">端午艾灸节 · 限时专场</span>
+                  <h3>三年陈艾<br>今日秒杀 29 元起</h3>
+                  <p>同仁堂中医馆精选 · 真实商户资质审核</p>
+                </div>
+                <div class="quick">
+                  <button class="qitem" onclick="mPage('detail')"><div class="qicon">艾</div><span>艾灸用品</span></button>
+                  <button class="qitem" onclick="mPage('service')"><div class="qicon">疗</div><span>到店调理</span></button>
+                  <button class="qitem" onclick="mPage('article')"><div class="qicon">典</div><span>中医知识</span></button>
+                  <button class="qitem" onclick="toast('已进入商户入驻流程')"><div class="qicon">店</div><span>商户入驻</span></button>
+                </div>
+                <div class="section">
+                  <div class="sec-title"><h3>新人专属券</h3><small>每人限领 1 张</small></div>
+                  <div class="coupon-strip">
+                    <div class="coupon"><b>¥20</b><div><p>满100可用</p><span>全平台通用</span></div><button onclick="claim(this)">领取</button></div>
+                    <div class="coupon"><b>¥50</b><div><p>满300可用</p><span>艾灸类目</span></div><button onclick="claim(this)">领取</button></div>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="sec-title"><h3>道地好物</h3><small>精选商户热销</small></div>
+                  <div class="grid2">
+                    <article class="media-card" onclick="mPage('detail')">
+                      <img src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=700&q=85" alt="中草药与艾草">
+                      <div class="body"><h4>蕲春三年陈艾条 · 10根装</h4><div class="price"><b>¥98</b><span>售3.2万</span></div></div>
+                    </article>
+                    <article class="media-card" onclick="mPage('service')">
+                      <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=700&q=85" alt="中医调理服务">
+                      <div class="body"><h4>全身艾灸调理 · 60分钟</h4><div class="price"><b>¥168</b><span>4.9分</span></div></div>
+                    </article>
+                  </div>
+                </div>
+                <div class="video" onclick="toast('播放：老中医讲解艾灸调理方法')">
+                  <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=900&q=85" alt="中医知识视频封面">
+                  <div class="play"><span>▶</span></div>
+                </div>
+              </section>
+
+              <section class="page" data-page="detail">
+                <div class="detail-img">
+                  <button class="back" onclick="mPage('home')">‹</button>
+                  <img src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=1000&q=88" alt="三年陈艾">
+                </div>
+                <div class="detail-info">
+                  <div class="price"><b>¥29</b><span>秒杀库存 144 件</span></div>
+                  <h2>蕲春三年陈艾条 · 温经散寒 · 10根装</h2>
+                  <div class="pills"><span class="pill">商户资质已审</span><span class="pill">顺丰包邮</span><span class="pill">7天无理由</span></div>
+                  <p style="font-size:13px;line-height:1.9;color:var(--muted)">取自蕲春道地艾草，自然陈化三年，烟气柔和、火力均匀，适用于居家艾灸、三伏调理、肩颈腰腿日常养护。</p>
+                  <div class="section" style="padding:0;margin-top:16px">
+                    <div class="sec-title"><h3>商户信息</h3><small>进店</small></div>
+                    <div class="doctor-card" style="margin:0">
+                      <div class="body">
+                        <h3>同仁堂中医馆</h3>
+                        <p>评分 4.9 · 在售 286 件 · 年费商户 · 营业执照与商品资质已审核。</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="page" data-page="service">
+                <div class="topline"><button onclick="mPage('home')">‹</button><h2>到店服务</h2></div>
+                <div class="doctor-card">
+                  <img src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=900&q=88" alt="艾灸服务">
+                  <div class="body">
+                    <div class="price"><b>¥168</b><span>60分钟 · 到店核销</span></div>
+                    <h3>全身艾灸调理</h3>
+                    <p>同仁堂中医馆 · 郑州金水区文化路78号。适合肩颈酸痛、寒湿体质、亚健康调理。</p>
+                    <div class="pills"><span class="pill">明日 15:00</span><span class="pill">剩余 8 个名额</span><span class="pill">支持改期</span></div>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="sec-title"><h3>选择时段</h3><small>约满自动置灰</small></div>
+                  <div class="grid2">
+                    <button class="secondary" onclick="toast('已选择 09:00')">09:00 余3</button>
+                    <button class="secondary" style="opacity:.42">10:00 已满</button>
+                    <button class="primary" onclick="toast('已选择 15:00')">15:00 余8</button>
+                    <button class="secondary" onclick="toast('已选择 17:00')">17:00 余2</button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="page" data-page="article">
+                <div class="topline"><button onclick="mPage('home')">‹</button><h2>中医知识</h2></div>
+                <div class="video" style="height:220px">
+                  <video poster="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=900&q=85" muted loop playsinline>
+                    <source src="https://videos.pexels.com/video-files/853870/853870-hd_1280_720_25fps.mp4" type="video/mp4">
+                  </video>
+                  <div class="play"><span onclick="toast('播放艾灸知识短视频')">▶</span></div>
+                </div>
+                <div class="detail-info" style="margin-top:0;border-radius:0;padding-top:8px">
+                  <h2>艾灸入门：8 个常用穴位与居家调理注意事项</h2>
+                  <p style="font-size:13px;line-height:2;color:var(--muted)">艾灸讲究辨证与火候。足三里、关元、神阙等穴位适合日常温补，但孕期、发热、皮肤破损者不建议自行施灸。平台内容由商户提交，平台审核后发布。</p>
+                  <div class="pills"><span class="pill">阅读 12.3万</span><span class="pill">收藏 8.6k</span><span class="pill">关联商品 4 件</span></div>
+                </div>
+              </section>
+
+              <section class="page" data-page="cart">
+                <div class="topline"><button onclick="mPage('home')">‹</button><h2>购物车</h2></div>
+                <div class="cart-card">
+                  <img src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=500&q=85" alt="艾条">
+                  <div style="flex:1">
+                    <h4>蕲春三年陈艾条 · 10根装</h4>
+                    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">同仁堂中医馆 · 秒杀价</p>
+                    <div class="price"><b>¥29</b><div class="stepper"><button onclick="step(this,-1)">-</button><span>1</span><button onclick="step(this,1)">+</button></div></div>
+                  </div>
+                </div>
+                <div class="cart-card">
+                  <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=500&q=85" alt="中药茶">
+                  <div style="flex:1">
+                    <h4>春季养肝草本茶 · 30包</h4>
+                    <p style="font-size:12px;color:var(--muted);margin-bottom:10px">华佗堂养生馆</p>
+                    <div class="price"><b>¥128</b><div class="stepper"><button onclick="step(this,-1)">-</button><span>1</span><button onclick="step(this,1)">+</button></div></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <div class="buybar" id="buybar">
+              <div class="mini" onclick="toast('已收藏')">♡<br>收藏</div>
+              <button class="secondary" onclick="mPage('cart')">加入购物车</button>
+              <button class="primary" onclick="toast('调起微信支付 · 生成订单')">立即购买</button>
+            </div>
+            <nav class="tabbar">
+              <button class="active" onclick="mPage('home',this)"><b>⌂</b>首页</button>
+              <button onclick="mPage('detail',this)"><b>艾</b>商城</button>
+              <button onclick="mPage('service',this)"><b>疗</b>服务</button>
+              <button onclick="mPage('article',this)"><b>典</b>知识</button>
+              <button onclick="mPage('cart',this)"><b>囊</b>购物车</button>
+            </nav>
+          </div>
+        </div>
+        <div>
+          <div class="panel">
+            <div class="panel-h"><h3>消费者端演示路径</h3><button class="ghost" onclick="toast('建议演示：首页 → 商品详情 → 加购 → 服务预约 → 内容种草')">演示脚本</button></div>
+            <table>
+              <tr><th>页面</th><th>客户能看到的价值</th><th>交互</th></tr>
+              <tr><td>首页</td><td>真实中医馆图片、药材场景、活动券、精选商品</td><td>点商品/服务/领券</td></tr>
+              <tr><td>商品详情</td><td>商户资质、道地药材、秒杀价格、购买闭环</td><td>加入购物车/立即购买</td></tr>
+              <tr><td>服务预约</td><td>到店服务时段选择与核销业务基础</td><td>选择时段</td></tr>
+              <tr><td>中医知识</td><td>内容种草 + 视频讲解 + 商品导购</td><td>播放视频/收藏</td></tr>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-h"><h3>视觉升级点</h3></div>
+            <div style="padding:18px;line-height:2;color:var(--muted);font-size:14px">
+              采用米白宣纸底、朱砂主按钮、松石绿业务状态、古金强调色；用真实药材/中医馆/调理场景图替代旧版纯色块；版式采用“传统品牌封面 + 现代电商卡片”，更适合客户展示。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="workbench merchant" id="merchant">
+        <div class="desk">
+          <div class="desk-layout">
+            <aside class="side">
+              <div class="side-logo"><div class="seal">店</div><div><h3>商户中心</h3><small>同仁堂中医馆</small></div></div>
+              <nav class="menu" data-desk="merchantDesk">
+                <button class="active" data-page="m-dashboard">经营概览</button>
+                <button data-page="m-products">商品/服务</button>
+                <button data-page="m-orders">订单核销</button>
+                <button data-page="m-income">收益提现</button>
+                <button data-page="m-promo">分销推广</button>
+              </nav>
+            </aside>
+            <section class="desk-main">
+              <div class="desk-top"><h2 id="merchantTitle">经营概览</h2><div class="user"><span>年费商户 · 到期 2027-05-08</span><div class="avatar">仁</div></div></div>
+              <div class="desk-scroll" id="merchantDesk">
+                <section class="page active" data-page="m-dashboard">
+                  <div class="kpis">
+                    <div class="kpi"><span>今日 GMV</span><b>¥3,860</b><small>↑ 12.4%</small></div>
+                    <div class="kpi"><span>今日订单</span><b>28</b><small>待发货 12</small></div>
+                    <div class="kpi"><span>待核销</span><b>5</b><small>到店服务</small></div>
+                    <div class="kpi"><span>可提现</span><b>¥18,360</b><small>可申请</small></div>
+                  </div>
+                  <div class="panel"><div class="panel-h"><h3>近7日营收趋势</h3></div><div class="chart"><div class="bar" style="height:52%" data-v="2.8k"></div><div class="bar" style="height:67%" data-v="3.6k"></div><div class="bar" style="height:56%" data-v="3.0k"></div><div class="bar red" style="height:76%" data-v="4.3k"></div><div class="bar" style="height:64%" data-v="3.3k"></div><div class="bar" style="height:49%" data-v="2.5k"></div><div class="bar red" style="height:72%" data-v="3.86k"></div></div></div>
+                </section>
+                <section class="page" data-page="m-products">
+                  <div class="panel"><div class="panel-h"><h3>商品与服务管理</h3><button class="primary" onclick="toast('打开新增商品表单')">新增商品</button></div><table><tr><th>商品/服务</th><th>类型</th><th>库存/名额</th><th>价格</th><th>状态</th><th></th></tr><tr><td>蕲春三年陈艾条</td><td>实物商品</td><td>1580</td><td>¥98</td><td><span class="badge ok">在售</span></td><td class="actions"><button class="ghost">编辑</button></td></tr><tr><td>全身艾灸60分钟</td><td>到店服务</td><td>今日剩余 8</td><td>¥168</td><td><span class="badge ok">可预约</span></td><td class="actions"><button class="ghost">配置时段</button></td></tr><tr><td>颈肩艾灸贴</td><td>实物商品</td><td>1240</td><td>¥35</td><td><span class="badge wait">待审核</span></td><td class="actions"><button class="ghost">查看</button></td></tr></table></div>
+                </section>
+                <section class="page" data-page="m-orders">
+                  <div class="panel"><div class="panel-h"><h3>订单履约与扫码核销</h3><button class="primary" onclick="toast('扫码核销成功，订单已完成')">扫码核销</button></div><table><tr><th>订单号</th><th>用户</th><th>商品/服务</th><th>金额</th><th>状态</th><th></th></tr><tr><td>ZY238001</td><td>王小姐</td><td>三年陈艾条 ×2</td><td>¥176</td><td><span class="badge wait">待发货</span></td><td class="actions"><button class="ghost" onclick="toast('已录入顺丰单号')">发货</button></td></tr><tr><td>ZY210015</td><td>李先生</td><td>全身艾灸 15:00</td><td>¥168</td><td><span class="badge wait">待核销</span></td><td class="actions"><button class="ghost" onclick="toast('核销码有效，服务完成')">核销</button></td></tr></table></div>
+                </section>
+                <section class="page" data-page="m-income">
+                  <div class="kpis"><div class="kpi"><span>可提现余额</span><b>¥18,360</b><small>最低 ¥100</small></div><div class="kpi"><span>待结算</span><b>¥6,425</b><small>T+7</small></div><div class="kpi"><span>已提现</span><b>¥5,000</b><small>本月</small></div><div class="kpi"><span>佣金收入</span><b>¥3,860</b><small>分销</small></div></div>
+                  <div class="panel"><div class="panel-h"><h3>提现申请</h3><button class="primary" onclick="toast('提现申请已提交，进入平台打款队列')">提交提现</button></div><div class="form-grid"><label>提现金额<input value="5000"></label><label>到账银行卡<input value="建设银行 ****6688"></label><label>支付密码<input type="password" placeholder="请输入6位密码"></label><label>备注<input placeholder="选填"></label></div></div>
+                </section>
+                <section class="page" data-page="m-promo">
+                  <div class="panel"><div class="panel-h"><h3>一级分销推广</h3><button class="primary" onclick="toast('推广链接已复制')">复制推广链接</button></div><div style="padding:22px;display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center"><div style="height:160px;border-radius:22px;background:repeating-linear-gradient(45deg,#16211d 0 8px,#fffaf0 8px 16px);border:10px solid #fff;box-shadow:0 0 0 1px var(--line)"></div><div><h3 style="font-family:'Noto Serif SC';font-size:26px;margin-bottom:8px">同仁堂中医馆专属二维码</h3><p style="color:var(--muted);line-height:1.9">一级分销：艾灸类目 15%，中药茶饮 10%，到店服务 8%。消费者通过二维码下单，订单完成后自动生成佣金流水。</p></div></div></div>
+                </section>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div class="workbench admin" id="admin">
+        <div class="desk">
+          <div class="desk-layout">
+            <aside class="side">
+              <div class="side-logo"><div class="seal">管</div><div><h3>平台后台</h3><small>中医网 Admin</small></div></div>
+              <nav class="menu" data-desk="adminDesk">
+                <button class="active" data-page="a-dashboard">数据仪表盘</button>
+                <button data-page="a-merchant">商户审核</button>
+                <button data-page="a-settle">结算打款</button>
+                <button data-page="a-marketing">营销活动</button>
+                <button data-page="a-system">系统设置</button>
+              </nav>
+            </aside>
+            <section class="desk-main">
+              <div class="desk-top"><h2 id="adminTitle">数据仪表盘</h2><div class="user"><span>李岩 · 平台超管</span><div class="avatar">李</div></div></div>
+              <div class="desk-scroll" id="adminDesk">
+                <section class="page active" data-page="a-dashboard">
+                  <div class="kpis"><div class="kpi"><span>平台 GMV</span><b>¥1,286,420</b><small>↑18.6%</small></div><div class="kpi"><span>入驻商户</span><b>4,238</b><small>待审38</small></div><div class="kpi"><span>订单总数</span><b>8,632</b><small>今日 486</small></div><div class="kpi"><span>待打款</span><b>¥186,420</b><small>42笔</small></div></div>
+                  <div class="panel"><div class="panel-h"><h3>平台交易趋势</h3></div><div class="chart"><div class="bar" style="height:55%" data-v="168k"></div><div class="bar" style="height:62%" data-v="189k"></div><div class="bar" style="height:48%" data-v="146k"></div><div class="bar red" style="height:78%" data-v="238k"></div><div class="bar" style="height:68%" data-v="208k"></div><div class="bar" style="height:42%" data-v="128k"></div><div class="bar red" style="height:85%" data-v="258k"></div></div></div>
+                </section>
+                <section class="page" data-page="a-merchant">
+                  <div class="panel"><div class="panel-h"><h3>商户入驻审核</h3><button class="ghost">导出列表</button></div><table><tr><th>商户</th><th>类目</th><th>法人</th><th>年费</th><th>状态</th><th></th></tr><tr><td>本草堂中医馆</td><td>艾灸用品/服务</td><td>张三</td><td>¥2980/年</td><td><span class="badge wait">待审核</span></td><td class="actions"><button class="ghost" onclick="toast('审核通过，短信通知商户支付年费')">通过</button><button class="ghost" onclick="toast('已驳回，请商户补充资质')">驳回</button></td></tr><tr><td>康健艾灸养生馆</td><td>到店服务</td><td>李四</td><td>¥2980/年</td><td><span class="badge wait">待审核</span></td><td class="actions"><button class="ghost">查看</button></td></tr></table></div>
+                </section>
+                <section class="page" data-page="a-settle">
+                  <div class="panel"><div class="panel-h"><h3>商户提现与批量打款</h3><button class="primary" onclick="toast('已调用微信企业付款，批量打款 3 笔')">批量打款</button></div><table><tr><th>提现单</th><th>商户</th><th>银行</th><th>金额</th><th>状态</th><th></th></tr><tr><td>TX238</td><td>同仁堂中医馆</td><td>建行 ****6688</td><td>¥5,000</td><td><span class="badge wait">待打款</span></td><td class="actions"><button class="ghost">打款</button></td></tr><tr><td>TX212</td><td>华佗堂养生馆</td><td>工行 ****2233</td><td>¥3,860</td><td><span class="badge wait">待打款</span></td><td class="actions"><button class="ghost">打款</button></td></tr></table></div>
+                </section>
+                <section class="page" data-page="a-marketing">
+                  <div class="panel"><div class="panel-h"><h3>营销活动配置</h3><button class="primary" onclick="toast('活动已保存，并同步到消费者首页')">保存活动</button></div><div class="form-grid"><label>轮播标题<input value="端午艾灸节"></label><label>跳转类型<select><option>活动专题页</option><option>商品详情</option></select></label><label>秒杀商品<input value="三年陈艾条"></label><label>秒杀价格<input value="29"></label><label>优惠券名称<input value="满100减20"></label><label>每人限领<input value="1"></label></div></div>
+                  <div class="panel"><div class="panel-h"><h3>分销规则</h3></div><table><tr><th>类目</th><th>一级佣金</th><th>说明</th></tr><tr><td>艾灸用品</td><td>15%</td><td>主推类目</td></tr><tr><td>中药茶饮</td><td>10%</td><td>普通类目</td></tr><tr><td>到店服务</td><td>8%</td><td>服务核销后结算</td></tr></table></div>
+                </section>
+                <section class="page" data-page="a-system">
+                  <div class="panel"><div class="panel-h"><h3>平台参数设置</h3><button class="primary" onclick="toast('系统设置已保存')">保存设置</button></div><div class="form-grid"><label>商户入驻年费<input value="2980"></label><label>最低提现金额<input value="100"></label><label>默认平台抽佣<select><option>10%</option><option>8%</option><option>5%</option></select></label><label>提现到账承诺<input value="1-3个工作日"></label><label style="grid-column:1/-1">二期规划<textarea rows="4">直播带货、IM在线咨询医师、处方流转、医师资质认证、内容视频化运营。</textarea></label></div></div>
+                </section>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+  const scopes=document.querySelectorAll('#scopeSwitch button');
+  scopes.forEach(btn=>btn.addEventListener('click',()=>{
+    scopes.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.workbench').forEach(w=>w.classList.remove('active'));
+    document.getElementById(btn.dataset.scope).classList.add('active');
+  }));
+  function mPage(id,tab){
+    const root=document.getElementById('mobilePages');
+    root.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    root.querySelector(`[data-page="${id}"]`).classList.add('active');
+    root.scrollTop=0;
+    document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+    if(tab) tab.classList.add('active');
+    document.getElementById('buybar').style.display = ['detail','service','cart'].includes(id) ? 'flex' : 'none';
+  }
+  document.getElementById('buybar').style.display='none';
+  function claim(btn){btn.textContent='已领取';btn.style.background='#7d7061';toast('优惠券领取成功，已放入我的卡券');}
+  function step(btn,d){const s=btn.parentElement.querySelector('span');let n=+s.textContent+d;if(n<1)n=1;s.textContent=n;toast('数量已更新');}
+  function toast(msg){
+    const t=document.getElementById('toast');t.textContent=msg;t.classList.add('active');
+    clearTimeout(window.__t);window.__t=setTimeout(()=>t.classList.remove('active'),1800);
+  }
+  document.querySelectorAll('.menu').forEach(menu=>{
+    menu.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        menu.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const desk=document.getElementById(menu.dataset.desk);
+        desk.querySelectorAll(':scope > .page').forEach(p=>p.classList.remove('active'));
+        desk.querySelector(`[data-page="${btn.dataset.page}"]`).classList.add('active');
+        desk.scrollTop=0;
+        const titleId=menu.dataset.desk==='merchantDesk'?'merchantTitle':'adminTitle';
+        document.getElementById(titleId).textContent=btn.textContent.trim();
+      });
+    });
+  });
+</script>
+</body>
+</html>

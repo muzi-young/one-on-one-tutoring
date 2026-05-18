@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HQ Admin — HBOT</title>
+  <style>
+    :root {
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --sidebar: #0f172a;
+      --sidebar-text: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+    a { color: inherit; }
+    .layout { display: flex; min-height: 100vh; }
+    aside {
+      width: 240px;
+      background: var(--sidebar);
+      color: var(--sidebar-text);
+      padding: 24px 16px;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+    aside .logo { font-weight: 700; font-size: 0.95rem; margin-bottom: 28px; letter-spacing: -0.02em; }
+    aside nav button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    aside nav button:hover { color: #fff; background: rgba(255,255,255,0.06); }
+    aside nav button.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; }
+    main { flex: 1; padding: 32px 40px 56px; max-width: 1440px; margin: 0 auto; width: 100%; }
+    .top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    h1 { margin: 0; font-size: 1.35rem; font-weight: 600; }
+    .lang {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .lang a { font-size: 0.85rem; color: var(--muted); text-decoration: none; }
+    .lang .tog {
+      display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px;
+    }
+    .lang .tog button {
+      border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; font-size: 0.75rem; cursor: pointer; color: var(--muted);
+    }
+    .lang .tog button.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .kpi .lbl { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi .val { font-size: 1.65rem; font-weight: 700; margin-top: 6px; }
+    .kpi .delta { font-size: 0.8rem; color: #059669; margin-top: 4px; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .panel h2 { margin: 0 0 16px; font-size: 1rem; font-weight: 600; }
+    .map-mock {
+      height: 280px;
+      background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 50%, #dbeafe 100%);
+      border-radius: 12px;
+      border: 1px dashed #c7d2fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4338ca;
+      font-size: 0.9rem;
+      text-align: center;
+      padding: 20px;
+    }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    select, input, button.btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 0.85rem;
+    }
+    button.btn { background: var(--surface); cursor: pointer; }
+    button.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; }
+    tr { cursor: pointer; }
+    tr:hover { background: #fafafa; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+    .tabs button {
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .tabs button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .drawer-back {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      z-index: 40;
+    }
+    .drawer-back.show { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(420px, 100%);
+      height: 100%;
+      background: #fff;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.08);
+      z-index: 41;
+      padding: 24px;
+      transform: translateX(100%);
+      transition: transform 0.2s ease;
+    }
+    .drawer-back.show .drawer { transform: translateX(0); }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.35);
+    }
+    .modal.show { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      width: min(400px, 92vw);
+    }
+    .modal-box h3 { margin: 0 0 12px; }
+    .row { display: flex; gap: 8px; margin-top: 16px; }
+    .row .btn { flex: 1; }
+
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #111827;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 60;
+    }
+    .toast.show { opacity: 1; }
+
+    .wizard-steps { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .wizard-steps span {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--muted);
+    }
+    .wizard-steps span.done { background: #d1fae5; color: #047857; }
+    .wizard-steps span.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .sparkline {
+      height: 56px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #eef2ff 0%, #fff 100%);
+      border: 1px dashed #c7d2fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .matrix { font-size: 0.78rem; overflow-x: auto; }
+    .matrix th, .matrix td { text-align: center; white-space: nowrap; }
+    .matrix td.ok { color: #059669; font-weight: 600; }
+    .matrix td.no { color: #d1d5db; }
+
+    .drawer h2 { font-size: 1rem; }
+    .drawer .d-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px; }
+    .drawer .d-tabs button {
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .drawer .d-tabs button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .d-panel { display: none; font-size: 0.85rem; color: var(--muted); }
+    .d-panel.on { display: block; }
+
+    .kpi-wrap { position: relative; transition: opacity 0.2s ease; }
+    .kpi-wrap.loading { opacity: 0.55; pointer-events: none; }
+    .kpi-skel {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-wrap.loading + .kpi-skel { display: grid; }
+    .kpi-skel .kpi { min-height: 88px; background: linear-gradient(90deg,#f3f4f6 0%,#e5e7eb 50%,#f3f4f6 100%); background-size: 200% 100%; animation: hqsk 1s linear infinite; border: 1px solid var(--line); border-radius: 14px; }
+    @keyframes hqsk { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .timeline { border-left: 2px solid var(--line); margin-left: 8px; padding-left: 16px; }
+    .timeline .tl-item { position: relative; padding-bottom: 14px; font-size: 0.85rem; }
+    .timeline .tl-item::before {
+      content: ""; position: absolute; left: -21px; top: 4px; width: 8px; height: 8px; border-radius: 99px;
+      background: var(--accent); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line);
+    }
+    .timeline time { font-size: 0.72rem; color: var(--muted); display: block; margin-bottom: 4px; }
+
+    .flag-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.85rem; }
+    .flag-row:last-child { border-bottom: 0; }
+    input[type="range"].roll { width: 140px; accent-color: var(--accent); }
+
+    .sla { font-size: 0.72rem; color: #b45309; font-variant-numeric: tabular-nums; }
+    .bulk-bar { display: none; align-items: center; gap: 10px; padding: 10px 12px; background: var(--accent-soft); border-radius: 10px; margin-bottom: 12px; font-size: 0.85rem; }
+    .bulk-bar.show { display: flex; }
+    aside nav button:focus-visible, button.btn:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .fleet-split {
+      display: grid;
+      grid-template-columns: 1.2fr 0.85fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .fleet-split { grid-template-columns: 1fr; } }
+    .fleet-map { min-height: 320px; position: relative; }
+    .fleet-caption {
+      position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+      margin: 0; font-size: 0.82rem; color: #4338ca; text-align: center; max-width: 90%; z-index: 2; pointer-events: none;
+    }
+    .fleet-pins {
+      position: absolute;
+      inset: 16px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      pointer-events: none;
+    }
+    .fleet-pins span {
+      align-self: center; justify-self: center;
+      width: 12px; height: 12px; border-radius: 99px;
+      box-shadow: 0 0 0 3px #fff, 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .fleet-pins span.run { background: #059669; }
+    .fleet-pins span.idle { background: #94a3b8; }
+    .fleet-pins span.off { background: #dc2626; }
+    .fleet-legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .fleet-legend i { width: 10px; height: 10px; border-radius: 99px; display: inline-block; margin-right: 6px; vertical-align: middle; }
+    .i-run { background: #059669; } .i-idle { background: #94a3b8; } .i-off { background: #dc2626; }
+
+    .tabs-lined .tabs { border-bottom: 1px solid var(--line); padding-bottom: 0; margin-bottom: 16px; }
+    .tabs-lined .tabs button { border-radius: 10px 10px 0 0; margin-bottom: -1px; }
+
+    .pill-st {
+      font-size: 0.7rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+      display: inline-block;
+    }
+    .pill-st.open { background: #fef3c7; color: #92400e; }
+    .pill-st.asg { background: #dbeafe; color: #1e40af; }
+    .pill-st.res { background: #d1fae5; color: #047857; }
+
+    .policy-editor {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      background: #fafafa;
+    }
+    .policy-editor textarea {
+      width: 100%; min-height: 140px; font-family: ui-monospace, monospace; font-size: 0.82rem;
+      border-radius: 10px; border: 1px solid var(--line); padding: 12px;
+    }
+
+    .rb-more { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+
+    .split-h {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) { .split-h { grid-template-columns: 1fr; } }
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="logo">HBOT HQ</div>
+      <nav>
+        <button type="button" data-sec="overview" class="active" data-i18n="nav_ov">Overview</button>
+        <button type="button" data-sec="fleet" data-i18n="nav_fl">Fleet map</button>
+        <button type="button" data-sec="reports" data-i18n="nav_rep">Reports</button>
+        <button type="button" data-sec="directory" data-i18n="nav_dir">Directory</button>
+        <button type="button" data-sec="onboarding" data-i18n="nav_on">Clinic onboarding</button>
+        <button type="button" data-sec="policies" data-i18n="nav_po">Policy templates</button>
+        <button type="button" data-sec="audit" data-i18n="nav_au">Audit log</button>
+        <button type="button" data-sec="settlement" data-i18n="nav_st">Settlements</button>
+        <button type="button" data-sec="integrations" data-i18n="nav_in">Integrations</button>
+        <button type="button" data-sec="rbac" data-i18n="nav_rb">Roles & permissions</button>
+        <button type="button" data-sec="alerts" data-i18n="nav_al">Alerts</button>
+        <button type="button" data-sec="assets" data-i18n="nav_as">Assets</button>
+        <button type="button" data-sec="billing" data-i18n="nav_bi">Billing rules</button>
+        <button type="button" data-sec="maint" data-i18n="nav_mn">Maintenance</button>
+      </nav>
+    </aside>
+    <main>
+      <div class="top">
+        <h1 data-i18n="page_title">Global operations</h1>
+        <div class="lang">
+          <a href="index.html" data-i18n="hub">Hub</a>
+          <div class="tog">
+            <button type="button" id="le">EN</button>
+            <button type="button" id="lz">中文</button>
+          </div>
+          <span style="font-size:0.75rem;color:var(--muted);" data-i18n="role">Role: Super Admin</span>
+        </div>
+      </div>
+
+      <section class="section active" id="sec-overview">
+        <div class="toolbar" style="margin-bottom:8px;align-items:center;">
+          <span style="font-size:0.85rem;color:var(--muted);" data-i18n="exec_lbl">Executive drill-down</span>
+          <select id="exec-region" style="min-width:160px;">
+            <option value="all" data-i18n="op_all">All regions</option>
+            <option value="apac">APAC</option>
+            <option value="emea">EMEA</option>
+            <option value="amer">Americas</option>
+          </select>
+        </div>
+        <div class="kpi-wrap" id="kpi-wrap">
+        <div class="kpis" id="kpis-main">
+          <div class="kpi">
+            <div class="lbl" data-i18n="kpi_sess">Sessions today</div>
+            <div class="val" id="kpi-sess">1,284</div>
+            <div class="delta" id="kpi-sess-d" data-i18n="kpi_up">+4.2% vs yesterday</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl" data-i18n="kpi_on">Online devices</div>
+            <div class="val" id="kpi-on">612</div>
+            <div class="delta" id="kpi-on-d" data-i18n="kpi_stable">Stable</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl" data-i18n="kpi_al">Open alerts</div>
+            <div class="val" id="kpi-al">23</div>
+            <div class="delta" id="kpi-al-d" data-i18n="kpi_crit">3 critical</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl" data-i18n="kpi_rev">Est. monthly share</div>
+            <div class="val" id="kpi-rev">$842k</div>
+            <div class="delta" id="kpi-rev-d" data-i18n="kpi_proj">Projection</div>
+          </div>
+        </div>
+        </div>
+        <div class="kpi-skel" aria-hidden="true"><div class="kpi"></div><div class="kpi"></div><div class="kpi"></div><div class="kpi"></div></div>
+        <button type="button" class="btn btn-primary" id="btn-refresh" data-i18n="btn_ref">Refresh KPIs</button>
+        <button type="button" class="btn" id="btn-print-preview" style="margin-left:8px;" data-i18n="btn_print">Printable report…</button>
+        <div class="panel" style="margin-top:20px;">
+          <h2 data-i18n="ff_title">Feature flags · rollout</h2>
+          <div class="flag-row">
+            <span data-i18n="ff1">Telemetry batch upload</span>
+            <label><span class="meta" id="ff1-pct" style="margin-right:8px;">60%</span><input class="roll" type="range" id="ff1" min="0" max="100" value="60" /></label>
+          </div>
+          <div class="flag-row">
+            <span data-i18n="ff2">New dispute workflow</span>
+            <label><span class="meta" id="ff2-pct" style="margin-right:8px;">20%</span><input class="roll" type="range" id="ff2" min="0" max="100" value="20" /></label>
+          </div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="inc_title">Incident timeline (mock)</h2>
+          <div class="timeline" id="inc-tl">
+            <div class="tl-item"><time>10:40</time><span data-i18n="inc1">Webhook burst · payments degraded</span></div>
+            <div class="tl-item"><time>09:55</time><span data-i18n="inc2">Region EMEA · elevated offline rate</span></div>
+            <div class="tl-item"><time>Yesterday</time><span data-i18n="inc3">SIM vendor maintenance · resolved</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="map_title">Multi-site device map</h2>
+          <div class="map-mock" data-i18n="map_mock">Schematic map placeholder · markers would show running / idle / offline (per Excel).</div>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="dash_title">Device status board</h2>
+          <div class="toolbar">
+            <select id="flt-region">
+              <option data-i18n="op_all">All regions</option>
+              <option>APAC</option>
+              <option>EMEA</option>
+              <option>Americas</option>
+            </select>
+            <select id="flt-clinic">
+              <option data-i18n="op_cl">All clinics</option>
+              <option>Clinic North</option>
+              <option>Clinic Bay</option>
+            </select>
+            <button type="button" class="btn" id="btn-filter" data-i18n="btn_apply">Apply filters</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="th_dev">Device</th>
+                <th data-i18n="th_st">Status</th>
+                <th data-i18n="th_last">Last session</th>
+              </tr>
+            </thead>
+            <tbody id="tbl-dash">
+              <tr data-id="HBOT-001"><td>HBOT-001</td><td><span style="color:#059669;">Running</span></td><td>14:02</td></tr>
+              <tr data-id="HBOT-002"><td>HBOT-002</td><td><span style="color:#6b7280;">Idle</span></td><td>11:40</td></tr>
+              <tr data-id="HBOT-003"><td>HBOT-003</td><td><span style="color:#dc2626;">Offline</span></td><td>Yesterday</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="sec-fleet">
+        <div class="panel">
+          <h2 data-i18n="fl_title">Fleet readiness map</h2>
+          <p style="color:var(--muted);font-size:0.88rem;margin:-8px 0 18px;" data-i18n="fl_sub">North-star ops canvas · Geo imagery intentionally omitted.</p>
+          <div class="fleet-split">
+            <div class="map-mock fleet-map">
+              <p class="fleet-caption" data-i18n="fl_map">Orthographic fleet canvas · clusters indicate clinic density (demo).</p>
+              <div class="fleet-pins" aria-hidden="true">
+                <span class="run"></span><span class="idle"></span><span class="off"></span><span class="run"></span>
+                <span class="idle"></span><span class="run"></span><span class="idle"></span><span class="off"></span>
+                <span class="run"></span><span class="idle"></span><span class="idle"></span><span class="run"></span>
+              </div>
+            </div>
+            <div>
+              <div class="fleet-legend">
+                <span><i class="i-run"></i><span data-i18n="lg_run">Running</span></span>
+                <span><i class="i-idle"></i><span data-i18n="lg_idle">Idle</span></span>
+                <span><i class="i-off"></i><span data-i18n="lg_off">Offline</span></span>
+              </div>
+              <div class="toolbar">
+                <select id="fl-region"><option data-i18n="op_all">All regions</option><option>APAC</option><option>EMEA</option><option>Americas</option></select>
+                <button type="button" class="btn btn-primary" id="fl-apply" data-i18n="btn_apply">Apply filters</button>
+              </div>
+              <table>
+                <thead><tr><th data-i18n="th_cl">Clinic</th><th data-i18n="th_dev">Devices</th><th data-i18n="fl_col_run">Running</th></tr></thead>
+                <tbody>
+                  <tr><td>Bay Hyperbaric Center</td><td>12</td><td>7</td></tr>
+                  <tr><td>North Wellness</td><td>8</td><td>4</td></tr>
+                  <tr><td>Lakeside Rehab</td><td>5</td><td>0</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-reports">
+        <div class="panel">
+          <h2 data-i18n="rep_title">Reports workspace</h2>
+          <p style="color:var(--muted);font-size:0.88rem;margin:-8px 0 16px;" data-i18n="rep_sub">Curated exports · CSV / PDF hand-off to finance.</p>
+          <div class="toolbar">
+            <select id="rep-preset">
+              <option data-i18n="rep_p1">Sessions by clinic · MTD</option>
+              <option data-i18n="rep_p2">Alert SLA compliance</option>
+              <option data-i18n="rep_p3">Revenue share accrual</option>
+            </select>
+            <button type="button" class="btn btn-primary" id="btn-rep-open" data-i18n="rep_export">Configure export…</button>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><div class="lbl" data-i18n="rep_k1">Last run</div><div class="val" style="font-size:1.1rem;">May 14 · 06:10 UTC</div></div>
+            <div class="kpi"><div class="lbl" data-i18n="rep_k2">Queued jobs</div><div class="val" style="font-size:1.1rem;">2</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-directory">
+        <div class="panel">
+          <h2 data-i18n="dir_title">Users & organizations</h2>
+          <div class="toolbar">
+            <input type="search" id="dir-q" placeholder="" data-i18n-ph="dir_ph" style="min-width:220px;" />
+            <select id="dir-type">
+              <option data-i18n="dir_all">All types</option>
+              <option data-i18n="dir_org">Organizations</option>
+              <option data-i18n="dir_user">Users</option>
+            </select>
+            <button type="button" class="btn btn-primary" id="btn-dir-search" data-i18n="dir_search">Search</button>
+            <input type="file" id="csv-file" accept=".csv" style="display:none;" />
+            <button type="button" class="btn" id="btn-csv" data-i18n="dir_csv">Import clinics (CSV)</button>
+          </div>
+          <div class="bulk-bar" id="dir-bulk">
+            <span id="dir-bulk-n">0</span> <span data-i18n="bulk_sel">selected</span>
+            <button type="button" class="btn btn-primary" id="dir-bulk-tag" data-i18n="bulk_tag">Tag region</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px;"><input type="checkbox" id="dir-all" aria-label="select all" /></th>
+                <th data-i18n="th_name">Name</th>
+                <th data-i18n="th_type">Type</th>
+                <th data-i18n="th_region">Region</th>
+                <th data-i18n="th_st">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbl-dir">
+              <tr><td><input type="checkbox" class="dir-cb" /></td><td>Bay Hyperbaric Center</td><td data-i18n="t_clinic">Clinic</td><td>US-West</td><td><span style="color:#059669;">Active</span></td></tr>
+              <tr><td><input type="checkbox" class="dir-cb" /></td><td>North Wellness</td><td data-i18n="t_clinic">Clinic</td><td>US-East</td><td><span style="color:#059669;">Active</span></td></tr>
+              <tr><td><input type="checkbox" class="dir-cb" /></td><td>Ops · j.smith</td><td data-i18n="t_user">User</td><td>—</td><td><span style="color:#6b7280;">Invited</span></td></tr>
+            </tbody>
+          </table>
+          <p class="empty-dir" style="display:none;color:var(--muted);font-size:0.85rem;margin-top:12px;" data-i18n="dir_empty">No matches (demo).</p>
+        </div>
+      </section>
+
+      <section class="section" id="sec-onboarding">
+        <div class="panel">
+          <h2 data-i18n="onb_title">Clinic onboarding</h2>
+          <div class="wizard-steps" id="wiz-steps">
+            <span class="on" data-step-i="1" data-i18n="wiz_1">1. Profile</span>
+            <span data-step-i="2" data-i18n="wiz_2">2. Billing</span>
+            <span data-step-i="3" data-i18n="wiz_3">3. Devices</span>
+            <span data-step-i="4" data-i18n="wiz_4">4. Review</span>
+          </div>
+          <div id="wiz-p1">
+            <label data-i18n="lbl_cl_name">Clinic legal name</label>
+            <input type="text" id="wiz-name" style="width:100%;max-width:400px;margin-bottom:12px;" />
+            <span class="err" id="wiz-err" style="color:#dc2626;font-size:0.8rem;display:none;" data-i18n="wiz_err">Required</span>
+          </div>
+          <div id="wiz-p2" style="display:none;"><p style="color:var(--muted);" data-i18n="wiz_p2">Attach tax ID & payout account (mock).</p></div>
+          <div id="wiz-p3" style="display:none;"><p style="color:var(--muted);" data-i18n="wiz_p3">Register first devices / IMEI placeholders.</p></div>
+          <div id="wiz-p4" style="display:none;"><p style="color:var(--muted);" data-i18n="wiz_p4">Summary ready to submit.</p></div>
+          <div class="toolbar" style="margin-top:16px;">
+            <button type="button" class="btn" id="wiz-back" data-i18n="wiz_back">Back</button>
+            <button type="button" class="btn btn-primary" id="wiz-next" data-i18n="wiz_next">Next</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-policies">
+        <div class="split-h">
+        <div class="panel">
+          <h2 data-i18n="pol_title">Policy templates</h2>
+          <p style="color:var(--muted);font-size:0.88rem;" data-i18n="pol_sub">Versioned templates for consent, retention, geofence defaults.</p>
+          <table>
+            <thead><tr><th data-i18n="th_name">Name</th><th data-i18n="th_ver">Version</th><th data-i18n="th_st">Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td data-i18n="pol_p1">Privacy · HBOT</td><td>v1.4</td><td>Published</td><td><button type="button" class="btn pol-dup" data-i18n="btn_dup">Duplicate</button></td></tr>
+              <tr><td data-i18n="pol_g1">Geofence default</td><td>v0.9</td><td>Draft</td><td><button type="button" class="btn pol-edit" data-i18n="btn_edit">Edit in draft</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h2 data-i18n="pol_ed_title">Policy editor (stub)</h2>
+          <p style="color:var(--muted);font-size:0.88rem;" data-i18n="pol_ed_sub">Structured YAML-style body · validates before publish.</p>
+          <div class="policy-editor">
+            <label data-i18n="pol_ed_lbl">Draft body</label>
+            <textarea id="pol-body" spellcheck="false">consent:
+  region: default
+  retention_days: 730
+geofence:
+  mode: radius
+  default_km: 2</textarea>
+            <div class="toolbar" style="margin-top:12px;">
+              <button type="button" class="btn" id="pol-diff" data-i18n="pol_diff">Preview diff</button>
+              <button type="button" class="btn btn-primary" id="pol-save" data-i18n="pol_save">Save draft</button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-audit">
+        <div class="panel">
+          <h2 data-i18n="aud_title">Audit log</h2>
+          <div class="toolbar">
+            <input type="search" id="aud-q" data-i18n-ph="aud_ph" placeholder="" style="min-width:200px;" />
+            <input type="date" id="aud-from" value="2026-05-01" />
+            <input type="date" id="aud-to" value="2026-05-15" />
+            <select id="aud-act">
+              <option value="all" data-i18n="aud_all">All actions</option>
+              <option value="login" data-i18n="aud_login">Login</option>
+              <option value="cfg" data-i18n="aud_cfg">Config change</option>
+            </select>
+            <select id="aud-actor">
+              <option value="all" data-i18n="aud_actor_all">All actors</option>
+              <option value="hq">HQ</option>
+              <option value="clinic">Clinic</option>
+            </select>
+            <button type="button" class="btn btn-primary" id="aud-apply" data-i18n="btn_apply">Apply filters</button>
+          </div>
+          <table id="tbl-aud">
+            <thead><tr><th data-i18n="th_time">Time</th><th data-i18n="aud_actor">Actor</th><th data-i18n="aud_action">Action</th><th data-i18n="th_dev">Target</th></tr></thead>
+            <tbody>
+              <tr data-act="login" data-actor="hq"><td>10:22</td><td>j.smith@hq</td><td data-i18n="aud_a1">Login success</td><td>—</td></tr>
+              <tr data-act="cfg" data-actor="hq"><td>09:40</td><td>finance@hq</td><td data-i18n="aud_a2">Updated revenue rule</td><td>Clinic Bay</td></tr>
+              <tr data-act="login" data-actor="clinic"><td>Yesterday</td><td>nurse@bay</td><td data-i18n="aud_a1">Login success</td><td>—</td></tr>
+              <tr data-act="cfg" data-actor="clinic"><td>Yesterday</td><td>lead@north</td><td data-i18n="aud_a3">Exported roster CSV</td><td>North Wellness</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="sec-settlement">
+        <div class="panel tabs-lined">
+          <h2 data-i18n="set_title">Billing & settlement</h2>
+          <div class="tabs" id="set-tabs">
+            <button type="button" class="active" data-stab="out" data-i18n="set_tab_out">Payouts</button>
+            <button type="button" data-stab="inv" data-i18n="set_tab_inv">Invoice aging</button>
+            <button type="button" data-stab="adj" data-i18n="set_tab_adj">Adjustments</button>
+          </div>
+          <div id="set-pane-out">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="lbl" data-i18n="set_k1">Pending payouts</div>
+              <div class="val">$128k</div>
+              <div class="delta" data-i18n="set_k1d">12 clinics</div>
+            </div>
+            <div class="kpi">
+              <div class="lbl" data-i18n="set_k2">In dispute</div>
+              <div class="val">$4.2k</div>
+              <div class="delta" data-i18n="set_k2d">3 cases</div>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th data-i18n="th_cl">Clinic</th><th data-i18n="set_col1">Period</th><th data-i18n="set_col2">Net</th><th data-i18n="th_st">Status</th></tr></thead>
+            <tbody>
+              <tr><td>Clinic Bay</td><td>Apr 2026</td><td>$48,200</td><td data-i18n="st_paid">Paid</td></tr>
+              <tr><td>Clinic North</td><td>Apr 2026</td><td>$31,900</td><td data-i18n="st_proc">Processing</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <div id="set-pane-inv" style="display:none;">
+            <p class="meta" style="color:var(--muted);font-size:0.88rem;" data-i18n="set_inv_sub">A/R buckets for clinic billing entities (demo).</p>
+            <table>
+              <thead><tr><th data-i18n="th_cl">Clinic</th><th data-i18n="set_ar_30">0–30</th><th data-i18n="set_ar_60">31–60</th><th data-i18n="set_ar_90">61+</th></tr></thead>
+              <tbody>
+                <tr><td>Bay Hyperbaric Center</td><td>$12.4k</td><td>$2.1k</td><td>$0</td></tr>
+                <tr><td>North Wellness</td><td>$8.9k</td><td>$0</td><td>$450</td></tr>
+              </tbody>
+            </table>
+            <button type="button" class="btn" style="margin-top:12px;" id="btn-set-csv" data-i18n="set_dl">Download aging CSV</button>
+          </div>
+          <div id="set-pane-adj" style="display:none;">
+            <p class="meta" style="color:var(--muted);font-size:0.88rem;" data-i18n="set_adj_sub">Manual credits pending controller approval.</p>
+            <table>
+              <thead><tr><th data-i18n="set_adj_id">Ref</th><th data-i18n="set_adj_amt">Amount</th><th data-i18n="th_st">Status</th></tr></thead>
+              <tbody>
+                <tr><td>ADJ-9081</td><td>-$620</td><td data-i18n="st_pend">Pending</td></tr>
+                <tr><td>ADJ-9077</td><td>$120</td><td data-i18n="st_appr">Approved</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-integrations">
+        <div class="panel">
+          <h2 data-i18n="int_title">Integration health</h2>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="lbl" data-i18n="int_sms">SMS gateway</div>
+              <div class="val" style="font-size:1.1rem;color:#059669;">OK</div>
+              <div class="delta" data-i18n="int_sms_d">Latency 120ms · Aliyun mock</div>
+            </div>
+            <div class="kpi">
+              <div class="lbl" data-i18n="int_pay">Payments</div>
+              <div class="val" style="font-size:1.1rem;color:#d97706;">Degraded</div>
+              <div class="delta" data-i18n="int_pay_d">Webhook retries 2%</div>
+            </div>
+          </div>
+          <button type="button" class="btn" id="int-ping" data-i18n="int_ping">Run connectivity check</button>
+          <button type="button" class="btn" id="btn-wh-log" style="margin-left:8px;" data-i18n="wh_open">Webhook retry log</button>
+        </div>
+      </section>
+
+      <section class="section" id="sec-rbac">
+        <div class="panel">
+          <h2 data-i18n="rbac_title">Role permission matrix (stub)</h2>
+          <p class="rb-more" data-i18n="rbac_sub">Read-only demo · Excel RBAC to be mapped.</p>
+          <div class="matrix">
+            <table>
+              <thead>
+                <tr>
+                  <th data-i18n="rbac_perm">Permission</th>
+                  <th data-i18n="rbac_sa">Super Admin</th>
+                  <th data-i18n="rbac_fin">Finance</th>
+                  <th data-i18n="rbac_ops">Ops</th>
+                  <th data-i18n="rbac_sup">Support</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td data-i18n="rbac_p1">Devices write</td><td class="ok">✓</td><td class="no">—</td><td class="ok">✓</td><td class="no">—</td></tr>
+                <tr><td data-i18n="rbac_p2">Billing rules</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td></tr>
+                <tr><td data-i18n="rbac_p3">Audit export</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">—</td><td class="ok">✓</td></tr>
+                <tr><td data-i18n="rbac_p4">Policy publish</td><td class="ok">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+                <tr><td data-i18n="rbac_p5">Alert acknowledge</td><td class="ok">✓</td><td class="no">—</td><td class="ok">✓</td><td class="ok">✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-alerts">
+        <div class="panel">
+          <h2 data-i18n="al_title">Alert center</h2>
+          <div class="tabs" id="al-tabs">
+            <button type="button" class="active" data-sev="all" data-i18n="al_all">All</button>
+            <button type="button" data-sev="crit" data-i18n="al_crit">Critical</button>
+            <button type="button" data-sev="warn" data-i18n="al_warn">Warning</button>
+          </div>
+          <button type="button" class="btn" id="al-bulk-ack" data-i18n="bulk_ack" style="margin-bottom:12px;display:none;">Ack selected</button>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px;"><input type="checkbox" id="al-all" /></th>
+                <th data-i18n="th_time">Time</th>
+                <th data-i18n="th_type">Type</th>
+                <th data-i18n="th_dev">Device</th>
+                <th data-i18n="th_st">Workflow</th>
+                <th data-i18n="th_sla">SLA</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbl-alerts">
+              <tr data-sev="crit"><td><input type="checkbox" class="al-cb" /></td><td>10:12</td><td data-i18n="al_geo">Geofence breach</td><td>HBOT-204</td><td><span class="pill-st open" data-i18n="al_w_open">Open</span></td><td><span class="sla" data-i18n="sla1">12m left</span></td><td><button type="button" class="btn al-asg" data-i18n="al_asg">Assign…</button> <button type="button" class="btn al-res" data-i18n="al_res">Resolve</button></td></tr>
+              <tr data-sev="warn"><td><input type="checkbox" class="al-cb" /></td><td>09:55</td><td data-i18n="al_temp">Motor temperature</td><td>HBOT-118</td><td><span class="pill-st asg" data-i18n="al_w_asg">Assigned · Ops-B</span></td><td><span class="sla" data-i18n="sla2">45m left</span></td><td><button type="button" class="btn al-asg" data-i18n="al_asg">Assign…</button> <button type="button" class="btn al-res" data-i18n="al_res">Resolve</button></td></tr>
+              <tr data-sev="warn"><td><input type="checkbox" class="al-cb" /></td><td>09:10</td><td data-i18n="al_off">After-hours power-on</td><td>HBOT-077</td><td><span class="pill-st res" data-i18n="al_w_res">Resolved</span></td><td><span style="color:var(--muted);font-size:0.72rem;">—</span></td><td><button type="button" class="btn" disabled data-i18n="al_done">Closed</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="sec-assets">
+        <div class="panel">
+          <h2 data-i18n="as_title">Lifecycle & geofence</h2>
+          <p style="color:var(--muted);font-size:0.9rem;margin:0 0 16px;" data-i18n="as_sub">Simplified radius demo (Excel: polygon geofence per clinic).</p>
+          <label data-i18n="lbl_rad">Fence radius (km)</label>
+          <input type="number" id="rad" value="2" min="0.5" max="50" step="0.1" style="width:200px;margin-bottom:12px;" />
+          <button type="button" class="btn btn-primary" id="btn-geo" data-i18n="btn_save_geo">Save geofence draft</button>
+        </div>
+      </section>
+
+      <section class="section" id="sec-billing">
+        <div class="panel">
+          <h2 data-i18n="bi_title">Revenue share rules</h2>
+          <p style="color:var(--muted);font-size:0.85rem;" data-i18n="bi_hint">Per Excel: per-session, hourly, tiered — configuration UI TBD; this is a read-only summary.</p>
+          <table style="margin-top:12px;">
+            <thead><tr><th data-i18n="th_cl">Clinic</th><th data-i18n="th_model">Model</th><th data-i18n="th_rate">Rate</th></tr></thead>
+            <tbody>
+              <tr><td>Clinic Bay</td><td>Per session + cap</td><td>$18 + 12%</td></tr>
+              <tr><td>Clinic North</td><td>Tiered</td><td>Tier 1–3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="sec-maint">
+        <div class="panel">
+          <h2 data-i18n="mn_title">Preventive work orders</h2>
+          <table>
+            <thead><tr><th data-i18n="th_id">WO</th><th data-i18n="th_dev">Device</th><th data-i18n="th_st">State</th></tr></thead>
+            <tbody>
+              <tr><td>WO-9921</td><td>HBOT-118</td><td>Open</td></tr>
+              <tr><td>WO-9910</td><td>HBOT-204</td><td>Assigned</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-back" id="drawer-back"><div class="drawer" id="drawer">
+    <h2 id="dr-title" style="margin-top:0;">Device</h2>
+    <div class="d-tabs" id="dr-tabs">
+      <button type="button" class="on" data-dtab="ov" data-i18n="dt_ov">Overview</button>
+      <button type="button" data-dtab="tel" data-i18n="dt_tel">Telemetry</button>
+      <button type="button" data-dtab="sim" data-i18n="dt_sim">SIM</button>
+      <button type="button" data-dtab="mnt" data-i18n="dt_mnt">Maintenance</button>
+      <button type="button" data-dtab="prm" data-i18n="dt_prm">Access</button>
+    </div>
+    <div class="d-panel on" id="dp-ov"><p style="color:var(--muted);font-size:0.9rem;margin:0;" id="dr-ov-text"></p></div>
+    <div class="d-panel" id="dp-tel">
+      <p data-i18n="dt_tel_b">Pressure / temperature streams (mock).</p>
+      <div class="sparkline" data-i18n="dt_sp1">Pressure · 24h sparkline</div>
+      <div class="sparkline" style="margin-top:8px;" data-i18n="dt_sp2">Motor temp · 24h sparkline</div>
+    </div>
+    <div class="d-panel" id="dp-sim">
+      <p data-i18n="dt_sim_b">ICCID · carrier · last attach (mock).</p>
+      <table style="margin-top:10px;font-size:0.82rem;"><tbody>
+        <tr><td data-i18n="dt_iccid">ICCID</td><td>8986…9912</td></tr>
+        <tr><td data-i18n="dt_carrier">Carrier</td><td>China Mobile (mock)</td></tr>
+      </tbody></table>
+    </div>
+    <div class="d-panel" id="dp-mnt">
+      <p data-i18n="dt_mnt_b">Next PM due · parts life (mock).</p>
+      <div class="sparkline" data-i18n="dt_sp3">Vibration RMS trend</div>
+    </div>
+    <div class="d-panel" id="dp-prm">
+      <p data-i18n="dt_prm_b">Binding / clinic scope / field override flags (read-only stub).</p>
+    </div>
+    <button type="button" class="btn" id="dr-close" style="margin-top:20px;width:100%;" data-i18n="btn_close">Close</button>
+  </div></div>
+
+  <div class="drawer-back" id="wh-back"><div class="drawer" id="wh-drawer">
+    <h2 style="margin-top:0;" data-i18n="wh_title">Webhook retry log</h2>
+    <p class="meta" style="font-size:0.85rem;color:var(--muted);" data-i18n="wh_sub">Latest payment webhooks (mock).</p>
+    <table style="font-size:0.82rem;width:100%;">
+      <thead><tr><th data-i18n="wh_t1">Time</th><th data-i18n="wh_t2">Event</th><th data-i18n="wh_t3">Attempts</th></tr></thead>
+      <tbody>
+        <tr><td>10:41:02</td><td>invoice.paid</td><td>2</td></tr>
+        <tr><td>10:38:55</td><td>transfer.failed</td><td>5</td></tr>
+        <tr><td>10:20:11</td><td>payout.completed</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <button type="button" class="btn" id="wh-close" style="margin-top:18px;width:100%;" data-i18n="btn_close">Close</button>
+  </div></div>
+
+  <div class="modal" id="modal-print">
+    <div class="modal-box" style="width:min(720px,94vw);max-height:86vh;overflow:auto;">
+      <h3 data-i18n="print_title">Executive summary (preview)</h3>
+      <p style="color:var(--muted);font-size:0.88rem;" data-i18n="print_sub">Print-friendly snapshot · demo content.</p>
+      <div id="print-body" style="border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:12px;font-size:0.85rem;line-height:1.5;">
+        <strong data-i18n="print_h1">KPI snapshot</strong>
+        <p data-i18n="print_p1">Sessions, online devices, open alerts, share estimate — pulled from current region filter.</p>
+        <strong data-i18n="print_h2">Open risks</strong>
+        <p data-i18n="print_p2">Critical alerts within SLA; webhook retries monitored.</p>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="print-close" data-i18n="cancel">Close</button>
+        <button type="button" class="btn btn-primary" id="print-go" data-i18n="print_do">Print / PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-asg">
+    <div class="modal-box">
+      <h3 data-i18n="asg_title">Assign alert</h3>
+      <p style="color:var(--muted);font-size:0.88rem;" data-i18n="asg_sub">Routes to on-call queue (demo).</p>
+      <label data-i18n="asg_lbl">Owner</label>
+      <select id="asg-to" style="width:100%;margin-bottom:12px;">
+        <option>Ops · EU-East</option>
+        <option>Ops · US-West</option>
+        <option>Clinical safety</option>
+      </select>
+      <div class="row">
+        <button type="button" class="btn" id="asg-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="asg-go" data-i18n="asg_go">Assign</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-rep">
+    <div class="modal-box" style="width:min(480px,94vw);text-align:left;">
+      <h3 data-i18n="rep_modal_title">Export report</h3>
+      <label data-i18n="rep_fmt">Format</label>
+      <select id="rep-fmt" style="width:100%;margin-bottom:12px;"><option>CSV</option><option>PDF</option><option>Excel</option></select>
+      <label data-i18n="rep_scope">Scope</label>
+      <input id="rep-scope" type="text" value="Global · current filters" style="width:100%;margin-bottom:12px;" />
+      <div class="row">
+        <button type="button" class="btn" id="rep-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="rep-run" data-i18n="rep_run">Queue export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const T = {
+      en: {
+        nav_ov: "Overview", nav_dir: "Directory", nav_on: "Clinic onboarding", nav_po: "Policy templates",
+        nav_au: "Audit log", nav_st: "Settlements", nav_in: "Integrations", nav_rb: "Roles & permissions",
+        nav_al: "Alerts", nav_as: "Assets", nav_bi: "Billing rules", nav_mn: "Maintenance",
+        nav_fl: "Fleet map", nav_rep: "Reports",
+        page_title: "Global operations", hub: "Hub", role: "Role: Super Admin",
+        kpi_sess: "Sessions today", kpi_up: "+4.2% vs yesterday", kpi_on: "Online devices", kpi_stable: "Stable",
+        kpi_al: "Open alerts", kpi_crit: "3 critical", kpi_rev: "Est. monthly share", kpi_proj: "Projection",
+        btn_ref: "Refresh KPIs", map_title: "Multi-site device map",
+        map_mock: "Schematic map placeholder · markers: running / idle / offline (per requirements).",
+        dash_title: "Device status board", op_all: "All regions", op_cl: "All clinics", btn_apply: "Apply filters",
+        th_dev: "Device", th_st: "Status", th_last: "Last session",
+        al_title: "Alert center", al_all: "All", al_crit: "Critical", al_warn: "Warning",
+        th_time: "Time", th_type: "Type", al_geo: "Geofence breach", al_temp: "Motor temperature", al_off: "After-hours power-on",
+        btn_ack: "Ack", as_title: "Lifecycle & geofence",
+        as_sub: "Simplified radius demo (requirements: polygon per clinic).",
+        lbl_rad: "Fence radius (km)", btn_save_geo: "Save geofence draft",
+        bi_title: "Revenue share rules",
+        bi_hint: "Per requirements: per-session, hourly, tiered — full editor TBD; read-only summary.",
+        th_cl: "Clinic", th_model: "Model", th_rate: "Rate",
+        mn_title: "Preventive work orders", th_id: "WO",
+        btn_close: "Close", ack_title: "Acknowledge alert?", ack_sub: "Creates audit log entry (demo).",
+        cancel: "Cancel", btn_confirm: "Confirm",
+        toast_ref: "KPIs refreshed", toast_flt: "Filters applied", toast_geo: "Geofence draft saved",
+        toast_ack: "Alert acknowledged", dr_tpl: "Telemetry, SIM ICCID, firmware, binding state — detail view (demo).",
+        dir_title: "Users & organizations", dir_ph: "Search name or email", dir_all: "All types", dir_org: "Organizations",
+        dir_user: "Users", dir_search: "Search", dir_empty: "No matches (demo).", th_name: "Name", th_region: "Region",
+        t_clinic: "Clinic", t_user: "User",
+        onb_title: "Clinic onboarding", wiz_1: "1. Profile", wiz_2: "2. Billing", wiz_3: "3. Devices", wiz_4: "4. Review",
+        lbl_cl_name: "Clinic legal name", wiz_err: "Required", wiz_p2: "Attach tax ID & payout account (mock).",
+        wiz_p3: "Register first devices / IMEI placeholders.", wiz_p4: "Summary ready to submit.",
+        wiz_back: "Back", wiz_next: "Next", wiz_fin: "Submit",
+        pol_title: "Policy templates", pol_sub: "Versioned templates for consent, retention, geofence defaults.",
+        th_ver: "Version", btn_dup: "Duplicate", pol_p1: "Privacy · HBOT", pol_g1: "Geofence default",
+        aud_title: "Audit log", aud_all: "All actions", aud_login: "Login", aud_cfg: "Config change",
+        aud_actor: "Actor", aud_action: "Action", aud_a1: "Login success", aud_a2: "Updated revenue rule",
+        set_title: "Billing & settlement", set_k1: "Pending payouts", set_k1d: "12 clinics", set_k2: "In dispute",
+        set_k2d: "3 cases", set_col1: "Period", set_col2: "Net", st_paid: "Paid", st_proc: "Processing",
+        int_title: "Integration health", int_sms: "SMS gateway", int_sms_d: "Latency 120ms · Aliyun mock",
+        int_pay: "Payments", int_pay_d: "Webhook retries 2%", int_ping: "Run connectivity check",
+        rbac_title: "Role permission matrix (stub)", rbac_sub: "Read-only demo · Excel RBAC to be mapped.",
+        rbac_perm: "Permission", rbac_sa: "Super Admin", rbac_fin: "Finance", rbac_ops: "Ops", rbac_sup: "Support",
+        rbac_p1: "Devices write", rbac_p2: "Billing rules", rbac_p3: "Audit export", rbac_p4: "Policy publish", rbac_p5: "Alert acknowledge",
+        dt_ov: "Overview", dt_tel: "Telemetry", dt_sim: "SIM", dt_mnt: "Maintenance", dt_prm: "Access",
+        dt_tel_b: "Pressure / temperature streams (mock).", dt_sp1: "Pressure · 24h sparkline", dt_sp2: "Motor temp · 24h sparkline",
+        dt_sim_b: "ICCID · carrier · last attach (mock).", dt_iccid: "ICCID", dt_carrier: "Carrier",
+        dt_mnt_b: "Next PM due · parts life (mock).", dt_sp3: "Vibration RMS trend",
+        dt_prm_b: "Binding / clinic scope / field override flags (read-only stub).",
+        toast_dup: "Template duplicated (demo)", toast_aud: "Filters applied", toast_wiz: "Onboarding submitted (demo)",
+        toast_int: "All integrations reachable (demo)", toast_dir: "Search updated",
+        exec_lbl: "Executive drill-down", btn_print: "Printable report…",
+        ff_title: "Feature flags · rollout", ff1: "Telemetry batch upload", ff2: "New dispute workflow",
+        inc_title: "Incident timeline (mock)", inc1: "Webhook burst · payments degraded", inc2: "Region EMEA · elevated offline rate", inc3: "SIM vendor maintenance · resolved",
+        th_sla: "SLA timer", sla1: "12m left", sla2: "45m left", sla3: "2h left",
+        dir_csv: "Import clinics (CSV)", bulk_sel: "selected", bulk_tag: "Tag region",
+        bulk_ack: "Ack selected", wh_open: "Webhook retry log", wh_title: "Webhook retry log", wh_sub: "Latest payment webhooks (mock).",
+        wh_t1: "Time", wh_t2: "Event", wh_t3: "Attempts",
+        print_title: "Executive summary (preview)", print_sub: "Print-friendly snapshot · demo content.",
+        print_h1: "KPI snapshot", print_p1: "Sessions, online devices, alerts, share — region scoped.",
+        print_h2: "Open risks", print_p2: "Critical alerts within SLA; webhook retries monitored.",
+        print_do: "Print / PDF",
+        toast_csv: "Imported 12 rows (demo)", toast_bulk: "Bulk action queued (demo)", toast_print: "Opening print dialog (demo)",
+        fl_title: "Fleet readiness map",
+        fl_sub: "North-star ops canvas · no satellite imagery by design.",
+        fl_map: "Orthographic fleet canvas · clusters show clinic density (demo).",
+        lg_run: "Running", lg_idle: "Idle", lg_off: "Offline",
+        fl_col_run: "Running now",
+        rep_title: "Reports workspace",
+        rep_sub: "Curated exports · CSV / PDF hand-off for finance.",
+        rep_p1: "Sessions by clinic · MTD",
+        rep_p2: "Alert SLA compliance",
+        rep_p3: "Revenue share accrual",
+        rep_export: "Configure export…",
+        rep_k1: "Last successful export",
+        rep_k2: "Queued jobs",
+        rep_modal_title: "Export report",
+        rep_fmt: "Format",
+        rep_scope: "Scope",
+        rep_run: "Queue export",
+        toast_rep_q: "Export queued (demo)",
+        set_tab_out: "Payouts",
+        set_tab_inv: "Invoice aging",
+        set_tab_adj: "Adjustments",
+        set_inv_sub: "A/R buckets · clinic billing entities (demo).",
+        set_ar_30: "0–30 days",
+        set_ar_60: "31–60 days",
+        set_ar_90: "61+ days",
+        set_dl: "Download aging CSV",
+        set_adj_sub: "Manual credits awaiting controller approval.",
+        set_adj_id: "Reference",
+        set_adj_amt: "Amount",
+        st_pend: "Pending",
+        st_appr: "Approved",
+        aud_ph: "Search actor or target",
+        aud_actor_all: "All actors",
+        aud_a3: "Exported roster CSV",
+        pol_ed_title: "Policy editor (stub)",
+        pol_ed_sub: "YAML-style body · validates before publish.",
+        pol_ed_lbl: "Draft body",
+        pol_diff: "Preview diff",
+        pol_save: "Save draft",
+        btn_edit: "Edit in draft",
+        al_w_open: "Open",
+        al_w_asg: "Assigned · Ops-B",
+        al_w_asg_prefix: "Assigned · ",
+        al_w_res: "Resolved",
+        al_asg: "Assign…",
+        al_res: "Resolve",
+        al_done: "Closed",
+        asg_title: "Assign alert",
+        asg_sub: "Routes to on-call queue (demo).",
+        asg_lbl: "Owner",
+        asg_go: "Assign",
+        toast_asg: "Assignment recorded",
+        toast_res: "Alert resolved (demo)",
+        toast_diff: "Diff preview (demo)",
+        toast_pol: "Draft saved"
+      },
+      zh: {
+        nav_ov: "总览", nav_dir: "目录", nav_on: "诊所入驻向导", nav_po: "策略模板",
+        nav_au: "审计日志", nav_st: "结算", nav_in: "集成健康", nav_rb: "角色与权限",
+        nav_al: "告警", nav_as: "资产", nav_bi: "分账规则", nav_mn: "维保",
+        nav_fl: "设备地图", nav_rep: "报表",
+        page_title: "全球运营", hub: "入口", role: "角色：超级管理员",
+        kpi_sess: "今日治疗次数", kpi_up: "较昨日 +4.2%", kpi_on: "在线设备", kpi_stable: "稳定",
+        kpi_al: "未处理告警", kpi_crit: "3 条紧急", kpi_rev: "月度预估分成", kpi_proj: "预测值",
+        btn_ref: "刷新 KPI", map_title: "多点位设备地图",
+        map_mock: "地图示意占位 · 图标区分运行中/闲置/离线（按需求）。",
+        dash_title: "设备状态看板", op_all: "全部区域", op_cl: "全部诊所", btn_apply: "应用筛选",
+        th_dev: "设备", th_st: "状态", th_last: "最近治疗",
+        al_title: "智能告警中心", al_all: "全部", al_crit: "紧急", al_warn: "普通",
+        th_time: "时间", th_type: "类型", al_geo: "围栏越界", al_temp: "电机温度", al_off: "非授权时段开机",
+        btn_ack: "确认", as_title: "资产与围栏",
+        as_sub: "演示用半径（需求：诊所多边形围栏）。",
+        lbl_rad: "围栏半径（公里）", btn_save_geo: "保存围栏草稿",
+        bi_title: "分成规则",
+        bi_hint: "按需求：按次/按时长/阶梯等 — 完整编辑器待定；此处为只读摘要。",
+        th_cl: "诊所", th_model: "模式", th_rate: "费率",
+        mn_title: "预防性维保工单", th_id: "工单",
+        btn_close: "关闭", ack_title: "确认告警？", ack_sub: "写入审计日志（演示）。",
+        cancel: "取消", btn_confirm: "确认",
+        toast_ref: "KPI 已刷新", toast_flt: "筛选已应用", toast_geo: "围栏草稿已保存",
+        toast_ack: "告警已确认", dr_tpl: "遥测、SIM、固件、绑定状态 — 详情（演示）。",
+        dir_title: "用户与组织", dir_ph: "搜索名称或邮箱", dir_all: "全部类型", dir_org: "组织",
+        dir_user: "用户", dir_search: "搜索", dir_empty: "无匹配（演示）。", th_name: "名称", th_region: "区域",
+        t_clinic: "诊所", t_user: "用户",
+        onb_title: "诊所入驻向导", wiz_1: "1. 资料", wiz_2: "2. 结算", wiz_3: "3. 设备", wiz_4: "4. 复核",
+        lbl_cl_name: "诊所法定名称", wiz_err: "必填", wiz_p2: "上传税号与收款账户（演示）。",
+        wiz_p3: "登记首批设备 / IMEI 占位。", wiz_p4: "摘要可提交。",
+        wiz_back: "上一步", wiz_next: "下一步", wiz_fin: "提交",
+        pol_title: "策略模板", pol_sub: "同意书、留存周期、默认围栏等版本化模板。",
+        th_ver: "版本", btn_dup: "复制", pol_p1: "隐私 · HBOT", pol_g1: "默认围栏",
+        aud_title: "审计日志", aud_all: "全部动作", aud_login: "登录", aud_cfg: "配置变更",
+        aud_actor: "操作者", aud_action: "动作", aud_a1: "登录成功", aud_a2: "更新分成规则",
+        set_title: "账单与结算", set_k1: "待打款", set_k1d: "12 家诊所", set_k2: "争议中",
+        set_k2d: "3 起", set_col1: "账期", set_col2: "净额", st_paid: "已支付", st_proc: "处理中",
+        int_title: "集成健康", int_sms: "短信网关", int_sms_d: "延迟 120ms · 阿里云（演示）",
+        int_pay: "支付", int_pay_d: "Webhook 重试率 2%", int_ping: "运行连通性检测",
+        rbac_title: "角色权限矩阵（占位）", rbac_sub: "只读演示 · 与 Excel RBAC 映射待定。",
+        rbac_perm: "权限", rbac_sa: "超级管理员", rbac_fin: "财务", rbac_ops: "运营", rbac_sup: "客服",
+        rbac_p1: "设备写入", rbac_p2: "分账规则", rbac_p3: "审计导出", rbac_p4: "策略发布", rbac_p5: "告警确认",
+        dt_ov: "概览", dt_tel: "遥测", dt_sim: "SIM", dt_mnt: "维保", dt_prm: "访问控制",
+        dt_tel_b: "压力 / 温度流（演示）。", dt_sp1: "压力 · 24h 曲线占位", dt_sp2: "电机温度 · 24h 曲线占位",
+        dt_sim_b: "ICCID · 运营商 · 最近附着（演示）。", dt_iccid: "ICCID", dt_carrier: "运营商",
+        dt_mnt_b: "下次保养 · 部件寿命（演示）。", dt_sp3: "振动 RMS 趋势",
+        dt_prm_b: "绑定 / 诊所范围 / 现场覆盖标志（只读占位）。",
+        toast_dup: "模板已复制（演示）", toast_aud: "筛选已应用", toast_wiz: "入驻已提交（演示）",
+        toast_int: "集成检测通过（演示）", toast_dir: "搜索已更新",
+        exec_lbl: "高管下钻", btn_print: "可打印报表…",
+        ff_title: "功能开关 · 灰度", ff1: "遥测批量上报", ff2: "新争议流程",
+        inc_title: "事件时间线（演示）", inc1: "Webhook 尖峰 · 支付降级", inc2: "EMEA 区域离线率升高", inc3: "SIM 供应商维护 · 已恢复",
+        th_sla: "SLA 倒计时", sla1: "剩余 12 分钟", sla2: "剩余 45 分钟", sla3: "剩余 2 小时",
+        dir_csv: "导入诊所（CSV）", bulk_sel: "项已选", bulk_tag: "打标签",
+        bulk_ack: "批量确认", wh_open: "Webhook 重试日志", wh_title: "Webhook 重试日志", wh_sub: "最近支付回调（演示）。",
+        wh_t1: "时间", wh_t2: "事件", wh_t3: "重试次数",
+        print_title: "高管摘要（预览）", print_sub: "适合打印的快照 · 演示内容。",
+        print_h1: "KPI 概览", print_p1: "会话、在线设备、告警、分成 — 随区域筛选。",
+        print_h2: "在险事项", print_p2: "紧急告警在 SLA 内；Webhook 重试受监控。",
+        print_do: "打印 / PDF",
+        toast_csv: "已导入 12 行（演示）", toast_bulk: "批量动作已排队（演示）", toast_print: "正在打开打印（演示）",
+        fl_title: "机群就绪地图",
+        fl_sub: "运营总览画布 · 刻意不含实景地图瓦片。",
+        fl_map: "示意投影 · 聚合表示诊所密度（演示）。",
+        lg_run: "运行中", lg_idle: "闲置", lg_off: "离线",
+        fl_col_run: "当前运行",
+        rep_title: "报表工作台",
+        rep_sub: "可配置导出 · CSV/PDF 交接财务。",
+        rep_p1: "按诊所汇总 · 当月至今",
+        rep_p2: "告警 SLA 达成",
+        rep_p3: "分成计提",
+        rep_export: "配置导出…",
+        rep_k1: "上次成功导出",
+        rep_k2: "排队任务",
+        rep_modal_title: "导出报表",
+        rep_fmt: "格式",
+        rep_scope: "范围",
+        rep_run: "加入导出队列",
+        toast_rep_q: "导出任务已排队（演示）",
+        set_tab_out: "打款",
+        set_tab_inv: "账龄",
+        set_tab_adj: "调整项",
+        set_inv_sub: "应收账款桶 · 诊所法人实体（演示）。",
+        set_ar_30: "0–30 天",
+        set_ar_60: "31–60 天",
+        set_ar_90: "61+ 天",
+        set_dl: "下载账龄 CSV",
+        set_adj_sub: "手工贷项待总部复核。",
+        set_adj_id: "参考号",
+        set_adj_amt: "金额",
+        st_pend: "待处理",
+        st_appr: "已批准",
+        aud_ph: "搜索操作者或对象",
+        aud_actor_all: "全部操作者",
+        aud_a3: "导出名册 CSV",
+        pol_ed_title: "策略编辑器（占位）",
+        pol_ed_sub: "YAML 风格正文 · 发布前校验。",
+        pol_ed_lbl: "草稿正文",
+        pol_diff: "预览差异",
+        pol_save: "保存草稿",
+        btn_edit: "在草稿中编辑",
+        al_w_open: "待处理",
+        al_w_asg: "已指派 · Ops-B",
+        al_w_asg_prefix: "已指派 · ",
+        al_w_res: "已解决",
+        al_asg: "指派…",
+        al_res: "解决",
+        al_done: "已关闭",
+        asg_title: "指派告警",
+        asg_sub: "进入值班队列（演示）。",
+        asg_lbl: "负责人",
+        asg_go: "确认指派",
+        toast_asg: "指派已记录",
+        toast_res: "告警已关闭（演示）",
+        toast_diff: "差异预览（演示）",
+        toast_pol: "草稿已保存"
+      }
+    };
+    const lg = () => localStorage.getItem("hbot_lang") || "en";
+    function apply() {
+      const L = T[lg()];
+      document.documentElement.lang = lg() === "zh" ? "zh-Hans" : "en";
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const k = el.getAttribute("data-i18n");
+        if (L[k]) el.textContent = L[k];
+      });
+      document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+        const k = el.getAttribute("data-i18n-ph");
+        if (L[k]) el.setAttribute("placeholder", L[k]);
+      });
+      document.querySelectorAll("#dir-type option[data-i18n], #aud-act option[data-i18n], #exec-region option[data-i18n], #rep-preset option[data-i18n], #aud-actor option[data-i18n]").forEach((op) => {
+        const k = op.getAttribute("data-i18n");
+        if (L[k]) op.textContent = L[k];
+      });
+      document.getElementById("le").classList.toggle("active", lg() === "en");
+      document.getElementById("lz").classList.toggle("active", lg() === "zh");
+    }
+    document.getElementById("le").onclick = () => { localStorage.setItem("hbot_lang", "en"); apply(); };
+    document.getElementById("lz").onclick = () => { localStorage.setItem("hbot_lang", "zh"); apply(); };
+
+    function toast(k) {
+      const t = document.getElementById("toast");
+      t.textContent = T[lg()][k];
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    document.querySelectorAll("aside nav button").forEach((b) => {
+      b.onclick = () => {
+        document.querySelectorAll("aside nav button").forEach((x) => x.classList.remove("active"));
+        b.classList.add("active");
+        const id = b.dataset.sec;
+        document.querySelectorAll(".section").forEach((s) => s.classList.toggle("active", s.id === "sec-" + id));
+      };
+    });
+
+    const EXEC_KPIS = {
+      all: { sess: 1284, on: 612, al: 23, rev: "$842k" },
+      apac: { sess: 890, on: 420, al: 18, rev: "$510k" },
+      emea: { sess: 310, on: 150, al: 9, rev: "$240k" },
+      amer: { sess: 180, on: 120, al: 5, rev: "$180k" }
+    };
+    function applyExecKpi() {
+      const v = document.getElementById("exec-region").value;
+      const d = EXEC_KPIS[v] || EXEC_KPIS.all;
+      document.getElementById("kpi-sess").textContent = d.sess.toLocaleString();
+      document.getElementById("kpi-on").textContent = d.on.toLocaleString();
+      document.getElementById("kpi-al").textContent = String(d.al);
+      document.getElementById("kpi-rev").textContent = d.rev;
+    }
+    document.getElementById("exec-region").addEventListener("change", applyExecKpi);
+
+    document.getElementById("btn-refresh").onclick = () => {
+      const w = document.getElementById("kpi-wrap");
+      w.classList.add("loading");
+      setTimeout(() => {
+        document.getElementById("kpi-sess").textContent = String(1200 + Math.floor(Math.random() * 200));
+        document.getElementById("kpi-on").textContent = String(600 + Math.floor(Math.random() * 30));
+        document.getElementById("kpi-al").textContent = String(15 + Math.floor(Math.random() * 20));
+        w.classList.remove("loading");
+        toast("toast_ref");
+      }, 700);
+    };
+    document.getElementById("btn-filter").onclick = () => toast("toast_flt");
+    document.getElementById("btn-geo").onclick = () => toast("toast_geo");
+
+    const drawerBack = document.getElementById("drawer-back");
+    function openDrawer(devId) {
+      document.getElementById("dr-title").textContent = devId;
+      document.getElementById("dr-ov-text").textContent = T[lg()].dr_tpl;
+      document.querySelectorAll("#dr-tabs button").forEach((x, i) => x.classList.toggle("on", i === 0));
+      document.querySelectorAll(".d-panel").forEach((p, i) => p.classList.toggle("on", p.id === "dp-ov"));
+      drawerBack.classList.add("show");
+    }
+    document.getElementById("dr-close").onclick = () => { drawerBack.classList.remove("show"); };
+    drawerBack.addEventListener("click", (e) => { if (e.target === drawerBack) drawerBack.classList.remove("show"); });
+    document.getElementById("dr-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-dtab]");
+      if (!b) return;
+      document.querySelectorAll("#dr-tabs button").forEach((x) => x.classList.remove("on"));
+      b.classList.add("on");
+      const t = b.dataset.dtab;
+      document.querySelectorAll(".d-panel").forEach((p) => p.classList.toggle("on", p.id === "dp-" + t));
+    });
+    document.querySelectorAll("#tbl-dash tr").forEach((tr) => {
+      tr.onclick = () => openDrawer(tr.dataset.id);
+    });
+
+    document.getElementById("al-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-sev]");
+      if (!b) return;
+      document.querySelectorAll("#al-tabs button").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      const sev = b.dataset.sev;
+      document.querySelectorAll("#tbl-alerts tr").forEach((row) => {
+        const rs = row.dataset.sev;
+        row.style.display = sev === "all" || rs === sev ? "" : "none";
+      });
+    });
+
+    const modalAsg = document.getElementById("modal-asg");
+    let asgRow = null;
+    document.getElementById("tbl-alerts").addEventListener("click", (e) => {
+      const asg = e.target.closest(".al-asg");
+      if (asg) {
+        asgRow = asg.closest("tr");
+        modalAsg.classList.add("show");
+        return;
+      }
+      const res = e.target.closest(".al-res");
+      if (!res) return;
+      const row = res.closest("tr");
+      const pill = row.querySelector(".pill-st");
+      const L = T[lg()];
+      pill.className = "pill-st res";
+      pill.textContent = L.al_w_res;
+      res.style.display = "none";
+      row.querySelector(".al-asg").style.display = "none";
+      const slaCell = row.cells[5];
+      if (slaCell) slaCell.innerHTML = '<span style="color:var(--muted);font-size:0.72rem;">—</span>';
+      toast("toast_res");
+    });
+    document.getElementById("asg-cancel").onclick = () => { modalAsg.classList.remove("show"); asgRow = null; };
+    document.getElementById("asg-go").onclick = () => {
+      if (!asgRow) return;
+      const pill = asgRow.querySelector(".pill-st");
+      const pick = document.getElementById("asg-to").value;
+      const L = T[lg()];
+      pill.className = "pill-st asg";
+      pill.textContent = L.al_w_asg_prefix + document.getElementById("asg-to").value;
+      modalAsg.classList.remove("show");
+      toast("toast_asg");
+      asgRow = null;
+    };
+    modalAsg.addEventListener("click", (e) => { if (e.target === modalAsg) modalAsg.classList.remove("show"); });
+
+    const modalRep = document.getElementById("modal-rep");
+    document.getElementById("btn-rep-open").onclick = () => modalRep.classList.add("show");
+    document.getElementById("rep-cancel").onclick = () => modalRep.classList.remove("show");
+    document.getElementById("rep-run").onclick = () => { modalRep.classList.remove("show"); toast("toast_rep_q"); };
+    modalRep.addEventListener("click", (e) => { if (e.target === modalRep) modalRep.classList.remove("show"); });
+
+    document.getElementById("fl-apply").onclick = () => toast("toast_flt");
+
+    document.getElementById("set-tabs").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-stab]");
+      if (!b) return;
+      document.querySelectorAll("#set-tabs button").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      const t = b.dataset.stab;
+      document.getElementById("set-pane-out").style.display = t === "out" ? "block" : "none";
+      document.getElementById("set-pane-inv").style.display = t === "inv" ? "block" : "none";
+      document.getElementById("set-pane-adj").style.display = t === "adj" ? "block" : "none";
+    });
+    document.getElementById("btn-set-csv").onclick = () => toast("toast_csv");
+
+    document.getElementById("aud-apply").onclick = () => {
+      const f = document.getElementById("aud-act").value;
+      const a = document.getElementById("aud-actor").value;
+      const q = document.getElementById("aud-q").value.trim().toLowerCase();
+      document.querySelectorAll("#tbl-aud tbody tr").forEach((r) => {
+        const actOk = f === "all" || r.getAttribute("data-act") === f;
+        const actorOk = a === "all" || r.getAttribute("data-actor") === a;
+        const textOk = !q || r.innerText.toLowerCase().includes(q);
+        r.style.display = actOk && actorOk && textOk ? "" : "none";
+      });
+      toast("toast_aud");
+    };
+
+    document.querySelectorAll(".pol-edit").forEach((b) => {
+      b.onclick = () => document.getElementById("pol-body").focus();
+    });
+    document.getElementById("pol-diff").onclick = () => toast("toast_diff");
+    document.getElementById("pol-save").onclick = () => toast("toast_pol");
+
+    let wizStep = 1;
+    function syncWiz() {
+      const L = T[lg()];
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById("wiz-p" + i).style.display = wizStep === i ? "block" : "none";
+      }
+      document.querySelectorAll("#wiz-steps span").forEach((s) => {
+        const n = +s.getAttribute("data-step-i");
+        s.classList.toggle("on", n === wizStep);
+        s.classList.toggle("done", n < wizStep);
+      });
+      document.getElementById("wiz-back").style.visibility = wizStep === 1 ? "hidden" : "visible";
+      document.getElementById("wiz-next").textContent = wizStep === 4 ? L.wiz_fin : L.wiz_next;
+      document.getElementById("wiz-err").style.display = "none";
+    }
+    syncWiz();
+    document.getElementById("wiz-next").onclick = () => {
+      if (wizStep === 1) {
+        const v = document.getElementById("wiz-name").value.trim();
+        if (!v) {
+          document.getElementById("wiz-err").style.display = "block";
+          return;
+        }
+      }
+      if (wizStep < 4) { wizStep++; syncWiz(); return; }
+      toast("toast_wiz");
+      wizStep = 1;
+      document.getElementById("wiz-name").value = "";
+      syncWiz();
+    };
+    document.getElementById("wiz-back").onclick = () => {
+      if (wizStep > 1) { wizStep--; syncWiz(); }
+    };
+
+    document.getElementById("btn-dir-search").onclick = () => {
+      const q = document.getElementById("dir-q").value.trim().toLowerCase();
+      const rows = document.querySelectorAll("#tbl-dir tr");
+      let n = 0;
+      rows.forEach((r) => {
+        const show = !q || r.innerText.toLowerCase().includes(q);
+        r.style.display = show ? "" : "none";
+        if (show) n++;
+      });
+      document.querySelector(".empty-dir").style.display = n ? "none" : "block";
+      toast("toast_dir");
+    };
+
+    document.getElementById("aud-apply").onclick = () => {
+      const f = document.getElementById("aud-act").value;
+      document.querySelectorAll("#tbl-aud tbody tr").forEach((r) => {
+        r.style.display = f === "all" || r.getAttribute("data-act") === f ? "" : "none";
+      });
+      toast("toast_aud");
+    };
+
+    document.querySelectorAll(".pol-dup").forEach((b) => (b.onclick = () => toast("toast_dup")));
+    document.getElementById("int-ping").onclick = () => toast("toast_int");
+
+    [["ff1", "ff1-pct"], ["ff2", "ff2-pct"]].forEach(([rid, pid]) => {
+      const r = document.getElementById(rid);
+      const p = document.getElementById(pid);
+      r.addEventListener("input", () => { p.textContent = r.value + "%"; });
+    });
+
+    const modalPrint = document.getElementById("modal-print");
+    document.getElementById("btn-print-preview").onclick = () => { modalPrint.classList.add("show"); };
+    document.getElementById("print-close").onclick = () => modalPrint.classList.remove("show");
+    document.getElementById("print-go").onclick = () => { toast("toast_print"); window.print(); };
+    modalPrint.addEventListener("click", (e) => { if (e.target === modalPrint) modalPrint.classList.remove("show"); });
+
+    const whBack = document.getElementById("wh-back");
+    document.getElementById("btn-wh-log").onclick = () => whBack.classList.add("show");
+    document.getElementById("wh-close").onclick = () => whBack.classList.remove("show");
+    whBack.addEventListener("click", (e) => { if (e.target === whBack) whBack.classList.remove("show"); });
+
+    function syncDirBulk() {
+      const n = document.querySelectorAll(".dir-cb:checked").length;
+      document.getElementById("dir-bulk-n").textContent = String(n);
+      document.getElementById("dir-bulk").classList.toggle("show", n > 0);
+    }
+    document.querySelectorAll(".dir-cb").forEach((c) => c.addEventListener("change", syncDirBulk));
+    document.getElementById("dir-all").addEventListener("change", (e) => {
+      document.querySelectorAll(".dir-cb").forEach((c) => { c.checked = e.target.checked; });
+      syncDirBulk();
+    });
+    document.getElementById("dir-bulk-tag").onclick = () => toast("toast_bulk");
+
+    document.getElementById("btn-csv").onclick = () => document.getElementById("csv-file").click();
+    document.getElementById("csv-file").addEventListener("change", () => { toast("toast_csv"); });
+
+    function syncAlBulk() {
+      const n = document.querySelectorAll("#tbl-alerts .al-cb:checked").length;
+      document.getElementById("al-bulk-ack").style.display = n ? "inline-block" : "none";
+    }
+    document.querySelectorAll("#tbl-alerts .al-cb").forEach((c) => c.addEventListener("change", syncAlBulk));
+    document.getElementById("al-all").addEventListener("change", (e) => {
+      document.querySelectorAll("#tbl-alerts .al-cb").forEach((c) => { c.checked = e.target.checked; });
+      syncAlBulk();
+    });
+    document.getElementById("al-bulk-ack").onclick = () => {
+      document.querySelectorAll("#tbl-alerts tr").forEach((tr) => {
+        if (tr.querySelector(".al-cb:checked")) tr.remove();
+      });
+      syncAlBulk();
+      document.getElementById("al-all").checked = false;
+      toast("toast_ack");
+    };
+
+    applyExecKpi();
+    apply();
+  </script>
+</body>
+</html>

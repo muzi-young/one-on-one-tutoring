@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>医院营养订餐小程序 - 交互原型</title>
+<style>
+:root {
+  --green: #43A047;
+  --green-light: #66BB6A;
+  --green-bg: #E8F5E9;
+  --green-dark: #2E7D32;
+  --orange: #FF6D00;
+  --orange-light: #FFF3E0;
+  --red: #E53935;
+  --blue: #1E88E5;
+  --blue-light: #E3F2FD;
+  --purple: #7E57C2;
+  --yellow: #F9A825;
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --text-hint: #999999;
+  --bg-page: #F5F5F5;
+  --bg-white: #FFFFFF;
+  --border: #EEEEEE;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+.phone-frame {
+  width: 375px; height: 812px; background: var(--bg-page); border-radius: 40px;
+  overflow: hidden; position: relative; box-shadow: 0 0 0 8px #111, 0 0 0 10px #333, 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.page {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg-page); display: none; flex-direction: column;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  overflow: hidden; z-index: 1;
+}
+.page.active { display: flex; z-index: 2; }
+.page.slide-in { display: flex; z-index: 3; animation: slideIn 0.3s ease forwards; }
+.page.slide-out { display: flex; z-index: 1; animation: slideOut 0.3s ease forwards; }
+
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+/* Header */
+.header {
+  height: 56px; background: var(--bg-white); display: flex; align-items: center;
+  padding: 0 16px; position: relative; flex-shrink: 0; z-index: 10;
+}
+.header-title { flex: 1; text-align: center; font-size: 17px; font-weight: 600; color: var(--text-primary); }
+.header-back, .header-action { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; color: var(--text-primary); }
+
+/* Bottom Tab Bar */
+.tab-bar {
+  height: 60px; background: var(--bg-white); display: flex; align-items: center;
+  border-top: 1px solid var(--border); flex-shrink: 0; padding-bottom: 4px;
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; font-size: 10px; color: var(--text-hint); padding: 6px 0;
+}
+.tab-item.active { color: var(--green); }
+.tab-item .tab-icon { font-size: 22px; }
+.tab-item .tab-label { font-size: 10px; }
+
+/* Scrollable Content */
+.page-content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+
+/* Common UI Elements */
+.card { background: var(--bg-white); border-radius: var(--radius); margin: 12px 16px; box-shadow: var(--shadow-sm); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.tag-green { background: var(--green-bg); color: var(--green); }
+.tag-orange { background: var(--orange-light); color: var(--orange); }
+.tag-blue { background: var(--blue-light); color: var(--blue); }
+.tag-red { background: #FFEBEE; color: var(--red); }
+.tag-purple { background: #F3E5F5; color: var(--purple); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; border: none;
+  border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; padding: 10px 24px;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--green); color: white; }
+.btn-primary:active { background: var(--green-dark); }
+.btn-outline { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+.btn-outline:active { background: #f5f5f5; }
+
+.price { color: var(--green); font-weight: 700; }
+.price::before { content: '¥'; font-size: 0.75em; }
+.price-old { color: var(--text-hint); font-size: 12px; text-decoration: line-through; margin-left: 4px; }
+
+.add-btn {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--green);
+  color: white; border: none; font-size: 20px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.add-btn:active { transform: scale(0.9); }
+
+.quantity-ctrl { display: flex; align-items: center; gap: 8px; }
+.quantity-ctrl .minus-btn {
+  width: 28px; height: 28px; border-radius: 50%; background: white;
+  color: var(--text-secondary); border: 1px solid #ddd; font-size: 18px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.quantity-ctrl .qty { font-size: 14px; font-weight: 600; min-width: 16px; text-align: center; }
+
+/* Bottom Bar (Cart) */
+.bottom-bar {
+  height: 56px; background: var(--bg-white); display: flex; align-items: center;
+  padding: 0 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.cart-info { flex: 1; display: flex; align-items: center; gap: 8px; }
+.cart-icon-wrap {
+  position: relative; width: 40px; height: 40px; display: flex;
+  align-items: center; justify-content: center;
+}
+.cart-icon-wrap .icon { font-size: 24px; }
+.cart-badge {
+  position: absolute; top: 0; right: 0; background: var(--red); color: white;
+  font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+}
+.cart-price { font-size: 18px; font-weight: 700; color: var(--green); }
+.cart-price::before { content: '¥'; font-size: 13px; }
+.cart-hint { font-size: 11px; color: var(--text-hint); }
+.checkout-btn {
+  height: 40px; padding: 0 24px; border-radius: 20px; border: none;
+  font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.checkout-btn.active { background: var(--green); color: white; }
+.checkout-btn.disabled { background: #E0E0E0; color: var(--text-hint); }
+
+/* ==================== PAGE: LOGIN ==================== */
+#page-login { background: linear-gradient(180deg, var(--green) 0%, var(--green-light) 100%); justify-content: center; align-items: center; }
+.login-logo { width: 80px; height: 80px; background: var(--bg-white); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 20px; }
+.login-title { font-size: 24px; font-weight: 700; color: white; margin-bottom: 8px; }
+.login-subtitle { font-size: 14px; color: rgba(255,255,255,0.85); margin-bottom: 60px; }
+.login-btn {
+  width: 300px; height: 52px; background: var(--bg-white); border-radius: 26px;
+  border: none; font-size: 16px; font-weight: 600; color: var(--green);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.15); transition: transform 0.2s;
+}
+.login-btn:active { transform: scale(0.97); }
+.login-hint { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 16px; }
+.login-terms { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 12px; }
+.login-terms a { color: rgba(255,255,255,0.9); text-decoration: underline; }
+
+/* ==================== PAGE: HOME ==================== */
+.home-header {
+  background: var(--bg-white); padding: 12px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.home-location { display: flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.home-location .arrow { font-size: 10px; color: var(--text-hint); }
+.home-header-actions { display: flex; gap: 16px; }
+.home-header-actions span { font-size: 20px; cursor: pointer; }
+
+.home-banner {
+  margin: 12px 16px; border-radius: var(--radius); overflow: hidden; height: 140px;
+  background: linear-gradient(135deg, #2E7D32, #66BB6A); position: relative;
+  display: flex; align-items: center; padding: 20px;
+}
+.home-banner-text { color: white; }
+.home-banner-text h3 { font-size: 18px; margin-bottom: 6px; }
+.home-banner-text p { font-size: 13px; opacity: 0.9; }
+.home-banner-img { position: absolute; right: 16px; bottom: 0; font-size: 80px; opacity: 0.3; }
+
+.home-entries {
+  display: flex; justify-content: space-around; padding: 16px; margin: 0 16px;
+  background: var(--bg-white); border-radius: var(--radius); box-shadow: var(--shadow-sm);
+}
+.home-entry { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.home-entry-icon {
+  width: 48px; height: 48px; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 22px;
+}
+.home-entry-icon.yellow { background: #FFF8E1; }
+.home-entry-icon.green { background: var(--green-bg); }
+.home-entry-icon.orange { background: var(--orange-light); }
+.home-entry-icon.pink { background: #FCE4EC; }
+.home-entry-label { font-size: 12px; color: var(--text-secondary); }
+
+.home-notice {
+  margin: 12px 16px; padding: 10px 14px; background: var(--green-bg); border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--green-dark);
+}
+.home-notice .icon { font-size: 16px; }
+
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 16px 12px; 
+}
+.section-title { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.section-more { font-size: 13px; color: var(--text-hint); cursor: pointer; }
+
+.recommend-scroll { display: flex; gap: 12px; padding: 0 16px 16px; overflow-x: auto; }
+.recommend-scroll::-webkit-scrollbar { display: none; }
+.recommend-card {
+  min-width: 150px; background: var(--bg-white); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-sm); cursor: pointer; flex-shrink: 0;
+}
+.recommend-card-img { width: 150px; height: 100px; object-fit: cover; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+.recommend-card-info { padding: 10px; }
+.recommend-card-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.recommend-card-desc { font-size: 11px; color: var(--text-hint); margin-bottom: 6px; }
+.recommend-card-bottom { display: flex; align-items: center; justify-content: space-between; }
+.recommend-card-price { font-size: 16px; }
+
+.hot-meal-item {
+  display: flex; gap: 12px; padding: 14px 16px; background: var(--bg-white); cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.hot-meal-img {
+  width: 80px; height: 80px; border-radius: var(--radius-sm); background: #e0e0e0;
+  display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0;
+  overflow: hidden;
+}
+.hot-meal-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.hot-meal-name { font-size: 15px; font-weight: 600; }
+.hot-meal-desc { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+.hot-meal-tags { display: flex; gap: 6px; margin-top: 4px; }
+.hot-meal-bottom { display: flex; align-items: center; justify-content: space-between; }
+.hot-meal-price { font-size: 17px; }
+
+/* ==================== PAGE: TODAY MENU ==================== */
+.date-tabs {
+  display: flex; padding: 12px 16px; gap: 6px; background: var(--bg-white);
+  overflow-x: auto; flex-shrink: 0;
+}
+.date-tabs::-webkit-scrollbar { display: none; }
+.date-tab {
+  display: flex; flex-direction: column; align-items: center; padding: 6px 12px;
+  border-radius: 20px; cursor: pointer; min-width: 52px; flex-shrink: 0;
+}
+.date-tab .day-label { font-size: 12px; color: var(--text-hint); }
+.date-tab .day-num { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-top: 2px; }
+.date-tab.active { background: var(--green); }
+.date-tab.active .day-label, .date-tab.active .day-num { color: white; }
+
+.meal-tabs {
+  display: flex; padding: 12px 16px; gap: 12px; background: var(--bg-white);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.meal-tab {
+  padding: 8px 16px; border-radius: 20px; font-size: 13px; color: var(--text-secondary);
+  cursor: pointer; text-align: center; transition: all 0.2s;
+}
+.meal-tab.active { background: var(--green); color: white; font-weight: 600; }
+.meal-tab .time { font-size: 11px; display: block; margin-top: 2px; }
+.meal-tab.active .time { color: rgba(255,255,255,0.85); }
+
+.menu-layout { display: flex; flex: 1; overflow: hidden; }
+.category-sidebar {
+  width: 80px; background: #F8F8F8; overflow-y: auto; flex-shrink: 0;
+}
+.category-item {
+  padding: 14px 8px; text-align: center; font-size: 13px; color: var(--text-secondary);
+  cursor: pointer; position: relative; transition: all 0.2s;
+}
+.category-item.active {
+  background: var(--bg-white); color: var(--green); font-weight: 600;
+}
+.category-item.active::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: var(--green); border-radius: 0 2px 2px 0;
+}
+
+.menu-list { flex: 1; overflow-y: auto; padding: 8px 12px; }
+.menu-list-header { padding: 8px 4px; font-size: 14px; color: var(--text-secondary); }
+.menu-list-header span { font-weight: 600; color: var(--text-primary); }
+
+.food-item {
+  display: flex; gap: 10px; padding: 12px; background: var(--bg-white);
+  border-radius: var(--radius-sm); margin-bottom: 10px; box-shadow: var(--shadow-sm);
+}
+.food-item-img {
+  width: 80px; height: 80px; border-radius: var(--radius-sm); background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 36px;
+  overflow: hidden;
+}
+.food-item-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.food-item-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.food-item-desc { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+.food-item-tag { margin-top: 4px; }
+.food-item-sales { font-size: 11px; color: var(--text-hint); }
+.food-item-bottom { display: flex; align-items: center; justify-content: space-between; }
+.food-item-price { font-size: 17px; }
+
+/* ==================== PAGE: TOMORROW ORDER ==================== */
+.order-notice {
+  margin: 12px 16px; padding: 12px 14px; background: var(--green-bg);
+  border-radius: var(--radius-sm); border: 1px solid #C8E6C9;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.order-notice .icon { font-size: 18px; color: var(--green); margin-top: 1px; }
+.order-notice-content { flex: 1; }
+.order-notice-title { font-size: 14px; font-weight: 600; color: var(--green-dark); }
+.order-notice-desc { font-size: 12px; color: var(--green); margin-top: 2px; }
+
+/* ==================== PAGE: TODAY RECOMMEND ==================== */
+.filter-bar {
+  display: flex; align-items: center; padding: 12px 16px; background: var(--bg-white);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.filter-item {
+  flex: 1; text-align: center; font-size: 14px; color: var(--text-secondary);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px;
+}
+.filter-item.active { color: var(--green); font-weight: 600; }
+.filter-item .arrow { font-size: 8px; }
+.filter-btn {
+  display: flex; align-items: center; gap: 4px; font-size: 14px;
+  color: var(--text-secondary); cursor: pointer; padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+
+.recommend-list { padding: 12px 16px; }
+.recommend-food-card {
+  display: flex; gap: 12px; padding: 16px; background: var(--bg-white);
+  border-radius: var(--radius); margin-bottom: 12px; box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.recommend-food-img {
+  width: 100px; height: 100px; border-radius: var(--radius-sm); background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 44px;
+  overflow: hidden;
+}
+.recommend-food-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.recommend-food-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; }
+.recommend-food-name .sales-tag { font-size: 11px; color: var(--orange); }
+.recommend-food-desc { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+.recommend-food-tags { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.recommend-food-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.recommend-food-price { font-size: 18px; }
+
+/* ==================== PAGE: SPECIAL MEALS ==================== */
+.special-tabs {
+  display: flex; padding: 12px 16px; gap: 10px; background: var(--bg-white);
+  flex-shrink: 0; overflow-x: auto;
+}
+.special-tabs::-webkit-scrollbar { display: none; }
+.special-tab {
+  padding: 8px 18px; border-radius: 20px; font-size: 14px;
+  border: 1px solid var(--border); cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+.special-tab.active { background: var(--green); color: white; border-color: var(--green); }
+
+.special-card {
+  margin: 12px 16px; background: var(--bg-white); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.special-card-img {
+  width: 100%; height: 160px; background: #e0e0e0;
+  display: flex; align-items: center; justify-content: center; font-size: 60px;
+  overflow: hidden;
+}
+.special-card-body { padding: 16px; }
+.special-card-header { display: flex; justify-content: space-between; align-items: center; }
+.special-card-name { font-size: 17px; font-weight: 700; }
+.special-card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.6; }
+.special-card-items { font-size: 13px; color: var(--text-hint); margin-top: 8px; }
+.special-card-items span { color: var(--text-secondary); }
+.special-card-nutrition { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+.special-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.special-card-price { display: flex; align-items: baseline; gap: 6px; }
+.special-card-price .current { font-size: 22px; }
+.special-card-add-btn {
+  padding: 8px 18px; background: var(--green); color: white; border: none;
+  border-radius: 20px; font-size: 14px; cursor: pointer; transition: all 0.2s;
+}
+.special-card-add-btn:active { background: var(--green-dark); }
+
+/* ==================== PAGE: POST SURGERY ==================== */
+.surgery-tabs {
+  display: flex; padding: 12px 16px; gap: 8px; background: var(--bg-white);
+  flex-shrink: 0; overflow-x: auto;
+}
+.surgery-tabs::-webkit-scrollbar { display: none; }
+.surgery-tab {
+  padding: 8px 14px; border-radius: 20px; font-size: 13px;
+  border: 1px solid var(--border); cursor: pointer; white-space: nowrap;
+  text-align: center; min-width: 56px; transition: all 0.2s;
+}
+.surgery-tab.active { background: var(--green); color: white; border-color: var(--green); }
+
+.surgery-tips {
+  margin: 12px 16px; padding: 14px; background: var(--blue-light);
+  border-radius: var(--radius-sm);
+}
+.surgery-tips-title { font-size: 14px; font-weight: 600; color: var(--blue); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.surgery-tips-list { font-size: 13px; color: #37474F; line-height: 1.8; padding-left: 16px; }
+
+.surgery-card {
+  margin: 12px 16px; background: var(--bg-white); border-radius: var(--radius);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.surgery-card-img {
+  width: 100%; height: 140px; background: #e0e0e0;
+  display: flex; align-items: center; justify-content: center; font-size: 50px;
+  overflow: hidden;
+}
+.surgery-card-body { padding: 14px; }
+.surgery-card-header { display: flex; justify-content: space-between; align-items: center; }
+.surgery-card-name { font-size: 16px; font-weight: 700; }
+.surgery-card-stage { font-size: 12px; color: var(--blue); background: var(--blue-light); padding: 2px 8px; border-radius: 4px; }
+.surgery-card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+.surgery-card-includes { font-size: 12px; color: var(--text-hint); margin-top: 6px; }
+.surgery-card-features { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+.surgery-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+
+/* ==================== PAGE: MEAL DETAIL ==================== */
+.detail-hero {
+  width: 100%; height: 240px; background: linear-gradient(135deg, #81C784, #4CAF50);
+  display: flex; align-items: center; justify-content: center; font-size: 80px;
+  position: relative;
+}
+.detail-hero-back {
+  position: absolute; top: 12px; left: 12px; width: 36px; height: 36px;
+  background: rgba(0,0,0,0.3); border-radius: 50%; color: white;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
+}
+.detail-hero-share {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+  background: rgba(0,0,0,0.3); border-radius: 50%; color: white;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px;
+}
+.detail-hero-tag {
+  position: absolute; top: 12px; right: 60px; background: var(--green);
+  color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px;
+}
+
+.detail-price-section { padding: 16px; background: var(--bg-white); }
+.detail-name { font-size: 20px; font-weight: 700; }
+.detail-meta { display: flex; gap: 12px; margin-top: 6px; font-size: 12px; color: var(--text-hint); }
+.detail-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
+.detail-current-price { font-size: 26px; color: var(--green); font-weight: 700; }
+.detail-current-price::before { content: '¥'; font-size: 16px; }
+.detail-time-tag { background: var(--orange-light); color: var(--orange); padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+
+.detail-audience { padding: 12px 16px; background: var(--bg-white); margin-top: 1px; }
+.detail-audience-title { font-size: 14px; color: var(--text-hint); margin-bottom: 8px; }
+.detail-audience-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.detail-audience-tag { padding: 6px 14px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border); cursor: pointer; }
+.detail-audience-tag.active { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+.detail-desc { padding: 14px 16px; background: var(--bg-white); margin-top: 8px; font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+.detail-section { background: var(--bg-white); margin-top: 8px; }
+.detail-section-title { padding: 14px 16px 8px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; }
+.detail-section-subtitle { font-size: 12px; color: var(--text-hint); font-weight: 400; }
+
+.detail-food-item {
+  display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.detail-food-img {
+  width: 48px; height: 48px; border-radius: 8px; background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px;
+  margin-right: 12px;
+}
+.detail-food-name { flex: 1; }
+.detail-food-name h4 { font-size: 14px; font-weight: 500; }
+.detail-food-name p { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+.detail-food-price { font-size: 15px; color: var(--orange); font-weight: 600; }
+.detail-food-price::before { content: '¥'; font-size: 11px; }
+
+.nutrition-grid {
+  display: flex; justify-content: space-around; padding: 16px;
+}
+.nutrition-item { text-align: center; }
+.nutrition-value { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.nutrition-unit { font-size: 11px; color: var(--text-hint); }
+.nutrition-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+.review-item { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.review-header { display: flex; align-items: center; gap: 10px; }
+.review-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.review-user { flex: 1; }
+.review-name { font-size: 14px; font-weight: 500; }
+.review-stars { color: var(--yellow); font-size: 12px; }
+.review-date { font-size: 12px; color: var(--text-hint); }
+.review-text { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-top: 8px; }
+
+.detail-bottom-bar {
+  height: 56px; background: var(--bg-white); display: flex; align-items: center;
+  padding: 0 16px; gap: 12px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.detail-action {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; color: var(--text-hint); cursor: pointer; padding: 0 8px;
+}
+.detail-action .icon { font-size: 20px; }
+.detail-add-cart {
+  flex: 1; height: 40px; border-radius: 20px 0 0 20px; background: var(--yellow);
+  color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.detail-buy-now {
+  flex: 1; height: 40px; border-radius: 0 20px 20px 0; background: var(--green);
+  color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+
+/* ==================== PAGE: CONFIRM ORDER ==================== */
+.confirm-section { background: var(--bg-white); margin-top: 8px; padding: 16px; }
+.confirm-section:first-child { margin-top: 0; }
+.confirm-section-title {
+  font-size: 15px; font-weight: 600; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.confirm-section-title .edit { font-size: 13px; color: var(--green); font-weight: 400; cursor: pointer; }
+
+.address-card { display: flex; gap: 12px; }
+.address-icon { font-size: 20px; color: var(--green); margin-top: 2px; }
+.address-info { flex: 1; }
+.address-info h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.address-info p { font-size: 13px; color: var(--text-secondary); margin-bottom: 2px; }
+
+.delivery-time { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.delivery-time .icon { font-size: 18px; color: var(--green); }
+.delivery-time p { font-size: 13px; color: var(--text-secondary); }
+
+.delivery-meal-tabs { display: flex; gap: 8px; }
+.delivery-meal-tab {
+  padding: 6px 14px; border-radius: 16px; font-size: 13px;
+  border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+  color: var(--text-secondary); background: var(--bg-white); white-space: nowrap;
+}
+.delivery-meal-tab.active { background: var(--green); color: white; border-color: var(--green); font-weight: 600; }
+.delivery-meal-tab:active { transform: scale(0.96); }
+
+.delivery-time-detail {
+  display: flex; align-items: center; gap: 8px; margin-top: 14px; padding: 10px 14px;
+  background: var(--green-bg); border-radius: var(--radius-sm);
+}
+.delivery-time-detail .icon { font-size: 16px; color: var(--green); flex-shrink: 0; }
+.delivery-time-detail p { font-size: 13px; color: var(--green-dark); }
+.delivery-time-detail strong { color: var(--green-dark); }
+
+.form-row {
+  display: flex; align-items: center; padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.form-row:last-child { border-bottom: none; }
+.form-label { width: 80px; font-size: 14px; color: var(--text-secondary); flex-shrink: 0; }
+.form-value { flex: 1; text-align: right; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.form-value select {
+  border: none; font-size: 14px; color: var(--text-primary); text-align: right;
+  appearance: none; background: transparent; padding-right: 16px; cursor: pointer;
+}
+.form-value input {
+  border: none; font-size: 14px; color: var(--text-hint); text-align: right;
+  outline: none; width: 100%;
+}
+.form-arrow { font-size: 12px; color: var(--text-hint); }
+
+.order-food-item {
+  display: flex; align-items: center; gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.order-food-item:last-child { border-bottom: none; }
+.order-food-img {
+  width: 56px; height: 56px; border-radius: 8px; background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 24px;
+}
+.order-food-name { flex: 1; }
+.order-food-name h4 { font-size: 14px; }
+.order-food-name p { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+.order-food-qty { font-size: 13px; color: var(--text-hint); margin: 0 8px; }
+.order-food-price { font-size: 14px; color: var(--orange); font-weight: 600; }
+.order-food-price::before { content: '¥'; font-size: 11px; }
+
+.remark-textarea {
+  width: 100%; height: 72px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px; font-size: 13px; resize: none; font-family: inherit; outline: none;
+}
+.remark-textarea:focus { border-color: var(--green); }
+.remark-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.remark-tag {
+  padding: 6px 12px; border-radius: 16px; border: 1px solid var(--border);
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+}
+.remark-tag.active { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+.coupon-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; cursor: pointer;
+}
+.coupon-row .left { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--green); }
+.coupon-row .left .icon { font-size: 18px; }
+.coupon-row .right { font-size: 14px; color: var(--orange); display: flex; align-items: center; gap: 4px; }
+
+.fee-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+.fee-row .label { color: var(--text-secondary); }
+.fee-row .value { color: var(--text-primary); }
+.fee-row .value.discount { color: var(--orange); }
+.fee-row.total { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+.fee-row.total .label { font-weight: 600; }
+.fee-row.total .value { font-size: 16px; font-weight: 700; color: var(--green); }
+
+.confirm-bottom {
+  height: 60px; background: var(--bg-white); display: flex; align-items: center;
+  justify-content: space-between; padding: 0 16px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.confirm-total { font-size: 14px; color: var(--text-secondary); }
+.confirm-total .amount { font-size: 22px; color: var(--green); font-weight: 700; }
+.confirm-total .amount::before { content: '¥'; font-size: 14px; }
+.confirm-pay-btn {
+  height: 44px; padding: 0 32px; background: var(--green); color: white;
+  border: none; border-radius: 22px; font-size: 16px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.confirm-pay-btn:active { background: var(--green-dark); }
+
+/* ==================== PAGE: MY ORDERS ==================== */
+.order-tabs {
+  display: flex; background: var(--bg-white); border-bottom: 1px solid var(--border);
+  flex-shrink: 0; overflow-x: auto;
+}
+.order-tabs::-webkit-scrollbar { display: none; }
+.order-tab {
+  flex: 1; padding: 14px 0; text-align: center; font-size: 14px;
+  color: var(--text-secondary); cursor: pointer; position: relative;
+  min-width: 60px; white-space: nowrap;
+}
+.order-tab.active { color: var(--green); font-weight: 600; }
+.order-tab.active::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 3px; background: var(--green); border-radius: 2px;
+}
+
+.order-card {
+  margin: 12px 16px; background: var(--bg-white); border-radius: var(--radius);
+  padding: 16px; box-shadow: var(--shadow-sm); cursor: pointer;
+}
+.order-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.order-card-no { font-size: 13px; color: var(--text-secondary); }
+.order-card-status { font-size: 14px; font-weight: 600; }
+.order-card-status.delivering { color: var(--green); }
+.order-card-status.completed { color: var(--text-hint); }
+.order-card-status.pending { color: var(--orange); }
+
+.order-card-body { display: flex; gap: 10px; padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.order-card-img {
+  width: 64px; height: 64px; border-radius: 8px; background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.order-card-info { flex: 1; }
+.order-card-name { font-size: 14px; font-weight: 500; }
+.order-card-desc { font-size: 12px; color: var(--text-hint); margin-top: 4px; line-height: 1.5; }
+
+.order-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.order-card-price { font-size: 16px; color: var(--green); font-weight: 700; }
+.order-card-price::before { content: '实付: ¥'; font-size: 13px; color: var(--text-secondary); font-weight: 400; }
+.order-card-actions { display: flex; gap: 8px; }
+.order-action-btn {
+  padding: 6px 16px; border-radius: 16px; font-size: 13px; cursor: pointer;
+  transition: all 0.2s;
+}
+.order-action-btn.primary { background: var(--green); color: white; border: none; }
+.order-action-btn.primary:active { background: var(--green-dark); }
+.order-action-btn.outline { background: white; color: var(--text-primary); border: 1px solid var(--border); }
+.order-action-btn.danger { background: white; color: var(--red); border: 1px solid #FFCDD2; }
+
+.order-timer { font-size: 12px; color: var(--orange); margin-top: 4px; }
+
+/* ==================== PAGE: PROFILE ==================== */
+.profile-header {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  padding: 24px 16px 32px; display: flex; align-items: center; gap: 14px;
+  position: relative;
+}
+.profile-avatar {
+  width: 60px; height: 60px; border-radius: 50%; background: #ccc;
+  border: 3px solid rgba(255,255,255,0.4); display: flex; align-items: center;
+  justify-content: center; font-size: 28px; overflow: hidden;
+}
+.profile-name { font-size: 18px; font-weight: 700; color: white; }
+.profile-phone { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+.profile-settings {
+  position: absolute; right: 16px; top: 24px; font-size: 20px; color: white;
+  cursor: pointer;
+}
+
+.profile-orders {
+  margin: -16px 16px 0; background: var(--bg-white); border-radius: var(--radius);
+  padding: 16px; box-shadow: var(--shadow-sm); position: relative; z-index: 2;
+}
+.profile-orders-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.profile-orders-title { font-size: 16px; font-weight: 600; }
+.profile-orders-more { font-size: 13px; color: var(--text-hint); cursor: pointer; }
+
+.profile-order-icons { display: flex; justify-content: space-around; }
+.profile-order-item {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer; position: relative;
+}
+.profile-order-item .icon { font-size: 24px; }
+.profile-order-item .label { font-size: 12px; color: var(--text-secondary); }
+.profile-order-item .badge {
+  position: absolute; top: -4px; right: -4px; background: var(--red); color: white;
+  font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.profile-menu { margin: 12px 16px; background: var(--bg-white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.profile-menu-item {
+  display: flex; align-items: center; padding: 16px; cursor: pointer;
+  border-bottom: 1px solid var(--border); transition: background 0.2s;
+}
+.profile-menu-item:last-child { border-bottom: none; }
+.profile-menu-item:active { background: #f5f5f5; }
+.profile-menu-item .icon { font-size: 20px; margin-right: 12px; }
+.profile-menu-item .label { flex: 1; font-size: 15px; }
+.profile-menu-item .value { font-size: 13px; color: var(--text-hint); margin-right: 4px; }
+.profile-menu-item .value.green { color: var(--green); }
+.profile-menu-item .arrow { font-size: 14px; color: #ccc; }
+
+/* ==================== PAGE: SEARCH ==================== */
+.search-bar {
+  display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+  background: var(--bg-white); flex-shrink: 0;
+}
+.search-input-wrap {
+  flex: 1; display: flex; align-items: center; background: var(--bg-page);
+  border-radius: 20px; padding: 8px 14px; gap: 8px;
+}
+.search-input-wrap .icon { font-size: 16px; color: var(--text-hint); }
+.search-input-wrap input {
+  flex: 1; border: none; background: transparent; font-size: 14px;
+  outline: none; font-family: inherit;
+}
+.search-cancel { font-size: 14px; color: var(--green); cursor: pointer; }
+
+.search-history { padding: 16px; }
+.search-history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.search-history-title { font-size: 14px; font-weight: 600; }
+.search-history-clear { font-size: 16px; color: var(--text-hint); cursor: pointer; }
+.search-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-tag {
+  padding: 6px 14px; background: var(--bg-page); border-radius: 16px;
+  font-size: 13px; color: var(--text-secondary); cursor: pointer;
+}
+
+.search-hot { padding: 16px; }
+.search-hot-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.search-hot-item {
+  display: flex; align-items: center; gap: 10px; padding: 12px 0;
+  border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.search-hot-rank {
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; border-radius: 4px;
+}
+.search-hot-rank.top { background: var(--orange); color: white; }
+.search-hot-rank.normal { color: var(--text-hint); }
+.search-hot-name { flex: 1; font-size: 14px; }
+
+/* ==================== PAGE: PAYMENT SUCCESS ==================== */
+#page-pay-success { background: var(--bg-white); }
+.pay-success-top {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 16px 32px; background: linear-gradient(180deg, var(--green-bg) 0%, var(--bg-white) 100%);
+}
+.pay-success-icon { font-size: 64px; margin-bottom: 16px; }
+.pay-success-title { font-size: 20px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.pay-success-desc { font-size: 14px; color: var(--text-secondary); text-align: center; }
+.pay-success-amount { font-size: 32px; color: var(--green); font-weight: 700; margin-top: 16px; }
+.pay-success-amount::before { content: '¥'; font-size: 20px; }
+.pay-success-actions {
+  display: flex; gap: 12px; padding: 24px 16px; justify-content: center;
+}
+.pay-success-info {
+  margin: 0 16px; padding: 16px; background: var(--bg-page); border-radius: var(--radius);
+}
+.pay-success-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+.pay-success-row .label { color: var(--text-hint); }
+.pay-success-row .value { color: var(--text-primary); }
+
+/* ==================== PAGE: ORDER DETAIL ==================== */
+.order-detail-status {
+  padding: 24px 16px; background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+}
+.order-detail-status h2 { font-size: 20px; font-weight: 700; }
+.order-detail-status p { font-size: 13px; opacity: 0.85; margin-top: 6px; }
+
+.order-detail-track { padding: 16px; background: var(--bg-white); }
+.track-item { display: flex; gap: 12px; padding: 12px 0; position: relative; }
+.track-dot {
+  width: 12px; height: 12px; border-radius: 50%; background: #ddd; margin-top: 4px; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.track-dot.active { background: var(--green); }
+.track-item:not(:last-child) .track-dot::after {
+  content: ''; position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
+  width: 2px; height: calc(100% + 12px); background: #E0E0E0;
+}
+.track-info { flex: 1; }
+.track-info h4 { font-size: 14px; font-weight: 500; }
+.track-info p { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+
+/* ==================== PAGE: ADDRESS ==================== */
+.address-item {
+  padding: 16px; background: var(--bg-white); margin-bottom: 1px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.address-item .icon { font-size: 20px; color: var(--green); margin-top: 2px; }
+.address-item-info { flex: 1; }
+.address-item-info h4 { font-size: 15px; font-weight: 600; }
+.address-item-info p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.address-item-info .user { font-size: 13px; color: var(--text-hint); margin-top: 4px; }
+.address-item-actions { display: flex; gap: 16px; }
+.address-item-action { font-size: 14px; color: var(--text-hint); cursor: pointer; }
+.address-default-tag { font-size: 11px; color: var(--green); background: var(--green-bg); padding: 2px 6px; border-radius: 3px; margin-left: 6px; }
+
+.add-address-btn {
+  position: absolute; bottom: 80px; left: 16px; right: 16px;
+  height: 48px; background: var(--green); color: white; border: none;
+  border-radius: 24px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+
+/* ==================== PAGE: COUPONS ==================== */
+.coupon-card {
+  margin: 12px 16px; border-radius: var(--radius); overflow: hidden;
+  display: flex; box-shadow: var(--shadow-sm);
+}
+.coupon-left {
+  width: 100px; background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 16px 8px;
+}
+.coupon-amount { font-size: 28px; font-weight: 700; }
+.coupon-amount::before { content: '¥'; font-size: 16px; }
+.coupon-condition { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+.coupon-right { flex: 1; padding: 14px; background: var(--bg-white); }
+.coupon-title { font-size: 14px; font-weight: 600; }
+.coupon-desc { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+.coupon-expire { font-size: 11px; color: var(--text-hint); margin-top: 8px; }
+.coupon-use-btn {
+  float: right; padding: 4px 14px; border-radius: 12px;
+  border: 1px solid var(--green); color: var(--green); background: white;
+  font-size: 12px; cursor: pointer; margin-top: -20px;
+}
+
+/* ==================== PAGE: REVIEW ==================== */
+.review-form { padding: 16px; background: var(--bg-white); margin-top: 8px; }
+.review-food-info { display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.review-food-img {
+  width: 64px; height: 64px; border-radius: 8px; background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px;
+}
+.review-food-name h3 { font-size: 16px; font-weight: 600; }
+.review-food-name p { font-size: 13px; color: var(--text-hint); margin-top: 4px; }
+
+.review-stars-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.review-stars-label { font-size: 14px; color: var(--text-secondary); }
+.review-stars-input { display: flex; gap: 4px; }
+.review-star { font-size: 28px; cursor: pointer; color: #E0E0E0; transition: color 0.2s; }
+.review-star.active { color: var(--yellow); }
+
+.review-textarea {
+  width: 100%; height: 120px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px; font-size: 14px; resize: none; font-family: inherit; outline: none;
+  line-height: 1.6;
+}
+.review-textarea:focus { border-color: var(--green); }
+.review-submit-btn {
+  width: 100%; height: 48px; background: var(--green); color: white;
+  border: none; border-radius: 24px; font-size: 16px; font-weight: 600;
+  cursor: pointer; margin-top: 24px;
+}
+
+/* ==================== TOAST ==================== */
+.toast {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.75); color: white; padding: 12px 24px;
+  border-radius: 8px; font-size: 14px; z-index: 999; opacity: 0;
+  transition: opacity 0.3s; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* ==================== CART POPUP ==================== */
+.cart-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); z-index: 100; display: none;
+}
+.cart-overlay.show { display: block; }
+.cart-popup {
+  position: absolute; bottom: 56px; left: 0; width: 100%;
+  background: var(--bg-white); border-radius: 16px 16px 0 0;
+  max-height: 60%; overflow-y: auto; z-index: 101;
+  transform: translateY(100%); transition: transform 0.3s ease;
+}
+.cart-overlay.show .cart-popup { transform: translateY(0); }
+.cart-popup-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px; border-bottom: 1px solid var(--border); position: sticky;
+  top: 0; background: var(--bg-white); z-index: 1;
+}
+.cart-popup-title { font-size: 16px; font-weight: 600; }
+.cart-clear { font-size: 13px; color: var(--text-hint); cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+.cart-item {
+  display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-img {
+  width: 48px; height: 48px; border-radius: 8px; background: #e0e0e0;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.cart-item-info { flex: 1; }
+.cart-item-name { font-size: 14px; font-weight: 500; }
+.cart-item-price { font-size: 14px; color: var(--green); font-weight: 600; margin-top: 4px; }
+.cart-item-price::before { content: '¥'; font-size: 11px; }
+
+/* Animations */
+@keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+.bounce { animation: bounce 0.3s ease; }
+
+/* Scrollbar hide */
+::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame" id="app">
+  <div class="toast" id="toast"></div>
+
+<!-- ==================== PAGE: LOGIN ==================== -->
+<div class="page active" id="page-login">
+  <div class="login-logo">🍴</div>
+  <div class="login-title">医院营养订餐</div>
+  <div class="login-subtitle">健康饮食 贴心送达</div>
+  <button class="login-btn" onclick="navigateTo('page-home')">
+    <span style="font-size:22px;">💬</span> 微信授权登录
+  </button>
+  <div class="login-hint">登录后可同步订餐记录与配送信息</div>
+  <div class="login-terms">登录即表示您同意 <a href="#">《用户服务协议》</a> 和 <a href="#">《隐私政策》</a></div>
+</div>
+
+<!-- ==================== PAGE: HOME ==================== -->
+<div class="page" id="page-home">
+  <div class="home-header">
+    <div class="home-location" onclick="showToast('切换分院')">📍 第一附属医院 <span class="arrow">▼</span></div>
+    <div class="home-header-actions">
+      <span onclick="navigateTo('page-search')">🔍</span>
+      <span onclick="showToast('暂无新消息')">🔔</span>
+    </div>
+  </div>
+  <div class="page-content">
+    <div class="home-banner">
+      <div class="home-banner-text">
+        <h3>新鲜食材 每日直供</h3>
+        <p>专业营养师搭配，为您的健康保驾护航</p>
+      </div>
+      <div class="home-banner-img">🥗</div>
+    </div>
+
+    <div class="home-entries">
+      <div class="home-entry" onclick="navigateTo('page-today-menu')">
+        <div class="home-entry-icon yellow">☀️</div>
+        <div class="home-entry-label">今日午餐</div>
+      </div>
+      <div class="home-entry" onclick="navigateTo('page-tomorrow')">
+        <div class="home-entry-icon green">📅</div>
+        <div class="home-entry-label">明日预订</div>
+      </div>
+      <div class="home-entry" onclick="navigateTo('page-special')">
+        <div class="home-entry-icon orange">🍽️</div>
+        <div class="home-entry-label">特色套餐</div>
+      </div>
+      <div class="home-entry" onclick="navigateTo('page-surgery')">
+        <div class="home-entry-icon pink">💗</div>
+        <div class="home-entry-label">术后专享</div>
+      </div>
+    </div>
+
+    <div class="home-notice">
+      <span class="icon">📢</span> 今日17:00前可预订明日餐食，超时将关闭预订通道
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">今日推荐</div>
+      <div class="section-more" onclick="navigateTo('page-recommend')">更多 ›</div>
+    </div>
+    <div class="recommend-scroll">
+      <div class="recommend-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-card-img" style="background:linear-gradient(135deg,#4CAF50,#81C784);">🥬</div>
+        <div class="recommend-card-info">
+          <div class="recommend-card-name">清炒时令蔬</div>
+          <div class="recommend-card-desc">少油少盐 · 高纤维</div>
+          <div class="recommend-card-bottom">
+            <span class="recommend-card-price price">12</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('清炒时令蔬', 12)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-card-img" style="background:linear-gradient(135deg,#FFB74D,#FF9800);">🥚</div>
+        <div class="recommend-card-info">
+          <div class="recommend-card-name">嫩滑水蒸蛋</div>
+          <div class="recommend-card-desc">高蛋白 · 易消化</div>
+          <div class="recommend-card-bottom">
+            <span class="recommend-card-price price">8</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('嫩滑水蒸蛋', 8)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-card-img" style="background:linear-gradient(135deg,#4FC3F7,#29B6F6);">🐟</div>
+        <div class="recommend-card-info">
+          <div class="recommend-card-name">清蒸鲈鱼</div>
+          <div class="recommend-card-desc">高蛋白 · 低脂肪</div>
+          <div class="recommend-card-bottom">
+            <span class="recommend-card-price price">22</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('清蒸鲈鱼', 22)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">热门套餐</div>
+      <div class="section-more" onclick="navigateTo('page-special')">更多 ›</div>
+    </div>
+    <div style="background:var(--bg-white);">
+      <div class="hot-meal-item" onclick="navigateTo('page-meal-detail')">
+        <div class="hot-meal-img" style="background:linear-gradient(135deg,#66BB6A,#43A047);">🍱</div>
+        <div class="hot-meal-info">
+          <div>
+            <div class="hot-meal-name">术后康复套餐A</div>
+            <div class="hot-meal-desc">包含：清蒸鲈鱼+炒时蔬+小米粥+小馒头</div>
+            <div class="hot-meal-tags">
+              <span class="tag tag-green">清淡</span>
+              <span class="tag tag-blue">高蛋白</span>
+            </div>
+          </div>
+          <div class="hot-meal-bottom">
+            <span class="hot-meal-price price">32</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('术后康复套餐A', 32)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="hot-meal-item" onclick="navigateTo('page-meal-detail')">
+        <div class="hot-meal-img" style="background:linear-gradient(135deg,#81C784,#66BB6A);">🥗</div>
+        <div class="hot-meal-info">
+          <div>
+            <div class="hot-meal-name">糖尿病友好套餐</div>
+            <div class="hot-meal-desc">包含：杂粮饭+鸡胸肉+凉拌菜+无糖汤</div>
+            <div class="hot-meal-tags">
+              <span class="tag tag-orange">无糖</span>
+              <span class="tag tag-green">低GI</span>
+            </div>
+          </div>
+          <div class="hot-meal-bottom">
+            <span class="hot-meal-price price">28</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('糖尿病友好套餐', 28)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="hot-meal-item" onclick="navigateTo('page-meal-detail')">
+        <div class="hot-meal-img" style="background:linear-gradient(135deg,#FFB74D,#FFA726);">🍲</div>
+        <div class="hot-meal-info">
+          <div>
+            <div class="hot-meal-name">产妇营养套餐</div>
+            <div class="hot-meal-desc">包含：花生猪蹄汤+炒时蔬+鸡蛋+红枣粥</div>
+            <div class="hot-meal-tags">
+              <span class="tag tag-purple">催奶</span>
+              <span class="tag tag-red">补血</span>
+            </div>
+          </div>
+          <div class="hot-meal-bottom">
+            <span class="hot-meal-price price">38</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('产妇营养套餐', 38)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item active" onclick="switchTab('page-home')"><div class="tab-icon">🏠</div><div class="tab-label">首页</div></div>
+    <div class="tab-item" onclick="switchTab('page-today-menu')"><div class="tab-icon">🍴</div><div class="tab-label">菜单</div></div>
+    <div class="tab-item" onclick="switchTab('page-orders')"><div class="tab-icon">📋</div><div class="tab-label">订单</div></div>
+    <div class="tab-item" onclick="switchTab('page-profile')"><div class="tab-icon">👤</div><div class="tab-label">我的</div></div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: TODAY MENU ==================== -->
+<div class="page" id="page-today-menu">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">今日菜单</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="date-tabs">
+    <div class="date-tab active"><div class="day-label">今天</div><div class="day-num">16</div></div>
+    <div class="date-tab" onclick="navigateTo('page-tomorrow')"><div class="day-label">明天</div><div class="day-num">17</div></div>
+    <div class="date-tab"><div class="day-label">后天</div><div class="day-num">18</div></div>
+    <div class="date-tab"><div class="day-label">周五</div><div class="day-num">19</div></div>
+    <div class="date-tab"><div class="day-label">周六</div><div class="day-num">20</div></div>
+    <div class="date-tab"><div class="day-label">周日</div><div class="day-num">21</div></div>
+  </div>
+  <div class="meal-tabs" id="meal-tabs-today">
+    <div class="meal-tab active" onclick="switchMealTab(this)">早餐<span class="time">07:00-08:30</span></div>
+    <div class="meal-tab" onclick="switchMealTab(this)">午餐<span class="time">11:30-13:00</span></div>
+    <div class="meal-tab" onclick="switchMealTab(this)">晚餐<span class="time">17:30-19:00</span></div>
+  </div>
+  <div class="menu-layout">
+    <div class="category-sidebar">
+      <div class="category-item active" onclick="switchCategory(this)">全部</div>
+      <div class="category-item" onclick="switchCategory(this)">热销套餐</div>
+      <div class="category-item" onclick="switchCategory(this)">主食类</div>
+      <div class="category-item" onclick="switchCategory(this)">热菜类</div>
+      <div class="category-item" onclick="switchCategory(this)">凉菜类</div>
+      <div class="category-item" onclick="switchCategory(this)">汤粥类</div>
+      <div class="category-item" onclick="switchCategory(this)">特色餐</div>
+      <div class="category-item" onclick="switchCategory(this)">术后餐</div>
+      <div class="category-item" onclick="switchCategory(this)">糖尿病餐</div>
+    </div>
+    <div class="menu-list" id="menu-list-today">
+      <div class="menu-list-header">今日早餐 <span>已选2件，总计¥16</span></div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#FFF9C4,#FFE082);">🥣</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">养胃小米粥</div>
+            <div class="food-item-desc">无添加糖 · 易消化</div>
+            <div class="food-item-tag"><span class="tag tag-orange">月售1200+</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">6</span>
+            <div class="quantity-ctrl">
+              <button class="minus-btn" onclick="event.stopPropagation(); removeFromCart('养胃小米粥', 6)">−</button>
+              <span class="qty">1</span>
+              <button class="add-btn" onclick="event.stopPropagation(); addToCart('养胃小米粥', 6)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#DCEDC8,#AED581);">🥚</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">五香茶叶蛋</div>
+            <div class="food-item-desc">高蛋白 · 营养丰富</div>
+            <div class="food-item-tag"><span class="tag tag-orange">月售1500+</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">2</span>
+            <div class="quantity-ctrl">
+              <button class="minus-btn" onclick="event.stopPropagation(); removeFromCart('五香茶叶蛋', 2)">−</button>
+              <span class="qty">1</span>
+              <button class="add-btn" onclick="event.stopPropagation(); addToCart('五香茶叶蛋', 2)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);">🥟</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">鲜肉小笼包</div>
+            <div class="food-item-desc">一笼6个 · 现包现蒸</div>
+            <div class="food-item-tag"><span class="tag tag-orange">月售980+</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">10</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('鲜肉小笼包', 10)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#C8E6C9,#A5D6A7);">🥒</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">凉拌黄瓜</div>
+            <div class="food-item-desc">清爽开胃 · 微辣</div>
+            <div class="food-item-tag"><span class="tag tag-green">新品</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">6</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('凉拌黄瓜', 6)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#E1F5FE,#B3E5FC);">🥛</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">无糖豆浆</div>
+            <div class="food-item-desc">现磨 · 无添加糖</div>
+            <div class="food-item-tag"><span class="tag tag-orange">月售2000+</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">3</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('无糖豆浆', 3)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cart-overlay-menu" onclick="toggleCartPopup('menu')">
+    <div class="cart-popup" onclick="event.stopPropagation()">
+      <div class="cart-popup-header">
+        <div class="cart-popup-title">购物车</div>
+        <div class="cart-clear" onclick="clearCart(); toggleCartPopup('menu')">🗑️ 清空</div>
+      </div>
+      <div id="cart-popup-items-menu"></div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <div class="cart-info" onclick="toggleCartPopup('menu')">
+      <div class="cart-icon-wrap">
+        <span class="icon">🛒</span>
+        <span class="cart-badge" id="cart-count-menu">2</span>
+      </div>
+      <div>
+        <div class="cart-price" id="cart-total-menu">16</div>
+        <div class="cart-hint">预订后不可退改</div>
+      </div>
+    </div>
+    <button class="checkout-btn active" onclick="navigateTo('page-confirm')">去结算</button>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item" onclick="switchTab('page-home')"><div class="tab-icon">🏠</div><div class="tab-label">首页</div></div>
+    <div class="tab-item active" onclick="switchTab('page-today-menu')"><div class="tab-icon">🍴</div><div class="tab-label">菜单</div></div>
+    <div class="tab-item" onclick="switchTab('page-orders')"><div class="tab-icon">📋</div><div class="tab-label">订单</div></div>
+    <div class="tab-item" onclick="switchTab('page-profile')"><div class="tab-icon">👤</div><div class="tab-label">我的</div></div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: TOMORROW ORDER ==================== -->
+<div class="page" id="page-tomorrow">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">明日预订</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="date-tabs">
+    <div class="date-tab"><div class="day-label">今天</div><div class="day-num">16</div></div>
+    <div class="date-tab active"><div class="day-label">明天</div><div class="day-num">17</div></div>
+    <div class="date-tab"><div class="day-label">后天</div><div class="day-num">18</div></div>
+  </div>
+  <div class="order-notice">
+    <span class="icon">ℹ️</span>
+    <div class="order-notice-content">
+      <div class="order-notice-title">预订提醒</div>
+      <div class="order-notice-desc">今日17:00前可预订明日餐食，超时将关闭预订通道</div>
+    </div>
+  </div>
+  <div class="meal-tabs" id="meal-tabs-tmr">
+    <div class="meal-tab active" onclick="switchMealTab(this)">早餐<span class="time">07:00-08:30</span></div>
+    <div class="meal-tab" onclick="switchMealTab(this)">午餐<span class="time">11:30-13:00</span></div>
+    <div class="meal-tab" onclick="switchMealTab(this)">晚餐<span class="time">17:30-19:00</span></div>
+  </div>
+  <div class="menu-layout">
+    <div class="category-sidebar">
+      <div class="category-item active" onclick="switchCategory(this)">全部</div>
+      <div class="category-item" onclick="switchCategory(this)">热销套餐</div>
+      <div class="category-item" onclick="switchCategory(this)">主食类</div>
+      <div class="category-item" onclick="switchCategory(this)">热菜类</div>
+      <div class="category-item" onclick="switchCategory(this)">凉菜类</div>
+      <div class="category-item" onclick="switchCategory(this)">汤粥类</div>
+    </div>
+    <div class="menu-list">
+      <div class="menu-list-header">明日早餐 <span>已选0件，总计¥0</span></div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#FFE082,#FFD54F);">🎃</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">香甜南瓜粥</div>
+            <div class="food-item-desc">低糖 · 养胃</div>
+            <div class="food-item-tag"><span class="tag tag-green">预售中</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">5</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('香甜南瓜粥', 5)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#FFCCBC,#FFAB91);">🥟</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">鲜肉大包</div>
+            <div class="food-item-desc">现做 · 馅料充足</div>
+            <div class="food-item-tag"><span class="tag tag-green">预售中</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">3</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('鲜肉大包', 3)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);">🫘</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">香脆油条</div>
+            <div class="food-item-desc">现炸 · 外酥里嫩</div>
+            <div class="food-item-tag"><span class="tag tag-green">预售中</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">4</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('香脆油条', 4)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="food-item" onclick="navigateTo('page-dish-detail')">
+        <div class="food-item-img" style="background:linear-gradient(135deg,#DCEDC8,#C5E1A5);">🥚</div>
+        <div class="food-item-info">
+          <div>
+            <div class="food-item-name">五香茶叶蛋</div>
+            <div class="food-item-desc">高蛋白 · 营养丰富</div>
+            <div class="food-item-tag"><span class="tag tag-green">预售中</span></div>
+          </div>
+          <div class="food-item-bottom">
+            <span class="food-item-price price">2</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('五香茶叶蛋', 2)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <div class="cart-info">
+      <div class="cart-icon-wrap">
+        <span class="icon">🛒</span>
+        <span class="cart-badge" id="cart-count-tmr">0</span>
+      </div>
+      <div>
+        <div class="cart-price" id="cart-total-tmr">0</div>
+        <div class="cart-hint">预订后不可退改</div>
+      </div>
+    </div>
+    <button class="checkout-btn disabled">去结算</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE: TODAY RECOMMEND ==================== -->
+<div class="page" id="page-recommend">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">今日推荐</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-item active">综合 <span class="arrow">▼</span></div>
+    <div class="filter-item" onclick="this.classList.toggle('active')">销量 <span class="arrow">▲</span></div>
+    <div class="filter-item" onclick="this.classList.toggle('active')">价格 <span class="arrow">▲</span></div>
+    <div class="filter-btn" onclick="showToast('筛选功能')">≡ 筛选</div>
+  </div>
+  <div class="page-content">
+    <div class="recommend-list">
+      <div class="recommend-food-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-food-img" style="background:linear-gradient(135deg,#4CAF50,#81C784);">🥬</div>
+        <div class="recommend-food-info">
+          <div class="recommend-food-name">清炒时令蔬 <span class="sales-tag">月售999+</span></div>
+          <div class="recommend-food-desc">少油少盐 · 高纤维 · 新鲜当日采购</div>
+          <div class="recommend-food-tags">
+            <span class="tag tag-green">清淡</span>
+            <span class="tag tag-green">低脂</span>
+          </div>
+          <div class="recommend-food-bottom">
+            <span class="recommend-food-price price">12</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('清炒时令蔬', 12)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-food-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-food-img" style="background:linear-gradient(135deg,#FFE082,#FFD54F);">🥚</div>
+        <div class="recommend-food-info">
+          <div class="recommend-food-name">嫩滑水蒸蛋 <span class="sales-tag">月售1200+</span></div>
+          <div class="recommend-food-desc">高蛋白 · 易消化 · 适合所有人群</div>
+          <div class="recommend-food-tags">
+            <span class="tag tag-green">清淡</span>
+            <span class="tag tag-blue">高蛋白</span>
+          </div>
+          <div class="recommend-food-bottom">
+            <span class="recommend-food-price price">8</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('嫩滑水蒸蛋', 8)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-food-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-food-img" style="background:linear-gradient(135deg,#A5D6A7,#81C784);">🥒</div>
+        <div class="recommend-food-info">
+          <div class="recommend-food-name">凉拌黄瓜 <span class="sales-tag" style="color:var(--green);">新品</span></div>
+          <div class="recommend-food-desc">清爽开胃 · 微辣 · 可做不辣</div>
+          <div class="recommend-food-tags">
+            <span class="tag tag-orange">微辣</span>
+            <span class="tag tag-green">低热量</span>
+          </div>
+          <div class="recommend-food-bottom">
+            <span class="recommend-food-price price">6</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('凉拌黄瓜', 6)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-food-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-food-img" style="background:linear-gradient(135deg,#4FC3F7,#29B6F6);">🐟</div>
+        <div class="recommend-food-info">
+          <div class="recommend-food-name">清蒸鲈鱼 <span class="sales-tag" style="color:var(--blue);">医师推荐</span></div>
+          <div class="recommend-food-desc">高蛋白 · 低脂肪 · 促进伤口愈合</div>
+          <div class="recommend-food-tags">
+            <span class="tag tag-green">清淡</span>
+            <span class="tag tag-blue">高蛋白</span>
+          </div>
+          <div class="recommend-food-bottom">
+            <span class="recommend-food-price price">22</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('清蒸鲈鱼', 22)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="recommend-food-card" onclick="navigateTo('page-dish-detail')">
+        <div class="recommend-food-img" style="background:linear-gradient(135deg,#E1F5FE,#B3E5FC);">🥛</div>
+        <div class="recommend-food-info">
+          <div class="recommend-food-name">无糖豆浆 <span class="sales-tag">月售2000+</span></div>
+          <div class="recommend-food-desc">现磨 · 无添加糖 · 适合糖尿病患者</div>
+          <div class="recommend-food-tags">
+            <span class="tag tag-orange">无糖</span>
+            <span class="tag tag-blue">豆制品</span>
+          </div>
+          <div class="recommend-food-bottom">
+            <span class="recommend-food-price price">3</span>
+            <button class="add-btn" onclick="event.stopPropagation(); addToCart('无糖豆浆', 3)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: SPECIAL MEALS ==================== -->
+<div class="page" id="page-special">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">特色套餐</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="special-tabs">
+    <div class="special-tab active" onclick="switchSpecialTab(this)">术后康复</div>
+    <div class="special-tab" onclick="switchSpecialTab(this)">糖尿病餐</div>
+    <div class="special-tab" onclick="switchSpecialTab(this)">孕产妇餐</div>
+  </div>
+  <div class="page-content">
+    <div class="special-card" onclick="navigateTo('page-meal-detail')">
+      <div class="special-card-img" style="background:linear-gradient(135deg,#2E7D32,#66BB6A);">🥗</div>
+      <div class="special-card-body">
+        <div class="special-card-header">
+          <div class="special-card-name">术后康复套餐A</div>
+          <span class="tag tag-blue">医师推荐</span>
+        </div>
+        <div class="special-card-desc">适合术后恢复期患者，高蛋白、低脂肪，易消化，促进伤口愈合</div>
+        <div class="special-card-items"><span>包含：</span>清蒸鲈鱼 + 清炒时蔬 + 小米粥 + 小馒头</div>
+        <div class="special-card-nutrition">营养：热量420kcal 蛋白质28g 脂肪12g 碳水45g</div>
+        <div class="special-card-footer">
+          <div class="special-card-price">
+            <span class="current price">32</span>
+            <span class="price-old">¥38</span>
+          </div>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('术后康复套餐A', 32)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+    <div class="special-card" onclick="navigateTo('page-meal-detail')">
+      <div class="special-card-img" style="background:linear-gradient(135deg,#FF8F00,#FFB74D);">🍊</div>
+      <div class="special-card-body">
+        <div class="special-card-header">
+          <div class="special-card-name">糖尿病友好套餐</div>
+          <span class="tag tag-orange">低糖</span>
+        </div>
+        <div class="special-card-desc">专为糖尿病患者设计，低GI食材，控制血糖平稳，营养均衡</div>
+        <div class="special-card-items"><span>包含：</span>杂粮饭 + 鸡胸肉 + 凉拌菜 + 无糖汤</div>
+        <div class="special-card-nutrition">营养：热量380kcal 蛋白质25g 脂肪8g 碳水40g GI<55</div>
+        <div class="special-card-footer">
+          <div class="special-card-price">
+            <span class="current price">28</span>
+            <span class="price-old">¥32</span>
+          </div>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('糖尿病友好套餐', 28)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+    <div class="special-card" onclick="navigateTo('page-meal-detail')">
+      <div class="special-card-img" style="background:linear-gradient(135deg,#EF6C00,#FFB74D);">🍲</div>
+      <div class="special-card-body">
+        <div class="special-card-header">
+          <div class="special-card-name">产妇营养套餐</div>
+          <span class="tag tag-red">滋补</span>
+        </div>
+        <div class="special-card-desc">专为产后恢复期女性设计，补血益气，促进乳汁分泌，营养丰富</div>
+        <div class="special-card-items"><span>包含：</span>花生猪蹄汤 + 炒时蔬 + 鸡蛋 + 红枣粥</div>
+        <div class="special-card-nutrition">营养：热量480kcal 蛋白质32g 脂肪15g 碳水50g</div>
+        <div class="special-card-footer">
+          <div class="special-card-price">
+            <span class="current price">38</span>
+            <span class="price-old">¥45</span>
+          </div>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('产妇营养套餐', 38)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: POST SURGERY ==================== -->
+<div class="page" id="page-surgery">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">术后专享</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="surgery-tabs">
+    <div class="surgery-tab active" onclick="switchSurgeryTab(this)">全部</div>
+    <div class="surgery-tab" onclick="switchSurgeryTab(this)">术后1-3天</div>
+    <div class="surgery-tab" onclick="switchSurgeryTab(this)">术后4-7天</div>
+    <div class="surgery-tab" onclick="switchSurgeryTab(this)">术后1-2周</div>
+    <div class="surgery-tab" onclick="switchSurgeryTab(this)">康复期</div>
+  </div>
+  <div class="page-content">
+    <div class="surgery-tips">
+      <div class="surgery-tips-title">📍 术后饮食小贴士</div>
+      <ol class="surgery-tips-list">
+        <li>术后初期选择清淡、易消化的流质或半流质食物</li>
+        <li>适量增加蛋白质摄入，促进伤口愈合</li>
+        <li>避免辛辣、油腻、刺激性食物，短期戒酒</li>
+      </ol>
+    </div>
+
+    <div class="surgery-card" onclick="navigateTo('page-meal-detail')">
+      <div class="surgery-card-img" style="background:linear-gradient(135deg,#C8E6C9,#81C784);">🍜</div>
+      <div class="surgery-card-body">
+        <div class="surgery-card-header">
+          <div class="surgery-card-name">术后流质套餐</div>
+          <div class="surgery-card-stage">术后1-3天</div>
+        </div>
+        <div class="surgery-card-desc">适合术后初期排气后食用，全流质，易消化，减轻肠胃负担</div>
+        <div class="surgery-card-includes">包含：小米粥 + 蛋蛋羹 + 藕粉 + 蔬果汁</div>
+        <div class="surgery-card-features">特点：无渣、无刺激性、易吞咽、营养丰富</div>
+        <div class="surgery-card-footer">
+          <span class="price" style="font-size:20px;">26</span>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('术后流质套餐', 26)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+    <div class="surgery-card" onclick="navigateTo('page-meal-detail')">
+      <div class="surgery-card-img" style="background:linear-gradient(135deg,#A5D6A7,#66BB6A);">🥣</div>
+      <div class="surgery-card-body">
+        <div class="surgery-card-header">
+          <div class="surgery-card-name">术后半流质套餐</div>
+          <div class="surgery-card-stage">术后4-7天</div>
+        </div>
+        <div class="surgery-card-desc">适合术后恢复期食用，半流质，高蛋白，促进伤口愈合</div>
+        <div class="surgery-card-includes">包含：烂面条 + 碎肉末 + 蛋羹 + 蔬菜泥</div>
+        <div class="surgery-card-features">少油、含蛋白、易嚼碎、营养均衡</div>
+        <div class="surgery-card-footer">
+          <span class="price" style="font-size:20px;">29</span>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('术后半流质套餐', 29)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+    <div class="surgery-card" onclick="navigateTo('page-meal-detail')">
+      <div class="surgery-card-img" style="background:linear-gradient(135deg,#66BB6A,#43A047);">🍱</div>
+      <div class="surgery-card-body">
+        <div class="surgery-card-header">
+          <div class="surgery-card-name">高蛋白康复套餐</div>
+          <div class="surgery-card-stage">术后1-2周</div>
+        </div>
+        <div class="surgery-card-desc">适合术后恢复期食用，高蛋白口感，多种维生素，增强免疫力</div>
+        <div class="surgery-card-includes">包含：清蒸鲈鱼 + 虾仁滑蛋 + 炒时蔬 + 米饭</div>
+        <div class="surgery-card-features">高蛋白、低脂肪、营养全面、促进恢复</div>
+        <div class="surgery-card-footer">
+          <span class="price" style="font-size:20px;">35</span>
+          <button class="special-card-add-btn" onclick="event.stopPropagation(); addToCart('高蛋白康复套餐', 35)">加入购物车</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: MEAL DETAIL ==================== -->
+<div class="page" id="page-meal-detail">
+  <div class="page-content" style="padding-bottom:0;">
+    <div class="detail-hero" style="background:linear-gradient(135deg,#2E7D32,#81C784);">
+      🍱
+      <div class="detail-hero-back" onclick="goBack()">‹</div>
+      <div class="detail-hero-share">⇪</div>
+      <div class="detail-hero-tag">医师推荐</div>
+    </div>
+    <div class="detail-price-section">
+      <div class="detail-name">术后康复套餐A</div>
+      <div class="detail-meta">
+        <span>🔥 月售860份</span>
+        <span>⭐ 好评率98%</span>
+      </div>
+      <div class="detail-price-row">
+        <span class="detail-current-price">32</span>
+        <span class="price-old">¥38</span>
+        <span class="detail-time-tag">限时优惠</span>
+      </div>
+    </div>
+
+    <div class="detail-audience">
+      <div class="detail-audience-title">适用人群：</div>
+      <div class="detail-audience-tags">
+        <span class="detail-audience-tag active">术后患者</span>
+        <span class="detail-audience-tag">老年患者</span>
+        <span class="detail-audience-tag">体弱人群</span>
+      </div>
+    </div>
+
+    <div class="detail-desc">
+      适合术后1-2周恢复期患者，精选优质蛋白食材，高蛋白低脂肪，清淡易消化，促进伤口愈合，提升免疫力。所有食材当日新鲜采购，专业营养师搭配，安全健康。
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">套餐内容 <span class="detail-section-subtitle">营养师精心搭配，营养均衡</span></div>
+      <div class="detail-food-item">
+        <div class="detail-food-img" style="background:linear-gradient(135deg,#4FC3F7,#29B6F6);">🐟</div>
+        <div class="detail-food-name"><h4>清蒸鲈鱼</h4><p>约150g 优质蛋白</p></div>
+        <div class="detail-food-price">18</div>
+      </div>
+      <div class="detail-food-item">
+        <div class="detail-food-img" style="background:linear-gradient(135deg,#81C784,#66BB6A);">🥬</div>
+        <div class="detail-food-name"><h4>清炒时蔬</h4><p>约200g 高纤维</p></div>
+        <div class="detail-food-price">12</div>
+      </div>
+      <div class="detail-food-item">
+        <div class="detail-food-img" style="background:linear-gradient(135deg,#FFE082,#FFD54F);">🥣</div>
+        <div class="detail-food-name"><h4>小米粥</h4><p>约300ml 养胃易消化</p></div>
+        <div class="detail-food-price">5</div>
+      </div>
+      <div class="detail-food-item" style="border-bottom:none;">
+        <div class="detail-food-img" style="background:linear-gradient(135deg,#FFCCBC,#FFAB91);">🍞</div>
+        <div class="detail-food-name"><h4>杂粮小馒头</h4><p>2个 碳水化合物</p></div>
+        <div class="detail-food-price">3</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">营养信息</div>
+      <div class="nutrition-grid">
+        <div class="nutrition-item"><div class="nutrition-value">420<span class="nutrition-unit">kcal</span></div><div class="nutrition-label">热量</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">28<span class="nutrition-unit">g</span></div><div class="nutrition-label">蛋白质</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">12<span class="nutrition-unit">g</span></div><div class="nutrition-label">脂肪</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">45<span class="nutrition-unit">g</span></div><div class="nutrition-label">碳水</div></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">用户评价 <span class="detail-section-subtitle" style="color:var(--green);cursor:pointer;" onclick="navigateTo('page-reviews')">全部 ›</span></div>
+      <div style="padding:0 16px 4px;display:flex;align-items:center;gap:8px;">
+        <span style="color:var(--yellow);">⭐⭐⭐⭐⭐</span>
+        <span style="font-size:14px;font-weight:600;">4.8分</span>
+        <span style="font-size:12px;color:var(--text-hint);">256条评价</span>
+      </div>
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">👩</div>
+          <div class="review-user"><div class="review-name">李女士</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-12</div>
+        </div>
+        <div class="review-text">家人术后需要补充营养，这个套餐搭配很合理，味道清淡不油腻，鲈鱼很新鲜，配送也很准时，非常满意。</div>
+      </div>
+      <div class="review-item" style="border-bottom:none;">
+        <div class="review-header">
+          <div class="review-avatar">👨</div>
+          <div class="review-user"><div class="review-name">王先生</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-10</div>
+        </div>
+        <div class="review-text">套餐营养丰富，适合术后恢复，价格也很合理，就是希望能多一点口味选择。整体很不错，会继续购买。</div>
+      </div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="detail-bottom-bar">
+    <div class="detail-action" onclick="showToast('已收藏')">
+      <span class="icon">♡</span><span>收藏</span>
+    </div>
+    <div class="detail-action" onclick="showToast('已加入购物车')">
+      <span class="icon">🛒</span><span>购物车</span>
+    </div>
+    <button class="detail-add-cart" onclick="addToCart('术后康复套餐A', 32); showToast('已加入购物车')">加入购物车</button>
+    <button class="detail-buy-now" onclick="addToCart('术后康复套餐A', 32); navigateTo('page-confirm')">立即购买</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE: DISH DETAIL ==================== -->
+<div class="page" id="page-dish-detail">
+  <div class="page-content" style="padding-bottom:0;">
+    <div class="detail-hero" style="background:linear-gradient(135deg,#4CAF50,#A5D6A7);">
+      🥬
+      <div class="detail-hero-back" onclick="goBack()">‹</div>
+      <div class="detail-hero-share">⇪</div>
+    </div>
+    <div class="detail-price-section">
+      <div class="detail-name">清炒时令蔬</div>
+      <div class="detail-meta">
+        <span>🔥 月售999+</span>
+        <span>⭐ 好评率96%</span>
+      </div>
+      <div class="detail-price-row">
+        <span class="detail-current-price">12</span>
+      </div>
+    </div>
+    <div class="detail-desc">
+      选用当季新鲜时令蔬菜，少油少盐烹饪，保留蔬菜原有营养和口感。富含膳食纤维和维生素，适合所有人群食用。每日新鲜采购，确保品质。
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">营养信息</div>
+      <div class="nutrition-grid">
+        <div class="nutrition-item"><div class="nutrition-value">85<span class="nutrition-unit">kcal</span></div><div class="nutrition-label">热量</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">3<span class="nutrition-unit">g</span></div><div class="nutrition-label">蛋白质</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">4<span class="nutrition-unit">g</span></div><div class="nutrition-label">脂肪</div></div>
+        <div class="nutrition-item"><div class="nutrition-value">8<span class="nutrition-unit">g</span></div><div class="nutrition-label">碳水</div></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">食材说明</div>
+      <div style="padding:0 16px 16px;font-size:14px;color:var(--text-secondary);line-height:1.8;">
+        <p>• 主料：当季时令蔬菜（芥蓝/菜心/西兰花等，随季节调整）</p>
+        <p>• 调味：植物油、少量食盐、蒜蓉</p>
+        <p>• 烹饪方式：急火快炒，保留营养</p>
+        <p>• 份量：约200g</p>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">用户评价</div>
+      <div class="review-item" style="border-bottom:none;">
+        <div class="review-header">
+          <div class="review-avatar">👩</div>
+          <div class="review-user"><div class="review-name">张女士</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-15</div>
+        </div>
+        <div class="review-text">蔬菜很新鲜，口感脆嫩，味道清淡适中，非常适合住院期间食用，会继续点。</div>
+      </div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="detail-bottom-bar">
+    <div class="detail-action" onclick="showToast('已收藏')">
+      <span class="icon">♡</span><span>收藏</span>
+    </div>
+    <div class="detail-action">
+      <span class="icon">🛒</span><span>购物车</span>
+    </div>
+    <button class="detail-add-cart" onclick="addToCart('清炒时令蔬', 12); showToast('已加入购物车')">加入购物车</button>
+    <button class="detail-buy-now" onclick="addToCart('清炒时令蔬', 12); navigateTo('page-confirm')">立即购买</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE: CONFIRM ORDER ==================== -->
+<div class="page" id="page-confirm">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">确认订单</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="confirm-section">
+      <div class="confirm-section-title">配送信息 <span class="edit" onclick="navigateTo('page-address')">编辑 ›</span></div>
+      <div class="address-card">
+        <span class="address-icon">📍</span>
+        <div class="address-info">
+          <h4>第一附属医院 住院部</h4>
+          <p>8楼 806病房 12号床 张先生 138****5678</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">配送时间</div>
+      <div class="form-row">
+        <div class="form-label">配送日期</div>
+        <div class="form-value">
+          <select id="delivery-date" onchange="updateDeliveryTimeSummary()">
+            <option value="today">今天（4月16日）</option>
+            <option value="tomorrow" selected>明天（4月17日）</option>
+            <option value="day-after">后天（4月18日）</option>
+          </select>
+          <span class="form-arrow">›</span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">配送餐次</div>
+        <div class="form-value" style="justify-content:flex-end;">
+          <div class="delivery-meal-tabs" id="delivery-meal-tabs">
+            <span class="delivery-meal-tab active" onclick="switchDeliveryMeal(this)" data-meal="breakfast" data-time="07:00-08:30">早餐</span>
+            <span class="delivery-meal-tab" onclick="switchDeliveryMeal(this)" data-meal="lunch" data-time="11:30-13:00">午餐</span>
+            <span class="delivery-meal-tab" onclick="switchDeliveryMeal(this)" data-meal="dinner" data-time="17:30-19:00">晚餐</span>
+          </div>
+        </div>
+      </div>
+      <div class="delivery-time-detail" id="delivery-time-detail">
+        <span class="icon">🕐</span>
+        <p>配送时段：<strong id="delivery-summary">明天（4月17日）早餐 07:00-08:30</strong></p>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">请确认配送信息</div>
+      <div class="form-row">
+        <div class="form-label">楼层</div>
+        <div class="form-value"><select><option>8楼</option><option>9楼</option><option>10楼</option></select> <span class="form-arrow">›</span></div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">病房号</div>
+        <div class="form-value"><select><option>806</option><option>807</option><option>808</option></select> <span class="form-arrow">›</span></div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">床位号</div>
+        <div class="form-value"><select><option>12号床</option><option>13号床</option><option>14号床</option></select> <span class="form-arrow">›</span></div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">联系人</div>
+        <div class="form-value"><input type="text" placeholder="请填写联系人姓名" value="张先生"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-label">联系电话</div>
+        <div class="form-value"><input type="tel" placeholder="请填写联系电话" value="138****5678"></div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">商品列表</div>
+      <div class="order-food-item">
+        <div class="order-food-img" style="background:linear-gradient(135deg,#FFF9C4,#FFE082);">🥣</div>
+        <div class="order-food-name"><h4>养胃小米粥</h4><p>无添加糖</p></div>
+        <div class="order-food-qty">x1</div>
+        <div class="order-food-price">6</div>
+      </div>
+      <div class="order-food-item">
+        <div class="order-food-img" style="background:linear-gradient(135deg,#DCEDC8,#AED581);">🥚</div>
+        <div class="order-food-name"><h4>五香茶叶蛋</h4><p>高蛋白</p></div>
+        <div class="order-food-qty">x5</div>
+        <div class="order-food-price">10</div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">备注</div>
+      <textarea class="remark-textarea" placeholder="请填写特殊要求，例如不吃辣、少放盐等"></textarea>
+      <div class="remark-tags">
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">不要辣</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">少放盐</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">需要餐具</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">加热</span>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="coupon-row" onclick="navigateTo('page-coupons')">
+        <div class="left"><span class="icon">🎫</span> 优惠券</div>
+        <div class="right">3张可用 <span class="form-arrow">›</span></div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">费用明细</div>
+      <div class="fee-row"><span class="label">商品总价</span><span class="value">¥16</span></div>
+      <div class="fee-row"><span class="label">配送费</span><span class="value">¥2</span></div>
+      <div class="fee-row"><span class="label">优惠券抵扣</span><span class="value discount">-¥3</span></div>
+      <div class="fee-row total"><span class="label">支付金额</span><span class="value">¥15</span></div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="confirm-bottom">
+    <div class="confirm-total">合计：<span class="amount">15</span></div>
+    <button class="confirm-pay-btn" onclick="submitOrder()">立即支付</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE: PAYMENT SUCCESS ==================== -->
+<div class="page" id="page-pay-success">
+  <div class="header">
+    <div class="header-back" onclick="switchTab('page-home')">‹</div>
+    <div class="header-title">支付结果</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="pay-success-top">
+      <div class="pay-success-icon">✅</div>
+      <div class="pay-success-title">支付成功</div>
+      <div class="pay-success-desc">您的订单已提交，餐品将按时配送到病房</div>
+      <div class="pay-success-amount">15</div>
+    </div>
+    <div class="pay-success-actions">
+      <button class="btn btn-outline" onclick="navigateTo('page-order-detail')">查看订单</button>
+      <button class="btn btn-primary" onclick="switchTab('page-home')">返回首页</button>
+    </div>
+    <div class="pay-success-info">
+      <div class="pay-success-row"><span class="label">订单编号</span><span class="value">20240416001</span></div>
+      <div class="pay-success-row"><span class="label">配送地址</span><span class="value">8楼806病房12号床</span></div>
+      <div class="pay-success-row"><span class="label">配送时段</span><span class="value" id="pay-success-delivery">4月17日 早餐 07:00-08:30</span></div>
+      <div class="pay-success-row"><span class="label">支付方式</span><span class="value">微信支付</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: MY ORDERS ==================== -->
+<div class="page" id="page-orders">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">我的订单</div>
+    <div class="header-action" onclick="navigateTo('page-search')">🔍</div>
+  </div>
+  <div class="order-tabs">
+    <div class="order-tab active" onclick="switchOrderTab(this)">全部</div>
+    <div class="order-tab" onclick="switchOrderTab(this)">待支付</div>
+    <div class="order-tab" onclick="switchOrderTab(this)">待配送</div>
+    <div class="order-tab" onclick="switchOrderTab(this)">待收货</div>
+    <div class="order-tab" onclick="switchOrderTab(this)">已完成</div>
+  </div>
+  <div class="page-content">
+    <div class="order-card" onclick="navigateTo('page-order-detail')">
+      <div class="order-card-header">
+        <span class="order-card-no">订单号：20240416001</span>
+        <span class="order-card-status delivering">配送中</span>
+      </div>
+      <div class="order-card-body">
+        <div class="order-card-img" style="background:linear-gradient(135deg,#FFF9C4,#FFE082);">🥣</div>
+        <div class="order-card-info">
+          <div class="order-card-name">养胃小米粥 x1，五香茶叶蛋 x5 等2件商品</div>
+          <div class="order-card-desc">4月16日 早餐 配送至8楼806病房12号床</div>
+        </div>
+      </div>
+      <div class="order-card-footer">
+        <span class="order-card-price">15</span>
+        <div class="order-card-actions">
+          <button class="order-action-btn outline">联系骑手</button>
+          <button class="order-action-btn primary">确认收货</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-card" onclick="navigateTo('page-order-detail')">
+      <div class="order-card-header">
+        <span class="order-card-no">订单号：20240415023</span>
+        <span class="order-card-status completed">已完成</span>
+      </div>
+      <div class="order-card-body">
+        <div class="order-card-img" style="background:linear-gradient(135deg,#66BB6A,#43A047);">🍱</div>
+        <div class="order-card-info">
+          <div class="order-card-name">术后康复套餐A x1</div>
+          <div class="order-card-desc">4月15日 午餐 配送至8楼806病房12号床</div>
+        </div>
+      </div>
+      <div class="order-card-footer">
+        <span class="order-card-price">32</span>
+        <div class="order-card-actions">
+          <button class="order-action-btn outline">再来一单</button>
+          <button class="order-action-btn primary" onclick="event.stopPropagation(); navigateTo('page-review')">去评价</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-card" onclick="navigateTo('page-order-detail')">
+      <div class="order-card-header">
+        <span class="order-card-no">订单号：20240417005</span>
+        <span class="order-card-status pending">待支付</span>
+      </div>
+      <div class="order-card-body">
+        <div class="order-card-img" style="background:linear-gradient(135deg,#81C784,#66BB6A);">🥗</div>
+        <div class="order-card-info">
+          <div class="order-card-name">糖尿病友好套餐 x1</div>
+          <div class="order-card-desc">4月17日 午餐 配送至8楼806病房12号床</div>
+        </div>
+      </div>
+      <div class="order-card-footer">
+        <span class="order-card-price">28</span>
+        <div class="order-card-actions">
+          <button class="order-action-btn danger">取消订单</button>
+          <button class="order-action-btn primary" onclick="event.stopPropagation(); navigateTo('page-confirm')">去支付</button>
+        </div>
+      </div>
+      <div class="order-timer">支付剩余时间：14:23</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item" onclick="switchTab('page-home')"><div class="tab-icon">🏠</div><div class="tab-label">首页</div></div>
+    <div class="tab-item" onclick="switchTab('page-today-menu')"><div class="tab-icon">🍴</div><div class="tab-label">菜单</div></div>
+    <div class="tab-item active" onclick="switchTab('page-orders')"><div class="tab-icon">📋</div><div class="tab-label">订单</div></div>
+    <div class="tab-item" onclick="switchTab('page-profile')"><div class="tab-icon">👤</div><div class="tab-label">我的</div></div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: ORDER DETAIL ==================== -->
+<div class="page" id="page-order-detail">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">订单详情</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="order-detail-status">
+      <h2>配送中</h2>
+      <p>骑手正在配送中，预计10分钟内送达</p>
+    </div>
+
+    <div class="order-detail-track">
+      <div class="track-item">
+        <div class="track-dot active"></div>
+        <div class="track-info"><h4>骑手已取餐，正在配送中</h4><p>4月16日 07:15</p></div>
+      </div>
+      <div class="track-item">
+        <div class="track-dot active"></div>
+        <div class="track-info"><h4>商家已出餐</h4><p>4月16日 07:05</p></div>
+      </div>
+      <div class="track-item">
+        <div class="track-dot active"></div>
+        <div class="track-info"><h4>商家已接单</h4><p>4月16日 06:50</p></div>
+      </div>
+      <div class="track-item">
+        <div class="track-dot"></div>
+        <div class="track-info"><h4>订单已支付</h4><p>4月16日 06:45</p></div>
+      </div>
+    </div>
+
+    <div class="confirm-section" style="margin-top:8px;">
+      <div class="confirm-section-title">配送信息</div>
+      <div class="address-card">
+        <span class="address-icon">📍</span>
+        <div class="address-info">
+          <h4>第一附属医院 住院部</h4>
+          <p>8楼 806病房 12号床</p>
+          <p>张先生 138****5678</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">商品信息</div>
+      <div class="order-food-item">
+        <div class="order-food-img" style="background:linear-gradient(135deg,#FFF9C4,#FFE082);">🥣</div>
+        <div class="order-food-name"><h4>养胃小米粥</h4><p>无添加糖</p></div>
+        <div class="order-food-qty">x1</div>
+        <div class="order-food-price">6</div>
+      </div>
+      <div class="order-food-item">
+        <div class="order-food-img" style="background:linear-gradient(135deg,#DCEDC8,#AED581);">🥚</div>
+        <div class="order-food-name"><h4>五香茶叶蛋</h4><p>高蛋白</p></div>
+        <div class="order-food-qty">x5</div>
+        <div class="order-food-price">10</div>
+      </div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="confirm-section-title">费用信息</div>
+      <div class="fee-row"><span class="label">商品总价</span><span class="value">¥16</span></div>
+      <div class="fee-row"><span class="label">配送费</span><span class="value">¥2</span></div>
+      <div class="fee-row"><span class="label">优惠券抵扣</span><span class="value discount">-¥3</span></div>
+      <div class="fee-row total"><span class="label">实付金额</span><span class="value">¥15</span></div>
+    </div>
+
+    <div class="confirm-section">
+      <div class="fee-row"><span class="label">订单编号</span><span class="value">20240416001</span></div>
+      <div class="fee-row"><span class="label">下单时间</span><span class="value">2024-04-16 06:45</span></div>
+      <div class="fee-row"><span class="label">支付方式</span><span class="value">微信支付</span></div>
+      <div class="fee-row"><span class="label">配送时段</span><span class="value">早餐 07:00-08:30</span></div>
+    </div>
+
+    <div style="padding:16px;display:flex;gap:12px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="showToast('已拨打骑手电话')">联系骑手</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="showToast('已确认收货'); goBack()">确认收货</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: PROFILE ==================== -->
+<div class="page" id="page-profile">
+  <div class="page-content">
+    <div class="profile-header">
+      <div class="profile-avatar">👨</div>
+      <div>
+        <div class="profile-name">张先生</div>
+        <div class="profile-phone">138****5678</div>
+      </div>
+      <div class="profile-settings" onclick="showToast('设置页面')">⚙️</div>
+    </div>
+
+    <div class="profile-orders">
+      <div class="profile-orders-header">
+        <span class="profile-orders-title">我的订单</span>
+        <span class="profile-orders-more" onclick="switchTab('page-orders')">查看全部 ›</span>
+      </div>
+      <div class="profile-order-icons">
+        <div class="profile-order-item" onclick="switchTab('page-orders')">
+          <span class="icon">💰</span><span class="label">待支付</span>
+          <span class="badge">1</span>
+        </div>
+        <div class="profile-order-item" onclick="switchTab('page-orders')">
+          <span class="icon">🚚</span><span class="label">待配送</span>
+        </div>
+        <div class="profile-order-item" onclick="switchTab('page-orders')">
+          <span class="icon">📦</span><span class="label">待收货</span>
+          <span class="badge">1</span>
+        </div>
+        <div class="profile-order-item" onclick="switchTab('page-orders')">
+          <span class="icon">⭐</span><span class="label">待评价</span>
+        </div>
+        <div class="profile-order-item" onclick="switchTab('page-orders')">
+          <span class="icon">🔄</span><span class="label">退款售后</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-menu">
+      <div class="profile-menu-item" onclick="navigateTo('page-address')">
+        <span class="icon">📍</span><span class="label">配送地址管理</span>
+        <span class="value">2个地址</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="showToast('我的收藏')">
+        <span class="icon">❤️</span><span class="label">我的收藏</span>
+        <span class="value">6个菜品</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="navigateTo('page-coupons')">
+        <span class="icon">🎫</span><span class="label">优惠券</span>
+        <span class="value green">3张可用</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="showToast('分院管理')">
+        <span class="icon">🏥</span><span class="label">分院管理</span>
+        <span class="value">第一附属医院</span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="showToast('联系客服')">
+        <span class="icon">💬</span><span class="label">联系客服</span>
+        <span class="value"></span><span class="arrow">›</span>
+      </div>
+    </div>
+
+    <div class="profile-menu">
+      <div class="profile-menu-item" onclick="showToast('评价页面')">
+        <span class="icon">⭐</span><span class="label">评价我们</span>
+        <span class="value"></span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="showToast('用户协议')">
+        <span class="icon">📄</span><span class="label">用户协议</span>
+        <span class="value"></span><span class="arrow">›</span>
+      </div>
+      <div class="profile-menu-item" onclick="showToast('隐私政策')">
+        <span class="icon">🔒</span><span class="label">隐私政策</span>
+        <span class="value"></span><span class="arrow">›</span>
+      </div>
+    </div>
+    <div style="height:16px;"></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab-item" onclick="switchTab('page-home')"><div class="tab-icon">🏠</div><div class="tab-label">首页</div></div>
+    <div class="tab-item" onclick="switchTab('page-today-menu')"><div class="tab-icon">🍴</div><div class="tab-label">菜单</div></div>
+    <div class="tab-item" onclick="switchTab('page-orders')"><div class="tab-icon">📋</div><div class="tab-label">订单</div></div>
+    <div class="tab-item active" onclick="switchTab('page-profile')"><div class="tab-icon">👤</div><div class="tab-label">我的</div></div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: SEARCH ==================== -->
+<div class="page" id="page-search">
+  <div class="search-bar">
+    <div class="search-input-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="搜索菜品、套餐" id="search-input">
+    </div>
+    <span class="search-cancel" onclick="goBack()">取消</span>
+  </div>
+  <div class="page-content">
+    <div class="search-history">
+      <div class="search-history-header">
+        <span class="search-history-title">搜索历史</span>
+        <span class="search-history-clear" onclick="showToast('已清空搜索历史')">🗑️</span>
+      </div>
+      <div class="search-tags">
+        <span class="search-tag" onclick="showToast('搜索: 小米粥')">小米粥</span>
+        <span class="search-tag" onclick="showToast('搜索: 术后套餐')">术后套餐</span>
+        <span class="search-tag" onclick="showToast('搜索: 清蒸鲈鱼')">清蒸鲈鱼</span>
+        <span class="search-tag" onclick="showToast('搜索: 低糖')">低糖</span>
+        <span class="search-tag" onclick="showToast('搜索: 高蛋白')">高蛋白</span>
+      </div>
+    </div>
+    <div class="search-hot">
+      <div class="search-hot-title">🔥 热门搜索</div>
+      <div class="search-hot-item" onclick="showToast('搜索: 术后康复套餐')">
+        <span class="search-hot-rank top">1</span>
+        <span class="search-hot-name">术后康复套餐</span>
+      </div>
+      <div class="search-hot-item" onclick="showToast('搜索: 养胃小米粥')">
+        <span class="search-hot-rank top">2</span>
+        <span class="search-hot-name">养胃小米粥</span>
+      </div>
+      <div class="search-hot-item" onclick="showToast('搜索: 糖尿病友好套餐')">
+        <span class="search-hot-rank top">3</span>
+        <span class="search-hot-name">糖尿病友好套餐</span>
+      </div>
+      <div class="search-hot-item" onclick="showToast('搜索: 清蒸鲈鱼')">
+        <span class="search-hot-rank normal">4</span>
+        <span class="search-hot-name">清蒸鲈鱼</span>
+      </div>
+      <div class="search-hot-item" onclick="showToast('搜索: 产妇营养套餐')">
+        <span class="search-hot-rank normal">5</span>
+        <span class="search-hot-name">产妇营养套餐</span>
+      </div>
+      <div class="search-hot-item" onclick="showToast('搜索: 无糖豆浆')">
+        <span class="search-hot-rank normal">6</span>
+        <span class="search-hot-name">无糖豆浆</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: ADDRESS MANAGEMENT ==================== -->
+<div class="page" id="page-address">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">配送地址管理</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="address-item">
+      <span class="icon">📍</span>
+      <div class="address-item-info">
+        <h4>第一附属医院 住院部 <span class="address-default-tag">默认</span></h4>
+        <p>8楼 806病房 12号床</p>
+        <div class="user">张先生 138****5678</div>
+      </div>
+      <div class="address-item-actions">
+        <span class="address-item-action" onclick="showToast('编辑地址')">✏️</span>
+        <span class="address-item-action" onclick="showToast('删除地址')">🗑️</span>
+      </div>
+    </div>
+    <div class="address-item">
+      <span class="icon">📍</span>
+      <div class="address-item-info">
+        <h4>第一附属医院 门诊部</h4>
+        <p>3楼 外科诊室</p>
+        <div class="user">张先生 138****5678</div>
+      </div>
+      <div class="address-item-actions">
+        <span class="address-item-action" onclick="showToast('编辑地址')">✏️</span>
+        <span class="address-item-action" onclick="showToast('删除地址')">🗑️</span>
+      </div>
+    </div>
+  </div>
+  <button class="add-address-btn" onclick="showToast('新增地址')">+ 新增配送地址</button>
+</div>
+
+<!-- ==================== PAGE: COUPONS ==================== -->
+<div class="page" id="page-coupons">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">我的优惠券</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="coupon-card">
+      <div class="coupon-left">
+        <div class="coupon-amount">3</div>
+        <div class="coupon-condition">满15元可用</div>
+      </div>
+      <div class="coupon-right">
+        <div class="coupon-title">新用户满减券</div>
+        <div class="coupon-desc">全场通用，不限品类</div>
+        <div class="coupon-expire">有效期至 2024-05-01</div>
+        <button class="coupon-use-btn" onclick="showToast('去使用'); goBack()">去使用</button>
+      </div>
+    </div>
+    <div class="coupon-card">
+      <div class="coupon-left">
+        <div class="coupon-amount">5</div>
+        <div class="coupon-condition">满30元可用</div>
+      </div>
+      <div class="coupon-right">
+        <div class="coupon-title">套餐专享优惠</div>
+        <div class="coupon-desc">仅限套餐类商品使用</div>
+        <div class="coupon-expire">有效期至 2024-04-30</div>
+        <button class="coupon-use-btn" onclick="showToast('去使用'); goBack()">去使用</button>
+      </div>
+    </div>
+    <div class="coupon-card">
+      <div class="coupon-left" style="background:linear-gradient(135deg,#FFB74D,#FF9800);">
+        <div class="coupon-amount">2</div>
+        <div class="coupon-condition">免配送费</div>
+      </div>
+      <div class="coupon-right">
+        <div class="coupon-title">配送费减免券</div>
+        <div class="coupon-desc">免除一次配送费</div>
+        <div class="coupon-expire">有效期至 2024-04-25</div>
+        <button class="coupon-use-btn" onclick="showToast('去使用'); goBack()">去使用</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: REVIEW ==================== -->
+<div class="page" id="page-review">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">发表评价</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div class="review-form">
+      <div class="review-food-info">
+        <div class="review-food-img" style="background:linear-gradient(135deg,#66BB6A,#43A047);">🍱</div>
+        <div class="review-food-name">
+          <h3>术后康复套餐A</h3>
+          <p>订单号：20240415023</p>
+        </div>
+      </div>
+
+      <div class="review-stars-row">
+        <span class="review-stars-label">整体评分</span>
+        <div class="review-stars-input">
+          <span class="review-star active" onclick="setStars(1)">★</span>
+          <span class="review-star active" onclick="setStars(2)">★</span>
+          <span class="review-star active" onclick="setStars(3)">★</span>
+          <span class="review-star active" onclick="setStars(4)">★</span>
+          <span class="review-star active" onclick="setStars(5)">★</span>
+        </div>
+      </div>
+
+      <div class="review-stars-row">
+        <span class="review-stars-label">口味评分</span>
+        <div class="review-stars-input" id="taste-stars">
+          <span class="review-star active" onclick="setSubStars('taste-stars',1)">★</span>
+          <span class="review-star active" onclick="setSubStars('taste-stars',2)">★</span>
+          <span class="review-star active" onclick="setSubStars('taste-stars',3)">★</span>
+          <span class="review-star active" onclick="setSubStars('taste-stars',4)">★</span>
+          <span class="review-star" onclick="setSubStars('taste-stars',5)">★</span>
+        </div>
+      </div>
+
+      <div class="review-stars-row">
+        <span class="review-stars-label">配送评分</span>
+        <div class="review-stars-input" id="delivery-stars">
+          <span class="review-star active" onclick="setSubStars('delivery-stars',1)">★</span>
+          <span class="review-star active" onclick="setSubStars('delivery-stars',2)">★</span>
+          <span class="review-star active" onclick="setSubStars('delivery-stars',3)">★</span>
+          <span class="review-star active" onclick="setSubStars('delivery-stars',4)">★</span>
+          <span class="review-star active" onclick="setSubStars('delivery-stars',5)">★</span>
+        </div>
+      </div>
+
+      <textarea class="review-textarea" placeholder="请分享您的用餐体验，您的评价将帮助我们改进服务..."></textarea>
+
+      <div class="remark-tags" style="margin-top:12px;">
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">味道好</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">份量足</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">配送快</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">包装好</span>
+        <span class="remark-tag" onclick="toggleRemarkTag(this)">营养搭配合理</span>
+      </div>
+
+      <button class="review-submit-btn" onclick="showToast('评价提交成功'); setTimeout(()=>goBack(), 800)">提交评价</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE: ALL REVIEWS ==================== -->
+<div class="page" id="page-reviews">
+  <div class="header">
+    <div class="header-back" onclick="goBack()">‹</div>
+    <div class="header-title">全部评价 (256)</div>
+    <div class="header-action"></div>
+  </div>
+  <div class="page-content">
+    <div style="padding:12px 16px;background:var(--bg-white);display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);">
+      <span style="font-size:24px;font-weight:700;color:var(--yellow);">4.8</span>
+      <span style="color:var(--yellow);">⭐⭐⭐⭐⭐</span>
+      <span style="font-size:12px;color:var(--text-hint);">256条评价</span>
+    </div>
+    <div class="special-tabs" style="padding:8px 16px;">
+      <div class="special-tab active" style="font-size:12px;padding:6px 12px;" onclick="switchSpecialTab(this)">全部(256)</div>
+      <div class="special-tab" style="font-size:12px;padding:6px 12px;" onclick="switchSpecialTab(this)">好评(240)</div>
+      <div class="special-tab" style="font-size:12px;padding:6px 12px;" onclick="switchSpecialTab(this)">中评(12)</div>
+      <div class="special-tab" style="font-size:12px;padding:6px 12px;" onclick="switchSpecialTab(this)">差评(4)</div>
+    </div>
+    <div style="background:var(--bg-white);">
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">👩</div>
+          <div class="review-user"><div class="review-name">李女士</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-12</div>
+        </div>
+        <div class="review-text">家人术后需要补充营养，这个套餐搭配很合理，味道清淡不油腻，鲈鱼很新鲜，配送也很准时，非常满意。</div>
+      </div>
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">👨</div>
+          <div class="review-user"><div class="review-name">王先生</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-10</div>
+        </div>
+        <div class="review-text">套餐营养丰富，适合术后恢复，价格也很合理，就是希望能多一点口味选择。整体很不错，会继续购买。</div>
+      </div>
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">👩</div>
+          <div class="review-user"><div class="review-name">陈女士</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-08</div>
+        </div>
+        <div class="review-text">老公手术后一直吃这个套餐，营养搭配很科学，恢复得很快。清蒸鱼特别鲜嫩，比外面的健康多了。配送到床头太方便了！</div>
+      </div>
+      <div class="review-item">
+        <div class="review-header">
+          <div class="review-avatar">👨</div>
+          <div class="review-user"><div class="review-name">刘先生</div><div class="review-stars">⭐⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-06</div>
+        </div>
+        <div class="review-text">术后第二天就开始吃，味道清淡，米粥熬得很烂，容易消化。馒头也是软的，整体不错。价格也比外卖划算。</div>
+      </div>
+      <div class="review-item" style="border-bottom:none;">
+        <div class="review-header">
+          <div class="review-avatar">👩</div>
+          <div class="review-user"><div class="review-name">赵女士</div><div class="review-stars">⭐⭐⭐⭐</div></div>
+          <div class="review-date">2024-04-04</div>
+        </div>
+        <div class="review-text">份量还行，蔬菜新鲜，鱼的口味可以再调一下。配送准时，包装保温效果不错。希望增加一些汤品选择。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end phone-frame -->
+
+<script>
+const pageStack = ['page-login'];
+let cart = {};
+let cartTotal = 0;
+let cartCount = 0;
+
+function navigateTo(pageId) {
+  const currentPage = document.querySelector('.page.active');
+  const targetPage = document.getElementById(pageId);
+  if (!targetPage || currentPage.id === pageId) return;
+
+  pageStack.push(pageId);
+  currentPage.classList.remove('active');
+  currentPage.style.display = 'none';
+  targetPage.style.display = 'flex';
+  targetPage.classList.add('active');
+  targetPage.classList.add('slide-in');
+
+  setTimeout(() => { targetPage.classList.remove('slide-in'); }, 300);
+
+  const content = targetPage.querySelector('.page-content');
+  if (content) content.scrollTop = 0;
+}
+
+function goBack() {
+  if (pageStack.length <= 1) return;
+  const currentId = pageStack.pop();
+  const prevId = pageStack[pageStack.length - 1];
+  const currentPage = document.getElementById(currentId);
+  const prevPage = document.getElementById(prevId);
+
+  currentPage.classList.remove('active');
+  currentPage.classList.add('slide-out');
+  prevPage.style.display = 'flex';
+  prevPage.classList.add('active');
+
+  setTimeout(() => {
+    currentPage.classList.remove('slide-out');
+    currentPage.style.display = 'none';
+  }, 300);
+}
+
+const mainTabs = ['page-home', 'page-today-menu', 'page-orders', 'page-profile'];
+
+function switchTab(pageId) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active', 'slide-in', 'slide-out');
+    p.style.display = 'none';
+  });
+
+  const target = document.getElementById(pageId);
+  target.style.display = 'flex';
+  target.classList.add('active');
+  pageStack.length = 0;
+  pageStack.push(pageId);
+
+  document.querySelectorAll('.tab-bar').forEach(bar => {
+    bar.querySelectorAll('.tab-item').forEach(item => {
+      item.classList.remove('active');
+    });
+  });
+  document.querySelectorAll('.tab-bar').forEach(bar => {
+    const items = bar.querySelectorAll('.tab-item');
+    const idx = mainTabs.indexOf(pageId);
+    if (idx >= 0 && items[idx]) items[idx].classList.add('active');
+  });
+}
+
+function switchMealTab(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.meal-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchCategory(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.category-item').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchSpecialTab(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.special-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchSurgeryTab(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.surgery-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchOrderTab(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function addToCart(name, price) {
+  if (!cart[name]) cart[name] = { price, qty: 0 };
+  cart[name].qty++;
+  updateCartUI();
+  showToast(`已添加 ${name}`);
+}
+
+function removeFromCart(name, price) {
+  if (cart[name] && cart[name].qty > 0) {
+    cart[name].qty--;
+    if (cart[name].qty === 0) delete cart[name];
+    updateCartUI();
+  }
+}
+
+function clearCart() {
+  cart = {};
+  updateCartUI();
+  showToast('购物车已清空');
+}
+
+function updateCartUI() {
+  cartTotal = 0;
+  cartCount = 0;
+  Object.values(cart).forEach(item => {
+    cartTotal += item.price * item.qty;
+    cartCount += item.qty;
+  });
+
+  document.querySelectorAll('[id^="cart-count"]').forEach(el => {
+    el.textContent = cartCount;
+    el.style.display = cartCount > 0 ? 'flex' : 'none';
+  });
+  document.querySelectorAll('[id^="cart-total"]').forEach(el => {
+    el.textContent = cartTotal;
+  });
+
+  document.querySelectorAll('.checkout-btn').forEach(btn => {
+    if (cartCount > 0) {
+      btn.classList.add('active');
+      btn.classList.remove('disabled');
+    } else {
+      btn.classList.remove('active');
+      btn.classList.add('disabled');
+    }
+  });
+}
+
+function toggleCartPopup(id) {
+  const overlay = document.getElementById('cart-overlay-' + id);
+  if (overlay) {
+    overlay.classList.toggle('show');
+    if (overlay.classList.contains('show')) {
+      const container = document.getElementById('cart-popup-items-' + id);
+      if (container) {
+        let html = '';
+        Object.entries(cart).forEach(([name, item]) => {
+          html += `<div class="cart-item">
+            <div class="cart-item-img">🍽️</div>
+            <div class="cart-item-info">
+              <div class="cart-item-name">${name}</div>
+              <div class="cart-item-price">${item.price}</div>
+            </div>
+            <div class="quantity-ctrl">
+              <button class="minus-btn" onclick="removeFromCart('${name}', ${item.price}); toggleCartPopup('${id}'); toggleCartPopup('${id}');">−</button>
+              <span class="qty">${item.qty}</span>
+              <button class="add-btn" onclick="addToCart('${name}', ${item.price}); toggleCartPopup('${id}'); toggleCartPopup('${id}');">+</button>
+            </div>
+          </div>`;
+        });
+        if (!html) html = '<div style="padding:40px;text-align:center;color:var(--text-hint);">购物车是空的</div>';
+        container.innerHTML = html;
+      }
+    }
+  }
+}
+
+function switchDeliveryMeal(el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.delivery-meal-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  updateDeliveryTimeSummary();
+}
+
+function updateDeliveryTimeSummary() {
+  const dateSelect = document.getElementById('delivery-date');
+  const dateText = dateSelect.options[dateSelect.selectedIndex].text;
+  const activeTab = document.querySelector('#delivery-meal-tabs .delivery-meal-tab.active');
+  const mealName = activeTab ? activeTab.textContent : '早餐';
+  const mealTime = activeTab ? activeTab.dataset.time : '07:00-08:30';
+  const summary = document.getElementById('delivery-summary');
+  if (summary) summary.textContent = `${dateText} ${mealName} ${mealTime}`;
+
+  const dateVal = dateSelect.value;
+  const tabs = document.querySelectorAll('#delivery-meal-tabs .delivery-meal-tab');
+  if (dateVal === 'today') {
+    const hour = new Date().getHours();
+    tabs.forEach(t => {
+      const meal = t.dataset.meal;
+      let disabled = false;
+      if (meal === 'breakfast' && hour >= 7) disabled = true;
+      if (meal === 'lunch' && hour >= 11) disabled = true;
+      if (meal === 'dinner' && hour >= 17) disabled = true;
+      t.style.opacity = disabled ? '0.4' : '1';
+      t.style.pointerEvents = disabled ? 'none' : 'auto';
+      if (disabled && t.classList.contains('active')) {
+        t.classList.remove('active');
+      }
+    });
+    const firstAvail = document.querySelector('#delivery-meal-tabs .delivery-meal-tab:not(.active)[style*="opacity: 1"], #delivery-meal-tabs .delivery-meal-tab.active');
+    if (!document.querySelector('#delivery-meal-tabs .delivery-meal-tab.active')) {
+      const available = [...tabs].find(t => t.style.opacity !== '0.4');
+      if (available) { available.classList.add('active'); updateDeliveryTimeSummary(); }
+    }
+  } else {
+    tabs.forEach(t => { t.style.opacity = '1'; t.style.pointerEvents = 'auto'; });
+  }
+}
+
+function submitOrder() {
+  const summary = document.getElementById('delivery-summary');
+  const text = summary ? summary.textContent : '';
+  const el = document.getElementById('pay-success-delivery');
+  if (el) el.textContent = text;
+  navigateTo('page-pay-success');
+}
+
+function toggleRemarkTag(el) {
+  el.classList.toggle('active');
+}
+
+function setStars(n) {
+  const stars = document.querySelectorAll('.review-stars-input')[0].querySelectorAll('.review-star');
+  stars.forEach((s, i) => { s.classList.toggle('active', i < n); });
+}
+
+function setSubStars(containerId, n) {
+  const container = document.getElementById(containerId);
+  const stars = container.querySelectorAll('.review-star');
+  stars.forEach((s, i) => { s.classList.toggle('active', i < n); });
+}
+
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 1500);
+}
+
+updateCartUI();
+</script>
+
+</body>
+</html>

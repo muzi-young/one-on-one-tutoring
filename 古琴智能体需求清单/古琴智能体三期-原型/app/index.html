@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>用户端总览 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+  .page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+  .page-thumb{background:#fff;border:1px solid #ece4d3;border-radius:12px;overflow:hidden;cursor:pointer;transition:all .2s;display:block;color:inherit;}
+  .page-thumb:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(91,141,239,.2);border-color:#5b8def;}
+  .page-thumb .preview{height:140px;background:linear-gradient(135deg,#3a2f1e,#7a5a2c);display:flex;align-items:center;justify-content:center;color:#fff;font-size:36px;}
+  .page-thumb .info{padding:12px;}
+  .page-thumb .info h4{margin:0;font-size:14px;}
+  .page-thumb .info p{margin:4px 0 0;font-size:11px;color:#888;line-height:1.5;}
+  .flow-card{background:#fff;border:1px solid #ece4d3;border-radius:12px;padding:18px;margin-bottom:18px;}
+  .flow-steps{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:13px;}
+  .flow-step{background:#e7efff;color:#3463d8;padding:8px 14px;border-radius:8px;font-weight:600;}
+  .flow-arrow{color:#bbb;font-size:18px;}
+</style></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:22px;">📱 用户端 APP · 总览</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">面向消费者用户的移动端体验，覆盖直播观看、课程报名、预约提醒、回放学习全流程</p>
+    </div>
+    <a href="home.html" class="btn primary">进入 APP 首页 →</a>
+  </div>
+
+  <!-- 用户旅程 -->
+  <div class="flow-card" style="background:linear-gradient(90deg,#f0f6ff,#fff);border-color:#5b8def;">
+    <h3 style="margin:0 0 12px;color:#3463d8;">🗺 典型用户旅程</h3>
+    <div class="flow-steps">
+      <span class="flow-step">① 首页发现直播</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">② 进入直播间互动</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">③ 课程详情</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">④ 支付报名</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">⑤ 预约下场</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">⑥ 接收开播提醒</span>
+      <span class="flow-arrow">›</span>
+      <span class="flow-step">⑦ 回放学习</span>
+    </div>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v" style="color:#5b8def;">8</div><div class="l">页面数</div></div>
+    <div class="stat-card"><div class="v">12,430</div><div class="l">本月观看人次</div></div>
+    <div class="stat-card"><div class="v">5</div><div class="l">活跃直播</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">132</div><div class="l">本月报名</div></div>
+  </div>
+
+  <h3 class="ink-title" style="font-size:16px;margin:0 0 12px;">页面导览</h3>
+  <div class="page-grid">
+    <a class="page-thumb" href="home.html">
+      <div class="preview" style="background:linear-gradient(180deg,#3a2f1e,#7a5a2c);">🏠</div>
+      <div class="info"><h4>APP 首页</h4><p>直播入口 / 预约 / 回放推荐 / Tab 导航</p></div>
+    </a>
+    <a class="page-thumb" href="live.html">
+      <div class="preview" style="background:linear-gradient(180deg,#1a1408,#7a5a2c);">🔴</div>
+      <div class="info"><h4>直播间</h4><p>数字人 + 飘动弹幕 + 课程卡片下发</p></div>
+    </a>
+    <a class="page-thumb" href="course.html">
+      <div class="preview" style="background:linear-gradient(135deg,#7a5a2c,#a86d2c);">🎼</div>
+      <div class="info"><h4>课程详情</h4><p>课程介绍 / 大纲 / 评价 / 报名转化</p></div>
+    </a>
+    <a class="page-thumb" href="payment.html">
+      <div class="preview" style="background:linear-gradient(135deg,#23a06b,#108a72);">💳</div>
+      <div class="info"><h4>支付确认</h4><p>订单 + 优惠券 + 支付方式</p></div>
+    </a>
+    <a class="page-thumb" href="reserve.html">
+      <div class="preview" style="background:linear-gradient(135deg,#d6b06b,#8b6a36);">⏰</div>
+      <div class="info"><h4>预约成功</h4><p>多通道开播提醒 + 脚本预告</p></div>
+    </a>
+    <a class="page-thumb" href="replay.html">
+      <div class="preview" style="background:linear-gradient(135deg,#3a2f1e,#7a5a2c);">📺</div>
+      <div class="info"><h4>直播回放</h4><p>回放视频 + 章节定位 + 弹幕历史</p></div>
+    </a>
+    <a class="page-thumb" href="message.html">
+      <div class="preview" style="background:linear-gradient(135deg,#5b8def,#3463d8);">🔔</div>
+      <div class="info"><h4>消息中心</h4><p>开播提醒 / 课程通知 / 系统消息</p></div>
+    </a>
+    <a class="page-thumb" href="mine.html">
+      <div class="preview" style="background:linear-gradient(135deg,#3a2f1e,#7a5a2c);">👤</div>
+      <div class="info"><h4>我的</h4><p>课程 / 预约 / 订单 / 设置</p></div>
+    </a>
+  </div>
+
+  <div class="card" style="margin-top:24px;background:#f0f6ff;border-color:#5b8def;">
+    <h3 style="color:#3463d8;">💡 用户端特性说明</h3>
+    <ul style="margin:0;padding-left:20px;font-size:13px;color:#445;line-height:1.9;">
+      <li>所有页面均使用 iPhone 真机壳呈现，包含状态栏、Tab 栏、手势条</li>
+      <li>直播间含数字人形象、飘动弹幕、实时字幕、课程卡片悬浮</li>
+      <li>支付与会员体系对接客户既有 APP 能力，本端仅展示交互流程</li>
+      <li>哼唱识曲入口位于首页与底部 Tab，复用二期能力</li>
+    </ul>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="app/index.html" data-crumbs="<b>用户端 APP</b> / 总览" data-depth="1"></script>
+</body></html>

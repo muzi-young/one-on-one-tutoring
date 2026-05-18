@@ -9,7 +9,10 @@ const routes = require('./routes');
 const { fail } = require('./utils/response');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: '*', // 生产环境建议替换为前端域名
+  credentials: true
+}));
 app.use(express.json({ limit: '2mb' }));
 app.use(morgan('dev'));
 

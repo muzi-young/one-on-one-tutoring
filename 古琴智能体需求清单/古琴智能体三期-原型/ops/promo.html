@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>优惠活动 · 运营端</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">优惠活动配置</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">为直播专属优惠 / 限时价格 / 优惠券设置转化规则</p>
+    </div>
+    <button class="btn primary">+ 创建优惠活动</button>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v">3</div><div class="l">进行中活动</div></div>
+    <div class="stat-card"><div class="v">¥ 11.8万</div><div class="l">本月活动产值</div></div>
+    <div class="stat-card"><div class="v">2,164</div><div class="l">优惠券领取量</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">38.4%</div><div class="l">核销率</div></div>
+  </div>
+
+  <table class="tbl" style="margin-bottom:18px;">
+    <thead><tr><th>活动名称</th><th>关联直播</th><th>价格 / 优惠</th><th>库存</th><th>有效期</th><th>状态</th><th>转化</th><th>操作</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><b>《流水》直播专享 7 折</b></td>
+        <td>5/17 流水技法课</td>
+        <td><span style="color:#e74c3c;font-weight:bold;">¥896</span> <span style="text-decoration:line-through;color:#888;font-size:11px;">¥1280</span></td>
+        <td>23 / 100</td>
+        <td>直播结束 +30min</td>
+        <td><span class="tag tag-red">● 进行中</span></td>
+        <td><b>23</b> 单 / ¥20,608</td>
+        <td><button class="btn sm">详情</button> <button class="btn sm">下架</button></td>
+      </tr>
+      <tr>
+        <td><b>广陵散精修班 立减 ¥200</b></td>
+        <td>5/17 广陵散夜话</td>
+        <td>立减 ¥200</td>
+        <td>50 / 50</td>
+        <td>5/17 20:00 - 5/18 00:00</td>
+        <td><span class="tag tag-blue">待生效</span></td>
+        <td>—</td>
+        <td><button class="btn sm">编辑</button></td>
+      </tr>
+      <tr>
+        <td><b>新用户体验券</b></td>
+        <td>全场通用</td>
+        <td>¥30 体验券</td>
+        <td>无限</td>
+        <td>长期</td>
+        <td><span class="tag tag-green">长期有效</span></td>
+        <td><b>1,827</b> 领取 / 38% 核销</td>
+        <td><button class="btn sm">详情</button></td>
+      </tr>
+      <tr>
+        <td><b>梅花专场 满 500-80</b></td>
+        <td>5/10 梅花三弄</td>
+        <td>满减</td>
+        <td>—</td>
+        <td>已过期</td>
+        <td><span class="tag tag-gray">已结束</span></td>
+        <td><b>89</b> 单 / ¥7.1万</td>
+        <td><button class="btn sm">复盘</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 配置详情 -->
+  <div style="display:grid;grid-template-columns:1fr 380px;gap:18px;">
+    <div class="card">
+      <h3>《流水》直播专享 7 折 · 详情</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <label class="field"><span class="lbl">活动名称</span><input value="《流水》直播专享 7 折"/></label>
+        <label class="field"><span class="lbl">关联直播</span><select><option>5/17 流水技法课</option></select></label>
+        <label class="field"><span class="lbl">原价</span><input value="¥ 1280"/></label>
+        <label class="field"><span class="lbl">直播价</span><input value="¥ 896" style="color:#e74c3c;font-weight:bold;"/></label>
+        <label class="field"><span class="lbl">总库存</span><input value="100"/></label>
+        <label class="field"><span class="lbl">已售 / 剩余</span><input value="77 / 23" disabled/></label>
+        <label class="field"><span class="lbl">活动开始</span><input value="5/17 20:00"/></label>
+        <label class="field"><span class="lbl">活动结束</span><input value="直播结束 +30min"/></label>
+      </div>
+      <label class="field"><span class="lbl">参与门槛</span>
+        <select><option>所有用户</option><option>新用户专享</option><option>仅会员</option><option>仅指定标签用户</option></select>
+      </label>
+      <label class="field"><span class="lbl">叠加规则</span>
+        <div style="display:flex;gap:18px;font-size:13px;">
+          <label><input type="checkbox" checked style="width:auto;"/> 可叠加优惠券</label>
+          <label><input type="checkbox" style="width:auto;"/> 可使用积分</label>
+          <label><input type="checkbox" checked style="width:auto;"/> 赠送学习社群</label>
+        </div>
+      </label>
+      <label class="field"><span class="lbl">不可领取提示</span>
+        <textarea rows="2">活动已结束 / 名额已满 / 您不符合参与条件，请关注后续活动 ✦</textarea>
+      </label>
+      <div style="background:#fff5e1;border:1px solid #d6b06b;border-radius:8px;padding:10px;font-size:12px;color:#7a5b22;">
+        ⚠ 活动过期 / 库存不足 / 不符合条件 → 用户端展示对应提示。支付与核销对接客户 APP 既有能力。
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>直播间预览效果</h3>
+        <div style="background:linear-gradient(90deg,#fffaf0,#fff5e1);border:1px solid var(--gold);border-radius:8px;padding:10px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div style="width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,#d6b06b,#8b6a36);"></div>
+            <div style="flex:1;font-size:12px;">
+              <b>《流水》系统课</b><br/>
+              <span style="text-decoration:line-through;color:#888;">¥1280</span>
+              <span style="color:#e74c3c;font-weight:bold;font-size:14px;">¥896</span>
+              · 剩 23 席
+            </div>
+            <button class="btn primary sm">立即报名</button>
+          </div>
+          <div style="font-size:10px;color:#888;margin-top:6px;">⏱ 优惠倒计时 12:34</div>
+        </div>
+        <p style="font-size:11px;color:#888;margin:8px 0 0;">直播间课程卡片样式预览（用户端）</p>
+      </div>
+
+      <div class="card">
+        <h3>转化数据</h3>
+        <div style="font-size:13px;line-height:2;">
+          <div style="display:flex;justify-content:space-between;"><span>卡片曝光</span><b>1,243</b></div>
+          <div style="display:flex;justify-content:space-between;"><span>点击</span><b style="color:#23a06b;">86 (6.9%)</b></div>
+          <div style="display:flex;justify-content:space-between;"><span>提交订单</span><b>27</b></div>
+          <div style="display:flex;justify-content:space-between;"><span>支付成功</span><b style="color:#e74c3c;">23 (1.85%)</b></div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><span>实收金额</span><b style="color:var(--gold);">¥ 20,608</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="ops/promo.html" data-crumbs="运营端 / <b>优惠活动配置</b>" data-depth="1"></script>
+</body></html>

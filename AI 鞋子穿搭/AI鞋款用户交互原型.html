@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI鞋款用户交互原型</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(15, 23, 42, 0.78);
+      --card: rgba(255, 255, 255, 0.08);
+      --card-strong: rgba(255, 255, 255, 0.14);
+      --line: rgba(255, 255, 255, 0.14);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #7c3aed;
+      --primary-2: #06b6d4;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --shoe: #9a5a2f;
+      --sole: #3f2517;
+      --material: 0.28;
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 12%, rgba(124, 58, 237, 0.38), transparent 34%),
+        radial-gradient(circle at 82% 8%, rgba(6, 182, 212, 0.28), transparent 28%),
+        linear-gradient(135deg, #020617 0%, #111827 45%, #1e1b4b 100%);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .shell-card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 28px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+      padding: 32px;
+      min-height: 330px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.14);
+      border: 1px solid rgba(125, 211, 252, 0.24);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+      margin: 0;
+      max-width: 680px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 26px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 16px;
+      padding: 12px 16px;
+      color: var(--text);
+      background: var(--card-strong);
+      border: 1px solid var(--line);
+      transition: transform 0.2s, background 0.2s, border 0.2s;
+      min-height: 44px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn:focus-visible,
+    .tab:focus-visible,
+    .chip:focus-visible {
+      outline: 3px solid rgba(6, 182, 212, 0.55);
+      outline-offset: 2px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border-color: transparent;
+      box-shadow: 0 16px 42px rgba(124, 58, 237, 0.32);
+    }
+
+    .btn.success {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border-color: transparent;
+    }
+
+    .btn[disabled] {
+      opacity: 0.48;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .hero-preview {
+      padding: 22px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 14px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .phone {
+      position: sticky;
+      top: 20px;
+      border-radius: 36px;
+      padding: 14px;
+      background: linear-gradient(145deg, #111827, #020617);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    .phone-screen {
+      min-height: 760px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .statusbar {
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      color: #111827;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mobile-page {
+      padding: 18px;
+    }
+
+    .mobile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .tab {
+      border-radius: 14px;
+      padding: 10px;
+      background: #e2e8f0;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .tab.active {
+      background: #111827;
+      color: #fff;
+    }
+
+    .form-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #111827;
+    }
+
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 106px;
+      color: #0f172a;
+      background: #f8fafc;
+      resize: vertical;
+    }
+
+    .upload-box {
+      display: none;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 18px;
+      background: #f8fafc;
+      padding: 22px;
+      text-align: center;
+      color: #475569;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0 16px;
+    }
+
+    .chip {
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .chip.active {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #5b21b6;
+      font-weight: 800;
+    }
+
+    .progress-card {
+      display: none;
+      background: #111827;
+      color: #fff;
+      border-radius: 22px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .bar {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #7c3aed, #06b6d4);
+      border-radius: inherit;
+      transition: width 0.3s;
+    }
+
+    .preview-card {
+      display: none;
+      margin-top: 14px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+    }
+
+    .shoe-stage {
+      position: relative;
+      height: 190px;
+      border-radius: 22px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(124, 58, 237, 0.16), transparent 45%),
+        radial-gradient(circle at 70% 20%, rgba(6, 182, 212, 0.22), transparent 35%),
+        #e2e8f0;
+      display: grid;
+      place-items: center;
+      perspective: 780px;
+      user-select: none;
+    }
+
+    .watermark {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(15, 23, 42, 0.14);
+      font-weight: 900;
+      transform: rotate(-22deg);
+      font-size: 22px;
+      letter-spacing: 0.18em;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .shoe {
+      width: 250px;
+      height: 140px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(var(--rotate, -16deg)) rotateX(10deg);
+      transition: transform 0.16s ease;
+      filter: drop-shadow(0 28px 24px rgba(15, 23, 42, 0.22));
+    }
+
+    .shoe-footbed {
+      position: absolute;
+      left: 28px;
+      bottom: 28px;
+      width: 206px;
+      height: 46px;
+      background:
+        radial-gradient(circle at 78% 52%, rgba(255, 255, 255, 0.24), transparent 18%),
+        linear-gradient(135deg, rgba(255, 255, 255, var(--material)), transparent 42%),
+        color-mix(in srgb, var(--shoe) 74%, #f5deb3 26%);
+      border-radius: 62% 34% 42% 58% / 62% 46% 50% 52%;
+      transform: skewX(-12deg);
+      box-shadow: inset -16px -10px 18px rgba(63, 37, 23, 0.26);
+    }
+
+    .shoe-sole {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      width: 224px;
+      height: 24px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--sole) 72%, #fff 28%), var(--sole));
+      border-radius: 999px 70% 42% 60%;
+      transform: skewX(-10deg);
+      box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .sandal-strap {
+      position: absolute;
+      height: 15px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, var(--material)), transparent 40%),
+        var(--shoe);
+      border-radius: 999px;
+      border: 1px solid rgba(63, 37, 23, 0.34);
+      box-shadow: inset 0 -4px 7px rgba(63, 37, 23, 0.24), 0 4px 8px rgba(15, 23, 42, 0.12);
+    }
+
+    .strap-toe {
+      left: 150px;
+      top: 74px;
+      width: 72px;
+      transform: rotate(-5deg);
+    }
+
+    .strap-front {
+      left: 104px;
+      top: 65px;
+      width: 102px;
+      transform: rotate(-8deg);
+    }
+
+    .strap-mid {
+      left: 70px;
+      top: 55px;
+      width: 118px;
+      transform: rotate(-12deg);
+    }
+
+    .strap-ankle {
+      left: 42px;
+      top: 18px;
+      width: 112px;
+      height: 22px;
+      transform: rotate(-8deg);
+    }
+
+    .center-strap {
+      position: absolute;
+      left: 116px;
+      top: 30px;
+      width: 16px;
+      height: 58px;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, var(--material)), transparent 44%),
+        var(--shoe);
+      border-radius: 999px;
+      transform: rotate(-12deg);
+      border: 1px solid rgba(63, 37, 23, 0.34);
+      box-shadow: inset -4px 0 8px rgba(63, 37, 23, 0.2);
+    }
+
+    .heel-strap {
+      position: absolute;
+      left: 42px;
+      top: 36px;
+      width: 18px;
+      height: 64px;
+      background: var(--shoe);
+      border-radius: 999px;
+      transform: rotate(6deg);
+      box-shadow: inset -4px 0 8px rgba(63, 37, 23, 0.22);
+    }
+
+    .sandal-studs {
+      position: absolute;
+      left: 83px;
+      top: 57px;
+      width: 8px;
+      height: 8px;
+      background: #facc15;
+      border-radius: 50%;
+      box-shadow:
+        34px -8px 0 #facc15,
+        68px -16px 0 #facc15,
+        31px 12px 0 #facc15,
+        68px 3px 0 #facc15,
+        104px -2px 0 #facc15;
+      filter: drop-shadow(0 1px 1px rgba(63, 37, 23, 0.32));
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .swatch {
+      height: 38px;
+      border-radius: 14px;
+      border: 3px solid transparent;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.12);
+    }
+
+    .swatch.active {
+      border-color: #111827;
+    }
+
+    .material-grid,
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .small-btn {
+      min-height: 38px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 800;
+    }
+
+    .small-btn.active {
+      background: #111827;
+      color: #fff;
+    }
+
+    .workspace-panel {
+      display: grid;
+      gap: 18px;
+    }
+
+    .shell-card {
+      padding: 22px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      margin: 6px 0 0;
+      line-height: 1.6;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .flow-step {
+      position: relative;
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 116px;
+    }
+
+    .flow-step.active {
+      border-color: rgba(6, 182, 212, 0.55);
+      background: rgba(6, 182, 212, 0.12);
+    }
+
+    .flow-step b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      margin-bottom: 12px;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .flow-step span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .admin-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #dcfce7;
+      background: rgba(34, 197, 94, 0.14);
+    }
+
+    .tag.warn {
+      color: #fef3c7;
+      background: rgba(245, 158, 11, 0.18);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.72);
+      z-index: 20;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(560px, 100%);
+      background: #fff;
+      color: #0f172a;
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.36);
+    }
+
+    .modal-card h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .modal-card p {
+      color: #475569;
+      line-height: 1.7;
+    }
+
+    .ar-view {
+      height: 280px;
+      border-radius: 22px;
+      background:
+        linear-gradient(0deg, rgba(15, 23, 42, 0.32), rgba(15, 23, 42, 0.08)),
+        radial-gradient(circle at 50% 70%, #cbd5e1 0 9%, transparent 10%),
+        radial-gradient(circle at 42% 70%, #e2e8f0 0 12%, transparent 13%),
+        radial-gradient(circle at 58% 70%, #e2e8f0 0 12%, transparent 13%),
+        linear-gradient(135deg, #64748b, #cbd5e1);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+      margin: 16px 0;
+    }
+
+    .ar-view .shoe {
+      transform: scale(0.78) rotateY(-10deg) rotateX(12deg);
+      margin-top: 72px;
+    }
+
+    .pay-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .pay-card {
+      padding: 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 18px;
+      background: #f8fafc;
+    }
+
+    .pay-card strong {
+      display: block;
+      font-size: 24px;
+      margin: 8px 0;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .workspace,
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        position: static;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      .flow {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .app {
+        width: min(100% - 20px, 1180px);
+        padding-top: 14px;
+      }
+
+      .hero-card,
+      .shell-card {
+        border-radius: 22px;
+        padding: 18px;
+      }
+
+      .stats,
+      .flow,
+      .metric-grid,
+      .pay-options {
+        grid-template-columns: 1fr;
+      }
+
+      .phone-screen {
+        min-height: 720px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">AI 自动出款 · 三维预览 · AR 上脚 · 付费导出</div>
+        <h1>AI鞋款用户交互原型</h1>
+        <p>根据《AI鞋款产品方案》生成的可演示 HTML。它覆盖文字/图片生成、生成进度、三维鞋款查看、颜色材质改款、AR 试穿、付费解锁与后台运营监控。</p>
+        <div class="hero-actions">
+          <button class="btn primary" id="jumpGenerate">开始生成鞋款</button>
+          <button class="btn" id="jumpAdmin">查看后台面板</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>3D</strong><span>可拖动旋转预览</span></div>
+          <div class="stat"><strong>AR</strong><span>上脚试穿演示</span></div>
+          <div class="stat"><strong>付费</strong><span>高清无水印导出</span></div>
+        </div>
+      </div>
+
+      <div class="hero-preview shell-card">
+        <div class="shoe-stage" aria-label="鞋款展示预览">
+          <div class="watermark">FREE PREVIEW</div>
+          <div class="shoe" id="heroShoe">
+            <div class="shoe-footbed"></div>
+            <div class="shoe-sole"></div>
+            <div class="sandal-strap strap-ankle"></div>
+            <div class="heel-strap"></div>
+            <div class="center-strap"></div>
+            <div class="sandal-strap strap-mid"></div>
+            <div class="sandal-strap strap-front"></div>
+            <div class="sandal-strap strap-toe"></div>
+            <div class="sandal-studs"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" id="generateArea">
+      <div class="phone" aria-label="移动端用户流程原型">
+        <div class="phone-screen">
+          <div class="statusbar">
+            <span>18:16</span>
+            <span>AI Shoe</span>
+            <span>5G 82%</span>
+          </div>
+          <div class="mobile-page">
+            <div class="mobile-header">
+              <div>
+                <div style="font-size: 12px; color: #64748b; font-weight: 800;">欢迎回来</div>
+                <div style="font-size: 22px; font-weight: 900;">今天出一双新鞋</div>
+              </div>
+              <div class="avatar">AI</div>
+            </div>
+            <span class="pill">免费预览 · 高清导出需付费</span>
+
+            <div class="tabs" role="tablist" aria-label="生成方式">
+              <button class="tab active" data-mode="text">文字生成</button>
+              <button class="tab" data-mode="image">上传图片</button>
+            </div>
+
+            <div class="form-card">
+              <div id="textPanel">
+                <label for="prompt">描述你想要的鞋款</label>
+                <textarea id="prompt">一双真正的罗马角斗士凉鞋，开放鞋面，脚踝绑带，多条横向皮带，棕色皮革和金属铆钉装饰</textarea>
+              </div>
+              <div class="upload-box" id="imagePanel">
+                <strong>上传参考图</strong>
+                <p style="margin: 8px 0 0;">模拟上传：系统将提取鞋型轮廓、配色与风格。</p>
+              </div>
+
+              <div class="chips" aria-label="风格标签">
+                <button class="chip active">罗马角斗士</button>
+                <button class="chip">手工皮革</button>
+                <button class="chip">金属铆钉</button>
+                <button class="chip">复古度假</button>
+              </div>
+
+              <button class="btn primary" style="width: 100%;" id="generateBtn">生成 AI 鞋款</button>
+            </div>
+
+            <div class="progress-card" id="progressCard" aria-live="polite">
+              <strong id="progressTitle">正在创建生成任务</strong>
+              <div class="bar"><i id="progressBar"></i></div>
+              <div style="display: flex; justify-content: space-between; color: #cbd5e1; font-size: 12px;">
+                <span id="progressText">排队中</span>
+                <span id="progressNum">0%</span>
+              </div>
+            </div>
+
+            <div class="preview-card" id="previewCard">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap: 8px; margin-bottom: 12px;">
+                <div>
+                  <strong>Roma Gladiator 01</strong>
+                  <div style="color:#64748b; font-size:12px;">拖动鞋款可模拟 360° 查看</div>
+                </div>
+                <span class="pill" id="rightBadge">带水印</span>
+              </div>
+
+              <div class="shoe-stage" id="shoeStage">
+                <div class="watermark" id="watermark">FREE PREVIEW</div>
+                <div class="shoe" id="mainShoe">
+                  <div class="shoe-footbed"></div>
+                  <div class="shoe-sole"></div>
+                  <div class="sandal-strap strap-ankle"></div>
+                  <div class="heel-strap"></div>
+                  <div class="center-strap"></div>
+                  <div class="sandal-strap strap-mid"></div>
+                  <div class="sandal-strap strap-front"></div>
+                  <div class="sandal-strap strap-toe"></div>
+                  <div class="sandal-studs"></div>
+                </div>
+              </div>
+
+              <div class="control-row" aria-label="配色选择">
+                <button class="swatch active" data-color="#9a5a2f" style="background:#9a5a2f" aria-label="古铜棕"></button>
+                <button class="swatch" data-color="#6b3f24" style="background:#6b3f24" aria-label="深咖皮革"></button>
+                <button class="swatch" data-color="#1f2937" style="background:#1f2937" aria-label="黑色皮革"></button>
+                <button class="swatch" data-color="#c08a42" style="background:#c08a42" aria-label="焦糖皮革"></button>
+              </div>
+
+              <div class="material-grid" aria-label="材质选择">
+                <button class="small-btn active" data-material="0.28">针织鞋面</button>
+                <button class="small-btn" data-material="0.48">透明 TPU</button>
+                <button class="small-btn" data-material="0.16">磨砂皮革</button>
+                <button class="small-btn" data-material="0.36">机能网布</button>
+              </div>
+
+              <div class="action-grid">
+                <button class="btn" id="arBtn">AR 上脚</button>
+                <button class="btn primary" id="payBtn">高清导出</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="workspace-panel">
+        <div class="shell-card">
+          <div class="section-title">
+            <div>
+              <h2>用户交互流程</h2>
+              <p>对应方案模块五：从登录、生成、三维编辑、AR 试穿到付费导出。</p>
+            </div>
+          </div>
+          <div class="flow" id="flowSteps">
+            <div class="flow-step active"><b>1</b><strong>登录与协议</strong><span>用户阅读协议并进入首页。</span></div>
+            <div class="flow-step"><b>2</b><strong>选择生成方式</strong><span>文字描述或上传参考图。</span></div>
+            <div class="flow-step"><b>3</b><strong>生成任务</strong><span>系统排队、生成、失败可重试。</span></div>
+            <div class="flow-step"><b>4</b><strong>三维预览</strong><span>旋转查看，修改颜色材质。</span></div>
+            <div class="flow-step"><b>5</b><strong>AR 试穿</strong><span>模拟相机上脚预览。</span></div>
+            <div class="flow-step"><b>6</b><strong>付费解锁</strong><span>单次付费或会员导出。</span></div>
+            <div class="flow-step"><b>7</b><strong>权益下发</strong><span>高清无水印下载。</span></div>
+            <div class="flow-step"><b>8</b><strong>后台运营</strong><span>看数据、改价格、做风控。</span></div>
+          </div>
+        </div>
+
+        <div class="shell-card" id="adminPanel">
+          <div class="section-title">
+            <div>
+              <h2>平台管理后台</h2>
+              <p>运营人员可查看用户与交易数据，并调整价格、水印与风控规则。</p>
+            </div>
+            <span class="tag">实时演示</span>
+          </div>
+
+          <div class="admin-grid">
+            <div>
+              <div class="metric-grid">
+                <div class="metric"><strong id="metricUsers">2,438</strong><span>累计用户</span></div>
+                <div class="metric"><strong id="metricTasks">18,920</strong><span>生成任务</span></div>
+                <div class="metric"><strong id="metricPaid">12.6%</strong><span>付费转化</span></div>
+              </div>
+              <div style="height: 180px; margin-top: 14px; border-radius: 20px; background: linear-gradient(180deg, rgba(6,182,212,.24), rgba(124,58,237,.08)); border: 1px solid var(--line); display:flex; align-items:flex-end; gap:8px; padding:14px;">
+                <i style="height:40%; flex:1; background:#22d3ee; border-radius:10px 10px 0 0;"></i>
+                <i style="height:58%; flex:1; background:#38bdf8; border-radius:10px 10px 0 0;"></i>
+                <i style="height:45%; flex:1; background:#818cf8; border-radius:10px 10px 0 0;"></i>
+                <i style="height:74%; flex:1; background:#a78bfa; border-radius:10px 10px 0 0;"></i>
+                <i style="height:86%; flex:1; background:#c084fc; border-radius:10px 10px 0 0;"></i>
+                <i style="height:64%; flex:1; background:#f0abfc; border-radius:10px 10px 0 0;"></i>
+              </div>
+            </div>
+
+            <div class="admin-list">
+              <div class="admin-row">
+                <div><strong>单次高清导出</strong><br><span style="color: var(--muted); font-size: 13px;">当前价格 ¥9.9</span></div>
+                <button class="btn" id="priceBtn">调价</button>
+              </div>
+              <div class="admin-row">
+                <div><strong>水印策略</strong><br><span style="color: var(--muted); font-size: 13px;">账号 ID + 时间戳</span></div>
+                <span class="tag">启用</span>
+              </div>
+              <div class="admin-row">
+                <div><strong>风险用户</strong><br><span style="color: var(--muted); font-size: 13px;">异常下载 3 次</span></div>
+                <span class="tag warn">待处理</span>
+              </div>
+              <div class="admin-row">
+                <div><strong>会员月卡</strong><br><span style="color: var(--muted); font-size: 13px;">30 次高清导出</span></div>
+                <span class="tag">¥39/月</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal" id="arModal" role="dialog" aria-modal="true" aria-labelledby="arTitle">
+    <div class="modal-card">
+      <h3 id="arTitle">AR 上脚试穿</h3>
+      <p>模拟打开摄像头并完成足部识别。真实产品中需要请求相机权限，并对低光照或追踪失败提供降级预览。</p>
+      <div class="ar-view">
+        <div class="shoe">
+          <div class="shoe-footbed"></div>
+          <div class="shoe-sole"></div>
+          <div class="sandal-strap strap-ankle"></div>
+          <div class="heel-strap"></div>
+          <div class="center-strap"></div>
+          <div class="sandal-strap strap-mid"></div>
+          <div class="sandal-strap strap-front"></div>
+          <div class="sandal-strap strap-toe"></div>
+          <div class="sandal-studs"></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn" style="color:#0f172a;" data-close="arModal">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="payModal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+    <div class="modal-card">
+      <h3 id="payTitle">解锁高清无水印导出</h3>
+      <p>免费用户只能查看带水印预览。选择单次付费或会员后，系统将下发高清无水印下载权益。</p>
+      <div class="pay-options">
+        <div class="pay-card">
+          <span>单次导出</span>
+          <strong>¥9.9</strong>
+          <small>仅当前鞋款，24 小时内可下载 3 次</small>
+        </div>
+        <div class="pay-card">
+          <span>会员月卡</span>
+          <strong>¥39</strong>
+          <small>30 次高清导出，基础材质包开放</small>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button class="btn" style="color:#0f172a;" data-close="payModal">取消</button>
+        <button class="btn success" id="unlockBtn">模拟支付成功</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const tabs = document.querySelectorAll(".tab");
+    const textPanel = document.getElementById("textPanel");
+    const imagePanel = document.getElementById("imagePanel");
+    const generateBtn = document.getElementById("generateBtn");
+    const progressCard = document.getElementById("progressCard");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const progressNum = document.getElementById("progressNum");
+    const progressTitle = document.getElementById("progressTitle");
+    const previewCard = document.getElementById("previewCard");
+    const flowSteps = Array.from(document.querySelectorAll(".flow-step"));
+    const mainShoe = document.getElementById("mainShoe");
+    const heroShoe = document.getElementById("heroShoe");
+    const shoeStage = document.getElementById("shoeStage");
+    const watermark = document.getElementById("watermark");
+    const rightBadge = document.getElementById("rightBadge");
+
+    function setFlow(index) {
+      flowSteps.forEach((step, idx) => step.classList.toggle("active", idx <= index));
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((item) => item.classList.remove("active"));
+        tab.classList.add("active");
+        const isText = tab.dataset.mode === "text";
+        textPanel.style.display = isText ? "block" : "none";
+        imagePanel.style.display = isText ? "none" : "block";
+        setFlow(1);
+      });
+    });
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => chip.classList.toggle("active"));
+    });
+
+    generateBtn.addEventListener("click", () => {
+      setFlow(2);
+      previewCard.style.display = "none";
+      progressCard.style.display = "block";
+      generateBtn.disabled = true;
+      let value = 0;
+      const messages = ["创建生成任务", "排队中", "生成鞋身结构", "生成材质贴图", "准备三维预览"];
+      const timer = setInterval(() => {
+        value += 20;
+        progressBar.style.width = value + "%";
+        progressNum.textContent = value + "%";
+        progressTitle.textContent = "正在" + messages[Math.min(messages.length - 1, Math.floor(value / 25))];
+        progressText.textContent = value < 100 ? "预计还需 " + Math.max(1, 6 - Math.floor(value / 20)) + " 秒" : "生成成功";
+        if (value >= 100) {
+          clearInterval(timer);
+          setTimeout(() => {
+            progressCard.style.display = "none";
+            previewCard.style.display = "block";
+            generateBtn.disabled = false;
+            setFlow(3);
+          }, 420);
+        }
+      }, 360);
+    });
+
+    document.querySelectorAll(".swatch").forEach((swatch) => {
+      swatch.addEventListener("click", () => {
+        document.querySelectorAll(".swatch").forEach((item) => item.classList.remove("active"));
+        swatch.classList.add("active");
+        root.style.setProperty("--shoe", swatch.dataset.color);
+        setFlow(3);
+      });
+    });
+
+    document.querySelectorAll("[data-material]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-material]").forEach((item) => item.classList.remove("active"));
+        btn.classList.add("active");
+        root.style.setProperty("--material", btn.dataset.material);
+        setFlow(3);
+      });
+    });
+
+    let dragging = false;
+    let startX = 0;
+    let rotate = -16;
+
+    function applyRotate(targetRotate) {
+      rotate = targetRotate;
+      mainShoe.style.setProperty("--rotate", rotate + "deg");
+      heroShoe.style.setProperty("--rotate", rotate + "deg");
+    }
+
+    shoeStage.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      startX = event.clientX;
+      shoeStage.setPointerCapture(event.pointerId);
+    });
+
+    shoeStage.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      const delta = event.clientX - startX;
+      startX = event.clientX;
+      applyRotate(rotate + delta * 0.8);
+    });
+
+    shoeStage.addEventListener("pointerup", () => {
+      dragging = false;
+    });
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("open");
+    }
+
+    document.getElementById("arBtn").addEventListener("click", () => {
+      setFlow(4);
+      openModal("arModal");
+    });
+
+    document.getElementById("payBtn").addEventListener("click", () => {
+      setFlow(5);
+      openModal("payModal");
+    });
+
+    document.getElementById("unlockBtn").addEventListener("click", () => {
+      closeModal("payModal");
+      watermark.style.display = "none";
+      rightBadge.textContent = "已解锁";
+      rightBadge.style.background = "#dcfce7";
+      rightBadge.style.color = "#166534";
+      setFlow(6);
+      alert("支付成功：已下发高清无水印导出权益。");
+    });
+
+    document.querySelectorAll("[data-close]").forEach((btn) => {
+      btn.addEventListener("click", () => closeModal(btn.dataset.close));
+    });
+
+    document.querySelectorAll(".modal").forEach((modal) => {
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) modal.classList.remove("open");
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        document.querySelectorAll(".modal.open").forEach((modal) => modal.classList.remove("open"));
+      }
+    });
+
+    document.getElementById("jumpGenerate").addEventListener("click", () => {
+      document.getElementById("generateArea").scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.getElementById("jumpAdmin").addEventListener("click", () => {
+      document.getElementById("adminPanel").scrollIntoView({ behavior: "smooth" });
+      setFlow(7);
+    });
+
+    document.getElementById("priceBtn").addEventListener("click", () => {
+      setFlow(7);
+      alert("后台调价演示：单次高清导出价格可在套餐与定价配置页调整。");
+    });
+  </script>
+</body>
+</html>

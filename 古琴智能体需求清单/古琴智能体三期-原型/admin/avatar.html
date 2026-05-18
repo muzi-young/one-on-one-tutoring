@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>数字人资产 · 管理后台</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">数字人资产管理</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">统一管理形象、声音、授权与可用场景；过期或停用资产不可在直播中使用</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn">批量导入</button>
+      <button class="btn primary">+ 新增数字人</button>
+    </div>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v">4</div><div class="l">数字人总数</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">2</div><div class="l">启用中</div></div>
+    <div class="stat-card"><div class="v" style="color:#d99a2b;">1</div><div class="l">即将到期</div></div>
+    <div class="stat-card"><div class="v" style="color:#888;">1</div><div class="l">已停用</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;">
+    <div class="card">
+      <div style="position:relative;height:160px;background:linear-gradient(135deg,#d6b06b,#8b6a36);border-radius:8px;margin:-16px -16px 12px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:90px;height:120px;background:linear-gradient(180deg,#f4d9a8,#a06a2c);border-radius:50% 50% 30% 30% / 60% 60% 25% 25%;"></div>
+        <span style="position:absolute;top:8px;left:8px;" class="tag tag-green">启用中</span>
+      </div>
+      <h3 style="margin:0;">阿琴 · 数字人</h3>
+      <div style="font-size:12px;color:#888;margin-top:4px;">形象 + 克隆声音</div>
+      <div style="font-size:13px;line-height:1.9;margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权来源</span><span>自有</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权到期</span><span>2027-12-31</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">可用场景</span><span>直播/课件/答疑</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">已使用</span><span>36 场直播</span></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px;"><button class="btn sm" style="flex:1;">详情</button><button class="btn sm" style="flex:1;">编辑</button></div>
+    </div>
+
+    <div class="card" style="border-color:#d99a2b;">
+      <div style="position:relative;height:160px;background:linear-gradient(135deg,#f0a5a5,#c56d6d);border-radius:8px;margin:-16px -16px 12px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:90px;height:120px;background:linear-gradient(180deg,#fae0d4,#a06868);border-radius:50% 50% 30% 30% / 60% 60% 25% 25%;"></div>
+        <span style="position:absolute;top:8px;left:8px;" class="tag tag-yellow">即将到期</span>
+      </div>
+      <h3 style="margin:0;">清音 · 数字人</h3>
+      <div style="font-size:12px;color:#888;margin-top:4px;">克隆声音（女声）</div>
+      <div style="font-size:13px;line-height:1.9;margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权来源</span><span>客户授权</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权到期</span><span style="color:#d99a2b;font-weight:bold;">2026-08-01</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">可用场景</span><span>直播/课件</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">已使用</span><span>12 场直播</span></div>
+      </div>
+      <div style="background:#fff5e1;color:#7a5b22;font-size:11px;padding:6px 8px;border-radius:6px;margin-top:8px;">距到期 77 天，建议续约</div>
+      <div style="display:flex;gap:6px;margin-top:8px;"><button class="btn primary sm" style="flex:1;">续约</button><button class="btn sm" style="flex:1;">详情</button></div>
+    </div>
+
+    <div class="card">
+      <div style="position:relative;height:160px;background:linear-gradient(135deg,#a0e0c0,#5ba686);border-radius:8px;margin:-16px -16px 12px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:90px;height:120px;background:linear-gradient(180deg,#cef0dc,#5b8a72);border-radius:50% 50% 30% 30% / 60% 60% 25% 25%;"></div>
+        <span style="position:absolute;top:8px;left:8px;" class="tag tag-green">启用中</span>
+      </div>
+      <h3 style="margin:0;">逸尘 · 数字人</h3>
+      <div style="font-size:12px;color:#888;margin-top:4px;">男声 · 名家分身</div>
+      <div style="font-size:13px;line-height:1.9;margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权来源</span><span>名家协议</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权到期</span><span>2027-06-30</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">可用场景</span><span>直播/答疑</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">已使用</span><span>8 场直播</span></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:12px;"><button class="btn sm" style="flex:1;">详情</button><button class="btn sm" style="flex:1;">编辑</button></div>
+    </div>
+
+    <div class="card" style="opacity:.6;">
+      <div style="position:relative;height:160px;background:linear-gradient(135deg,#ccc,#888);border-radius:8px;margin:-16px -16px 12px;display:flex;align-items:center;justify-content:center;">
+        <div style="width:90px;height:120px;background:linear-gradient(180deg,#ddd,#777);border-radius:50% 50% 30% 30% / 60% 60% 25% 25%;"></div>
+        <span style="position:absolute;top:8px;left:8px;" class="tag tag-red">已停用</span>
+      </div>
+      <h3 style="margin:0;">素心 · 数字人</h3>
+      <div style="font-size:12px;color:#888;margin-top:4px;">客户自有形象</div>
+      <div style="font-size:13px;line-height:1.9;margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">授权到期</span><span style="color:#e74c3c;">2026-02-14（已过期）</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">原因</span><span>授权未续</span></div>
+      </div>
+      <div style="background:#fde2e2;color:#a13a3a;font-size:11px;padding:6px 8px;border-radius:6px;margin-top:8px;">不可用于新直播，历史回放正常</div>
+      <div style="display:flex;gap:6px;margin-top:8px;"><button class="btn primary sm" style="flex:1;">联系客户续授</button></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <h3>使用记录 / 操作日志</h3>
+    <table class="tbl">
+      <thead><tr><th>时间</th><th>资产</th><th>场景</th><th>操作人</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>5/16 19:00</td><td>阿琴</td><td>直播：流水技法课</td><td>运营·李</td><td>正常使用</td></tr>
+        <tr><td>5/15 10:24</td><td>清音</td><td>—</td><td>系统</td><td>授权临期预警（距到期 77 天）</td></tr>
+        <tr><td>5/13 20:00</td><td>阿琴</td><td>直播：阳关三叠</td><td>运营·王</td><td>正常使用</td></tr>
+        <tr><td>2/14 23:30</td><td>素心</td><td>—</td><td>系统</td><td>授权到期，自动停用</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="admin/avatar.html" data-crumbs="管理后台 / <b>数字人资产</b>" data-depth="1"></script>
+</body></html>

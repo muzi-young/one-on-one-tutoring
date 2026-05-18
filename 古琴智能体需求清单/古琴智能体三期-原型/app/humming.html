@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>哼唱识曲 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+  .mic-circle{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,#d6b06b,#8b6a36);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:54px;color:#fff;box-shadow:0 12px 40px rgba(176,137,73,.5);position:relative;cursor:pointer;transition:transform .2s;}
+  .mic-circle.recording{animation:pulse 1.2s infinite;background:linear-gradient(135deg,#e74c3c,#a13a3a);}
+  .mic-circle.recording::before,.mic-circle.recording::after{content:"";position:absolute;inset:-10px;border:2px solid #e74c3c;border-radius:50%;opacity:.6;animation:ring 1.5s infinite;}
+  .mic-circle.recording::after{animation-delay:.6s;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+  @keyframes ring{0%{transform:scale(1);opacity:.6;}100%{transform:scale(1.5);opacity:0;}}
+  .wave{display:flex;align-items:center;justify-content:center;gap:3px;height:50px;margin-top:24px;}
+  .wave span{display:inline-block;width:4px;background:#d6b06b;border-radius:2px;animation:wave 1s ease-in-out infinite;}
+  .wave span:nth-child(1){height:20%;animation-delay:0s;}
+  .wave span:nth-child(2){height:60%;animation-delay:.1s;}
+  .wave span:nth-child(3){height:90%;animation-delay:.2s;}
+  .wave span:nth-child(4){height:70%;animation-delay:.3s;}
+  .wave span:nth-child(5){height:40%;animation-delay:.4s;}
+  .wave span:nth-child(6){height:80%;animation-delay:.5s;}
+  .wave span:nth-child(7){height:50%;animation-delay:.6s;}
+  .wave span:nth-child(8){height:30%;animation-delay:.7s;}
+  @keyframes wave{0%,100%{transform:scaleY(.5);}50%{transform:scaleY(1.5);}}
+</style></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div style="background:#fff;padding:8px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;">
+      <a href="home.html" style="font-size:20px;color:#333;">‹</a>
+      <h3 style="margin:0;font-size:16px;">哼唱识曲</h3>
+      <span style="margin-left:auto;color:#888;font-size:12px;">使用帮助</span>
+    </div>
+    <div class="app-body" style="background:linear-gradient(180deg,#fffaf0 0%,#f7f3e9 100%);">
+
+      <!-- 提示 -->
+      <div style="text-align:center;padding:32px 24px 18px;">
+        <h2 class="ink-title" id="status-title" style="margin:0 0 6px;font-size:20px;">轻哼一段，识别古琴曲</h2>
+        <p id="status-sub" style="margin:0;color:#888;font-size:13px;">建议在安静环境下哼唱 5-10 秒</p>
+      </div>
+
+      <!-- 麦克风 -->
+      <div style="text-align:center;padding:24px 0;">
+        <div id="mic" class="mic-circle" onclick="toggleRec()">🎙</div>
+        <div id="wave-host" class="wave" style="display:none;">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <div id="timer" style="margin-top:14px;color:#b08949;font-family:monospace;font-size:16px;font-weight:600;display:none;">00:00</div>
+        <p id="tip" style="margin:14px 0 0;color:#888;font-size:12px;">点击麦克风开始录音</p>
+      </div>
+
+      <!-- 识别结果（默认隐藏） -->
+      <div id="result" class="section" style="display:none;">
+        <h4 class="ink-title" style="font-size:14px;margin:0 0 8px;">识别结果（按相似度）</h4>
+        <div style="background:#fff;border-radius:12px;padding:14px;border:2px solid var(--gold);margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-size:11px;color:#23a06b;font-weight:600;">⭐ 最佳匹配 · 相似度 92%</div>
+              <div class="ink-title" style="font-size:17px;margin-top:4px;">流水</div>
+              <div style="font-size:11px;color:#888;margin-top:2px;">古琴名曲 · 伯牙子期 · 高山流水</div>
+            </div>
+            <button class="btn primary sm" onclick="window.toast('正在播放...','success')">▶ 试听</button>
+          </div>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <a href="course.html" class="btn sm" style="flex:1;justify-content:center;">查看课程</a>
+            <a href="score.html" class="btn sm" style="flex:1;justify-content:center;">查看曲谱</a>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div><b>梅花三弄</b> <span style="color:#888;font-size:11px;">相似度 71%</span><div style="font-size:11px;color:#888;margin-top:2px;">古琴/古筝皆有</div></div>
+          <button class="btn sm">查看 ›</button>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+          <div><b>阳关三叠</b> <span style="color:#888;font-size:11px;">相似度 58%</span><div style="font-size:11px;color:#888;margin-top:2px;">王维《送元二使安西》</div></div>
+          <button class="btn sm">查看 ›</button>
+        </div>
+        <button class="btn" style="width:100%;justify-content:center;margin-top:12px;" onclick="resetRec()">🔄 重新哼唱</button>
+        <p style="font-size:11px;color:#888;text-align:center;margin:10px 0 0;">没找到？<a style="color:var(--gold);">反馈正确曲目</a> 帮我们改进</p>
+      </div>
+
+      <!-- 历史 -->
+      <div class="section" id="history-section">
+        <div class="section-title"><h4 class="ink-title">最近识别</h4><a>清空</a></div>
+        <div style="background:#fff;border-radius:10px;font-size:13px;overflow:hidden;">
+          <div style="padding:12px 14px;border-bottom:1px solid #f1ead7;display:flex;justify-content:space-between;align-items:center;">
+            <div><b>《阳关三叠》</b><div style="font-size:11px;color:#888;margin-top:2px;">昨天 21:34 · 相似度 88%</div></div>
+            <span style="color:var(--gold);">›</span>
+          </div>
+          <div style="padding:12px 14px;border-bottom:1px solid #f1ead7;display:flex;justify-content:space-between;align-items:center;">
+            <div><b>《梅花三弄》</b><div style="font-size:11px;color:#888;margin-top:2px;">3 天前 · 相似度 79%</div></div>
+            <span style="color:var(--gold);">›</span>
+          </div>
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;">
+            <div><b>未识别成功</b><div style="font-size:11px;color:#888;margin-top:2px;">5 天前 · 候选 3 首</div></div>
+            <span style="color:#888;">›</span>
+          </div>
+        </div>
+      </div>
+      <div style="height:90px;"></div>
+    </div>
+    <div class="tab-bar">
+      <a href="home.html"><span class="ic">🏠</span>首页</a>
+      <a href="course.html"><span class="ic">🎼</span>课程</a>
+      <a class="on"><span class="ic">🎙</span>识曲</a>
+      <a href="message.html"><span class="ic">💬</span>消息</a>
+      <a href="mine.html"><span class="ic">👤</span>我的</a>
+    </div>
+  </div></div>
+</div>
+</div>
+<script>
+  let recording=false, timer=null, sec=0;
+  function toggleRec(){
+    const mic = document.getElementById('mic');
+    const wave = document.getElementById('wave-host');
+    const tip = document.getElementById('tip');
+    const tm = document.getElementById('timer');
+    const title = document.getElementById('status-title');
+    const sub = document.getElementById('status-sub');
+    if(!recording){
+      recording = true; sec = 0;
+      mic.classList.add('recording'); mic.textContent = '⏹';
+      wave.style.display='flex'; tm.style.display='block'; tip.textContent='正在聆听… 再次点击结束';
+      title.textContent='聆听中'; sub.textContent='请保持轻松，自然哼唱旋律';
+      timer = setInterval(()=>{ sec++; tm.textContent = '00:'+String(sec).padStart(2,'0'); if(sec>=10) toggleRec(); },1000);
+    } else {
+      recording = false; clearInterval(timer);
+      mic.classList.remove('recording'); mic.textContent='🎙';
+      wave.style.display='none'; tm.style.display='none';
+      title.textContent='识别中...'; sub.textContent='匹配曲目特征库，请稍候';
+      tip.textContent='AI 比对中…';
+      setTimeout(()=>{
+        title.textContent='识别完成 ✓'; sub.textContent='为您找到 3 首相似曲目';
+        tip.textContent='';
+        document.getElementById('result').style.display='block';
+        document.getElementById('history-section').style.display='none';
+        window.toast('识别完成','success');
+      },1500);
+    }
+  }
+  function resetRec(){
+    document.getElementById('result').style.display='none';
+    document.getElementById('history-section').style.display='block';
+    document.getElementById('status-title').textContent='轻哼一段，识别古琴曲';
+    document.getElementById('status-sub').textContent='建议在安静环境下哼唱 5-10 秒';
+    document.getElementById('tip').textContent='点击麦克风开始录音';
+  }
+</script>
+<script src="../assets/sidebar.js" data-active="app/humming.html" data-crumbs="用户端APP / <b>哼唱识曲</b>" data-depth="1"></script>
+</body></html>

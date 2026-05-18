@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>消息中心 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div style="background:#fff;padding:14px;border-bottom:1px solid #eee;">
+      <h3 style="margin:0;font-size:17px;" class="ink-title">消息</h3>
+    </div>
+    <div class="app-body">
+      <!-- 分类入口 -->
+      <div style="background:#fff;display:grid;grid-template-columns:repeat(4,1fr);text-align:center;padding:14px 0;border-bottom:8px solid #f7f3e9;">
+        <div><div style="position:relative;width:44px;height:44px;border-radius:50%;background:#fff5e1;color:var(--gold);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;">⏰<span style="position:absolute;top:0;right:4px;background:#e74c3c;color:#fff;font-size:9px;padding:1px 5px;border-radius:9px;">2</span></div><div style="font-size:11px;margin-top:4px;">开播提醒</div></div>
+        <div><div style="position:relative;width:44px;height:44px;border-radius:50%;background:#e7efff;color:#3463d8;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;">🎼<span style="position:absolute;top:0;right:4px;background:#e74c3c;color:#fff;font-size:9px;padding:1px 5px;border-radius:9px;">1</span></div><div style="font-size:11px;margin-top:4px;">课程通知</div></div>
+        <div><div style="width:44px;height:44px;border-radius:50%;background:#dcf6f0;color:#108a72;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;">💬</div><div style="font-size:11px;margin-top:4px;">互动消息</div></div>
+        <div><div style="width:44px;height:44px;border-radius:50%;background:#eee;color:#666;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:20px;">📢</div><div style="font-size:11px;margin-top:4px;">系统通知</div></div>
+      </div>
+
+      <!-- 消息列表 -->
+      <div style="background:#fff;">
+        <div style="padding:14px;border-bottom:1px solid #f1ead7;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#d6b06b,#8b6a36);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">⏰</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><b style="font-size:14px;">开播提醒</b><span style="font-size:11px;color:#aaa;">5分钟前</span></div>
+            <div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">您预约的《广陵散》赏析夜话将在 10 分钟后开播，点击进入直播间 ›</div>
+            <div style="background:#fff5e1;border-radius:6px;padding:8px;margin-top:8px;display:flex;align-items:center;gap:8px;">
+              <div style="width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#d6b06b,#8b6a36);"></div>
+              <div style="font-size:11px;flex:1;">明晚 20:00 · 名家张老师</div>
+              <a href="live.html" class="btn primary sm">进入</a>
+            </div>
+          </div>
+          <span style="width:8px;height:8px;background:#e74c3c;border-radius:50%;"></span>
+        </div>
+
+        <div style="padding:14px;border-bottom:1px solid #f1ead7;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#5b8def,#3463d8);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">🎼</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><b style="font-size:14px;">课程通知</b><span style="font-size:11px;color:#aaa;">2小时前</span></div>
+            <div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">您购买的《流水》系统课已更新第 3 课「滚拂技法详解」，立即观看 ›</div>
+          </div>
+          <span style="width:8px;height:8px;background:#e74c3c;border-radius:50%;"></span>
+        </div>
+
+        <div style="padding:14px;border-bottom:1px solid #f1ead7;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#23c4a7,#108a72);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">💬</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><b style="font-size:14px;">阿琴 数字人</b><span style="font-size:11px;color:#aaa;">昨天</span></div>
+            <div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">您上次提到的"勾挑差别"问题，我整理了一份图解笔记 ›</div>
+          </div>
+        </div>
+
+        <div style="padding:14px;border-bottom:1px solid #f1ead7;display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#999,#666);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">📢</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><b style="font-size:14px;">系统通知</b><span style="font-size:11px;color:#aaa;">3天前</span></div>
+            <div style="font-size:12px;color:#666;margin-top:4px;line-height:1.5;">APP 已更新至 v3.0，新增数字人直播功能，立即体验 ›</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:80px;"></div>
+    </div>
+
+    <div class="tab-bar">
+      <a href="home.html"><span class="ic">🏠</span>首页</a>
+      <a href="course.html"><span class="ic">🎼</span>课程</a>
+      <a href="humming.html"><span class="ic">🎙</span>识曲</a>
+      <a class="on"><span class="ic">💬</span>消息</a>
+      <a href="mine.html"><span class="ic">👤</span>我的</a>
+    </div>
+  </div></div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="app/message.html" data-crumbs="用户端APP / <b>消息中心</b>" data-depth="1"></script>
+</body></html>

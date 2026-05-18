@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AI健康管家小程序 - 高保真交互原型</title>
+<style>
+:root{
+  --primary:#0F8F8C;
+  --primary-dark:#08706D;
+  --primary-soft:#E5F7F5;
+  --blue:#2563EB;
+  --blue-soft:#EAF1FF;
+  --orange:#F97316;
+  --orange-soft:#FFF3E7;
+  --red:#E11D48;
+  --red-soft:#FFF1F3;
+  --purple:#7C3AED;
+  --purple-soft:#F3EAFE;
+  --green:#16A34A;
+  --green-soft:#EAF7EF;
+  --text:#152022;
+  --muted:#647275;
+  --hint:#9AA6A8;
+  --line:#E6ECEC;
+  --bg:#F4F8F8;
+  --card:#FFFFFF;
+  --shadow:0 14px 44px rgba(6,31,34,.18);
+  --shadow-sm:0 6px 18px rgba(15,45,48,.08);
+  --radius:18px;
+  --radius-sm:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  min-height:100vh;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  background:
+    radial-gradient(circle at 12% 16%,rgba(15,143,140,.28),transparent 28%),
+    radial-gradient(circle at 86% 20%,rgba(37,99,235,.22),transparent 30%),
+    linear-gradient(135deg,#0B1F24 0%,#142A35 48%,#0D161A 100%);
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:28px;
+}
+.stage{width:min(1180px,100%);display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:center}
+.phone{
+  width:390px;height:844px;background:var(--bg);border-radius:42px;overflow:hidden;position:relative;
+  box-shadow:0 0 0 8px #101516,0 0 0 10px #313A3C,0 28px 70px rgba(0,0,0,.45);
+}
+.phone:before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:116px;height:28px;background:#101516;border-radius:0 0 18px 18px;z-index:50}
+.status{height:44px;padding:12px 24px 0;display:flex;justify-content:space-between;align-items:flex-start;font-size:12px;font-weight:700;color:#172123;background:var(--card)}
+.page{position:absolute;inset:44px 0 66px;background:var(--bg);display:none;flex-direction:column;overflow:hidden}
+.page.active{display:flex}
+.header{height:54px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);display:flex;align-items:center;padding:0 16px;border-bottom:1px solid rgba(230,236,236,.75);flex-shrink:0}
+.back,.head-action{width:42px;height:42px;border:0;background:transparent;border-radius:14px;color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.back:active,.head-action:active{background:#EEF4F4}
+.title{flex:1;text-align:center;font-size:17px;font-weight:800}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:18px;-webkit-overflow-scrolling:touch}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:66px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px 8px;z-index:20}
+.tab{border:0;background:transparent;color:var(--hint);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.tab i{width:24px;height:24px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:800}
+.tab.active{color:var(--primary);font-weight:700}
+.tab.active i{background:var(--primary-soft)}
+.card{background:var(--card);border:1px solid rgba(230,236,236,.9);border-radius:var(--radius);box-shadow:var(--shadow-sm);margin:12px 16px;padding:16px}
+.section-title{font-size:17px;font-weight:850;margin:20px 18px 10px;display:flex;align-items:center;justify-content:space-between}
+.section-title small{font-size:12px;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}.hint{color:var(--hint)}.bold{font-weight:800}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}
+.pill.green{background:var(--green-soft);color:var(--green)}.pill.blue{background:var(--blue-soft);color:var(--blue)}
+.pill.orange{background:var(--orange-soft);color:var(--orange)}.pill.red{background:var(--red-soft);color:var(--red)}
+.pill.purple{background:var(--purple-soft);color:var(--purple)}.pill.gray{background:#EEF2F2;color:#5C696B}
+.btn{min-height:42px;border:0;border-radius:14px;padding:0 16px;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:.18s ease}
+.btn:active{transform:scale(.98)}.btn.primary{background:var(--primary);color:white}.btn.dark{background:#102629;color:white}
+.btn.ghost{background:#F1F6F6;color:var(--text)}.btn.outline{background:white;color:var(--primary);border:1px solid #B9DFDC}
+.grid{display:grid;gap:10px}.grid.two{grid-template-columns:1fr 1fr}.grid.three{grid-template-columns:repeat(3,1fr)}
+.hero{margin:12px 16px 0;padding:18px;border-radius:24px;color:white;background:linear-gradient(135deg,#0F8F8C,#1F7AE0 62%,#6D4BEA);box-shadow:var(--shadow)}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start}.avatar{width:44px;height:44px;border-radius:18px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-weight:900;border:1px solid rgba(255,255,255,.26)}
+.score{font-size:42px;line-height:1;font-weight:900;margin-top:16px;letter-spacing:-1px}.score span{font-size:13px;font-weight:700;opacity:.86}
+.hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}.hero-metric{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:10px}.hero-metric b{display:block;font-size:15px}.hero-metric small{font-size:10px;opacity:.82}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 16px}
+.quick button{background:white;border:1px solid var(--line);border-radius:18px;padding:12px 6px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:11px;color:var(--text);font-weight:700;cursor:pointer}
+.quick .qicon{width:34px;height:34px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:13px}
+.q1{background:linear-gradient(135deg,#0F8F8C,#30B8AE)}.q2{background:linear-gradient(135deg,#2563EB,#60A5FA)}.q3{background:linear-gradient(135deg,#7C3AED,#A78BFA)}.q4{background:linear-gradient(135deg,#F97316,#FDBA74)}.q5{background:linear-gradient(135deg,#16A34A,#7CD88A)}.q6{background:linear-gradient(135deg,#E11D48,#FB7185)}.q7{background:linear-gradient(135deg,#334155,#64748B)}.q8{background:linear-gradient(135deg,#0891B2,#22D3EE)}
+.timeline{display:flex;flex-direction:column;gap:12px}.timeline-item{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start}.dot{width:34px;height:34px;border-radius:14px;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:900}.line-card{background:#F8FBFB;border:1px solid var(--line);border-radius:14px;padding:10px}
+.ai-tabs{display:flex;margin:12px 16px;background:#EAF1F1;border-radius:16px;padding:4px}.ai-tabs button{flex:1;height:36px;border:0;border-radius:13px;background:transparent;font-weight:800;color:var(--muted);cursor:pointer}.ai-tabs button.active{background:white;color:var(--primary);box-shadow:0 3px 12px rgba(13,92,93,.12)}
+.chat{display:flex;flex-direction:column;gap:12px;margin:12px 16px}.bubble{max-width:86%;padding:12px 13px;border-radius:18px;font-size:13px;line-height:1.55}.bubble.user{align-self:flex-end;background:var(--primary);color:white;border-bottom-right-radius:6px}.bubble.ai{align-self:flex-start;background:white;border:1px solid var(--line);border-bottom-left-radius:6px}.source{margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.chat-input{margin:8px 16px 14px;background:white;border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;gap:8px}.chat-input input{flex:1;border:0;outline:0;padding:0 8px;font-size:14px}.send{width:40px;height:40px;border-radius:14px;border:0;background:var(--primary);color:white;font-weight:900}
+.result-card{background:linear-gradient(180deg,#fff,#F7FEFD);border:1px solid #CFE9E6;border-radius:18px;padding:14px;margin-top:10px}.result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.confidence{height:8px;background:#E7EEEE;border-radius:99px;overflow:hidden}.confidence span{display:block;height:100%;background:linear-gradient(90deg,#16A34A,#0F8F8C);border-radius:99px}
+.upload{border:1.5px dashed #A9D8D4;border-radius:20px;background:#F4FCFB;padding:18px;text-align:center}.upload .big{font-size:32px;font-weight:900;color:var(--primary);margin-bottom:8px}
+.metric-row{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}.metric-row:last-child{border-bottom:0}.metric-name{font-weight:800}.metric-value{font-weight:900}.abnormal{color:var(--red)}
+.family-switch{display:flex;gap:8px;overflow:auto;margin:12px 16px 4px}.member{min-width:92px;background:white;border:1px solid var(--line);border-radius:18px;padding:10px;text-align:center;cursor:pointer}.member.active{border-color:var(--primary);background:var(--primary-soft)}.member .face{width:38px;height:38px;border-radius:16px;background:#DFF5F3;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--primary)}
+.chart{height:150px;border-radius:18px;background:linear-gradient(180deg,#F8FCFC,#EEF7F7);position:relative;overflow:hidden;border:1px solid var(--line);margin-top:12px}.chart svg{width:100%;height:100%}.chart-label{display:flex;justify-content:space-between;font-size:11px;color:var(--hint);margin-top:8px}
+.list-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.list-item:last-child{border-bottom:0}.thumb{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,#E5F7F5,#EAF1FF);display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--primary);flex-shrink:0}.list-main{flex:1;min-width:0}.list-main h4{font-size:14px;margin-bottom:4px}.list-main p{font-size:12px;color:var(--muted);line-height:1.45}.price{font-size:18px;font-weight:900;color:var(--primary)}
+.package{display:grid;grid-template-columns:1fr auto;gap:10px;border:1px solid var(--line);border-radius:18px;padding:14px;background:white;margin-bottom:10px}.package h4{font-size:15px}.package p{font-size:12px;color:var(--muted);line-height:1.45;margin-top:4px}
+.nine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.eco{background:#F8FBFB;border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center;font-size:11px;font-weight:800}.eco b{display:block;font-size:18px;color:var(--primary);margin-bottom:6px}
+.drawer{position:absolute;left:0;right:0;bottom:-70%;height:66%;background:white;border-radius:28px 28px 0 0;z-index:70;box-shadow:0 -20px 46px rgba(0,0,0,.18);transition:.28s ease;padding:16px;display:flex;flex-direction:column}.drawer.open{bottom:0}.drawer-handle{width:44px;height:5px;background:#DDE5E5;border-radius:99px;margin:0 auto 12px}.drawer-body{overflow:auto}.shade{position:absolute;inset:0;background:rgba(5,20,22,.38);z-index:60;display:none}.shade.show{display:block}
+.toast{position:absolute;left:24px;right:24px;bottom:86px;background:#102629;color:white;border-radius:16px;padding:12px 14px;font-size:13px;z-index:90;box-shadow:var(--shadow);display:none}.toast.show{display:block;animation:fadeUp .22s ease}@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.side{color:white}.side .panel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:24px;backdrop-filter:blur(18px);box-shadow:0 18px 60px rgba(0,0,0,.22)}.side h1{font-size:32px;line-height:1.18;margin-bottom:12px}.side p{color:rgba(255,255,255,.72);line-height:1.7;font-size:14px}.flow-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.flow-nav button{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:white;border-radius:16px;padding:12px;text-align:left;cursor:pointer}.flow-nav button:hover,.flow-nav button.active{background:rgba(15,143,140,.36);border-color:rgba(126,230,221,.5)}.flow-nav b{display:block;font-size:14px;margin-bottom:4px}.flow-nav span{font-size:11px;color:rgba(255,255,255,.66)}.script{margin-top:18px;background:rgba(255,255,255,.08);border-radius:20px;padding:16px}.script ol{padding-left:18px;color:rgba(255,255,255,.76);font-size:13px;line-height:1.8}
+@media(max-width:860px){body{padding:12px}.stage{grid-template-columns:1fr;justify-items:center}.side{display:none}.phone{width:375px;height:812px}}
+</style>
+</head>
+<body>
+<main class="stage">
+  <section class="phone" aria-label="AI健康管家小程序手机原型">
+    <div class="status"><span>19:02</span><span>5G  96%</span></div>
+
+    <section class="page active" id="home">
+      <div class="header"><button class="back" style="visibility:hidden">‹</button><div class="title">AI健康管家</div><button class="head-action" onclick="openDrawer('privacy')">合规</button></div>
+      <div class="content">
+        <div class="hero">
+          <div class="hero-top">
+            <div><div style="font-size:13px;opacity:.86">晚上好，李女士</div><div style="font-size:20px;font-weight:900;margin-top:4px">家庭健康今日稳定</div></div>
+            <div class="avatar">李</div>
+          </div>
+          <div class="score">86 <span>家庭健康评分</span></div>
+          <div class="hero-metrics">
+            <div class="hero-metric"><b>126/82</b><small>最近血压</small></div>
+            <div class="hero-metric"><b>6.3</b><small>空腹血糖</small></div>
+            <div class="hero-metric"><b>2项</b><small>待办提醒</small></div>
+          </div>
+        </div>
+        <div class="quick">
+          <button onclick="showPage('ai')"><span class="qicon q1">AI</span>AI问诊</button>
+          <button onclick="showPage('report')"><span class="qicon q2">报</span>报告解读</button>
+          <button onclick="showPage('trend')"><span class="qicon q3">趋</span>硬件趋势</button>
+          <button onclick="showPage('guide')"><span class="qicon q4">导</span>就医助手</button>
+          <button onclick="showPage('family')"><span class="qicon q5">家</span>家庭闭环</button>
+          <button onclick="showPage('shop')"><span class="qicon q6">包</span>服务包</button>
+          <button onclick="showPage('eco')"><span class="qicon q7">九</span>服务生态</button>
+          <button onclick="showPage('govern')"><span class="qicon q8">审</span>AI治理</button>
+        </div>
+        <div class="section-title">今日健康待办 <small>2项待完成</small></div>
+        <div class="card timeline">
+          <div class="timeline-item"><div class="dot">1</div><div class="line-card"><b>爸爸血压复测</b><p class="muted" style="font-size:12px;margin-top:4px">连续 3 天收缩压偏高，建议今晚 20:00 再测一次。</p></div></div>
+          <div class="timeline-item"><div class="dot">2</div><div class="line-card"><b>体检报告待解读</b><p class="muted" style="font-size:12px;margin-top:4px">发现血脂异常项，建议查看 AI 解读并保存档案。</p></div></div>
+        </div>
+        <div class="section-title">推荐服务 <small>基于家庭画像</small></div>
+        <div class="card">
+          <div class="package"><div><span class="pill green">家庭年卡</span><h4 style="margin-top:8px">家庭慢病管理年卡</h4><p>含 4 位成员档案、月报、AI解读、复诊提醒与服务包折扣。</p></div><div class="price">699</div></div>
+          <button class="btn primary" style="width:100%" onclick="showPage('shop')">查看服务包商城</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="ai">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">AI 健管与导诊</div><button class="head-action" onclick="openDrawer('sources')">依据</button></div>
+      <div class="content">
+        <div class="ai-tabs"><button class="active" id="tabHealth" onclick="switchAi('health')">AI健管</button><button id="tabGuide" onclick="switchAi('guide')">AI导诊</button></div>
+        <div class="chat" id="chatBox">
+          <div class="bubble ai"><b>AI健康管家</b><br>我可以基于你的健康档案、硬件数据和医学知识库，提供健康信息参考。请描述你的问题。</div>
+          <div class="bubble user">最近血压有点高，早上测到 148/92，需要去医院吗？</div>
+          <div class="bubble ai">
+            你的收缩压已高于常规参考范围，建议先复测并记录近期饮食、睡眠和用药情况。若连续多次偏高，建议预约心内科或全科门诊评估。
+            <div class="source"><span class="pill blue">指南依据</span><span class="pill green">置信度 86%</span><span class="pill orange">不替代诊断</span></div>
+          </div>
+        </div>
+        <div class="card result-card">
+          <div class="result-head"><b>AI 风险分级</b><span class="pill orange">建议复诊</span></div>
+          <p class="muted" style="font-size:12px;line-height:1.6">未命中急诊风险，但连续偏高需关注。AI 已生成病情摘要，可用于就医沟通。</p>
+          <div class="confidence" style="margin:10px 0"><span style="width:86%"></span></div>
+          <div class="grid two"><button class="btn outline" onclick="showPage('guide')">预约就医</button><button class="btn primary" onclick="toast('健管小结已保存到爸爸档案')">保存小结</button></div>
+        </div>
+      </div>
+      <div class="chat-input"><input id="aiInput" value="我还在吃降压药，可以停吗？"><button class="send" onclick="sendAi()">发</button></div>
+    </section>
+
+    <section class="page" id="report">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">报告解读中心</div><button class="head-action" onclick="toast('报告原件已加密保存')">保存</button></div>
+      <div class="content">
+        <div class="card upload" onclick="toast('已模拟上传：2026春季体检报告.pdf')"><div class="big">＋</div><b>上传体检/检验报告</b><p class="muted" style="font-size:12px;margin-top:6px">支持图片、PDF，自动识别异常项并归档。</p></div>
+        <div class="section-title">识别结果 <small>3项异常</small></div>
+        <div class="card">
+          <div class="metric-row"><div><div class="metric-name">低密度脂蛋白胆固醇</div><small class="muted">参考范围 0 - 3.4 mmol/L</small></div><div class="metric-value abnormal">4.1 ↑</div></div>
+          <div class="metric-row"><div><div class="metric-name">空腹血糖</div><small class="muted">参考范围 3.9 - 6.1 mmol/L</small></div><div class="metric-value abnormal">6.3 ↑</div></div>
+          <div class="metric-row"><div><div class="metric-name">尿酸</div><small class="muted">参考范围 150 - 420 μmol/L</small></div><div class="metric-value">398</div></div>
+        </div>
+        <div class="card">
+          <span class="pill blue">AI 解读</span>
+          <h3 style="font-size:16px;margin:10px 0">可能与饮食结构、体重和近期运动不足相关</h3>
+          <p class="muted" style="font-size:13px;line-height:1.7">建议优先进行生活方式干预，并在 1-3 个月后复查血脂和血糖。若合并高血压、糖尿病家族史或胸闷等症状，建议预约心内科或内分泌科。</p>
+          <div class="source"><span class="pill green">来源：血脂管理指南</span><span class="pill orange">非诊断结论</span></div>
+          <button class="btn primary" style="width:100%;margin-top:12px" onclick="showPage('shop')">查看推荐服务包</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="family">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">家庭健康闭环</div><button class="head-action" onclick="toast('已通知授权家属')">通知</button></div>
+      <div class="content">
+        <div class="family-switch">
+          <div class="member active"><div class="face">父</div><b>爸爸</b><br><small class="muted">高血压</small></div>
+          <div class="member"><div class="face">母</div><b>妈妈</b><br><small class="muted">血脂关注</small></div>
+          <div class="member"><div class="face">童</div><b>孩子</b><br><small class="muted">成长记录</small></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><span class="pill orange">风险标签</span><h3 style="font-size:18px;margin-top:8px">心血管风险中等</h3></div><div class="score" style="font-size:34px;color:var(--primary);margin:0">72</div></div>
+          <div class="timeline" style="margin-top:14px">
+            <div class="timeline-item"><div class="dot">测</div><div class="line-card">今日 20:00 血压复测</div></div>
+            <div class="timeline-item"><div class="dot">药</div><div class="line-card">晚饭后 30 分钟用药提醒</div></div>
+            <div class="timeline-item"><div class="dot">诊</div><div class="line-card">7 天后建议复诊或线上咨询</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <b>家庭健康月报</b>
+          <p class="muted" style="font-size:13px;line-height:1.7;margin-top:8px">本月完成 19 次测量，异常 4 次；报告解读 1 次；AI 咨询 5 次；建议优先购买慢病管理服务包。</p>
+          <button class="btn outline" style="width:100%;margin-top:12px" onclick="toast('月报已生成，可分享给家属')">生成并分享月报</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="trend">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">硬件趋势分析</div><button class="head-action" onclick="toast('正在同步设备数据')">同步</button></div>
+      <div class="content">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div><span class="pill green">血压计在线</span><h3 style="font-size:18px;margin-top:8px">近 7 天血压趋势</h3></div><button class="btn ghost" onclick="toast('已切换到血糖仪')">切换</button></div>
+          <div class="chart">
+            <svg viewBox="0 0 330 150" preserveAspectRatio="none">
+              <polyline points="10,92 58,78 106,86 154,62 202,58 250,44 318,36" fill="none" stroke="#0F8F8C" stroke-width="4" stroke-linecap="round"/>
+              <polyline points="10,112 58,104 106,108 154,98 202,92 250,88 318,82" fill="none" stroke="#F97316" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="chart-label"><span>周一</span><span>周三</span><span>周五</span><span>今天</span></div>
+        </div>
+        <div class="card">
+          <span class="pill red">异常波动</span>
+          <h3 style="font-size:16px;margin:10px 0">连续 3 天收缩压上升</h3>
+          <p class="muted" style="font-size:13px;line-height:1.7">AI 建议今晚复测，并记录睡眠、盐分摄入和用药情况。若仍高于 140/90，建议预约就医。</p>
+          <div class="grid two" style="margin-top:12px"><button class="btn outline" onclick="showPage('ai')">咨询AI</button><button class="btn primary" onclick="showPage('guide')">预约医生</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="guide">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">就医助手</div><button class="head-action" onclick="openDrawer('hospital')">画像</button></div>
+      <div class="content">
+        <div class="card">
+          <span class="pill blue">智能匹配</span>
+          <h3 style="font-size:18px;margin:10px 0">推荐心内科 / 全科门诊</h3>
+          <p class="muted" style="font-size:13px;line-height:1.7">匹配理由：血压连续偏高、年龄 58 岁、有家族史，建议优先选择具备慢病管理能力的机构。</p>
+        </div>
+        <div class="card">
+          <div class="list-item"><div class="thumb">三甲</div><div class="list-main"><h4>市中心医院 心内科</h4><p>擅长高血压、冠心病管理；明日 09:30 有号</p><span class="pill green">匹配度 92%</span></div><button class="btn primary" onclick="toast('预约成功：明日 09:30')">预约</button></div>
+          <div class="list-item"><div class="thumb">社康</div><div class="list-main"><h4>阳光社区全科门诊</h4><p>距离 1.2km，支持慢病复诊和用药咨询</p><span class="pill blue">可当日</span></div><button class="btn outline" onclick="toast('已加入就医计划')">加入</button></div>
+        </div>
+        <div class="card">
+          <b>就诊前材料清单</b>
+          <div class="timeline" style="margin-top:12px">
+            <div class="timeline-item"><div class="dot">证</div><div class="line-card">身份证、医保卡、既往病历</div></div>
+            <div class="timeline-item"><div class="dot">报</div><div class="line-card">近 7 天血压记录、体检报告</div></div>
+            <div class="timeline-item"><div class="dot">药</div><div class="line-card">当前服用药品清单和剂量</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="shop">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">服务包商城</div><button class="head-action" onclick="toast('权益卡已打开')">权益</button></div>
+      <div class="content">
+        <div class="card" style="background:linear-gradient(135deg,#102629,#0F8F8C);color:white">
+          <span class="pill" style="background:rgba(255,255,255,.16);color:white">AI 推荐</span>
+          <h3 style="font-size:20px;margin:10px 0">慢病管理包更适合爸爸</h3>
+          <p style="font-size:13px;line-height:1.7;opacity:.82">基于血压趋势、年龄、报告指标和家庭风险标签推荐。</p>
+        </div>
+        <div class="card">
+          <div class="package"><div><span class="pill green">P1增强</span><h4>高血压慢病管理包</h4><p>12次数据解读、4次复诊提醒、1次营养咨询、服务有效期90天。</p></div><div><div class="price">299</div><button class="btn primary" onclick="toast('已生成服务包权益卡')">购买</button></div></div>
+          <div class="package"><div><span class="pill blue">报告关联</span><h4>血脂血糖复查包</h4><p>含复查项目预约、报告解读和就医材料清单。</p></div><div><div class="price">199</div><button class="btn outline" onclick="toast('已加入购物车')">加入</button></div></div>
+          <div class="package"><div><span class="pill purple">家庭年卡</span><h4>家庭健康年卡</h4><p>最多4位成员，月报、AI解读、异常提醒、服务包折扣。</p></div><div><div class="price">699</div><button class="btn outline" onclick="toast('已查看权益详情')">详情</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="eco">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">九宫格服务生态</div><button class="head-action" onclick="toast('已切换商户视角')">商户</button></div>
+      <div class="content">
+        <div class="card">
+          <div class="nine-grid">
+            <div class="eco"><b>医</b>医院</div><div class="eco"><b>药</b>药店</div><div class="eco"><b>检</b>检测机构</div>
+            <div class="eco"><b>体</b>体检中心</div><div class="eco"><b>营</b>营养机构</div><div class="eco"><b>心</b>心理机构</div>
+            <div class="eco"><b>康</b>康复机构</div><div class="eco"><b>护</b>护理机构</div><div class="eco"><b>保</b>保险/健管</div>
+          </div>
+        </div>
+        <div class="card">
+          <b>业态专属资质审核</b>
+          <div class="timeline" style="margin-top:12px">
+            <div class="timeline-item"><div class="dot">1</div><div class="line-card">医院：医疗机构执业许可证、医生资质</div></div>
+            <div class="timeline-item"><div class="dot">2</div><div class="line-card">药店：药品经营许可证、处方药销售规则</div></div>
+            <div class="timeline-item"><div class="dot">3</div><div class="line-card">检测：检测资质、报告模板、履约范围</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="govern">
+      <div class="header"><button class="back" onclick="showPage('home')">‹</button><div class="title">AI合规治理</div><button class="head-action" onclick="toast('审计日志已导出')">导出</button></div>
+      <div class="content">
+        <div class="card">
+          <div class="grid two">
+            <div class="line-card"><span class="pill red">高风险</span><h3 style="font-size:22px;margin-top:8px">18</h3><small class="muted">今日拦截</small></div>
+            <div class="line-card"><span class="pill green">质检通过</span><h3 style="font-size:22px;margin-top:8px">96%</h3><small class="muted">AI回复抽检</small></div>
+          </div>
+        </div>
+        <div class="card">
+          <b>AI 回复质检闭环</b>
+          <div class="timeline" style="margin-top:12px">
+            <div class="timeline-item"><div class="dot">抽</div><div class="line-card">按高风险、低置信、投诉关联自动抽检</div></div>
+            <div class="timeline-item"><div class="dot">审</div><div class="line-card">医学专家标注：通过 / 优化 / 违规</div></div>
+            <div class="timeline-item"><div class="dot">改</div><div class="line-card">沉淀风险案例库，更新知识库和拦截规则</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="pill orange">合规边界</span>
+          <p class="muted" style="font-size:13px;line-height:1.7;margin-top:8px">AI 输出仅作为健康信息参考和导诊辅助，不替代医生诊断、治疗建议和处方行为。</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="shade" id="shade" onclick="closeDrawer()"></div>
+    <aside class="drawer" id="drawer"><div class="drawer-handle"></div><div class="drawer-body" id="drawerBody"></div></aside>
+    <div class="toast" id="toast"></div>
+
+    <nav class="tabbar">
+      <button class="tab active" data-page="home" onclick="showPage('home')"><i>首</i><span>首页</span></button>
+      <button class="tab" data-page="ai" onclick="showPage('ai')"><i>AI</i><span>问诊</span></button>
+      <button class="tab" data-page="family" onclick="showPage('family')"><i>家</i><span>家庭</span></button>
+      <button class="tab" data-page="shop" onclick="showPage('shop')"><i>商</i><span>商城</span></button>
+      <button class="tab" data-page="govern" onclick="showPage('govern')"><i>治</i><span>治理</span></button>
+    </nav>
+  </section>
+
+  <aside class="side">
+    <div class="panel">
+      <h1>AI健康管家<br>高保真交互原型</h1>
+      <p>面向客户演示的单文件原型，覆盖对标悦尔后的核心能力：AI可信医疗辅助、家庭全生命周期健康、千院/多机构导诊、报告解读、硬件趋势、服务包商城、九宫格生态和合规治理。</p>
+      <div class="flow-nav">
+        <button class="active" onclick="showPage('home')"><b>01 首页总览</b><span>家庭评分、快捷入口、待办</span></button>
+        <button onclick="showPage('ai')"><b>02 AI问诊</b><span>来源依据、置信度、风险提示</span></button>
+        <button onclick="showPage('report')"><b>03 报告解读</b><span>上传识别、异常解释、服务推荐</span></button>
+        <button onclick="showPage('family')"><b>04 家庭闭环</b><span>成员、任务、月报、授权</span></button>
+        <button onclick="showPage('trend')"><b>05 硬件趋势</b><span>设备数据、趋势、异常预警</span></button>
+        <button onclick="showPage('guide')"><b>06 就医助手</b><span>科室医生匹配、材料清单</span></button>
+        <button onclick="showPage('shop')"><b>07 服务包商城</b><span>服务包、权益卡、核销</span></button>
+        <button onclick="showPage('govern')"><b>08 合规治理</b><span>质检、拦截、审计</span></button>
+      </div>
+      <div class="script">
+        <b>2-5分钟演示脚本</b>
+        <ol>
+          <li>先讲首页：家庭健康评分把多成员、报告、硬件和待办汇总。</li>
+          <li>进入 AI 问诊：展示有依据、置信度和高风险边界。</li>
+          <li>展示报告解读和硬件趋势：说明数据如何触发服务推荐。</li>
+          <li>最后展示服务包和合规治理：说明商业化和上线安全边界。</li>
+        </ol>
+      </div>
+    </div>
+  </aside>
+</main>
+<script>
+const pageTitles={home:'AI健康管家',ai:'AI 健管与导诊',report:'报告解读中心',family:'家庭健康闭环',trend:'硬件趋势分析',guide:'就医助手',shop:'服务包商城',eco:'九宫格服务生态',govern:'AI合规治理'};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.page===id));
+  document.querySelectorAll('.flow-nav button').forEach(b=>b.classList.remove('active'));
+  const side=[...document.querySelectorAll('.flow-nav button')].find(b=>b.textContent.includes(pageTitles[id]?.split(' ')[0]||'首页'));
+  if(side) side.classList.add('active');
+  closeDrawer();
+}
+function switchAi(type){
+  document.getElementById('tabHealth').classList.toggle('active',type==='health');
+  document.getElementById('tabGuide').classList.toggle('active',type==='guide');
+  const box=document.getElementById('chatBox');
+  if(type==='guide'){
+    box.innerHTML='<div class="bubble ai"><b>AI导诊助手</b><br>请描述主要症状，我会按症状、时长、伴随表现、既往史进行追问，并推荐科室。</div><div class="bubble user">最近胸口闷，走快了有点出汗。</div><div class="bubble ai">该描述命中胸闷+出汗风险组合。建议优先线下急诊或心内科评估，不建议仅依赖线上咨询。<div class="source"><span class="pill red">高风险拦截</span><span class="pill blue">推荐心内科</span><span class="pill orange">立即就医</span></div></div>';
+  }else{
+    box.innerHTML='<div class="bubble ai"><b>AI健康管家</b><br>我可以基于你的健康档案、硬件数据和医学知识库，提供健康信息参考。请描述你的问题。</div><div class="bubble user">最近血压有点高，早上测到 148/92，需要去医院吗？</div><div class="bubble ai">你的收缩压已高于常规参考范围，建议先复测并记录近期饮食、睡眠和用药情况。若连续多次偏高，建议预约心内科或全科门诊评估。<div class="source"><span class="pill blue">指南依据</span><span class="pill green">置信度 86%</span><span class="pill orange">不替代诊断</span></div></div>';
+  }
+}
+function sendAi(){
+  const input=document.getElementById('aiInput');
+  const box=document.getElementById('chatBox');
+  const value=input.value.trim()||'我想继续咨询';
+  box.insertAdjacentHTML('beforeend',`<div class="bubble user">${value}</div>`);
+  setTimeout(()=>{box.insertAdjacentHTML('beforeend','<div class="bubble ai">涉及是否停药或调整剂量，AI 不能直接给出处方建议。建议携带近期血压记录咨询执业医生；如出现胸痛、呼吸困难、意识模糊，请立即就医。<div class="source"><span class="pill red">禁止回答场景</span><span class="pill blue">用药安全</span></div></div>');box.scrollTop=box.scrollHeight;},260);
+  input.value='';
+}
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function openDrawer(type){
+  const body=document.getElementById('drawerBody');
+  const content={
+    sources:`<h3>AI 回答依据展示</h3><div class="card" style="margin:12px 0"><span class="pill blue">指南依据</span><p class="muted" style="margin-top:8px;font-size:13px;line-height:1.7">回复参考高血压管理指南、平台医学知识库和用户近期血压趋势。低置信场景会要求补充信息或引导就医。</p></div><div class="card" style="margin:12px 0"><span class="pill red">禁止回答</span><p class="muted" style="margin-top:8px;font-size:13px;line-height:1.7">AI 不提供诊断结论、处方调整、急症处置、自伤风险处理等严肃医疗决策。</p></div>`,
+    privacy:`<h3>合规边界声明</h3><p class="muted" style="font-size:13px;line-height:1.8;margin-top:10px">AI 输出仅作为健康信息参考和导诊辅助，不替代医生诊断、治疗建议或处方行为。健康档案、报告、处方、用药记录和硬件数据属于敏感个人信息，需取得明确授权并按最小必要原则使用。</p>`,
+    hospital:`<h3>医院能力画像</h3><div class="card" style="margin:12px 0"><b>市中心医院</b><p class="muted" style="font-size:13px;line-height:1.7;margin-top:8px">三甲综合医院；优势科室：心内科、内分泌科；支持慢病复诊、报告复查、线下检查。</p><div class="source"><span class="pill green">专科优势</span><span class="pill blue">可预约</span><span class="pill orange">需携带报告</span></div></div>`
+  };
+  body.innerHTML=content[type]||content.privacy;
+  document.getElementById('shade').classList.add('show');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){document.getElementById('shade').classList.remove('show');document.getElementById('drawer').classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+</script>
+</body>
+</html>

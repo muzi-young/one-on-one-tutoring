@@ -1,0 +1,264 @@
+// ========================================
+// 妈祖万年历 - 全局样式系统
+// Mazu Design System
+// ========================================
+
+// 主题色彩变量
+:root {
+  // 主色调 - 神圣金色系
+  --mazu-gold: #D4AF37;
+  --mazu-gold-light: #F4D03F;
+  --mazu-gold-dark: #B8860B;
+  --mazu-gold-glow: rgba(212, 175, 55, 0.6);
+  
+  // 辅助色 - 深紫夜空
+  --mazu-purple-deep: #1a0a2e;
+  --mazu-purple-dark: #0d0618;
+  --mazu-purple-mid: #2a1040;
+  --mazu-purple-light: #4a2070;
+  
+  // 状态色
+  --mazu-success: #4ade80;
+  --mazu-warning: #fbbf24;
+  --mazu-danger: #f87171;
+  --mazu-info: #60a5fa;
+  
+  // 五行色
+  --wuxing-gold: #FFD700;
+  --wuxing-wood: #228B22;
+  --wuxing-water: #1E90FF;
+  --wuxing-fire: #FF4500;
+  --wuxing-earth: #DAA520;
+  
+  // 文字色
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
+  --text-gold: var(--mazu-gold);
+  
+  // 毛玻璃效果
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-blur: 20px;
+  
+  // 间距
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  // 圆角
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  
+  // 字体
+  --font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+}
+
+// 全局重置
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background: var(--mazu-purple-deep);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+// 毛玻璃卡片
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+// 金色渐变按钮
+.btn-gold {
+  background: linear-gradient(135deg, var(--mazu-gold) 0%, var(--mazu-gold-dark) 100%);
+  color: #1a0a2e;
+  font-weight: 600;
+  padding: 14px 32px;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
+  }
+  
+  &:hover::before {
+    left: 100%;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// 描边按钮
+.btn-outline {
+  background: transparent;
+  color: var(--mazu-gold);
+  border: 1px solid var(--mazu-gold);
+  padding: 12px 28px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(212, 175, 55, 0.1);
+  }
+}
+
+// 文字链接
+.text-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: color 0.2s;
+  
+  &:hover {
+    color: var(--mazu-gold);
+  }
+}
+
+// 输入框样式
+.input-field {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  outline: none;
+  transition: all 0.3s ease;
+  
+  &::placeholder {
+    color: var(--text-tertiary);
+  }
+  
+  &:focus {
+    border-color: var(--mazu-gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  }
+}
+
+// 光晕动画
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--mazu-gold-glow);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--mazu-gold-glow), 0 0 60px rgba(212, 175, 55, 0.3);
+  }
+}
+
+// 呼吸动画
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+// 旋转动画
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 光扫过动画
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+// 浮动动画
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// 渐入动画
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 2px;
+}
+
+// 隐藏滚动条但保持滚动功能
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

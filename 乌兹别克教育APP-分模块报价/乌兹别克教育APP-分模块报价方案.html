@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>乌兹别克教育 APP — 分模块报价方案</title>
+		<style>
+			:root {
+				--bg: #f6f8fb;
+				--card: #ffffff;
+				--line: #e3e8ef;
+				--text: #1f2937;
+				--muted: #6b7280;
+				--accent: #2563eb;
+			}
+			body {
+				margin: 0;
+				font-family: 'Microsoft YaHei', 'PingFang SC', 'Noto Sans SC', 'Source Han Sans SC', sans-serif;
+				background: var(--bg);
+				color: var(--text);
+				line-height: 1.65;
+			}
+			.wrap {
+				max-width: 1180px;
+				margin: 0 auto;
+				padding: 28px 20px 60px;
+			}
+			h1 {
+				font-size: 24px;
+				font-weight: 700;
+				margin: 0 0 8px;
+				letter-spacing: 0.02em;
+			}
+			.sub {
+				color: var(--muted);
+				font-size: 14px;
+				margin-bottom: 22px;
+			}
+			.card {
+				background: var(--card);
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				padding: 18px 20px;
+				margin: 16px 0;
+				box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+			}
+			h2 {
+				font-size: 17px;
+				margin: 0 0 12px;
+				color: #111827;
+				border-left: 4px solid var(--accent);
+				padding-left: 10px;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 13px;
+			}
+			th,
+			td {
+				border: 1px solid var(--line);
+				padding: 8px 10px;
+				vertical-align: top;
+			}
+			th {
+				background: #eef2ff;
+				text-align: left;
+				font-weight: 600;
+				white-space: nowrap;
+			}
+			td.num {
+				text-align: right;
+				font-variant-numeric: tabular-nums;
+			}
+			td.strong {
+				font-weight: 700;
+				color: #1e3a8a;
+			}
+			ul {
+				margin: 8px 0 0 18px;
+			}
+			li {
+				margin: 4px 0;
+			}
+			.note {
+				font-size: 13px;
+				color: var(--muted);
+			}
+			.sumrow td {
+				background: #f9fafb;
+				font-weight: 600;
+			}
+			code.path {
+				font-size: 12px;
+				background: #f3f4f6;
+				padding: 2px 6px;
+				border-radius: 6px;
+			}
+			.capbox {
+				background: #eff6ff;
+				border: 1px solid #bfdbfe;
+				border-radius: 10px;
+				padding: 12px 14px;
+				margin-top: 10px;
+				font-size: 14px;
+				color: #1e3a8a;
+			}
+			.contact-bar {
+				background: #f8fafc;
+				border: 1px solid var(--line);
+				border-radius: 10px;
+				padding: 14px 16px;
+				margin: 16px 0 4px;
+				font-size: 14px;
+				color: var(--text);
+			}
+			.contact-bar .contact-label {
+				font-size: 12px;
+				font-weight: 600;
+				color: var(--muted);
+				letter-spacing: 0.04em;
+				margin-bottom: 8px;
+			}
+			.contact-bar a {
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.contact-bar a:hover {
+				text-decoration: underline;
+			}
+			.site-footer {
+				margin-top: 28px;
+				padding-top: 16px;
+				border-top: 1px solid var(--line);
+				font-size: 13px;
+				color: var(--muted);
+				text-align: center;
+				line-height: 1.75;
+			}
+			.site-footer a {
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.site-footer a:hover {
+				text-decoration: underline;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<h1>乌兹别克教育 APP · 分模块报价方案</h1>
+			<div class="sub">
+				依据清单：<code class="path">乌兹别克教育 APP-需求功能清单_通俗版.xlsx</code>（通俗版需求，共 320 行）<br />
+				人力单价：UI <b>1000</b> 元/人天 · 前端 <b>1500</b> 元/人天 · 后端 <b>1800</b> 元/人天<br />
+			</div>
+
+			<div class="contact-bar" role="region" aria-label="商务联系">
+				<div class="contact-label">商务联系</div>
+				<div>
+					<strong>商务</strong>：李岩　<strong>公司</strong>：八角科技信息有限公司　<strong>联系电话</strong>：<a href="tel:18116339746">18116339746</a>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>一、模块划分与 Excel 映射规则</h2>
+				<p class="note">
+					直播课堂自教师端拆出；学生「在线学习」中含直播字样的归入直播；总后台「消息中心」归入 Telegram 推送；营销相关学生端+总后台营销中心/分销/运营 Push
+					归入营销参与；其余总后台与学生基础能力归入「其他」。
+				</p>
+				<table>
+					<thead>
+						<tr>
+							<th>报价模块</th>
+							<th>覆盖清单行数</th>
+							<th>主要端口来源</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Telegram 推送</td>
+							<td class="num">9</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>多语言（3 语言）</td>
+							<td class="num">0</td>
+							<td>全端横向能力（清单未单列）</td>
+						</tr>
+						<tr>
+							<td>课程中心</td>
+							<td class="num">22</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>直播相关</td>
+							<td class="num">7</td>
+							<td>学生端、教师端</td>
+						</tr>
+						<tr>
+							<td>考试中心</td>
+							<td class="num">17</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>本地知识库 AI 问答</td>
+							<td class="num">11</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>AI 客服</td>
+							<td class="num">10</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>营销参与</td>
+							<td class="num">31</td>
+							<td>学生端、总后台</td>
+						</tr>
+						<tr>
+							<td>作业与练习</td>
+							<td class="num">5</td>
+							<td>学生端</td>
+						</tr>
+						<tr>
+							<td>家长端</td>
+							<td class="num">18</td>
+							<td>家长端</td>
+						</tr>
+						<tr>
+							<td>教师端</td>
+							<td class="num">34</td>
+							<td>教师端</td>
+						</tr>
+						<tr>
+							<td>分店教务端</td>
+							<td class="num">31</td>
+							<td>分店教务端</td>
+						</tr>
+						<tr>
+							<td>分机构端</td>
+							<td class="num">14</td>
+							<td>分机构端</td>
+						</tr>
+						<tr>
+							<td>其他（学生基础/订单/学习管理/总后台配置等）</td>
+							<td class="num">111</td>
+							<td>APP合规隐私、学生端、总后台</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="card">
+				<h2>二、分模块人天、费用</h2>
+				<p class="note">金额 = 人天 × 单价；模块小计 = UI 费用 + 前端费用 + 后端费用。本表人天为<strong>闭环全流程</strong>；</p>
+				<div style="overflow-x: auto">
+					<table>
+						<thead>
+							<tr>
+								<th>报价模块</th>
+								<th>功能点数</th>
+								<th>UI人天</th>
+								<th>前人天</th>
+								<th>后人天</th>
+								<th>UI费用</th>
+								<th>前端费用</th>
+								<th>后端费用</th>
+								<th>模块小计(元)</th>
+								<th>小计(万)</th>
+								<th>人天估算依据（摘要）</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Telegram 推送</td>
+								<td class="num">9</td>
+								<td class="num">3</td>
+								<td class="num">4</td>
+								<td class="num">6</td>
+								<td class="num">3,000</td>
+								<td class="num">6,000</td>
+								<td class="num">10,800</td>
+								<td class="num strong">19,800</td>
+								<td class="num">1.98</td>
+								<td>模板/通道矩阵/机器人接入/日志重试；含应用内推送联动</td>
+							</tr>
+							<tr>
+								<td>多语言（3 语言）</td>
+								<td class="num">0</td>
+								<td class="num">4</td>
+								<td class="num">12</td>
+								<td class="num">5</td>
+								<td class="num">4,000</td>
+								<td class="num">18,000</td>
+								<td class="num">9,000</td>
+								<td class="num strong">31,000</td>
+								<td class="num">3.10</td>
+								<td>跨端词条、语言切换、模板渲染与内容字段对齐（Excel 未单列，按横向能力估算）</td>
+							</tr>
+							<tr>
+								<td>课程中心</td>
+								<td class="num">22</td>
+								<td class="num">5</td>
+								<td class="num">11</td>
+								<td class="num">14</td>
+								<td class="num">5,000</td>
+								<td class="num">16,500</td>
+								<td class="num">25,200</td>
+								<td class="num strong">46,700</td>
+								<td class="num">4.67</td>
+								<td>学生端课表化浏览+总后台课程编排；录播/试听/筛选/评价链路</td>
+							</tr>
+							<tr>
+								<td>直播相关（：标准 RTC/录制/互动）</td>
+								<td class="num">7</td>
+								<td class="num">11</td>
+								<td class="num">45</td>
+								<td class="num">79</td>
+								<td class="num">11,000</td>
+								<td class="num">67,500</td>
+								<td class="num">142,200</td>
+								<td class="num strong">220,700</td>
+								<td class="num">22.07</td>
+								<td>覆盖小班/1V1、白板、出勤、回放、字幕主链路；弱网策略细化、转码参数矩阵、运营级监控等高阶项见优化升级</td>
+							</tr>
+							<tr>
+								<td>考试中心</td>
+								<td class="num">17</td>
+								<td class="num">5</td>
+								<td class="num">10</td>
+								<td class="num">12</td>
+								<td class="num">5,000</td>
+								<td class="num">15,000</td>
+								<td class="num">21,600</td>
+								<td class="num strong">41,600</td>
+								<td class="num">4.16</td>
+								<td>组卷、监考策略、切屏提醒、成绩/错题；与总后台考务联动</td>
+							</tr>
+							<tr>
+								<td>本地知识库 AI 问答</td>
+								<td class="num">11</td>
+								<td class="num">4</td>
+								<td class="num">7</td>
+								<td class="num">20</td>
+								<td class="num">4,000</td>
+								<td class="num">10,500</td>
+								<td class="num">36,000</td>
+								<td class="num strong">50,500</td>
+								<td class="num">5.05</td>
+								<td>向量库/索引重建/RAG 编排/敏感过滤；多端会话与评测</td>
+							</tr>
+							<tr>
+								<td>AI 客服</td>
+								<td class="num">10</td>
+								<td class="num">2</td>
+								<td class="num">4</td>
+								<td class="num">7</td>
+								<td class="num">2,000</td>
+								<td class="num">6,000</td>
+								<td class="num">12,600</td>
+								<td class="num strong">20,600</td>
+								<td class="num">2.06</td>
+								<td>机器人+转人工+话术树+坐席台；工单转化</td>
+							</tr>
+							<tr>
+								<td>营销参与</td>
+								<td class="num">31</td>
+								<td class="num">6</td>
+								<td class="num">12</td>
+								<td class="num">15</td>
+								<td class="num">6,000</td>
+								<td class="num">18,000</td>
+								<td class="num">27,000</td>
+								<td class="num strong">51,000</td>
+								<td class="num">5.10</td>
+								<td>优惠券/拼团/分销落地页+总后台营销中心/分销中心</td>
+							</tr>
+							<tr>
+								<td>作业与练习</td>
+								<td class="num">5</td>
+								<td class="num">3</td>
+								<td class="num">7</td>
+								<td class="num">9</td>
+								<td class="num">3,000</td>
+								<td class="num">10,500</td>
+								<td class="num">16,200</td>
+								<td class="num strong">29,700</td>
+								<td class="num">2.97</td>
+								<td>收发作业、AI 预批改、错题本与教师批改联动</td>
+							</tr>
+							<tr>
+								<td>家长端（）</td>
+								<td class="num">18</td>
+								<td class="num">8</td>
+								<td class="num">17</td>
+								<td class="num">15</td>
+								<td class="num">8,000</td>
+								<td class="num">25,500</td>
+								<td class="num">27,000</td>
+								<td class="num strong">60,500</td>
+								<td class="num">6.05</td>
+								<td>绑定授权、学情透明、证书/消息/续费等主链路；高阶运营报表进优化升级</td>
+							</tr>
+							<tr>
+								<td>教师端（不含直播课堂，）</td>
+								<td class="num">34</td>
+								<td class="num">9</td>
+								<td class="num">19</td>
+								<td class="num">23</td>
+								<td class="num">9,000</td>
+								<td class="num">28,500</td>
+								<td class="num">41,400</td>
+								<td class="num strong">78,900</td>
+								<td class="num">7.89</td>
+								<td>覆盖课表/课程/学情/作业批改/考务主链路；分销绩效高阶与深度报表进优化升级</td>
+							</tr>
+							<tr>
+								<td>分店教务端（）</td>
+								<td class="num">31</td>
+								<td class="num">8</td>
+								<td class="num">13</td>
+								<td class="num">14</td>
+								<td class="num">8,000</td>
+								<td class="num">19,500</td>
+								<td class="num">25,200</td>
+								<td class="num strong">52,700</td>
+								<td class="num">5.27</td>
+								<td>学员档案、排课、订单售后、招生试听、考试组织、证书初审、基础报表</td>
+							</tr>
+							<tr>
+								<td>分机构端（）</td>
+								<td class="num">14</td>
+								<td class="num">8</td>
+								<td class="num">13</td>
+								<td class="num">14</td>
+								<td class="num">8,000</td>
+								<td class="num">19,500</td>
+								<td class="num">25,200</td>
+								<td class="num strong">52,700</td>
+								<td class="num">5.27</td>
+								<td>驾驶舱、目标进度、教师排名、督办与续费看板（标准版）</td>
+							</tr>
+							<tr>
+								<td>其他（ MVP：账户/订单/学习/必要后台）</td>
+								<td class="num">111</td>
+								<td class="num">7</td>
+								<td class="num">32</td>
+								<td class="num">29</td>
+								<td class="num">7,000</td>
+								<td class="num">48,000</td>
+								<td class="num">52,200</td>
+								<td class="num strong">107,200</td>
+								<td class="num">10.72</td>
+								<td>优先主链路：账户/支付/订单/学习管理/证书展示/合规字段/组织权限基础版；财务结算、BI、审计备份、奖惩参数等大量条目进优化升级 sprint</td>
+							</tr>
+							<tr class="sumrow">
+								<td colspan="5">人工成本合计（不含风险缓冲）</td>
+								<td colspan="3"></td>
+								<td class="num strong">863,600</td>
+								<td class="num">86.36</td>
+								<td>左侧合计为客户给出的参考之和</td>
+							</tr>
+							<tr class="sumrow">
+								<td colspan="8">风险缓冲（与封顶价联动取整，约当人工之 10%）</td>
+								<td class="num strong">86,400</td>
+								<td colspan="4" class="note">用于联调返工、需求澄清、第三方接口变更等；与人工合计相加严格等于 ¥950,000</td>
+							</tr>
+							<tr class="sumrow">
+								<td colspan="8"><b>参考总计（增值税前：人工 + 风险缓冲）</b></td>
+								<td class="num strong">950,000</td>
+								<td colspan="4" class="note">对外报价与合同封顶口径；不超过 ¥950,000</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>三、各模块功能摘要（摘自 Excel）</h2>
+				<p class="note">以下为每模块抽样展示，完整条目以源 Excel 为准；/优化升级切分以第六节《范围边界》为准。</p>
+				<h3>Telegram 推送</h3>
+				<ul>
+					<li>【学生端】账户与认证 — 绑定 Telegram（用于识别会话）</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 消息模板管理</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — Telegram 机器人 接入</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 发送通道矩阵</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 发送日志</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 失败重试与降级</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 苹果推送与安卓推送 应用内推送</li>
+					<li>【总后台】消息中心（以 Telegram 为主通道） — 多语言模板渲染</li>
+					<li>… 共 9 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>多语言（3 语言）</h3>
+				<ul>
+					<li>Excel 未单列：按全应用横向能力估算（见人天依据）。</li>
+				</ul>
+				<h3>课程中心</h3>
+				<ul>
+					<li>【学生端】课程中心 — 课程分类浏览</li>
+					<li>【学生端】课程中心 — 课程详情展示</li>
+					<li>【学生端】课程中心 — 试听片段播放</li>
+					<li>【学生端】课程中心 — 关键词搜索</li>
+					<li>【学生端】课程中心 — 多维度筛选</li>
+					<li>【学生端】课程中心 — 课程收藏</li>
+					<li>【学生端】课程中心 — 最近浏览</li>
+					<li>【学生端】课程中心 — 课程评价浏览</li>
+					<li>… 共 22 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>直播相关</h3>
+				<ul>
+					<li>【学生端】在线学习 — 直播-小班互动、1V1</li>
+					<li>【学生端】在线学习 — 回放观看</li>
+					<li>【教师端】直播课堂 — 直播间开课</li>
+					<li>【教师端】直播课堂 — 白板与互动</li>
+					<li>【教师端】直播课堂 — 出勤与点名</li>
+					<li>【教师端】直播课堂 — 课堂回放</li>
+					<li>【教师端】直播课堂 — 多语字幕生成</li>
+				</ul>
+				<h3>考试中心</h3>
+				<ul>
+					<li>【学生端】考试中心 — 考试场次列表</li>
+					<li>【学生端】考试中心 — 考试须知与范围</li>
+					<li>【学生端】考试中心 — 在线答题与倒计时</li>
+					<li>【学生端】考试中心 — 切屏与异常提醒</li>
+					<li>【学生端】考试中心 — 到时自动交卷</li>
+					<li>【学生端】考试中心 — 草稿暂存</li>
+					<li>【学生端】考试中心 — 考试成绩查询</li>
+					<li>【学生端】考试中心 — 错题回顾</li>
+					<li>… 共 17 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>本地知识库 AI 问答</h3>
+				<ul>
+					<li>【学生端】本地知识库 AI 问答 — 学习知识提问</li>
+					<li>【学生端】本地知识库 AI 问答 — 多轮对话</li>
+					<li>【学生端】本地知识库 AI 问答 — 学习助手评价</li>
+					<li>【学生端】本地知识库 AI 问答 — 会话历史</li>
+					<li>【学生端】本地知识库 AI 问答 — 答题模式</li>
+					<li>【学生端】本地知识库 AI 问答 — 敏感词与适龄过滤</li>
+					<li>【总后台】本地知识库(AI 学习助手) — 课程向量库管理</li>
+					<li>【总后台】本地知识库(AI 学习助手) — 索引重建</li>
+					<li>… 共 11 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>AI 客服</h3>
+				<ul>
+					<li>【学生端】AI 客服 — 客服会话入口</li>
+					<li>【学生端】AI 客服 — 机器应答</li>
+					<li>【学生端】AI 客服 — 转人工</li>
+					<li>【学生端】AI 客服 — 会话历史与满意度</li>
+					<li>【学生端】AI 客服 — 工单转化</li>
+					<li>【总后台】AI 客服运营 — 客服 常见问题 知识库</li>
+					<li>【总后台】AI 客服运营 — 话术树设计</li>
+					<li>【总后台】AI 客服运营 — 坐席工作台</li>
+					<li>… 共 10 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>营销参与</h3>
+				<ul>
+					<li>【学生端】营销参与 — 优惠券领取</li>
+					<li>【学生端】营销参与 — 优惠券使用</li>
+					<li>【学生端】营销参与 — 拼团参与</li>
+					<li>【学生端】营销参与 — 拼团进度</li>
+					<li>【学生端】营销参与 — 转介绍绑定</li>
+					<li>【学生端】营销参与 — 分销邀请落地页</li>
+					<li>【学生端】营销参与 — 分销专属价/券展示</li>
+					<li>【学生端】营销参与 — 活动中心</li>
+					<li>… 共 31 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>作业与练习</h3>
+				<ul>
+					<li>【学生端】作业与练习 — 作业接收</li>
+					<li>【学生端】作业与练习 — 作业提交</li>
+					<li>【学生端】作业与练习 — AI 预批改</li>
+					<li>【学生端】作业与练习 — 错题本</li>
+					<li>【学生端】作业与练习 — 作业回看</li>
+				</ul>
+				<h3>家长端</h3>
+				<ul>
+					<li>【家长端】账户与绑定 — 家长注册登录</li>
+					<li>【家长端】账户与绑定 — 学员绑定</li>
+					<li>【家长端】账户与绑定 — 授权范围管理</li>
+					<li>【家长端】账户与绑定 — 永久绑定关系查看</li>
+					<li>【家长端】账户与绑定 — 美国儿童上网隐私相关规则 可核验 Consent 记录</li>
+					<li>【家长端】学情透明 — 学员学习报告查看</li>
+					<li>【家长端】学情透明 — 课表与出勤</li>
+					<li>【家长端】学情透明 — 进度查看</li>
+					<li>… 共 18 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>教师端（不含直播课堂）</h3>
+				<ul>
+					<li>【教师端】账户与入职 — 教师注册/入职申请</li>
+					<li>【教师端】账户与入职 — 分店绑定</li>
+					<li>【教师端】账户与入职 — 课酬协议</li>
+					<li>【教师端】账户与入职 — 权限与角色</li>
+					<li>【教师端】账户与入职 — 绑定 Telegram（用于识别会话）</li>
+					<li>【教师端】我的课程与课表 — 我的课程列表</li>
+					<li>【教师端】我的课程与课表 — 我的课表</li>
+					<li>【教师端】我的课程与课表 — 调课与请假</li>
+					<li>… 共 34 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>分店教务端</h3>
+				<ul>
+					<li>【分店教务端】学员档案管理 — 新增学员档案</li>
+					<li>【分店教务端】学员档案管理 — 学员档案查询</li>
+					<li>【分店教务端】学员档案管理 — 学员转分店申请</li>
+					<li>【分店教务端】学员档案管理 — 绑定关系变更审计</li>
+					<li>【分店教务端】排课与课表管理 — 班级管理</li>
+					<li>【分店教务端】排课与课表管理 — 排课计划</li>
+					<li>【分店教务端】排课与课表管理 — 教室/直播间分配</li>
+					<li>【分店教务端】排课与课表管理 — 调课审批</li>
+					<li>… 共 31 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>分机构端</h3>
+				<ul>
+					<li>【分机构端】分店运营驾驶舱 — 运营总览</li>
+					<li>【分机构端】分店运营驾驶舱 — 趋势对比</li>
+					<li>【分机构端】招生计划与目标进度 — 目标与关键结果 进度看板</li>
+					<li>【分机构端】招生计划与目标进度 — 目标分解到教师</li>
+					<li>【分机构端】招生计划与目标进度 — 低于序时进度告警</li>
+					<li>【分机构端】教师业绩与排名 — 教师业绩排行</li>
+					<li>【分机构端】教师业绩与排名 — 教师业绩明细</li>
+					<li>【分机构端】续费看板(店长) — 续费率与到期名单</li>
+					<li>… 共 14 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+				<h3>其他（学生基础/订单/学习管理/总后台配置等）</h3>
+				<ul>
+					<li>【学生端】账户与认证 — 邮箱注册</li>
+					<li>【学生端】账户与认证 — 邮箱激活</li>
+					<li>【学生端】账户与认证 — 邮箱登录</li>
+					<li>【学生端】账户与认证 — 忘记密码</li>
+					<li>【学生端】账户与认证 — 修改密码</li>
+					<li>【学生端】账户与认证 — 邮箱变更</li>
+					<li>【学生端】账户与认证 — 未成年人保护（美国儿童上网隐私相关规则）</li>
+					<li>【学生端】账户与认证 — 家长-学员双向授权</li>
+					<li>… 共 111 条功能点（Excel《通俗版需求》）</li>
+				</ul>
+			</div>
+
+			<div class="card">
+				<h2>五、假设与不含项</h2>
+				<ul>
+					<li><b>假设</b>：需求以当前《通俗版》为准；三方服务（短信/邮件、对象存储、RTC、推送）按国内合规云厂商选型；不含应用商店上架代办费用。</li>
+					<li><b>不含</b>：专业翻译与配音外包、线下培训、硬件、长期驻场运维、等保测评费用、海外律师合规专项（除清单已列 COPPA 相关字段外）。</li>
+					<li><b>打开方式</b>：双击本 HTML 文件，推荐使用 Chrome / Edge / Safari 最新版。</li>
+				</ul>
+			</div>
+
+			<div class="card">
+				<h2>六、交付范围与优化升级扩展（预算衔接）</h2>
+				<p class="note">下列优化升级金额为<strong>参考估价</strong>（增值税前），签约以优化升级范围说明书与排期为准；<b>不计入 ¥950,000 封顶</b>。</p>
+				<table>
+					<thead>
+						<tr>
+							<th>阶段</th>
+							<th>范围摘要</th>
+							<th>人工(元)</th>
+							<th>风险缓冲参考(约10%)</th>
+							<th>参考小计(元)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><b>总费用</b></td>
+							<td>见表二：教学主链路 + 标准直播 + 家长/教务/机构标准版 +「其他」MVP；风险缓冲与人工合计封顶。</td>
+							<td class="num strong">863,600</td>
+							<td class="num strong">86,400</td>
+							<td class="num strong">950,000</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<footer class="site-footer">
+				商务：李岩 · 八角科技信息有限公司 · 联系电话：<a href="tel:18116339746">18116339746</a>
+			</footer>
+		</div>
+	</body>
+</html>

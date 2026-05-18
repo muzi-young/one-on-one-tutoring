@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江苏神州半导体 — 上位机原型 Demo</title>
+<style>
+:root{--bg:#f5f7fa;--panel:#fff;--border:#e4e7ed;--text:#303133;--text2:#606266;--muted:#909399;--pri:#409eff;--pri-light:#ecf5ff;--suc:#67c23a;--warn:#e6a23c;--err:#f56c6c;--info:#909399;--radius:6px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:13px;height:100vh;overflow:hidden;user-select:none}
+.app{display:flex;flex-direction:column;height:100vh}
+
+/* ---- Toolbar ---- */
+.toolbar{height:48px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.brand{font-weight:700;font-size:15px;color:var(--pri);margin-right:20px;white-space:nowrap}
+.tb{padding:5px 12px;border:1px solid var(--border);border-radius:4px;background:var(--panel);color:var(--text);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:4px;transition:.2s;white-space:nowrap}
+.tb:hover{border-color:var(--pri);color:var(--pri)}
+.tb.p{background:var(--pri);border-color:var(--pri);color:#fff}.tb.p:hover{background:#66b1ff}
+.tb.s{background:var(--suc);border-color:var(--suc);color:#fff}
+.tb.d{background:var(--err);border-color:var(--err);color:#fff}
+.divider{width:1px;height:20px;background:var(--border);margin:0 6px}
+.toolbar-right{margin-left:auto;display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text2)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px}
+.dot.on{background:var(--suc)}.dot.off{background:var(--err)}.dot.w{background:var(--warn)}
+
+/* ---- Main ---- */
+.main{flex:1;display:flex;overflow:hidden}
+
+/* ---- Sidebar ---- */
+.side{width:240px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.side-hd{padding:10px 14px;border-bottom:1px solid var(--border);font-weight:500;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.side-hd input{width:100%;margin-top:6px;padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;outline:none}
+.side-hd input:focus{border-color:var(--pri)}
+.tree{flex:1;overflow-y:auto;padding:6px 0}
+.tg{margin-bottom:2px}
+.tg-h{padding:7px 14px;font-size:11px;color:var(--muted);letter-spacing:.8px;display:flex;align-items:center;gap:5px;cursor:pointer}
+.ti{padding:7px 14px 7px 26px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+.ti:hover{background:var(--bg)}
+.ti.act{background:var(--pri-light);color:var(--pri)}
+.ic{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;flex-shrink:0;font-weight:700}
+.ic.rf{background:#409eff}.ic.ma{background:#67c23a}.ic.vi{background:#e6a23c}.ic.dd{background:#909399}
+.ti .nm{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{font-size:10px;padding:1px 6px;border-radius:10px}
+.badge.on{background:#f0f9eb;color:var(--suc)}.badge.off{background:#fef0f0;color:var(--err)}.badge.w{background:#fdf6ec;color:var(--warn)}
+
+/* ---- Content ---- */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.tabs-bar{padding:0 20px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;gap:0}
+.tab{padding:10px 18px;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;transition:.2s}
+.tab:hover{color:var(--pri)}
+.tab.act{color:var(--pri);border-bottom-color:var(--pri);font-weight:500}
+.panels{flex:1;overflow:hidden;position:relative}
+.panel{position:absolute;inset:0;overflow-y:auto;padding:16px 20px;display:none}
+.panel.show{display:block}
+
+/* ---- Grid Cards ---- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:.2s;cursor:pointer}
+.card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-2px)}
+.card-hd{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700}
+.card-info{flex:1}.card-nm{font-weight:500;font-size:14px;margin-bottom:2px}.card-tp{font-size:11px;color:var(--muted)}
+.card-st{display:flex;align-items:center;gap:3px;font-size:12px}
+.card-bd{padding:12px 14px}
+.pr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px dashed #eee}.pr:last-child{border:none}
+.pl{color:var(--muted);font-size:12px}.pv{font-weight:500;font-size:13px}.pv.on{color:var(--suc)}.pv.off{color:var(--muted)}.pv.w{color:var(--warn)}
+.card-ft{padding:8px 14px;background:#fafafa;display:flex;gap:6px}
+.cb{flex:1;padding:5px 0;border:1px solid var(--border);border-radius:4px;background:var(--panel);font-size:12px;cursor:pointer;transition:.2s;text-align:center}
+.cb:hover{border-color:var(--pri);color:var(--pri)}
+
+/* ---- Realtime Chart Panel ---- */
+.chart-wrap{display:flex;gap:14px;height:100%}
+.chart-main{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column}
+.chart-hd{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chart-canvas{flex:1;position:relative;overflow:hidden}
+.chart-canvas svg{width:100%;height:100%}
+.chart-side{width:200px;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;overflow-y:auto}
+.ch-item{padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;display:flex;align-items:center;gap:6px}
+.ch-item:last-child{border:none}
+.ch-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ---- Task Panel ---- */
+.task-layout{display:flex;gap:14px;height:100%}
+.task-list{width:260px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column}
+.task-list-hd{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-weight:500}
+.task-items{flex:1;overflow-y:auto;padding:6px}
+.task-item{padding:8px 10px;border-radius:6px;cursor:pointer;margin-bottom:4px;display:flex;align-items:center;gap:8px;font-size:13px;transition:.15s}
+.task-item:hover{background:var(--bg)}.task-item.act{background:var(--pri-light);color:var(--pri)}
+.task-detail{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column}
+.task-detail-hd{padding:10px 14px;border-bottom:1px solid var(--border);font-weight:500;display:flex;align-items:center;justify-content:space-between}
+.task-detail-bd{flex:1;overflow-y:auto;padding:14px}
+.step{display:flex;gap:10px;margin-bottom:10px}
+.step-num{width:28px;height:28px;background:var(--pri);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.step-body{flex:1;background:var(--bg);border-radius:6px;padding:10px 12px;font-size:12px}
+.step-body b{display:block;margin-bottom:4px;font-size:13px}
+
+/* ---- Record Panel ---- */
+.rec-layout{display:flex;gap:14px;height:100%}
+.rec-cfg{width:300px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column}
+.rec-cfg-hd{padding:10px 14px;border-bottom:1px solid var(--border);font-weight:500}
+.rec-cfg-bd{flex:1;overflow-y:auto;padding:10px 14px}
+.rec-group{margin-bottom:10px}
+.rec-group-title{font-size:12px;font-weight:500;margin-bottom:6px;color:var(--text2)}
+.rec-check{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:12px;cursor:pointer}
+.rec-check input{accent-color:var(--pri)}
+.rec-preview{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column}
+.rec-preview-hd{padding:10px 14px;border-bottom:1px solid var(--border);font-weight:500;display:flex;align-items:center;justify-content:space-between}
+.rec-table{flex:1;overflow:auto;padding:10px 14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:7px 10px;border:1px solid var(--border);text-align:left}
+th{background:var(--bg);font-weight:500;position:sticky;top:0}
+
+/* ---- Logger ---- */
+.logger{height:180px;background:var(--panel);border-top:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:height .3s}
+.logger.collapsed{height:36px}
+.log-hd{padding:7px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.log-title{font-weight:500;font-size:13px}
+.log-tabs{display:flex;gap:3px}
+.lt{padding:2px 8px;font-size:11px;border-radius:3px;cursor:pointer;color:var(--text2)}
+.lt.act{background:var(--bg);color:var(--text)}
+.log-acts{margin-left:auto;display:flex;gap:6px}
+.log-bd{flex:1;overflow-y:auto;padding:6px 14px;font-family:Monaco,Consolas,monospace;font-size:11px;line-height:1.8;background:#1e1e1e;color:#d4d4d4}
+.ll{display:flex;gap:10px}
+.lt2{color:#6a9955;flex-shrink:0}
+.lv{width:48px;flex-shrink:0}
+.lv.i{color:#569cd6}.lv.w{color:#ce9178}.lv.e{color:#f14c4c}.lv.s{color:#4ec9b0}
+
+/* ---- Ctx Menu ---- */
+.ctx{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:6px;box-shadow:0 6px 16px rgba(0,0,0,.12);min-width:170px;padding:4px 0;z-index:1000;display:none}
+.ctx.show{display:block}
+.mi{padding:7px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:7px}
+.mi:hover{background:var(--bg)}
+.md{height:1px;background:var(--border);margin:4px 0}
+
+/* ---- Modal ---- */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:2000}
+.mo.show{display:flex}
+.modal{background:var(--panel);border-radius:8px;width:720px;max-width:90vw;max-height:85vh;overflow:hidden;display:flex;flex-direction:column}
+.modal.wide{width:900px}
+.mh{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mt{font-size:16px;font-weight:600}
+.mx{width:28px;height:28px;border:none;background:transparent;cursor:pointer;border-radius:4px;font-size:18px;color:var(--muted)}
+.mx:hover{background:var(--bg)}
+.mb{flex:1;padding:20px;overflow-y:auto}
+.mf{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.ds{margin-bottom:20px}.ds:last-child{margin-bottom:0}
+.ds-t{font-size:14px;font-weight:500;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.di{display:flex;flex-direction:column;gap:3px}
+.dl{font-size:12px;color:var(--muted)}.dv{font-size:14px;font-weight:500}
+input[type=text],input[type=number],select{padding:6px 10px;border:1px solid var(--border);border-radius:4px;width:100%;font-size:13px;outline:none}
+input:focus,select:focus{border-color:var(--pri)}
+
+/* Slider */
+.sld{margin-top:14px}
+.sld-h{display:flex;justify-content:space-between;margin-bottom:6px}
+.sld-track{height:8px;background:#e4e7ed;border-radius:4px;position:relative;cursor:pointer}
+.sld-fill{height:100%;border-radius:4px;position:absolute;left:0;top:0}
+.sld-fill.green{background:var(--suc)}.sld-fill.blue{background:var(--pri)}
+.sld-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:#fff;border:2px solid var(--pri);border-radius:50%;cursor:pointer;z-index:1}
+
+/* ---- Status bar ---- */
+.status-bar{height:24px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 16px;font-size:11px;color:var(--muted);gap:16px;flex-shrink:0}
+
+/* Smith placeholder */
+.smith-placeholder{width:100%;aspect-ratio:1;max-width:320px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;margin:10px auto;background:repeating-radial-gradient(circle,transparent,transparent 30px,var(--bg) 30px,var(--bg) 32px)}
+
+/* ---- Matcher Full Panel ---- */
+.modal.full{width:96vw;height:92vh;max-width:96vw;max-height:92vh}
+.mat-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 16px;background:var(--bg)}
+.mat-tab{padding:8px 16px;font-size:13px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;transition:.2s}
+.mat-tab:hover{color:var(--pri)}
+.mat-tab.act{color:var(--pri);border-bottom-color:var(--pri);font-weight:500;background:var(--panel)}
+.mat-panels{flex:1;overflow:hidden;position:relative}
+.mat-panel{position:absolute;inset:0;overflow-y:auto;display:none}
+.mat-panel.show{display:flex}
+
+/* Status indicators */
+.ind-group{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:10px}
+.ind-group-title{font-size:12px;font-weight:600;color:var(--pri);text-align:center;margin-bottom:8px;padding:3px 10px;background:var(--pri-light);border-radius:4px;display:inline-block}
+.ind-row{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:6px}
+.ind{display:flex;align-items:center;gap:5px;font-size:12px}
+.ind-dot{width:10px;height:10px;border-radius:50%;border:1px solid #ccc;background:#ddd;flex-shrink:0}
+.ind-dot.g{background:var(--suc);border-color:#5daf34}.ind-dot.r{background:var(--err);border-color:#e04040}.ind-dot.y{background:var(--warn);border-color:#d49a30}
+
+/* PVD param grid */
+.pvd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.pvd-cell{background:var(--panel);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.pvd-cell .pvd-k{color:var(--muted)}.pvd-cell .pvd-v{font-weight:600;font-size:13px}
+
+/* Vertical bar */
+.vbar-wrap{display:flex;gap:20px;justify-content:center;padding:10px 0}
+.vbar-col{display:flex;flex-direction:column;align-items:center;gap:6px;width:80px}
+.vbar-label{font-size:12px;font-weight:600;color:var(--pri);padding:3px 14px;background:var(--pri-light);border-radius:4px;cursor:pointer}
+.vbar-label:hover{background:#d9ecff}
+.vbar-input{width:70px;text-align:center;padding:4px 2px;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:4px}
+.vbar-input:focus{border-color:var(--pri)}
+.vbar-target{font-size:11px;color:var(--muted)}
+.vbar-track{width:40px;height:240px;background:#e4e7ed;border-radius:4px;position:relative;cursor:pointer;border:1px solid var(--border)}
+.vbar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:0 0 3px 3px}
+.vbar-fill.blue{background:linear-gradient(to top,#409eff,#79bbff)}
+.vbar-fill.green-line{position:absolute;left:-4px;right:-4px;height:3px;background:var(--suc);border-radius:2px;z-index:2}
+.vbar-thumb{position:absolute;left:50%;transform:translate(-50%,50%);width:44px;height:10px;background:var(--panel);border:2px solid var(--pri);border-radius:3px;cursor:ns-resize;z-index:3}
+.vbar-scale{position:absolute;right:-28px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--muted)}
+.vbar-unit{font-size:11px;color:var(--muted)}
+
+/* Match mode tabs */
+.match-modes{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;justify-content:center}
+.match-mode{padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:4px;cursor:pointer;transition:.2s}
+.match-mode:hover{border-color:var(--pri);color:var(--pri)}
+.match-mode.act{background:var(--pri);color:#fff;border-color:var(--pri)}
+
+/* Setting sub-tabs */
+.set-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 10px;flex-wrap:wrap;background:var(--bg)}
+.set-tab{padding:6px 12px;font-size:12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap}
+.set-tab:hover{color:var(--pri)}.set-tab.act{color:var(--pri);border-bottom-color:var(--pri);font-weight:500;background:var(--panel)}
+.set-panels{flex:1;overflow-y:auto;padding:16px}
+.set-panel{display:none}.set-panel.show{display:block}
+.rw-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.rw-row label{font-size:12px;color:var(--text2);min-width:120px}
+.rw-row input{width:160px}
+.rw-btn{padding:4px 12px;border:none;border-radius:4px;font-size:11px;cursor:pointer;font-weight:600;color:#fff}
+.rw-btn.read{background:var(--pri)}.rw-btn.write{background:var(--suc)}
+.rw-btn:hover{opacity:.85}
+
+/* ---- Login overlay ---- */
+#mo-login{z-index:3000;background:rgba(15,23,42,.78)!important}
+.login-card{width:420px;max-width:92vw;background:var(--panel);border-radius:12px;box-shadow:0 24px 64px rgba(0,0,0,.35);overflow:hidden}
+.login-brand{padding:32px 28px 20px;text-align:center;background:linear-gradient(165deg,var(--pri-light),#fff 50%)}
+.login-brand .lb-t{font-size:20px;font-weight:700;color:var(--pri);letter-spacing:.5px}
+.login-brand .lb-s{font-size:12px;color:var(--muted);margin-top:6px}
+.login-bd{padding:20px 28px 28px}
+.login-bd .di{margin-bottom:12px}
+
+/* ---- Device scan ---- */
+.scan-prog{height:10px;background:#e4e7ed;border-radius:5px;overflow:hidden;margin:16px 0}
+.scan-prog-in{height:100%;width:0%;background:linear-gradient(90deg,var(--pri),#66b1ff);border-radius:5px}
+.scan-prog.run .scan-prog-in{animation:scanPg 2.2s ease-out forwards}
+@keyframes scanPg{0%{width:4%}100%{width:100%}}
+.scan-hint{font-size:12px;color:var(--muted);min-height:18px}
+.scan-list{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;margin-top:10px;display:none}
+.scan-list.show{display:block}
+.scan-row{display:grid;grid-template-columns:88px 0.9fr 1fr 64px;gap:6px;padding:8px 10px;font-size:11px;border-bottom:1px solid var(--bg);align-items:center}
+.scan-row.hd{background:var(--bg);font-weight:600;font-size:12px}
+
+/* ---- Oscilloscope ---- */
+.scope-wrap{display:flex;flex-direction:column;height:100%;min-height:400px}
+.scope-tb{padding:8px 12px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.scope-tb .tb,.scope-tb select{padding:4px 8px;font-size:11px}
+.scope-body{display:flex;gap:14px;flex:1;min-height:0}
+.scope-main{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;min-width:0}
+.scope-canvas{flex:1;min-height:260px;padding:8px}
+.scope-canvas svg{width:100%;height:100%}
+.scope-side{width:228px;flex-shrink:0;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;overflow-y:auto}
+.scope-sec{margin-bottom:14px}
+.scope-sec-t{font-weight:600;font-size:12px;color:var(--text2);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.scope-chk{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:12px;cursor:pointer}
+.scope-chk input{accent-color:var(--pri)}
+.math-row{display:flex;gap:6px;margin-top:6px;align-items:center}
+.math-row input{flex:1}
+.math-ch{font-size:11px;color:var(--pri);padding:5px 8px;background:var(--pri-light);border-radius:4px;margin-top:6px}
+.scope-stat{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px}
+.scope-stat div b{font-weight:600;color:var(--text)}
+
+/* ---- Data browser sub-panels ---- */
+.hist-subbar{display:flex;gap:0;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.hist-stab{padding:8px 18px;font-size:13px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.2s}
+.hist-stab:hover{color:var(--pri)}
+.hist-stab.act{color:var(--pri);border-bottom-color:var(--pri);font-weight:500}
+.hist-subpanel{display:none}
+.hist-subpanel.show{display:block}
+.db-info{font-size:11px;color:var(--muted);margin-bottom:12px;padding:8px 10px;background:var(--bg);border-radius:6px}
+.db-filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:12px;align-items:end}
+.db-filters .di{gap:4px}
+.db-ms{min-height:72px}
+.db-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px}
+
+/* ---- Export dialog ---- */
+.exp-fmt{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+.exp-fmt label{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.exp-chk{max-height:120px;overflow-y:auto;border:1px solid var(--border);border-radius:6px;padding:8px}
+.exp-chk label{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;cursor:pointer}
+.exp-prog{height:8px;background:#e4e7ed;border-radius:4px;overflow:hidden;margin:14px 0 0;display:none}
+.exp-prog.show{display:block}
+.exp-prog-in{height:100%;width:0%;background:var(--suc);border-radius:4px;transition:width .2s}
+
+/* ---- Task: add step ---- */
+.step-add{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border)}
+.step-add-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.step-form{display:none;margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.step-form.show{display:block}
+.step-form .dg{grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:900px){.step-form .dg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- ===== Toolbar ===== -->
+<header class="toolbar">
+  <div class="brand">神州半导体上位机</div>
+  <button class="tb" onclick="openSys()">⚙ 系统设置</button>
+  <button class="tb" onclick="openConn()">🔌 接口配置</button>
+  <button class="tb" onclick="openScan()">🔍 扫描设备</button>
+  <div class="divider"></div>
+  <button class="tb p" onclick="switchTab('task')">▶ 启动任务</button>
+  <button class="tb" id="btnStopTask">⏹ 停止</button>
+  <div class="divider"></div>
+  <button class="tb s" id="btnRec" onclick="toggleRec()">● 开始记录</button>
+  <button class="tb" onclick="switchTab('record')">📊 记录设置</button>
+  <div class="divider"></div>
+  <button class="tb" onclick="openSmith()">◎ 史密斯图</button>
+  <div class="toolbar-right">
+    <span><span class="dot on"></span>在线: <b id="cntOn">5</b></span>
+    <span><span class="dot w"></span>警告: <b>1</b></span>
+    <span><span class="dot off"></span>离线: <b>1</b></span>
+    <span style="color:var(--muted)" id="toolbarRole">🔒 —</span>
+  </div>
+</header>
+
+<div class="main">
+<!-- ===== Sidebar ===== -->
+<aside class="side">
+  <div class="side-hd">
+    <span>设备列表</span>
+    <input type="text" placeholder="搜索设备..." id="devSearch" oninput="filterTree()">
+  </div>
+  <div class="tree" id="devTree">
+    <div class="tg"><div class="tg-h">● 串口设备 (COM)</div>
+      <div class="ti act" data-id="rf-a1" oncontextmenu="ctxShow(event)" ondblclick="openDetail('rf-a1')"><div class="ic rf">RF</div><span class="nm">RF电源-A型-01</span><span class="badge on">在线</span></div>
+      <div class="ti" data-id="mat-cip" oncontextmenu="ctxShow(event)" ondblclick="openDetail('mat-cip')"><div class="ic ma">M</div><span class="nm">匹配器-CIP2-01</span><span class="badge on">在线</span></div>
+      <div class="ti" data-id="ddl-01" oncontextmenu="ctxShow(event)" ondblclick="openDetail('ddl-01')"><div class="ic dd">D</div><span class="nm">DDL-01</span><span class="badge on">在线</span></div>
+    </div>
+    <div class="tg"><div class="tg-h">● 网口设备 (ETH)</div>
+      <div class="ti" data-id="rf-m1" oncontextmenu="ctxShow(event)" ondblclick="openDetail('rf-m1')"><div class="ic rf">RF</div><span class="nm">RF电源-M型-01</span><span class="badge w">警告</span></div>
+      <div class="ti" data-id="vi-01" oncontextmenu="ctxShow(event)" ondblclick="openDetail('vi-01')"><div class="ic vi">VI</div><span class="nm">VI传感器-01</span><span class="badge on">在线</span></div>
+    </div>
+    <div class="tg"><div class="tg-h">● EtherCAT</div>
+      <div class="ti" data-id="mat-gen" oncontextmenu="ctxShow(event)"><div class="ic ma">M</div><span class="nm">匹配器-通用-01</span><span class="badge off">离线</span></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== Content ===== -->
+<main class="content">
+  <div class="tabs-bar">
+    <div class="tab act" data-tab="overview" onclick="switchTab('overview')">设备概览</div>
+    <div class="tab" data-tab="chart" onclick="switchTab('chart')">实时曲线</div>
+    <div class="tab" data-tab="scope" onclick="switchTab('scope')">示波器</div>
+    <div class="tab" data-tab="task" onclick="switchTab('task')">任务计划</div>
+    <div class="tab" data-tab="record" onclick="switchTab('record')">数据记录</div>
+    <div class="tab" data-tab="history" onclick="switchTab('history')">数据浏览</div>
+  </div>
+  <div class="panels">
+
+    <!-- ======= 设备概览 ======= -->
+    <div class="panel show" id="p-overview">
+      <div class="grid">
+        <!-- RF-A -->
+        <div class="card" ondblclick="openDetail('rf-a1')" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#409eff">RF</div><div class="card-info"><div class="card-nm">RF电源-A型-01</div><div class="card-tp">COM3 · A型协议 · 115200</div></div><div class="card-st"><span class="dot on"></span>在线</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">RF开关</span><span class="pv on">● ON</span></div><div class="pr"><span class="pl">当前功率</span><span class="pv">500 W</span></div><div class="pr"><span class="pl">当前频率</span><span class="pv">13.56 MHz</span></div><div class="pr"><span class="pl">工作模式</span><span class="pv">CW</span></div></div>
+          <div class="card-ft"><button class="cb" onclick="openDetail('rf-a1')">详情</button><button class="cb" onclick="openDetail('rf-a1')">设置</button></div>
+        </div>
+        <!-- 匹配器 CIP2 -->
+        <div class="card" ondblclick="openDetail('mat-cip')" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#67c23a">M</div><div class="card-info"><div class="card-nm">匹配器-CIP2-01</div><div class="card-tp">COM4 · Modbus · 9600</div></div><div class="card-st"><span class="dot on"></span>在线</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">匹配状态</span><span class="pv on">● 已匹配</span></div><div class="pr"><span class="pl">电机1 目标/实际</span><span class="pv">45.2% / 45.0%</span></div><div class="pr"><span class="pl">电机2 目标/实际</span><span class="pv">67.8% / 67.5%</span></div><div class="pr"><span class="pl">工作模式</span><span class="pv">自动</span></div></div>
+          <div class="card-ft"><button class="cb" onclick="openDetail('mat-cip')">详情</button><button class="cb" onclick="openDetail('mat-cip')">电机控制</button></div>
+        </div>
+        <!-- VI -->
+        <div class="card" ondblclick="openDetail('vi-01')" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#e6a23c">VI</div><div class="card-info"><div class="card-nm">VI传感器-01</div><div class="card-tp">192.168.1.100:5000 · HTTP/JSON</div></div><div class="card-st"><span class="dot on"></span>在线</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">RF ON</span><span class="pv on">● 检测到</span></div><div class="pr"><span class="pl">电压</span><span class="pv">220.5 V</span></div><div class="pr"><span class="pl">电流</span><span class="pv">2.35 A</span></div><div class="pr"><span class="pl">相位</span><span class="pv">45.2°</span></div></div>
+          <div class="card-ft"><button class="cb" onclick="openDetail('vi-01')">详情</button><button class="cb" onclick="switchTab('chart')">曲线</button></div>
+        </div>
+        <!-- RF-M (warn) -->
+        <div class="card" ondblclick="openDetail('rf-m1')" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#409eff">RF</div><div class="card-info"><div class="card-nm">RF电源-M型-01</div><div class="card-tp">192.168.1.101:8080 · TCP(M型)</div></div><div class="card-st" style="color:var(--warn)"><span class="dot w"></span>警告</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">RF开关</span><span class="pv off">○ OFF</span></div><div class="pr"><span class="pl">当前功率</span><span class="pv">0 W</span></div><div class="pr"><span class="pl">当前频率</span><span class="pv">13.56 MHz</span></div><div class="pr"><span class="pl">⚠ 警告</span><span class="pv w">反射功率过高</span></div></div>
+          <div class="card-ft"><button class="cb" onclick="openDetail('rf-m1')">详情</button><button class="cb" onclick="toast('报警已确认','warn')">确认报警</button></div>
+        </div>
+        <!-- DDL -->
+        <div class="card" ondblclick="openDetail('ddl-01')" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#909399">D</div><div class="card-info"><div class="card-nm">DDL-01</div><div class="card-tp">COM5 · 自定义协议2</div></div><div class="card-st"><span class="dot on"></span>在线</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">通信状态</span><span class="pv on">● 正常</span></div><div class="pr"><span class="pl">电机4位置</span><span class="pv">32.5%</span></div><div class="pr"><span class="pl">电机5位置</span><span class="pv">78.3%</span></div></div>
+          <div class="card-ft"><button class="cb" onclick="openDetail('ddl-01')">详情</button><button class="cb">设置</button></div>
+        </div>
+        <!-- EC offline -->
+        <div class="card" style="opacity:.6" oncontextmenu="ctxShow(event)">
+          <div class="card-hd"><div class="card-icon" style="background:#c0c4cc">M</div><div class="card-info"><div class="card-nm">匹配器-通用-01</div><div class="card-tp">EtherCAT · 从站#3</div></div><div class="card-st" style="color:var(--err)"><span class="dot off"></span>离线</div></div>
+          <div class="card-bd"><div class="pr"><span class="pl">状态</span><span class="pv off">未连接</span></div><div class="pr"><span class="pl">最后通讯</span><span class="pv">14:28:03</span></div></div>
+          <div class="card-ft"><button class="cb">重新连接</button><button class="cb">诊断</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 实时曲线 ======= -->
+    <div class="panel" id="p-chart">
+      <div class="chart-wrap">
+        <div class="chart-main">
+          <div class="chart-hd"><span style="font-weight:500">实时波形</span><div style="display:flex;gap:6px"><button class="tb" style="padding:3px 8px;font-size:11px">暂停</button><button class="tb" style="padding:3px 8px;font-size:11px">截图</button><button class="tb" style="padding:3px 8px;font-size:11px" onclick="openExport()">导出</button></div></div>
+          <div class="chart-canvas">
+            <svg viewBox="0 0 800 300" preserveAspectRatio="none">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#409eff" stop-opacity=".3"/><stop offset="1" stop-color="#409eff" stop-opacity="0"/></linearGradient></defs>
+              <line x1="0" y1="75" x2="800" y2="75" stroke="#eee" stroke-dasharray="4"/>
+              <line x1="0" y1="150" x2="800" y2="150" stroke="#eee" stroke-dasharray="4"/>
+              <line x1="0" y1="225" x2="800" y2="225" stroke="#eee" stroke-dasharray="4"/>
+              <path d="M0,200 Q100,180 200,120 T400,150 T600,80 T800,140" fill="url(#g1)" stroke="none"/>
+              <path d="M0,200 Q100,180 200,120 T400,150 T600,80 T800,140" fill="none" stroke="#409eff" stroke-width="2"/>
+              <path d="M0,160 Q100,200 200,180 T400,220 T600,170 T800,190" fill="none" stroke="#67c23a" stroke-width="2"/>
+              <path d="M0,100 Q100,90 200,110 T400,95 T600,105 T800,98" fill="none" stroke="#e6a23c" stroke-width="1.5" stroke-dasharray="6"/>
+              <text x="790" y="135" font-size="10" fill="#409eff" text-anchor="end">功率 500W</text>
+              <text x="790" y="185" font-size="10" fill="#67c23a" text-anchor="end">电机1 45.2%</text>
+              <text x="790" y="93" font-size="10" fill="#e6a23c" text-anchor="end">电压 220.5V</text>
+            </svg>
+          </div>
+        </div>
+        <div class="chart-side">
+          <div style="font-weight:500;margin-bottom:8px;font-size:13px">数据通道</div>
+          <div class="ch-item"><input type="checkbox" checked><div class="ch-dot" style="background:#409eff"></div>RF-A 功率</div>
+          <div class="ch-item"><input type="checkbox" checked><div class="ch-dot" style="background:#67c23a"></div>匹配器 电机1</div>
+          <div class="ch-item"><input type="checkbox" checked><div class="ch-dot" style="background:#e6a23c"></div>VI 电压</div>
+          <div class="ch-item"><input type="checkbox"><div class="ch-dot" style="background:#f56c6c"></div>VI 电流</div>
+          <div class="ch-item"><input type="checkbox"><div class="ch-dot" style="background:#909399"></div>RF-A 频率</div>
+          <div class="ch-item"><input type="checkbox"><div class="ch-dot" style="background:#b37feb"></div>DDL 电机4</div>
+          <hr style="margin:8px 0;border:none;border-top:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px">显示设置</div>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px;margin-bottom:4px"><span>时间窗口</span></label>
+          <select style="font-size:11px;padding:3px 6px;width:100%;margin-bottom:6px"><option>30s</option><option selected>60s</option><option>5min</option><option>30min</option></select>
+          <label style="font-size:12px;display:flex;align-items:center;gap:4px"><span>刷新帧率</span></label>
+          <select style="font-size:11px;padding:3px 6px;width:100%"><option>10fps</option><option selected>30fps</option><option>60fps</option></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 示波器 ======= -->
+    <div class="panel" id="p-scope">
+      <div class="scope-wrap">
+        <div class="scope-tb">
+          <button class="tb p" id="scopeRunBtn" onclick="scopeToggleRun()">▶ 运行</button>
+          <button class="tb" onclick="toast('单次触发已就绪','info')">↯ 单次触发</button>
+          <span style="color:var(--muted);font-size:11px">时间窗口</span>
+          <select id="scopeWin"><option>10ms/div</option><option selected>100ms/div</option><option>1s/div</option></select>
+          <span style="color:var(--muted);font-size:11px">采样率</span>
+          <select id="scopeRate"><option>1 MS/s</option><option selected>10 MS/s</option><option>50 MS/s</option></select>
+          <button class="tb" onclick="openExport()">导出</button>
+          <button class="tb" onclick="toast('截图已保存到剪贴板','suc')">截图</button>
+        </div>
+        <div class="scope-body">
+          <div class="scope-main">
+            <div class="scope-canvas">
+              <svg viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet">
+                <defs><pattern id="scopeGrid" width="40" height="36" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 36" fill="none" stroke="#e8eaed" stroke-width="0.8"/></pattern></defs>
+                <rect width="800" height="360" fill="url(#scopeGrid)"/>
+                <line x1="0" y1="180" x2="800" y2="180" stroke="#dcdfe6" stroke-width="1.2"/>
+                <line x1="400" y1="0" x2="400" y2="360" stroke="#dcdfe6" stroke-width="1.2"/>
+                <path d="M0,220 C80,200 160,240 240,180 S400,120 480,200 S640,260 800,160" fill="none" stroke="#409eff" stroke-width="2"/>
+                <path d="M0,260 C100,280 200,200 320,240 S520,300 800,220" fill="none" stroke="#67c23a" stroke-width="1.5" opacity=".85"/>
+                <text x="760" y="155" font-size="11" fill="#409eff" text-anchor="end">Ch A</text>
+                <text x="760" y="215" font-size="11" fill="#67c23a" text-anchor="end">Ch B</text>
+              </svg>
+            </div>
+          </div>
+          <div class="scope-side">
+            <div class="scope-sec"><div class="scope-sec-t">数据通道</div>
+              <label class="scope-chk"><input type="checkbox" checked data-ch="A" onchange="scopeChStat()"> 通道 A</label>
+              <label class="scope-chk"><input type="checkbox" checked data-ch="B" onchange="scopeChStat()"> 通道 B</label>
+              <label class="scope-chk"><input type="checkbox" data-ch="C" onchange="scopeChStat()"> 通道 C</label>
+              <label class="scope-chk"><input type="checkbox" data-ch="D" onchange="scopeChStat()"> 通道 D</label>
+            </div>
+            <div class="scope-sec"><div class="scope-sec-t">数学通道</div>
+              <div class="math-row"><input type="text" id="scopeMathExpr" placeholder="例: A - B" value="A - B" style="font-size:12px"><button class="tb" style="padding:4px 10px;font-size:11px" onclick="scopeAddMath()">添加</button></div>
+              <div class="math-ch" id="scopeMathList">Math1: A-B</div>
+            </div>
+            <div class="scope-sec"><div class="scope-sec-t">触发设置</div>
+              <div class="di"><span class="dl">触发源</span><select id="scopeTrigSrc" style="font-size:12px"><option>通道 A</option><option>通道 B</option><option>Math1</option></select></div>
+              <div class="di" style="margin-top:6px"><span class="dl">触发条件</span><select id="scopeTrigCond" style="font-size:12px"><option>上升沿</option><option>下降沿</option><option>越限</option></select></div>
+              <div class="di" style="margin-top:6px"><span class="dl">阈值</span><input type="text" value="2.5" style="font-size:12px"></div>
+              <label class="scope-chk" style="margin-top:6px"><input type="checkbox" checked id="scopeTrigEn"> 启用触发</label>
+            </div>
+            <div class="scope-sec"><div class="scope-sec-t">统计面板 <span style="font-weight:400;color:var(--muted)">(Ch A)</span></div>
+              <div class="scope-stat" id="scopeStats">
+                <div>均值 <b>1.24 V</b></div><div>峰峰值 <b>3.80 V</b></div>
+                <div>RMS <b>1.41 V</b></div><div>标准差 <b>0.62 V</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 任务计划 ======= -->
+    <div class="panel" id="p-task">
+      <div class="task-layout">
+        <div class="task-list">
+          <div class="task-list-hd"><span>任务列表</span><button class="tb" style="padding:3px 8px;font-size:11px">+ 新建</button></div>
+          <div class="task-items">
+            <div class="task-item act">📋 RF功率循环测试</div>
+            <div class="task-item">📋 匹配器自动调谐</div>
+            <div class="task-item">📋 全设备联动-001</div>
+          </div>
+        </div>
+        <div class="task-detail">
+          <div class="task-detail-hd"><span>RF功率循环测试</span><div style="display:flex;gap:6px"><button class="tb p" style="padding:4px 10px;font-size:12px">▶ 运行</button><button class="tb" style="padding:4px 10px;font-size:12px">编辑</button><span style="font-size:11px;color:var(--muted);margin-left:8px">循环: 10次 · 预计: 50s</span></div></div>
+          <div class="task-detail-bd">
+            <div class="step"><div class="step-num">1</div><div class="step-body"><b>开始数据记录</b>记录方案: "RF功率测试方案" · 存储: SQLite</div></div>
+            <div class="step"><div class="step-num">2</div><div class="step-body"><b>设置 RF-A 功率</b>设备: RF电源-A型-01 · 目标: 300W · 模式: CW</div></div>
+            <div class="step"><div class="step-num">3</div><div class="step-body"><b>RF ON</b>设备: RF电源-A型-01 · TRG ON</div></div>
+            <div class="step"><div class="step-num">4</div><div class="step-body"><b>延时</b>等待 2000 ms</div></div>
+            <div class="step"><div class="step-num">5</div><div class="step-body"><b>设置 RF-A 功率</b>设备: RF电源-A型-01 · 目标: 600W</div></div>
+            <div class="step"><div class="step-num">6</div><div class="step-body"><b>延时</b>等待 2000 ms</div></div>
+            <div class="step"><div class="step-num">7</div><div class="step-body"><b>RF OFF</b>设备: RF电源-A型-01 · TRG OFF</div></div>
+            <div class="step"><div class="step-num">8</div><div class="step-body"><b>延时</b>等待 1000 ms · → 循环回步骤2（共10次）</div></div>
+            <div class="step"><div class="step-num">9</div><div class="step-body"><b>停止数据记录</b></div></div>
+            <div style="margin-top:10px;padding:10px;background:#fdf6ec;border-radius:6px;font-size:12px;color:var(--warn)">⚠ 错误策略: 步骤失败时 <b>中止任务</b> 并执行安全关断（RF OFF → 电机保持）</div>
+            <div class="step-add">
+              <div class="step-add-hd"><span style="font-weight:500;font-size:13px">添加步骤</span><button class="tb" id="btnToggleStep" style="padding:4px 10px;font-size:12px" onclick="toggleStepForm()">+ 添加步骤</button></div>
+              <div class="step-form" id="stepForm">
+                <div class="dg">
+                  <div class="di"><span class="dl">步骤类型</span><select id="stepType"><option>Delay</option><option>SetPoint</option><option>StartRecord</option><option>StopRecord</option><option>SetDeviceMode</option><option>RfOnOff</option><option>UserNotification</option></select></div>
+                  <div class="di"><span class="dl">目标设备</span><select id="stepDev" onchange="fillStepParams()"><option>RF电源-A型-01</option><option>匹配器-CIP2-01</option><option>VI传感器-01</option><option>DDL-01</option><option>RF电源-M型-01</option></select></div>
+                  <div class="di"><span class="dl">参数/指令</span><select id="stepParam"></select></div>
+                  <div class="di"><span class="dl">值</span><input type="text" id="stepVal" placeholder="数值或文本"></div>
+                  <div class="di"><span class="dl">错误策略</span><select id="stepErr"><option>AbortTask</option><option>SkipAndContinue</option><option>RetryN</option></select></div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:8px"><button class="tb p" style="padding:5px 14px;font-size:12px" onclick="appendStep()">插入到任务</button><button class="tb" style="padding:5px 14px;font-size:12px" onclick="toggleStepForm()">收起</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 数据记录 ======= -->
+    <div class="panel" id="p-record">
+      <div class="rec-layout">
+        <div class="rec-cfg">
+          <div class="rec-cfg-hd">记录项配置</div>
+          <div class="rec-cfg-bd">
+            <div style="margin-bottom:8px;display:flex;gap:6px"><button class="tb" style="padding:3px 8px;font-size:11px">加载方案</button><button class="tb" style="padding:3px 8px;font-size:11px">保存方案</button></div>
+            <div class="rec-group"><div class="rec-group-title">RF电源-A型-01</div>
+              <label class="rec-check"><input type="checkbox" checked>当前功率 (W)</label>
+              <label class="rec-check"><input type="checkbox" checked>反射功率 (W)</label>
+              <label class="rec-check"><input type="checkbox">当前频率 (MHz)</label>
+              <label class="rec-check"><input type="checkbox">RF开关状态</label>
+            </div>
+            <div class="rec-group"><div class="rec-group-title">匹配器-CIP2-01</div>
+              <label class="rec-check"><input type="checkbox" checked>电机1实际位置 (%)</label>
+              <label class="rec-check"><input type="checkbox" checked>电机2实际位置 (%)</label>
+              <label class="rec-check"><input type="checkbox">匹配状态</label>
+            </div>
+            <div class="rec-group"><div class="rec-group-title">VI传感器-01</div>
+              <label class="rec-check"><input type="checkbox" checked>电压 (V)</label>
+              <label class="rec-check"><input type="checkbox" checked>电流 (A)</label>
+              <label class="rec-check"><input type="checkbox">相位 (°)</label>
+            </div>
+            <div class="rec-group"><div class="rec-group-title">DDL-01</div>
+              <label class="rec-check"><input type="checkbox">电机4位置 (%)</label>
+              <label class="rec-check"><input type="checkbox">电机5位置 (%)</label>
+            </div>
+            <hr style="margin:8px 0;border:none;border-top:1px solid var(--border)">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">采样策略</div>
+            <select style="font-size:12px;padding:4px 8px;width:100%;margin-bottom:6px"><option selected>每次轮询 (EveryPoll)</option><option>固定间隔 100ms</option><option>固定间隔 1s</option><option>值变化时 (OnChange)</option></select>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">存储方式</div>
+            <select style="font-size:12px;padding:4px 8px;width:100%"><option>CSV 文件</option><option selected>SQLite 数据库</option></select>
+          </div>
+        </div>
+        <div class="rec-preview">
+          <div class="rec-preview-hd"><span>数据预览（最近记录）</span><div style="display:flex;gap:6px"><button class="tb" style="padding:3px 8px;font-size:11px" onclick="openExport()">导出 CSV</button><button class="tb" style="padding:3px 8px;font-size:11px">清空</button></div></div>
+          <div class="rec-table">
+            <table>
+              <thead><tr><th>时间戳</th><th>RF-A 功率</th><th>RF-A 反射</th><th>电机1</th><th>电机2</th><th>VI 电压</th><th>VI 电流</th></tr></thead>
+              <tbody>
+                <tr><td>14:32:15.100</td><td>500</td><td>12</td><td>45.2</td><td>67.8</td><td>220.5</td><td>2.35</td></tr>
+                <tr><td>14:32:15.200</td><td>501</td><td>11</td><td>45.1</td><td>67.9</td><td>220.3</td><td>2.36</td></tr>
+                <tr><td>14:32:15.300</td><td>499</td><td>13</td><td>45.3</td><td>67.7</td><td>220.6</td><td>2.34</td></tr>
+                <tr><td>14:32:15.400</td><td>500</td><td>12</td><td>45.2</td><td>67.8</td><td>220.4</td><td>2.35</td></tr>
+                <tr><td>14:32:15.500</td><td>502</td><td>11</td><td>45.0</td><td>68.0</td><td>220.7</td><td>2.33</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= 数据浏览 ======= -->
+    <div class="panel" id="p-history">
+      <div class="hist-subbar">
+        <div class="hist-stab act" data-hsub="evt" onclick="histSubTab('evt')">事件日志</div>
+        <div class="hist-stab" data-hsub="db" onclick="histSubTab('db')">数据库查询</div>
+      </div>
+      <div class="hist-subpanel show" id="hist-panel-evt">
+        <div style="display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:12px">时间范围:</label>
+          <input type="text" value="2026-04-22 14:00" style="width:160px;font-size:12px;padding:4px 8px"> ~ <input type="text" value="2026-04-22 15:00" style="width:160px;font-size:12px;padding:4px 8px">
+          <label style="font-size:12px;margin-left:8px">设备:</label>
+          <select style="font-size:12px;padding:4px 8px"><option>全部</option><option>RF电源-A型-01</option><option>匹配器-CIP2-01</option><option>VI传感器-01</option></select>
+          <label style="font-size:12px;margin-left:8px">级别:</label>
+          <select style="font-size:12px;padding:4px 8px"><option>全部</option><option>INFO</option><option>WARN</option><option>ERROR</option></select>
+          <button class="tb p" style="padding:4px 10px;font-size:12px" onclick="toast('事件日志已刷新','suc')">🔍 查询</button>
+          <button class="tb" style="padding:4px 10px;font-size:12px" onclick="openExport()">📤 导出</button>
+        </div>
+        <table>
+          <thead><tr><th style="width:140px">时间</th><th style="width:80px">级别</th><th style="width:140px">设备</th><th>事件内容</th></tr></thead>
+          <tbody>
+            <tr><td>14:32:15.234</td><td style="color:var(--pri)">INFO</td><td>RF电源-A型-01</td><td>连接成功 COM3@115200</td></tr>
+            <tr><td>14:32:15.456</td><td style="color:var(--suc)">OK</td><td>匹配器-CIP2-01</td><td>握手完成，Modbus Addr=01</td></tr>
+            <tr><td>14:32:16.012</td><td style="color:var(--pri)">INFO</td><td>VI传感器-01</td><td>HTTP连接 192.168.1.100:5000</td></tr>
+            <tr><td>14:32:18.789</td><td style="color:var(--warn)">WARN</td><td>RF电源-M型-01</td><td>反射功率超过阈值: 52W > 50W</td></tr>
+            <tr><td>14:32:20.123</td><td style="color:var(--pri)">INFO</td><td>DDL-01</td><td>参数查询成功 电机4:32.5% 电机5:78.3%</td></tr>
+            <tr><td>14:33:01.567</td><td style="color:var(--pri)">INFO</td><td>系统</td><td>数据记录启动，方案: "RF功率测试方案"</td></tr>
+            <tr><td>14:33:01.890</td><td style="color:var(--pri)">INFO</td><td>系统</td><td>任务 "RF功率循环测试" 开始执行（第1/10轮）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="hist-subpanel" id="hist-panel-db">
+        <div class="db-info">数据库: local.db · 1,234,567 条记录 · 45.2 MB</div>
+        <div class="db-filters">
+          <div class="di"><span class="dl">会话</span><select style="font-size:12px"><option>会话 #20260422-001</option><option>会话 #20260421-018</option><option>全部会话</option></select></div>
+          <div class="di"><span class="dl">开始时间</span><input type="text" value="2026-04-22 00:00" style="font-size:12px"></div>
+          <div class="di"><span class="dl">结束时间</span><input type="text" value="2026-04-22 23:59" style="font-size:12px"></div>
+          <div class="di"><span class="dl">设备 (多选)</span><select class="db-ms" multiple size="3" style="font-size:12px"><option selected>RF电源-A型-01</option><option selected>匹配器-CIP2-01</option><option>VI传感器-01</option><option>DDL-01</option></select></div>
+          <div class="di"><span class="dl">参数 (多选)</span><select class="db-ms" multiple size="3" style="font-size:12px"><option selected>功率(W)</option><option selected>反射功率(W)</option><option>电机1(%)</option><option>电压(V)</option></select></div>
+        </div>
+        <button class="tb p" style="padding:4px 12px;font-size:12px;margin-bottom:10px" onclick="toast('数据库查询完成','suc')">执行查询</button>
+        <table>
+          <thead><tr><th>时间戳</th><th>设备</th><th>参数</th><th>值</th><th>单位</th></tr></thead>
+          <tbody id="dbTableBody">
+            <tr><td>2026-04-22 14:32:15.100</td><td>RF电源-A型-01</td><td>功率</td><td>500.2</td><td>W</td></tr>
+            <tr><td>2026-04-22 14:32:15.100</td><td>匹配器-CIP2-01</td><td>电机1</td><td>45.18</td><td>%</td></tr>
+            <tr><td>2026-04-22 14:32:15.200</td><td>RF电源-A型-01</td><td>功率</td><td>501.0</td><td>W</td></tr>
+            <tr><td>2026-04-22 14:32:15.200</td><td>VI传感器-01</td><td>电压</td><td>220.4</td><td>V</td></tr>
+            <tr><td>2026-04-22 14:32:15.300</td><td>RF电源-A型-01</td><td>反射功率</td><td>11.8</td><td>W</td></tr>
+          </tbody>
+        </table>
+        <div class="db-bar">
+          <span>共 <b id="dbTotal">1,234,567</b> 条 · 本页 <b id="dbPageInfo">1–5</b></span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="tb" style="padding:4px 10px;font-size:12px" onclick="dbPage(-1)">上一页</button>
+            <button class="tb" style="padding:4px 10px;font-size:12px" onclick="dbPage(1)">下一页</button>
+            <button class="tb s" style="padding:4px 10px;font-size:12px" onclick="openExport();toast('将导出当前查询为 CSV','info')">导出 CSV</button>
+            <button class="tb s" style="padding:4px 10px;font-size:12px" onclick="openExport();toast('将导出当前查询为 Parquet','info')">导出 Parquet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- ===== Logger ===== -->
+<div class="logger" id="logger">
+  <div class="log-hd">
+    <span class="log-title">日志终端</span>
+    <div class="log-tabs"><span class="lt act">全部</span><span class="lt">通信</span><span class="lt">报警</span><span class="lt">操作</span><span class="lt">审计</span></div>
+    <div class="log-acts"><button class="tb" style="padding:2px 8px;font-size:11px">清空</button><button class="tb" style="padding:2px 8px;font-size:11px">导出</button><button class="tb" style="padding:2px 8px;font-size:11px" onclick="toggleLog()">折叠 ▲</button></div>
+  </div>
+  <div class="log-bd" id="logBody">
+    <div class="ll"><span class="lt2">14:32:15.234</span><span class="lv i">[INFO]</span><span>RF电源-A型-01 连接成功 COM3@115200</span></div>
+    <div class="ll"><span class="lt2">14:32:15.456</span><span class="lv s">[OK]</span><span>匹配器-CIP2-01 握手完成 Modbus Addr:01 · 寄存器数:48</span></div>
+    <div class="ll"><span class="lt2">14:32:16.012</span><span class="lv i">[INFO]</span><span>VI传感器-01 HTTP连接 192.168.1.100:5000 · JSON解析OK</span></div>
+    <div class="ll"><span class="lt2">14:32:18.789</span><span class="lv w">[WARN]</span><span>RF电源-M型-01 反射功率超阈值 52W>50W · 报警已闩锁</span></div>
+    <div class="ll"><span class="lt2">14:32:20.123</span><span class="lv i">[INFO]</span><span>DDL-01 查询OK 电机4:32.5% 电机5:78.3% · 2ms</span></div>
+    <div class="ll"><span class="lt2">14:32:22.001</span><span class="lv i">[INFO]</span><span>EtherCAT 匹配器-通用-01 连接超时 · 状态→Fault</span></div>
+    <div class="ll"><span class="lt2">14:33:01.567</span><span class="lv s">[REC]</span><span>数据记录启动 方案:"RF功率测试方案" 存储:SQLite</span></div>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <span>轮询周期: 100ms</span><span>记录: 已停止</span><span>任务: 空闲</span><span>CPU: 12%</span><span>磁盘: 45.2GB 可用</span><span style="margin-left:auto">v1.2.0 · 工程: 神州半导体-测试</span>
+</div>
+</div>
+
+<!-- ===== Context Menu ===== -->
+<div class="ctx" id="ctx">
+  <div class="mi">📋 查看详情</div>
+  <div class="mi">⏱ 设置查询间隔</div>
+  <div class="mi">🔄 重新握手</div>
+  <div class="md"></div>
+  <div class="mi">▶ 启动查询</div>
+  <div class="mi">⏸ 暂停查询</div>
+  <div class="md"></div>
+  <div class="mi">📤 导出点表</div>
+  <div class="mi">📎 复制诊断信息</div>
+  <div class="mi">⚙ 设备配置</div>
+</div>
+
+<!-- ===== RF 详情弹窗 ===== -->
+<div class="mo" id="mo-rf" onclick="closeMo('mo-rf')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">RF电源-A型-01 · 设备详情</div><button class="mx" onclick="closeMo('mo-rf')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">基本信息</div><div class="dg">
+      <div class="di"><span class="dl">设备名称</span><span class="dv">RF电源-A型-01</span></div>
+      <div class="di"><span class="dl">设备类型</span><span class="dv">RF射频电源 · A型</span></div>
+      <div class="di"><span class="dl">SN号</span><span class="dv">RF-A-2024-00123</span></div>
+      <div class="di"><span class="dl">固件版本</span><span class="dv">v2.1.3</span></div>
+      <div class="di"><span class="dl">接口</span><span class="dv">COM3 @ 115200 8N1</span></div>
+      <div class="di"><span class="dl">连接状态</span><span class="dv" style="color:var(--suc)">● Ready</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">只读参数（实时）</div><div class="dg">
+      <div class="di"><span class="dl">通信状态</span><span class="dv" style="color:var(--suc)">● 在线</span></div>
+      <div class="di"><span class="dl">RF开关</span><span class="dv" style="color:var(--suc)">● ON</span></div>
+      <div class="di"><span class="dl">当前功率</span><span class="dv">500 W</span></div>
+      <div class="di"><span class="dl">反射功率</span><span class="dv">12 W</span></div>
+      <div class="di"><span class="dl">当前频率</span><span class="dv">13.56 MHz</span></div>
+      <div class="di"><span class="dl">工作模式</span><span class="dv">CW</span></div>
+      <div class="di"><span class="dl">错误码</span><span class="dv">0x0000（无故障）</span></div>
+      <div class="di"><span class="dl">运行时长</span><span class="dv">4h 23min</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">可写参数（设置）</div>
+      <div class="sld" data-slider data-min="0" data-max="1000" data-val="500" data-unit=" W" data-color="blue"><div class="sld-h"><span class="dl">设定功率</span><span class="dv sld-val">500 W</span></div><div class="sld-track"><div class="sld-fill blue" style="width:50%"></div><div class="sld-thumb" style="left:50%"></div></div></div>
+      <div class="dg" style="margin-top:14px">
+        <div class="di"><span class="dl">设定频率 (MHz)</span><input type="text" value="13.56"></div>
+        <div class="di"><span class="dl">工作模式</span><select id="rfModeSelect"><option selected>CW</option><option>Pulse</option></select></div>
+        <div class="di"><span class="dl">脉冲宽度 (μs)</span><input type="number" id="rfPulseWidth" value="100" disabled></div>
+        <div class="di"><span class="dl">RF开关</span><select><option selected>ON</option><option>OFF</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-rf')">取消</button><button class="tb p">应用设置</button></div>
+</div></div>
+
+<!-- ===== 匹配器完整面板弹窗 ===== -->
+<div class="mo" id="mo-mat" onclick="closeMo('mo-mat')">
+<div class="modal full" onclick="event.stopPropagation()">
+  <div class="mh" style="padding:10px 20px">
+    <div class="mt">PVD 匹配器-CIP2-01 · <span style="font-size:13px;color:var(--muted)">COM4 · Modbus</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px"><span class="dot on"></span>Connected</span>
+      <button class="mx" onclick="closeMo('mo-mat')">×</button>
+    </div>
+  </div>
+
+  <!-- 匹配器页签 -->
+  <div class="mat-tabs">
+    <div class="mat-tab act" data-mt="mat-main" onclick="matTab('mat-main')">主界面</div>
+    <div class="mat-tab" data-mt="mat-imp" onclick="matTab('mat-imp')">Impedance界面</div>
+    <div class="mat-tab" data-mt="mat-log" onclick="matTab('mat-log')">操作日志界面</div>
+    <div class="mat-tab" data-mt="mat-set" onclick="matTab('mat-set')">设置界面</div>
+  </div>
+
+  <div class="mat-panels">
+    <!-- ====== 主界面 ====== -->
+    <div class="mat-panel show" id="mat-main" style="padding:12px;gap:12px">
+      <!-- 左侧主区域 -->
+      <div style="flex:1;overflow-y:auto;padding-right:8px">
+        <!-- 状态指示器行 -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <div class="ind-group" style="flex:1;min-width:200px">
+            <span class="ind-group-title">Interlock报警信息</span>
+            <div class="ind-row">
+              <div class="ind"><span class="ind-dot g"></span>interlock</div>
+              <div class="ind"><span class="ind-dot g"></span>OUT1</div>
+              <div class="ind"><span class="ind-dot g"></span>OUT2</div>
+              <div class="ind"><span class="ind-dot"></span>OUT3</div>
+              <div class="ind"><span class="ind-dot"></span>OUT4</div>
+            </div>
+          </div>
+          <div class="ind-group" style="min-width:100px">
+            <span class="ind-group-title">Pulse/CW标识</span>
+            <div class="ind-row"><div class="ind"><span class="ind-dot g"></span>rf</div></div>
+          </div>
+          <div class="ind-group" style="min-width:100px">
+            <span class="ind-group-title">风扇报警信息</span>
+            <div class="ind-row"><div class="ind"><span class="ind-dot g"></span>fans</div></div>
+          </div>
+          <div class="ind-group" style="flex:1;min-width:260px">
+            <span class="ind-group-title">其他状态</span>
+            <div class="ind-row">
+              <div class="ind"><span class="ind-dot g"></span>ETHERCAT控制中</div>
+              <div class="ind"><span class="ind-dot g"></span>参数加载状态</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 电机状态 -->
+        <div class="ind-group">
+          <span class="ind-group-title">电机状态</span>
+          <div class="ind-row">
+            <div class="ind"><span class="ind-dot g"></span>Load自检</div>
+            <div class="ind"><span class="ind-dot g"></span>Tune自检</div>
+            <div class="ind"><span class="ind-dot"></span>电机转动中</div>
+            <div class="ind"><span class="ind-dot"></span>匹配超限报警</div>
+            <div class="ind"><span class="ind-dot g"></span>已匹配</div>
+          </div>
+        </div>
+
+        <!-- PVD 参数 -->
+        <div style="font-size:12px;font-weight:600;color:var(--pri);text-align:center;margin:10px 0 6px;padding:3px;background:var(--pri-light);border-radius:4px">PVD</div>
+        <div class="pvd-grid">
+          <div class="pvd-cell"><span class="pvd-k">Vol</span><span class="pvd-v">220.5 V</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Cur</span><span class="pvd-v">2.35 A</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Pha</span><span class="pvd-v">45.2°</span></div>
+          <div class="pvd-cell"><span class="pvd-k">前向功率</span><span class="pvd-v">518 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">反射功率</span><span class="pvd-v">12 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">负载功率</span><span class="pvd-v">506 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Zr</span><span class="pvd-v">48.5 Ω</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Zx</span><span class="pvd-v">12.3 Ω</span></div>
+          <div class="pvd-cell"><span class="pvd-k">POW1</span><span class="pvd-v">0 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">POW2</span><span class="pvd-v">0 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">POW3</span><span class="pvd-v">0 W</span></div>
+          <div class="pvd-cell"><span class="pvd-k">POW4</span><span class="pvd-v">0 W</span></div>
+        </div>
+
+        <!-- 调试参数 -->
+        <div style="font-size:12px;font-weight:600;color:var(--warn);text-align:center;margin:10px 0 6px;padding:3px;background:#fdf6ec;border-radius:4px">调试参数</div>
+        <div class="pvd-grid">
+          <div class="pvd-cell"><span class="pvd-k">电压原始值</span><span class="pvd-v">3286</span></div>
+          <div class="pvd-cell"><span class="pvd-k">电流原始值</span><span class="pvd-v">1520</span></div>
+          <div class="pvd-cell"><span class="pvd-k">相位原始值</span><span class="pvd-v">2048</span></div>
+          <div class="pvd-cell"><span class="pvd-k">风扇转速</span><span class="pvd-v">2400 /秒</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Load编码器</span><span class="pvd-v">1842</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Tune编码器</span><span class="pvd-v">3067</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Load直控</span><span class="pvd-v">0</span></div>
+          <div class="pvd-cell"><span class="pvd-k">Tune直控</span><span class="pvd-v">0</span></div>
+          <div class="pvd-cell"><span class="pvd-k">匹配时间</span><span class="pvd-v">85 ms</span></div>
+          <div class="pvd-cell"><span class="pvd-k">RV</span><span class="pvd-v">0</span></div>
+          <div class="pvd-cell"><span class="pvd-k">RI</span><span class="pvd-v">0</span></div>
+          <div class="pvd-cell"><span class="pvd-k">RP</span><span class="pvd-v">0</span></div>
+          <div class="pvd-cell" style="grid-column:span 2"><span class="pvd-k">Gamma</span><span class="pvd-v">0.024</span></div>
+        </div>
+      </div>
+
+      <!-- 右侧 Load/Tune 柱状控制面板 -->
+      <div style="width:260px;flex-shrink:0;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 8px;display:flex;flex-direction:column">
+        <div style="font-size:13px;font-weight:600;text-align:center;margin-bottom:8px">PVD_Match</div>
+        <div class="match-modes">
+          <span class="match-mode" onclick="setMatchMode(this)">手动预设</span>
+          <span class="match-mode act" onclick="setMatchMode(this)">自动模式</span>
+          <span class="match-mode" onclick="setMatchMode(this)">手动位置</span>
+          <span class="match-mode" onclick="setMatchMode(this)">ETHERCAT</span>
+          <span class="match-mode" onclick="setMatchMode(this)">初始化</span>
+        </div>
+        <div class="vbar-wrap">
+          <!-- Load -->
+          <div class="vbar-col">
+            <div class="vbar-label" onclick="openLoadSet('Load')">Load</div>
+            <input type="number" class="vbar-input" id="vb-load-input" value="84.69" step="1" min="0" max="100">
+            <div class="vbar-target">50.00</div>
+            <div style="position:relative">
+              <div class="vbar-track" id="vb-load-track">
+                <div class="vbar-fill blue" id="vb-load-fill" style="height:84.69%"></div>
+                <div class="vbar-fill green-line" id="vb-load-target" style="bottom:50%"></div>
+                <div class="vbar-thumb" id="vb-load-thumb" style="bottom:84.69%"></div>
+              </div>
+              <div class="vbar-scale"><span>100</span><span>90</span><span>80</span><span>70</span><span>60</span><span>50</span><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div>
+            </div>
+            <div class="vbar-unit">325.0 pF</div>
+          </div>
+          <!-- Tune -->
+          <div class="vbar-col">
+            <div class="vbar-label" onclick="openLoadSet('Tune')">Tune</div>
+            <input type="number" class="vbar-input" id="vb-tune-input" value="59.67" step="1" min="0" max="100">
+            <div class="vbar-target">50.00</div>
+            <div style="position:relative">
+              <div class="vbar-track" id="vb-tune-track">
+                <div class="vbar-fill blue" id="vb-tune-fill" style="height:59.67%"></div>
+                <div class="vbar-fill green-line" id="vb-tune-target" style="bottom:50%"></div>
+                <div class="vbar-thumb" id="vb-tune-thumb" style="bottom:59.67%"></div>
+              </div>
+              <div class="vbar-scale"><span>100</span><span>90</span><span>80</span><span>70</span><span>60</span><span>50</span><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div>
+            </div>
+            <div class="vbar-unit">325.0 pF</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== Impedance界面 ====== -->
+    <div class="mat-panel" id="mat-imp" style="padding:20px;flex-direction:column;align-items:center">
+      <div class="smith-placeholder" style="max-width:400px">Smith Chart<br>（阻抗实时映射）</div>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:10px">Z = 48.5 + j12.3 Ω · VSWR = 1.28 · |Γ| = 0.024<br>输入阻抗 / 输出阻抗 切换于 PVD_Match 面板</div>
+    </div>
+
+    <!-- ====== 操作日志 ====== -->
+    <div class="mat-panel" id="mat-log" style="flex-direction:column">
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center">
+        <button class="tb" style="font-size:11px;padding:3px 8px">清空</button>
+        <button class="tb" style="font-size:11px;padding:3px 8px">导出</button>
+        <span style="margin-left:auto;font-size:11px;color:var(--muted)">最近 100 条</span>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:8px 16px;font-family:Monaco,Consolas,monospace;font-size:11px;line-height:1.8;background:#1e1e1e;color:#d4d4d4">
+        <div class="ll"><span class="lt2">14:32:15.100</span><span class="lv i">[INFO]</span><span>匹配器 连接成功 COM4 Modbus Addr:01</span></div>
+        <div class="ll"><span class="lt2">14:32:15.200</span><span class="lv s">[OK]</span><span>Load自检通过 · Tune自检通过</span></div>
+        <div class="ll"><span class="lt2">14:32:15.350</span><span class="lv i">[INFO]</span><span>读取参数: 48 寄存器 OK · 初始Load=84.69 Tune=59.67</span></div>
+        <div class="ll"><span class="lt2">14:32:18.000</span><span class="lv i">[SET]</span><span>模式切换 → 自动模式</span></div>
+        <div class="ll"><span class="lt2">14:32:20.500</span><span class="lv s">[MATCH]</span><span>匹配完成 85ms · Gamma=0.024 · Zr=48.5Ω Zx=12.3Ω</span></div>
+        <div class="ll"><span class="lt2">14:32:22.100</span><span class="lv i">[PVD]</span><span>Vol=220.5V Cur=2.35A Pha=45.2° Fwd=518W Ref=12W</span></div>
+        <div class="ll"><span class="lt2">14:33:01.000</span><span class="lv i">[SET]</span><span>Load位置设定 → 66.58</span></div>
+        <div class="ll"><span class="lt2">14:33:05.200</span><span class="lv s">[OK]</span><span>电机到位 Load=66.58 (编码器=1842)</span></div>
+      </div>
+    </div>
+
+    <!-- ====== 设置界面 ====== -->
+    <div class="mat-panel" id="mat-set" style="flex-direction:column">
+      <div class="set-tabs">
+        <div class="set-tab act" data-st="st-preset" onclick="setSubTab('st-preset')">预设点</div>
+        <div class="set-tab" data-st="st-imp" onclick="setSubTab('st-imp')">目标阻抗</div>
+        <div class="set-tab" data-st="st-cal" onclick="setSubTab('st-cal')">输入校准</div>
+        <div class="set-tab" data-st="st-proc" onclick="setSubTab('st-proc')">匹配过程</div>
+        <div class="set-tab" data-st="st-enc" onclick="setSubTab('st-enc')">编码器范围</div>
+        <div class="set-tab" data-st="st-motor" onclick="setSubTab('st-motor')">电机直控</div>
+        <div class="set-tab" data-st="st-init" onclick="setSubTab('st-init')">初始化控制</div>
+        <div class="set-tab" data-st="st-alarm" onclick="setSubTab('st-alarm')">报警与信息</div>
+        <div class="set-tab" data-st="st-firm" onclick="setSubTab('st-firm')">参数固化</div>
+        <div class="set-tab" data-st="st-rec" onclick="setSubTab('st-rec')">记录配置</div>
+        <div class="set-tab" data-st="st-other" onclick="setSubTab('st-other')">其他配置</div>
+      </div>
+      <div class="set-panels">
+
+        <!-- 预设点（含串口配置） -->
+        <div class="set-panel show" id="st-preset">
+          <div class="ds"><div class="ds-t">Serial 串口配置</div>
+            <div class="dg" style="grid-template-columns:repeat(3,1fr)">
+              <div class="di"><span class="dl">Baudrate</span><select><option>9600</option><option selected>115200</option><option>230400</option></select></div>
+              <div class="di"><span class="dl">Direction</span><select><option selected>AllDirections</option><option>Input</option><option>Output</option></select></div>
+              <div class="di"><span class="dl">Databits</span><select><option selected>Data8</option><option>Data7</option></select></div>
+              <div class="di"><span class="dl">FlowControl</span><select><option selected>NoFlowControl</option><option>Hardware</option><option>Software</option></select></div>
+              <div class="di"><span class="dl">Parity</span><select><option selected>NoParity</option><option>Even</option><option>Odd</option></select></div>
+              <div class="di"><span class="dl">Stop</span><select><option selected>OneStop</option><option>TwoStop</option></select></div>
+            </div>
+          </div>
+          <div class="ds"><div class="ds-t">Time Configure 定时配置</div>
+            <div class="dg">
+              <div class="di"><span class="dl">Communication (ms)</span><input type="number" value="100"></div>
+              <div class="di"><span class="dl">Record (ms)</span><input type="number" value="100"></div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:16px"><button class="tb p" onclick="toast('串口配置已保存','suc')">Save 保存</button></div>
+        </div>
+
+        <!-- 目标阻抗 -->
+        <div class="set-panel" id="st-imp">
+          <div class="ds"><div class="ds-t">目标阻抗设置</div>
+            <div class="dg">
+              <div class="di"><span class="dl">目标 Zr (Ω)</span><input type="number" value="50"></div>
+              <div class="di"><span class="dl">目标 Zx (Ω)</span><input type="number" value="0"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 输入校准 -->
+        <div class="set-panel" id="st-cal">
+          <div class="ds"><div class="ds-t">输入校准</div>
+            <div class="dg">
+              <div class="di"><span class="dl">电压增益</span><input type="number" value="1.000" step="0.001"></div>
+              <div class="di"><span class="dl">电压偏移</span><input type="number" value="0"></div>
+              <div class="di"><span class="dl">电流增益</span><input type="number" value="1.000" step="0.001"></div>
+              <div class="di"><span class="dl">电流偏移</span><input type="number" value="0"></div>
+              <div class="di"><span class="dl">相位增益</span><input type="number" value="1.000" step="0.001"></div>
+              <div class="di"><span class="dl">相位偏移</span><input type="number" value="0"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 匹配过程 -->
+        <div class="set-panel" id="st-proc">
+          <div class="ds"><div class="ds-t">匹配算法参数</div>
+            <div class="dg">
+              <div class="di"><span class="dl">匹配超时 (ms)</span><input type="number" value="5000"></div>
+              <div class="di"><span class="dl">步进粒度</span><input type="number" value="1.00" step="0.1"></div>
+              <div class="di"><span class="dl">收敛阈值 Gamma</span><input type="number" value="0.05" step="0.01"></div>
+              <div class="di"><span class="dl">最大迭代次数</span><input type="number" value="200"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 编码器范围 -->
+        <div class="set-panel" id="st-enc">
+          <div class="ds"><div class="ds-t">编码器范围</div>
+            <div class="dg">
+              <div class="di"><span class="dl">Load 编码器 Min</span><input type="number" value="0"></div>
+              <div class="di"><span class="dl">Load 编码器 Max</span><input type="number" value="4095"></div>
+              <div class="di"><span class="dl">Tune 编码器 Min</span><input type="number" value="0"></div>
+              <div class="di"><span class="dl">Tune 编码器 Max</span><input type="number" value="4095"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 电机直控 (Match Motor) -->
+        <div class="set-panel" id="st-motor">
+          <div style="font-size:12px;font-weight:600;color:var(--pri);text-align:center;margin-bottom:12px;padding:3px;background:var(--pri-light);border-radius:4px">Match Motor</div>
+          <div class="rw-row"><label>版本号</label><input type="text" value="" placeholder="32位整数" style="width:160px"><button class="rw-btn read" onclick="toast('READ OK: 版本号=2','info')">READ</button></div>
+          <div class="rw-row"><label>风扇阈值</label><input type="text" value="" placeholder="32位整数" style="width:160px"><button class="rw-btn read" onclick="toast('READ OK: 风扇阈值=3000','info')">READ</button><button class="rw-btn write" onclick="toast('WRITE OK','suc')">WRITE</button></div>
+          <div class="rw-row"><label>风扇延迟控制</label><input type="text" value="" placeholder="10对应2秒左右" style="width:160px"><button class="rw-btn read" onclick="toast('READ OK: 风扇延迟=10','info')">READ</button><button class="rw-btn write" onclick="toast('WRITE OK','suc')">WRITE</button></div>
+          <div class="rw-row"><label>小灯Low计数</label><input type="text" value="" placeholder="32位整数" style="width:120px"><label style="min-width:auto">小灯High计数</label><input type="text" value="" placeholder="32位整数" style="width:120px"><button class="rw-btn read" onclick="toast('READ OK','info')">READ</button><button class="rw-btn write" onclick="toast('WRITE OK','suc')">WRITE</button></div>
+        </div>
+
+        <!-- 初始化控制 -->
+        <div class="set-panel" id="st-init">
+          <div class="ds"><div class="ds-t">初始化控制</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="tb p" onclick="toast('Load 电机初始化完成','suc')">Load 初始化</button>
+              <button class="tb p" onclick="toast('Tune 电机初始化完成','suc')">Tune 初始化</button>
+              <button class="tb" onclick="toast('全部参数已恢复出厂','warn')">恢复出厂</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 报警与信息 -->
+        <div class="set-panel" id="st-alarm">
+          <div class="ds"><div class="ds-t">报警阈值</div>
+            <div class="dg">
+              <div class="di"><span class="dl">反射功率阈值 (W)</span><input type="number" value="50"></div>
+              <div class="di"><span class="dl">温度阈值 (°C)</span><input type="number" value="80"></div>
+              <div class="di"><span class="dl">匹配超限 (%)</span><input type="number" value="95"></div>
+              <div class="di"><span class="dl">Interlock 使能</span><select><option selected>启用</option><option>禁用</option></select></div>
+            </div>
+          </div>
+          <div class="ds"><div class="ds-t">当前报警</div>
+            <div style="font-size:12px;color:var(--suc)">✔ 无活跃报警</div>
+          </div>
+        </div>
+
+        <!-- 参数固化 -->
+        <div class="set-panel" id="st-firm">
+          <div class="ds"><div class="ds-t">参数固化</div>
+            <p style="font-size:12px;color:var(--text2);margin-bottom:12px">将当前运行参数写入设备 EEPROM，断电保持。</p>
+            <button class="tb p" onclick="toast('参数已固化到 EEPROM','suc')">执行固化</button>
+          </div>
+        </div>
+
+        <!-- 记录配置 -->
+        <div class="set-panel" id="st-rec">
+          <div class="ds"><div class="ds-t">数据记录配置</div>
+            <div class="dg">
+              <div class="di"><span class="dl">记录间隔 (ms)</span><input type="number" value="100"></div>
+              <div class="di"><span class="dl">存储路径</span><input type="text" value="C:\Data\PVD_Match\"></div>
+              <div class="di"><span class="dl">单文件上限 (MB)</span><input type="number" value="50"></div>
+              <div class="di"><span class="dl">自动滚动</span><select><option selected>启用</option><option>禁用</option></select></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 其他配置 -->
+        <div class="set-panel" id="st-other">
+          <div class="ds"><div class="ds-t">其他配置</div>
+            <div class="dg">
+              <div class="di"><span class="dl">语言 / Language</span><select><option selected>中文</option><option>English</option></select></div>
+              <div class="di"><span class="dl">主题</span><select><option selected>浅色</option><option>深色</option></select></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ===== Load/Tune 设置弹窗 ===== -->
+<div class="mo" id="mo-loadset" onclick="closeMo('mo-loadset')">
+<div class="modal" style="width:380px" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt" id="loadset-title">Load设置</div><button class="mx" onclick="closeMo('mo-loadset')">×</button></div>
+  <div class="mb">
+    <div class="di" style="margin-bottom:12px"><span class="dl">手动调节步进</span><input type="number" id="ls-step" value="1.00" step="0.01"></div>
+    <div class="di" style="margin-bottom:12px"><span class="dl">0%时电容值 (pF)</span><input type="number" id="ls-cap0" value="50"></div>
+    <div class="di" style="margin-bottom:12px"><span class="dl">100%时电容值 (pF)</span><input type="number" id="ls-cap100" value="600"></div>
+  </div>
+  <div class="mf"><button class="tb p" onclick="toast('设置已生效','suc');closeMo('mo-loadset')">设置生效</button></div>
+</div></div>
+
+<!-- ===== 史密斯圆图弹窗 ===== -->
+<div class="mo" id="mo-smith" onclick="closeMo('mo-smith')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">史密斯圆图</div><button class="mx" onclick="closeMo('mo-smith')">×</button></div>
+  <div class="mb" style="text-align:center">
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:10px">
+      <button class="tb" style="font-size:11px;padding:3px 10px">RF-A 输出阻抗</button>
+      <button class="tb p" style="font-size:11px;padding:3px 10px">匹配器输入阻抗</button>
+      <button class="tb" style="font-size:11px;padding:3px 10px">VI Sensor</button>
+    </div>
+    <div class="smith-placeholder">Smith Chart 占位<br>（接入实时数据后绘制）</div>
+    <div style="font-size:12px;color:var(--muted)">Z = 48.5 + j12.3 Ω · VSWR = 1.28 · |Γ| = 0.12</div>
+  </div>
+</div></div>
+
+<!-- ===== 系统设置弹窗 ===== -->
+<div class="mo" id="mo-sys" onclick="closeMo('mo-sys')">
+<div class="modal" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">系统设置</div><button class="mx" onclick="closeMo('mo-sys')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">工程文件</div><div class="dg">
+      <div class="di"><span class="dl">工程名</span><input type="text" value="神州半导体-测试"></div>
+      <div class="di"><span class="dl">工程路径</span><input type="text" value="C:\Projects\shenzhou-01.proj" readonly style="background:var(--bg)"></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">权限与账户</div><div class="dg">
+      <div class="di"><span class="dl">当前用户</span><span class="dv">engineer_01（工程师）</span></div>
+      <div class="di"><span class="dl">会话超时</span><select><option>15 min</option><option selected>30 min</option><option>1 h</option><option>不超时</option></select></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">日志设置</div><div class="dg">
+      <div class="di"><span class="dl">单文件上限</span><select><option>10 MB</option><option selected>50 MB</option><option>100 MB</option></select></div>
+      <div class="di"><span class="dl">保留天数</span><input type="number" value="30"></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">部署与升级</div><div class="dg">
+      <div class="di"><span class="dl">当前版本</span><span class="dv">v1.2.0</span></div>
+      <div class="di"><span class="dl">自动升级</span><select><option>启用</option><option selected>禁用</option></select></div>
+    </div></div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-sys')">取消</button><button class="tb p">保存</button></div>
+</div></div>
+
+<!-- ===== 接口配置弹窗 ===== -->
+<div class="mo" id="mo-conn" onclick="closeMo('mo-conn')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">接口配置</div><button class="mx" onclick="closeMo('mo-conn')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">串口设备</div>
+      <table><thead><tr><th>端口</th><th>设备/机型</th><th>波特率</th><th>协议</th><th>查询周期</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>COM3</td><td>RF电源-A型-01</td><td>115200</td><td>A型专用</td><td>100ms</td><td><button class="cb" style="width:auto;padding:2px 8px">编辑</button></td></tr>
+        <tr><td>COM4</td><td>匹配器-CIP2-01</td><td>9600</td><td>Modbus</td><td>100ms</td><td><button class="cb" style="width:auto;padding:2px 8px">编辑</button></td></tr>
+        <tr><td>COM5</td><td>DDL-01</td><td>115200</td><td>自定义2</td><td>100ms</td><td><button class="cb" style="width:auto;padding:2px 8px">编辑</button></td></tr>
+      </tbody></table>
+    </div>
+    <div class="ds"><div class="ds-t">以太网设备</div>
+      <table><thead><tr><th>IP:Port</th><th>设备/机型</th><th>TCP角色</th><th>协议</th><th>查询周期</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>192.168.1.101:8080</td><td>RF电源-M型-01</td><td>Client→Server</td><td>M型专用</td><td>100ms</td><td><button class="cb" style="width:auto;padding:2px 8px">编辑</button></td></tr>
+        <tr><td>192.168.1.100:5000</td><td>VI传感器-01</td><td>HTTP Client</td><td>JSON</td><td>200ms</td><td><button class="cb" style="width:auto;padding:2px 8px">编辑</button></td></tr>
+      </tbody></table>
+    </div>
+    <div class="ds"><div class="ds-t">EtherCAT</div>
+      <table><thead><tr><th>从站#</th><th>设备/机型</th><th>PDO周期</th><th>状态</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>#3</td><td>匹配器-通用-01</td><td>1ms</td><td style="color:var(--err)">Fault</td><td><button class="cb" style="width:auto;padding:2px 8px">诊断</button></td></tr>
+      </tbody></table>
+    </div>
+    <div style="margin-top:10px"><button class="tb p" style="font-size:12px">+ 新增设备</button></div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-conn')">关闭</button></div>
+</div></div>
+
+<!-- ===== VI传感器详情弹窗 ===== -->
+<div class="mo" id="mo-vi" onclick="closeMo('mo-vi')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">VI传感器-01 · 设备详情</div><button class="mx" onclick="closeMo('mo-vi')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">基本信息</div><div class="dg">
+      <div class="di"><span class="dl">设备名称</span><span class="dv">VI传感器-01</span></div>
+      <div class="di"><span class="dl">设备类型</span><span class="dv">VI Sensor · HTTP/JSON</span></div>
+      <div class="di"><span class="dl">SN号</span><span class="dv">VI-2024-00056</span></div>
+      <div class="di"><span class="dl">固件版本</span><span class="dv">v3.0.1</span></div>
+      <div class="di"><span class="dl">接口</span><span class="dv">192.168.1.100:5000</span></div>
+      <div class="di"><span class="dl">连接状态</span><span class="dv" style="color:var(--suc)">● 在线</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">只读参数（实时）</div><div class="dg">
+      <div class="di"><span class="dl">RF ON 检测</span><span class="dv" style="color:var(--suc)">● 检测到</span></div>
+      <div class="di"><span class="dl">电压</span><span class="dv">220.5 V</span></div>
+      <div class="di"><span class="dl">电流</span><span class="dv">2.35 A</span></div>
+      <div class="di"><span class="dl">相位</span><span class="dv">45.2°</span></div>
+      <div class="di"><span class="dl">有功功率</span><span class="dv">518.2 W</span></div>
+      <div class="di"><span class="dl">阻抗 Z</span><span class="dv">93.8 Ω</span></div>
+      <div class="di"><span class="dl">谐波 THD</span><span class="dv">1.2%</span></div>
+      <div class="di"><span class="dl">频率</span><span class="dv">13.56 MHz</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">配置参数</div><div class="dg">
+      <div class="di"><span class="dl">上报间隔 (ms)</span><input type="number" value="200"></div>
+      <div class="di"><span class="dl">数据格式</span><select><option selected>JSON</option><option>VS34</option></select></div>
+    </div></div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-vi')">取消</button><button class="tb p" onclick="toast('VI传感器 配置已应用')">应用设置</button></div>
+</div></div>
+
+<!-- ===== DDL详情弹窗 ===== -->
+<div class="mo" id="mo-ddl" onclick="closeMo('mo-ddl')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">DDL-01 · 设备详情</div><button class="mx" onclick="closeMo('mo-ddl')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">基本信息</div><div class="dg">
+      <div class="di"><span class="dl">设备名称</span><span class="dv">DDL-01</span></div>
+      <div class="di"><span class="dl">设备类型</span><span class="dv">DDL 可调负载</span></div>
+      <div class="di"><span class="dl">接口</span><span class="dv">COM5 · 115200 8N1</span></div>
+      <div class="di"><span class="dl">连接状态</span><span class="dv" style="color:var(--suc)">● 在线</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">电机4</div>
+      <div class="sld" data-slider data-min="0" data-max="100" data-val="32.5" data-unit="%" data-color="blue"><div class="sld-h"><span class="dl">目标位置</span><span class="dv sld-val">32.5%</span></div><div class="sld-track"><div class="sld-fill blue" style="width:32.5%"></div><div class="sld-thumb" style="left:32.5%"></div></div></div>
+    </div>
+    <div class="ds"><div class="ds-t">电机5</div>
+      <div class="sld" data-slider data-min="0" data-max="100" data-val="78.3" data-unit="%" data-color="blue"><div class="sld-h"><span class="dl">目标位置</span><span class="dv sld-val">78.3%</span></div><div class="sld-track"><div class="sld-fill blue" style="width:78.3%"></div><div class="sld-thumb" style="left:78.3%"></div></div></div>
+    </div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-ddl')">取消</button><button class="tb p" onclick="toast('DDL 电机位置已下发')">应用位置</button></div>
+</div></div>
+
+<!-- ===== RF-M详情弹窗 ===== -->
+<div class="mo" id="mo-rfm" onclick="closeMo('mo-rfm')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">RF电源-M型-01 · 设备详情</div><button class="mx" onclick="closeMo('mo-rfm')">×</button></div>
+  <div class="mb">
+    <div class="ds"><div class="ds-t">基本信息</div><div class="dg">
+      <div class="di"><span class="dl">设备名称</span><span class="dv">RF电源-M型-01</span></div>
+      <div class="di"><span class="dl">设备类型</span><span class="dv">RF射频电源 · M型</span></div>
+      <div class="di"><span class="dl">接口</span><span class="dv">192.168.1.101:8080 · TCP</span></div>
+      <div class="di"><span class="dl">连接状态</span><span class="dv" style="color:var(--warn)">⚠ 警告</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">只读参数（实时）</div><div class="dg">
+      <div class="di"><span class="dl">RF开关</span><span class="dv" style="color:var(--muted)">○ OFF</span></div>
+      <div class="di"><span class="dl">当前功率</span><span class="dv">0 W</span></div>
+      <div class="di"><span class="dl">反射功率</span><span class="dv" style="color:var(--warn)">52 W ⚠</span></div>
+      <div class="di"><span class="dl">当前频率</span><span class="dv">13.56 MHz</span></div>
+      <div class="di"><span class="dl">报警</span><span class="dv" style="color:var(--warn)">反射功率过高</span></div>
+      <div class="di"><span class="dl">报警码</span><span class="dv" style="color:var(--warn)">0x0012</span></div>
+    </div></div>
+    <div class="ds"><div class="ds-t">可写参数（设置）</div>
+      <div class="sld" data-slider data-min="0" data-max="1000" data-val="0" data-unit=" W" data-color="blue"><div class="sld-h"><span class="dl">设定功率</span><span class="dv sld-val">0 W</span></div><div class="sld-track"><div class="sld-fill blue" style="width:0%"></div><div class="sld-thumb" style="left:0%"></div></div></div>
+      <div class="dg" style="margin-top:14px">
+        <div class="di"><span class="dl">设定频率 (MHz)</span><input type="text" value="13.56"></div>
+        <div class="di"><span class="dl">RF开关</span><select><option>ON</option><option selected>OFF</option></select></div>
+      </div>
+    </div>
+    <div class="ds"><div class="ds-t">报警操作</div><div style="display:flex;gap:8px"><button class="tb" style="font-size:12px;border-color:var(--warn);color:var(--warn)" onclick="toast('报警已确认')">确认报警</button><button class="tb" style="font-size:12px" onclick="toast('报警已复位')">复位报警</button></div></div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-rfm')">取消</button><button class="tb p" onclick="toast('RF-M 设置已应用')">应用设置</button></div>
+</div></div>
+
+<!-- ===== 登录 ===== -->
+<div class="mo show" id="mo-login" onclick="if(event.target===this)toast('请先完成登录','warn')">
+<div class="login-card" onclick="event.stopPropagation()">
+  <div class="login-brand"><div class="lb-t">神州半导体上位机</div><div class="lb-s">江苏神州半导体 · 设备控制软件</div></div>
+  <div class="login-bd">
+    <div class="di"><span class="dl">用户名</span><input type="text" id="loginUser" placeholder="用户名" value="operator"></div>
+    <div class="di"><span class="dl">密码</span><input type="password" id="loginPass" value="demo" placeholder="密码"></div>
+    <div class="di"><span class="dl">角色</span><select id="loginRole"><option>操作员</option><option selected>工程师</option><option>管理员</option></select></div>
+    <button class="tb p" style="width:100%;margin-top:8px;justify-content:center;padding:8px" onclick="doLogin()">登录</button>
+  </div>
+</div>
+</div>
+
+<!-- ===== 设备扫描 ===== -->
+<div class="mo" id="mo-scan" onclick="closeMo('mo-scan')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">扫描设备</div><button class="mx" onclick="closeMo('mo-scan')">×</button></div>
+  <div class="mb">
+    <p class="scan-hint" id="scanHint">点击下方按钮开始扫描串口与网段…</p>
+    <div class="scan-prog" id="scanProg"><div class="scan-prog-in"></div></div>
+    <button class="tb p" id="scanStartBtn" onclick="runDeviceScan()">开始扫描</button>
+    <div class="scan-list" id="scanList">
+      <div class="scan-row hd"><span>端口/地址</span><span>类型</span><span>型号</span><span>状态</span></div>
+      <div id="scanRows"></div>
+    </div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-scan')">取消</button><button class="tb s" id="scanAddAll" onclick="scanAddAll()" style="display:none">全部添加</button></div>
+</div>
+</div>
+
+<!-- ===== 导出数据 ===== -->
+<div class="mo" id="mo-export" onclick="closeMo('mo-export')">
+<div class="modal wide" onclick="event.stopPropagation()">
+  <div class="mh"><div class="mt">导出数据</div><button class="mx" onclick="closeMo('mo-export')">×</button></div>
+  <div class="mb">
+    <div class="ds-t" style="margin-bottom:8px">导出格式</div>
+    <div class="exp-fmt">
+      <label><input type="radio" name="expFmt" value="csv" checked> CSV</label>
+      <label><input type="radio" name="expFmt" value="parquet"> Parquet</label>
+      <label><input type="radio" name="expFmt" value="sqlite"> SQLite</label>
+    </div>
+    <div class="dg" style="margin-top:12px">
+      <div class="di"><span class="dl">时间范围 · 起</span><input type="text" value="2026-04-22 00:00"></div>
+      <div class="di"><span class="dl">时间范围 · 止</span><input type="text" value="2026-04-22 23:59"></div>
+    </div>
+    <div class="exp-grid">
+      <div><div class="dl" style="margin-bottom:6px">设备</div><div class="exp-chk">
+        <label><input type="checkbox" checked> RF电源-A型-01</label>
+        <label><input type="checkbox" checked> 匹配器-CIP2-01</label>
+        <label><input type="checkbox"> VI传感器-01</label>
+        <label><input type="checkbox"> DDL-01</label>
+      </div></div>
+      <div><div class="dl" style="margin-bottom:6px">参数</div><div class="exp-chk">
+        <label><input type="checkbox" checked> 功率</label>
+        <label><input type="checkbox" checked> 反射功率</label>
+        <label><input type="checkbox"> 电机1</label>
+        <label><input type="checkbox"> 电压</label>
+      </div></div>
+    </div>
+    <div class="exp-prog" id="expProg"><div class="exp-prog-in" id="expProgIn"></div></div>
+  </div>
+  <div class="mf"><button class="tb" onclick="closeMo('mo-export')">关闭</button><button class="tb p" onclick="startExport()">开始导出</button></div>
+</div>
+</div>
+
+<!-- ===== Toast ===== -->
+<div id="toastBox" style="position:fixed;top:60px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px"></div>
+
+<script>
+/* ========== Tab Switching ========== */
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('act',t.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('show',p.id==='p-'+id));
+}
+
+/* ========== Toast Notification ========== */
+function toast(msg,type){
+  type=type||'suc';
+  const colors={suc:'#67c23a',warn:'#e6a23c',err:'#f56c6c',info:'#409eff'};
+  const el=document.createElement('div');
+  el.textContent=msg;
+  Object.assign(el.style,{padding:'10px 20px',background:'#fff',border:'1px solid #e4e7ed',borderLeft:'4px solid '+(colors[type]||colors.info),borderRadius:'4px',boxShadow:'0 4px 12px rgba(0,0,0,.1)',fontSize:'13px',color:'#303133',opacity:'0',transform:'translateX(40px)',transition:'all .3s'});
+  document.getElementById('toastBox').appendChild(el);
+  requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateX(0)'});
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(40px)';setTimeout(()=>el.remove(),300)},2500);
+}
+
+/* ========== Context Menu ========== */
+let ctxTarget=null;
+function ctxShow(e){
+  e.preventDefault();e.stopPropagation();
+  ctxTarget=e.currentTarget;
+  const m=document.getElementById('ctx');
+  m.style.left=Math.min(e.pageX,window.innerWidth-180)+'px';
+  m.style.top=Math.min(e.pageY,window.innerHeight-250)+'px';
+  m.classList.add('show');
+}
+document.addEventListener('click',()=>document.getElementById('ctx').classList.remove('show'));
+document.querySelectorAll('#ctx .mi').forEach(mi=>{
+  mi.addEventListener('click',function(){
+    const txt=this.textContent.trim();
+    if(txt.includes('查看详情')&&ctxTarget){
+      const id=ctxTarget.dataset.id||ctxTarget.querySelector('[data-id]')?.dataset.id;
+      if(id)openDetail(id);
+    }else if(txt.includes('查询间隔')){
+      const v=prompt('设置查询间隔 (ms):','100');
+      if(v)toast('查询间隔已设为 '+v+'ms','info');
+    }else if(txt.includes('重新握手')){
+      toast('正在重新握手…','info');
+    }else if(txt.includes('启动查询')){
+      toast('已启动轮询查询','suc');
+    }else if(txt.includes('暂停查询')){
+      toast('查询已暂停','warn');
+    }else if(txt.includes('导出点表')){
+      toast('点表已导出','info');
+    }else if(txt.includes('复制诊断')){
+      toast('诊断信息已复制到剪贴板','info');
+    }else if(txt.includes('设备配置')){
+      openConn();
+    }
+  });
+});
+
+/* ========== Modal Open/Close ========== */
+function openDetail(id){
+  const map={'rf-a1':'mo-rf','mat-cip':'mo-mat','mat-gen':'mo-mat','vi-01':'mo-vi','ddl-01':'mo-ddl','rf-m1':'mo-rfm'};
+  const mo=map[id];
+  if(mo)document.getElementById(mo).classList.add('show');
+}
+function closeMo(id){document.getElementById(id).classList.remove('show')}
+function openSmith(){document.getElementById('mo-smith').classList.add('show')}
+function openSys(){document.getElementById('mo-sys').classList.add('show')}
+function openConn(){document.getElementById('mo-conn').classList.add('show')}
+
+/* ========== Tree Item Selection ========== */
+document.querySelectorAll('.ti').forEach(ti=>{
+  ti.addEventListener('click',function(e){
+    if(e.button!==0)return;
+    document.querySelectorAll('.ti').forEach(t=>t.classList.remove('act'));
+    this.classList.add('act');
+  });
+});
+
+/* ========== Task Item Selection ========== */
+document.querySelectorAll('.task-item').forEach(ti=>{
+  ti.addEventListener('click',function(){
+    document.querySelectorAll('.task-item').forEach(t=>t.classList.remove('act'));
+    this.classList.add('act');
+  });
+});
+
+/* ========== Log Tab Switching ========== */
+document.querySelectorAll('.log-tabs .lt').forEach(lt=>{
+  lt.addEventListener('click',function(){
+    this.parentElement.querySelectorAll('.lt').forEach(t=>t.classList.remove('act'));
+    this.classList.add('act');
+    toast('日志过滤: '+this.textContent,'info');
+  });
+});
+
+/* ========== Logger Collapse ========== */
+let logCollapsed=false;
+function toggleLog(){
+  const l=document.getElementById('logger');
+  logCollapsed=!logCollapsed;
+  l.classList.toggle('collapsed',logCollapsed);
+  l.querySelector('.log-acts button:last-child').textContent=logCollapsed?'展开 ▼':'折叠 ▲';
+}
+
+/* ========== Recording Toggle ========== */
+let recording=false;
+function toggleRec(){
+  recording=!recording;
+  const b=document.getElementById('btnRec');
+  if(recording){b.textContent='⏹ 停止记录';b.className='tb d';toast('数据记录已启动','suc')}
+  else{b.textContent='● 开始记录';b.className='tb s';toast('数据记录已停止','info')}
+  document.querySelector('.status-bar').children[1].textContent='记录: '+(recording?'运行中':'已停止');
+}
+
+/* ========== Search Filter ========== */
+function filterTree(){
+  const q=document.getElementById('devSearch').value.toLowerCase();
+  document.querySelectorAll('.ti').forEach(t=>{t.style.display=t.querySelector('.nm').textContent.toLowerCase().includes(q)?'':'none'});
+}
+
+/* ========== Login ========== */
+function doLogin(){
+  const role=document.getElementById('loginRole').value;
+  document.getElementById('mo-login').classList.remove('show');
+  document.getElementById('toolbarRole').textContent='🔒 '+role;
+  toast('登录成功','suc');
+}
+
+/* ========== Device scan ========== */
+function openScan(){
+  document.getElementById('mo-scan').classList.add('show');
+  document.getElementById('scanHint').textContent='点击下方按钮开始扫描串口与网段…';
+  document.getElementById('scanProg').classList.remove('run');
+  document.getElementById('scanList').classList.remove('show');
+  document.getElementById('scanRows').innerHTML='';
+  document.getElementById('scanAddAll').style.display='none';
+  document.getElementById('scanStartBtn').disabled=false;
+}
+function runDeviceScan(){
+  const hint=document.getElementById('scanHint');
+  const prog=document.getElementById('scanProg');
+  const btn=document.getElementById('scanStartBtn');
+  btn.disabled=true;
+  hint.textContent='正在扫描 COM 口与 192.168.1.0/24 …';
+  prog.classList.remove('run');
+  void prog.offsetWidth;
+  prog.classList.add('run');
+  document.getElementById('scanList').classList.remove('show');
+  document.getElementById('scanAddAll').style.display='none';
+  setTimeout(()=>{
+    prog.classList.remove('run');
+    hint.textContent='扫描完成，发现 4 台设备';
+    const rows=document.getElementById('scanRows');
+    const data=[
+      ['COM7','RF电源','A型 · SN-A-9921','待添加'],
+      ['COM9','匹配器','CIP2 · Rev3','待添加'],
+      ['192.168.1.105:8080','RF电源','M型 · TCP','在线'],
+      ['192.168.1.112:5000','VI传感器','VI-Pro','待添加']
+    ];
+    rows.innerHTML=data.map(r=>'<div class="scan-row"><span>'+r[0]+'</span><span>'+r[1]+'</span><span>'+r[2]+'</span><span style="color:var(--pri)">'+r[3]+'</span></div>').join('');
+    document.getElementById('scanList').classList.add('show');
+    document.getElementById('scanAddAll').style.display='';
+    btn.disabled=false;
+    toast('设备扫描完成','suc');
+  },2300);
+}
+function scanAddAll(){
+  toast('已将扫描到的设备全部加入工程','suc');
+  closeMo('mo-scan');
+}
+
+/* ========== Oscilloscope ========== */
+let scopeRunning=false;
+function scopeToggleRun(){
+  scopeRunning=!scopeRunning;
+  const b=document.getElementById('scopeRunBtn');
+  b.textContent=scopeRunning?'⏸ 暂停':'▶ 运行';
+  toast(scopeRunning?'示波器运行中':'示波器已暂停',scopeRunning?'suc':'info');
+}
+function scopeAddMath(){
+  const ex=(document.getElementById('scopeMathExpr').value||'A-B').replace(/\s+/g,'');
+  document.getElementById('scopeMathList').textContent='Math1: '+ex;
+  toast('已添加数学通道 Math1','suc');
+}
+const SCOPE_STATS={A:['1.24 V','3.80 V','1.41 V','0.62 V'],B:['0.88 V','2.10 V','0.95 V','0.41 V'],C:['2.05 V','4.20 V','2.18 V','0.91 V'],D:['0.50 V','1.20 V','0.55 V','0.22 V']};
+function scopeChStat(){
+  const ch=[...document.querySelectorAll('#p-scope .scope-chk input[type=checkbox]:checked')].map(x=>x.dataset.ch).filter(Boolean)[0]||'A';
+  const s=SCOPE_STATS[ch]||SCOPE_STATS.A;
+  document.getElementById('scopeStats').innerHTML='<div>均值 <b>'+s[0]+'</b></div><div>峰峰值 <b>'+s[1]+'</b></div><div>RMS <b>'+s[2]+'</b></div><div>标准差 <b>'+s[3]+'</b></div>';
+  const lab=document.querySelector('#p-scope .scope-sec-t span');
+  if(lab)lab.textContent='(Ch '+ch+')';
+}
+
+/* ========== Data browser sub-tabs ========== */
+function histSubTab(id){
+  document.querySelectorAll('.hist-stab').forEach(t=>t.classList.toggle('act',t.dataset.hsub===id));
+  document.getElementById('hist-panel-evt').classList.toggle('show',id==='evt');
+  document.getElementById('hist-panel-db').classList.toggle('show',id==='db');
+}
+let dbPageNum=1;
+function dbPage(d){
+  dbPageNum+=d;
+  if(dbPageNum<1)dbPageNum=1;
+  const start=(dbPageNum-1)*5+1;
+  document.getElementById('dbPageInfo').textContent=start+'–'+(start+4);
+  toast(d>0?'下一页':'上一页','info');
+}
+
+/* ========== Export dialog ========== */
+function openExport(){
+  document.getElementById('mo-export').classList.add('show');
+  document.getElementById('expProg').classList.remove('show');
+  document.getElementById('expProgIn').style.width='0%';
+}
+function startExport(){
+  const prog=document.getElementById('expProg');
+  const bar=document.getElementById('expProgIn');
+  prog.classList.add('show');
+  bar.style.width='0%';
+  let p=0;
+  const t=setInterval(()=>{
+    p+=25;
+    bar.style.width=Math.min(p,100)+'%';
+    if(p>=100){
+      clearInterval(t);
+      const fmt=(document.querySelector('input[name=expFmt]:checked')||{}).value||'csv';
+      toast('导出完成 · '+fmt.toUpperCase(),'suc');
+      prog.classList.remove('show');
+      bar.style.width='0%';
+      closeMo('mo-export');
+    }
+  },180);
+}
+
+/* ========== Task step editor ========== */
+const STEP_PARAMS={
+  'RF电源-A型-01':['设定功率','RF开关(TRG)','设定频率','工作模式'],
+  '匹配器-CIP2-01':['电机1目标','电机2目标','匹配模式','启动调谐'],
+  'VI传感器-01':['采样率','触发阈值','清零累计'],
+  'DDL-01':['电机4位置','电机5位置','通信周期'],
+  'RF电源-M型-01':['设定功率','RF开关','反射限值']
+};
+function fillStepParams(){
+  const dev=document.getElementById('stepDev').value;
+  const sel=document.getElementById('stepParam');
+  const arr=STEP_PARAMS[dev]||['通用参数'];
+  sel.innerHTML=arr.map(p=>'<option>'+p+'</option>').join('');
+}
+function toggleStepForm(){
+  const f=document.getElementById('stepForm');
+  const on=!f.classList.contains('show');
+  f.classList.toggle('show',on);
+  document.getElementById('btnToggleStep').textContent=on?'− 收起':'+ 添加步骤';
+}
+function appendStep(){
+  const type=document.getElementById('stepType').value;
+  const dev=document.getElementById('stepDev').value;
+  const param=document.getElementById('stepParam').value;
+  const val=document.getElementById('stepVal').value||'—';
+  const err=document.getElementById('stepErr').value;
+  toast('已插入步骤: '+type+' · '+dev+' · '+param+' = '+val+' · '+err,'suc');
+}
+
+/* ========== Slider Drag + Wheel ========== */
+function initSliders(){
+  document.querySelectorAll('.sld[data-slider]').forEach(sld=>{
+    const track=sld.querySelector('.sld-track');
+    const fill=sld.querySelector('.sld-fill');
+    const thumb=sld.querySelector('.sld-thumb');
+    const valEl=sld.querySelector('.sld-val');
+    const min=parseFloat(sld.dataset.min)||0;
+    const max=parseFloat(sld.dataset.max)||100;
+    const unit=sld.dataset.unit||'';
+    let val=parseFloat(sld.dataset.val)||0;
+
+    function setVal(v){
+      val=Math.round(Math.max(min,Math.min(max,v))*10)/10;
+      const pct=((val-min)/(max-min))*100;
+      fill.style.width=pct+'%';
+      thumb.style.left=pct+'%';
+      if(valEl)valEl.textContent=val+unit;
+      sld.dataset.val=val;
+    }
+
+    function pctFromEvent(e){
+      const rect=track.getBoundingClientRect();
+      return Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));
+    }
+
+    thumb.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      const onMove=ev=>{setVal(min+(max-min)*pctFromEvent(ev))};
+      const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp)};
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onUp);
+    });
+
+    track.addEventListener('click',function(e){
+      if(e.target===thumb)return;
+      setVal(min+(max-min)*pctFromEvent(e));
+    });
+
+    sld.addEventListener('wheel',function(e){
+      e.preventDefault();
+      const step=(max-min)/200;
+      setVal(val+(e.deltaY<0?step:-step));
+    },{passive:false});
+  });
+}
+
+/* ========== Mode-dependent field toggle ========== */
+function initModeToggle(){
+  const sel=document.getElementById('rfModeSelect');
+  const pw=document.getElementById('rfPulseWidth');
+  if(!sel||!pw)return;
+  sel.addEventListener('change',function(){
+    pw.disabled=this.value!=='Pulse';
+    if(this.value==='Pulse'){pw.style.background='';toast('已切换脉冲模式，可设置脉冲宽度','info')}
+    else{pw.style.background='var(--bg)'}
+  });
+}
+
+/* ========== Chart Pause Toggle ========== */
+(function(){
+  const btn=document.querySelector('#p-chart .chart-hd .tb');
+  if(!btn)return;
+  let paused=false;
+  btn.addEventListener('click',function(){
+    paused=!paused;
+    this.textContent=paused?'继续':'暂停';
+    this.style.borderColor=paused?'var(--warn)':'';
+    this.style.color=paused?'var(--warn)':'';
+    toast(paused?'曲线已暂停':'曲线已恢复','info');
+  });
+})();
+
+/* ========== Apply Buttons: RF-A ========== */
+document.querySelector('#mo-rf .mf .tb.p')?.addEventListener('click',function(){
+  toast('RF电源-A型 设置已应用','suc');
+  closeMo('mo-rf');
+});
+/* mo-mat now has no footer apply button - interactions are inline */
+document.querySelector('#mo-sys .mf .tb.p')?.addEventListener('click',function(){
+  toast('系统设置已保存','suc');
+  closeMo('mo-sys');
+});
+
+/* ========== Matcher Panel Tabs ========== */
+function matTab(id){
+  document.querySelectorAll('.mat-tab').forEach(t=>t.classList.toggle('act',t.dataset.mt===id));
+  document.querySelectorAll('.mat-panel').forEach(p=>p.classList.toggle('show',p.id===id));
+}
+
+/* ========== Setting Sub-Tabs ========== */
+function setSubTab(id){
+  document.querySelectorAll('.set-tab').forEach(t=>t.classList.toggle('act',t.dataset.st===id));
+  document.querySelectorAll('.set-panel').forEach(p=>p.classList.toggle('show',p.id===id));
+}
+
+/* ========== Match Mode ========== */
+function setMatchMode(el){
+  el.parentElement.querySelectorAll('.match-mode').forEach(m=>m.classList.remove('act'));
+  el.classList.add('act');
+  toast('匹配模式: '+el.textContent,'info');
+}
+
+/* ========== Load/Tune Settings Popup ========== */
+function openLoadSet(name){
+  document.getElementById('loadset-title').textContent=name+'设置';
+  document.getElementById('mo-loadset').classList.add('show');
+}
+
+/* ========== Vertical Bar Drag ========== */
+function initVBars(){
+  [['vb-load','vb-load-input'],['vb-tune','vb-tune-input']].forEach(([prefix,inputId])=>{
+    const track=document.getElementById(prefix+'-track');
+    const fill=document.getElementById(prefix+'-fill');
+    const thumb=document.getElementById(prefix+'-thumb');
+    const input=document.getElementById(inputId);
+    if(!track||!fill||!thumb||!input)return;
+    let val=parseFloat(input.value)||50;
+
+    function setVal(v){
+      val=Math.round(Math.max(0,Math.min(100,v))*100)/100;
+      fill.style.height=val+'%';
+      thumb.style.bottom=val+'%';
+      input.value=val.toFixed(2);
+    }
+
+    function pctFromEvent(e){
+      const rect=track.getBoundingClientRect();
+      return (1-(e.clientY-rect.top)/rect.height)*100;
+    }
+
+    thumb.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      const onMove=ev=>setVal(pctFromEvent(ev));
+      const onUp=()=>{document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp)};
+      document.addEventListener('mousemove',onMove);
+      document.addEventListener('mouseup',onUp);
+    });
+
+    track.addEventListener('click',function(e){
+      if(e.target===thumb)return;
+      setVal(pctFromEvent(e));
+    });
+
+    track.addEventListener('wheel',function(e){
+      e.preventDefault();
+      setVal(val+(e.deltaY<0?0.5:-0.5));
+    },{passive:false});
+
+    input.addEventListener('change',function(){
+      setVal(parseFloat(this.value)||0);
+    });
+  });
+}
+
+/* ========== Init ========== */
+fillStepParams();
+initSliders();
+initModeToggle();
+initVBars();
+</script>
+</body>
+</html>

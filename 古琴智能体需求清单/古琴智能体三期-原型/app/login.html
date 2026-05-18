@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>登录 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar dark" style="background:linear-gradient(180deg,#2a1d0f,#5b3a18);color:#fff;"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div class="app-body" style="background:linear-gradient(180deg,#5b3a18 0%,#2a1d0f 50%,#1a1408 100%);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:60px 30px 30px;color:#fff;text-align:center;">
+      <div style="width:72px;height:72px;background:#a8341e;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:34px;box-shadow:0 12px 30px rgba(168,52,30,.5);">琴</div>
+      <h2 class="ink-title" style="font-size:24px;margin:18px 0 6px;">古琴智能体</h2>
+      <p style="color:#d6c08a;font-size:13px;margin:0;">名家亲授 · 数字人陪练 · 千年雅韵</p>
+
+      <!-- 古琴装饰图 -->
+      <div style="margin:40px 0 30px;width:200px;height:80px;position:relative;">
+        <div style="position:absolute;top:35px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:38px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:41px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:44px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:47px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:50px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+        <div style="position:absolute;top:53px;left:0;right:0;height:2px;background:#d6b06b;opacity:.4;"></div>
+      </div>
+
+      <button onclick="wxLogin()" data-silent style="width:100%;background:#1aad19;color:#fff;border:none;padding:14px;border-radius:99px;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(26,173,25,.3);">
+        <span style="font-size:20px;">💚</span> 微信一键登录
+      </button>
+      <button onclick="document.getElementById('phoneForm').style.display='block';this.style.display='none';" data-silent style="width:100%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);padding:14px;border-radius:99px;font-size:15px;margin-top:12px;">
+        📱 手机号登录
+      </button>
+
+      <div id="phoneForm" style="display:none;width:100%;margin-top:18px;">
+        <input type="tel" placeholder="请输入手机号" maxlength="11" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:14px;text-align:center;font-size:14px;margin-bottom:10px;"/>
+        <div style="display:flex;gap:8px;">
+          <input type="text" placeholder="验证码" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:14px;text-align:center;font-size:14px;"/>
+          <button onclick="sendSms(this)" data-silent style="background:linear-gradient(90deg,#d6b06b,#b08949);color:#fff;border:none;padding:0 14px;border-radius:6px;font-size:12px;white-space:nowrap;">获取验证码</button>
+        </div>
+        <button onclick="phoneLogin()" data-silent style="width:100%;background:linear-gradient(90deg,#d6b06b,#b08949);color:#fff;border:none;padding:14px;border-radius:99px;font-size:15px;margin-top:14px;font-weight:600;">登录</button>
+      </div>
+
+      <label style="margin-top:20px;display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#a99b78;text-align:left;line-height:1.6;">
+        <input type="checkbox" id="agree" checked data-silent style="width:auto;margin-top:2px;"/>
+        <span>我已阅读并同意 <a style="color:#d6b06b;">《用户协议》</a> 与 <a style="color:#d6b06b;">《隐私政策》</a>，允许接收开播提醒推送</span>
+      </label>
+
+      <div style="margin-top:auto;padding-top:30px;font-size:11px;color:#7a6336;text-align:center;">
+        游客模式可浏览公开内容 · <a href="home.html" style="color:#d6b06b;">先逛逛 →</a>
+      </div>
+    </div>
+  </div></div>
+</div>
+</div>
+<script>
+  function wxLogin(){
+    if(!document.getElementById('agree').checked){ window.toast('请先同意用户协议','warn'); return; }
+    window.toast('微信授权中...');
+    setTimeout(()=>{ window.toast('登录成功 ✓','success'); setTimeout(()=>location.href='home.html', 600); }, 800);
+  }
+  function phoneLogin(){
+    if(!document.getElementById('agree').checked){ window.toast('请先同意用户协议','warn'); return; }
+    window.toast('登录成功 ✓','success');
+    setTimeout(()=>location.href='home.html', 600);
+  }
+  function sendSms(btn){
+    let n = 60;
+    btn.disabled = true; btn.style.opacity='.5';
+    btn.textContent = n+'s 后重发';
+    const it = setInterval(()=>{ n--; btn.textContent = n+'s 后重发'; if(n<=0){ clearInterval(it); btn.disabled=false; btn.style.opacity='1'; btn.textContent='获取验证码'; } },1000);
+    window.toast('验证码已发送','success');
+  }
+</script>
+<script src="../assets/sidebar.js" data-active="app/login.html" data-crumbs="用户端 / <b>登录</b>" data-depth="1"></script>
+</body></html>

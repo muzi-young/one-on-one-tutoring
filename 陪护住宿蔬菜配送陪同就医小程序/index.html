@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安心陪护 · 住宿+陪诊全套交互原型总览</title>
+<style>
+  :root{
+    --bg:#f4f7fa; --ink:#152226; --muted:#6b7a80; --line:#e1ebe6;
+    --green:#1f8a70; --green-2:#e3f4ee;
+    --blue:#2f6fed; --blue-2:#e8f0ff;
+    --orange:#f59e0b; --orange-2:#fff5e0;
+    --purple:#7c3aed; --purple-2:#ede4ff;
+    --shadow:0 24px 60px rgba(31,42,46,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    color:var(--ink);min-height:100vh;
+    background:radial-gradient(circle at 20% -10%,#d8f1e7 0,transparent 35%),
+               radial-gradient(circle at 90% 10%,#dde9ff 0,transparent 30%),
+               linear-gradient(135deg,#f7fbf9 0%,var(--bg) 100%);
+    font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  }
+  button,input,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:0}
+  a{color:inherit;text-decoration:none}
+  .shell{max-width:1280px;margin:0 auto;padding:48px 32px 80px}
+
+  /* hero */
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:40px;flex-wrap:wrap}
+  .hero .intro{max-width:720px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);font-weight:800;letter-spacing:.06em;font-size:13px;background:var(--green-2);padding:8px 14px;border-radius:99px}
+  h1{margin:16px 0 12px;font-size:clamp(32px,4.6vw,52px);line-height:1.08;letter-spacing:-.04em}
+  h1 span{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:16px;line-height:1.7;margin:0}
+  .hero-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;background:#fff;border:1px solid var(--line);font-size:13px;color:var(--muted);font-weight:600}
+  .badge b{color:var(--ink)}
+
+  /* metric strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:40px}
+  .strip .item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 14px rgba(31,42,46,.04)}
+  .strip .item .ico{width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+  .strip .item.green .ico{background:var(--green-2);color:var(--green)}
+  .strip .item.blue .ico{background:var(--blue-2);color:var(--blue)}
+  .strip .item.orange .ico{background:var(--orange-2);color:var(--orange)}
+  .strip .item.purple .ico{background:var(--purple-2);color:var(--purple)}
+  .strip .item .num{font-size:28px;font-weight:900;letter-spacing:-.02em;display:block;margin-bottom:2px}
+  .strip .item .lbl{font-size:13px;color:var(--muted)}
+
+  /* cards */
+  h2.section{margin:48px 0 18px;font-size:24px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+  h2.section::before{content:"";width:4px;height:22px;border-radius:99px;background:linear-gradient(180deg,var(--green),var(--blue))}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .end-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 12px 40px rgba(31,42,46,.06);display:flex;flex-direction:column;transition:.2s ease;position:relative;overflow:hidden}
+  .end-card:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(31,42,46,.12)}
+  .end-card.user::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#1f8a70,#54b399)}
+  .end-card.nurse::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#2f6fed,#78a4ff)}
+  .end-card.admin::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+  .end-card .head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .end-card .ico-box{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+  .end-card.user .ico-box{background:var(--green-2);color:var(--green)}
+  .end-card.nurse .ico-box{background:var(--blue-2);color:var(--blue)}
+  .end-card.admin .ico-box{background:var(--purple-2);color:var(--purple)}
+  .end-card h3{margin:0;font-size:20px;letter-spacing:-.02em}
+  .end-card .meta{font-size:12px;color:var(--muted);margin-top:4px}
+  .end-card p{color:var(--muted);font-size:14px;line-height:1.7;margin:0 0 16px;flex:1}
+  .end-card .modules{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+  .end-card .mod{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink)}
+  .end-card .mod .dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+  .end-card.nurse .mod .dot{background:var(--blue)}
+  .end-card.admin .mod .dot{background:var(--purple)}
+  .end-card .mod .count{margin-left:auto;color:var(--muted);font-size:12px}
+  .end-card .actions{display:flex;gap:8px}
+  .btn{min-height:44px;padding:0 18px;border-radius:12px;background:var(--green);color:#fff;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:14px;box-shadow:0 8px 18px rgba(31,138,112,.18);transition:.15s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.blue{background:var(--blue);box-shadow:0 8px 18px rgba(47,111,237,.2)}
+  .btn.purple{background:var(--purple);box-shadow:0 8px 18px rgba(124,58,237,.2)}
+  .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn.full{width:100%;flex:1}
+  .btn.lg{min-height:50px;font-size:16px;padding:0 22px}
+
+  /* feature value */
+  .value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .v-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px}
+  .v-card .ico{font-size:30px;margin-bottom:10px}
+  .v-card h4{margin:0 0 6px;font-size:16px}
+  .v-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+
+  /* demo script */
+  .demo{background:linear-gradient(135deg,#1f8a70 0%,#2f6fed 100%);color:#fff;border-radius:24px;padding:32px;display:grid;grid-template-columns:1fr 1.6fr;gap:28px;align-items:start}
+  .demo h3{margin:0 0 8px;font-size:22px;letter-spacing:-.02em}
+  .demo p{margin:0;opacity:.9;font-size:14px;line-height:1.7}
+  .demo ol{margin:0;padding-left:20px;font-size:14px;line-height:1.9}
+  .demo ol li b{font-weight:700}
+  .demo .tag{display:inline-block;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.18);font-size:12px;font-weight:600;margin:0 4px 4px 0}
+
+  /* footer */
+  .footer{margin-top:48px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8}
+  .footer a{color:var(--green);font-weight:700}
+
+  @media (max-width:980px){
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .grid,.value-grid{grid-template-columns:1fr}
+    .demo{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+
+  <section class="hero">
+    <div class="intro">
+      <span class="eyebrow">🛎️ INTERACTIVE PROTOTYPE · DEMO READY · 一期</span>
+      <h1>安心陪护 · <span>陪护住宿 + 陪同就医</span><br/>三端全交互原型总览</h1>
+      <p>面向中老年患者及家属的微信小程序与平台后台原型。覆盖<b>用户端 19 页 · 陪诊师端 7 页 · 平台 PC 后台 6 页</b>，可点击操作完整业务流程，开箱即用、客户演示就绪。</p>
+      <div class="hero-actions" style="margin-top:18px">
+        <span class="badge">📱 <b>iPhone 15 Pro Max</b> 模拟</span>
+        <span class="badge">💻 <b>1920×1080</b> PC 后台</span>
+        <span class="badge">🎯 <b>全部点击可交互</b></span>
+        <span class="badge">⚡ 直接打开 HTML 即用</span>
+        <span class="badge">📌 <b>一期范围</b>：暂不含蔬菜配送</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- metric strip -->
+  <div class="strip">
+    <div class="item green"><span class="ico">📱</span><span class="num">32+</span><span class="lbl">页面（三端总数）</span></div>
+    <div class="item blue"><span class="ico">🩺</span><span class="num">2</span><span class="lbl">业务场景闭环（住宿/陪诊）</span></div>
+    <div class="item orange"><span class="ico">⚡</span><span class="num">80+</span><span class="lbl">可交互动作（点击/筛选/支付/上报）</span></div>
+    <div class="item purple"><span class="ico">🎬</span><span class="num">4min</span><span class="lbl">客户演示脚本（已就绪）</span></div>
+  </div>
+
+  <!-- 三端入口 -->
+  <h2 class="section">🚀 选择端侧进入演示</h2>
+  <div class="grid">
+    <!-- 用户端 -->
+    <div class="end-card user">
+      <div class="head">
+        <div class="ico-box">📱</div>
+        <div>
+          <h3>用户端小程序</h3>
+          <div class="meta">面向患者家属 · iPhone 15 Pro Max</div>
+        </div>
+      </div>
+      <p>覆盖一站式陪护服务的 3 大模块：住宿预订、陪同就医、通用模块。完整下单链路、订单跟踪、客服互动、登录注册等可点击演示。</p>
+      <div class="modules">
+        <div class="mod"><span class="dot"></span>住宿预订模块<span class="count">8 页</span></div>
+        <div class="mod"><span class="dot"></span>陪同就医模块<span class="count">8 页</span></div>
+        <div class="mod"><span class="dot"></span>通用模块（个人/客服/登录）<span class="count">3 页</span></div>
+      </div>
+      <div class="actions">
+        <a href="01-用户端小程序原型.html" class="btn full lg">进入用户端 →</a>
+      </div>
+    </div>
+
+    <!-- 陪诊师端 -->
+    <div class="end-card nurse">
+      <div class="head">
+        <div class="ico-box">👩‍⚕️</div>
+        <div>
+          <h3>陪诊师端小程序</h3>
+          <div class="meta">面向陪诊师 · iPhone 15 Pro Max</div>
+        </div>
+      </div>
+      <p>陪诊师工作台 · 查看后台派单任务 / 进度上报 / 收入提现 / 入驻申请。包含在岗开关、订单概览、服务节点上报、实时位置共享、收入图表与提现等核心场景（订单均由后台派单，端内无接单）。</p>
+      <div class="modules">
+        <div class="mod"><span class="dot"></span>订单管理（首页/订单/详情/进度）<span class="count">4 页</span></div>
+        <div class="mod"><span class="dot"></span>个人中心（资料/收入/入驻申请）<span class="count">3 页</span></div>
+      </div>
+      <div class="actions">
+        <a href="02-陪诊师端小程序原型.html" class="btn blue full lg">进入陪诊师端 →</a>
+      </div>
+    </div>
+
+    <!-- 平台后台 -->
+    <div class="end-card admin">
+      <div class="head">
+        <div class="ico-box">💻</div>
+        <div>
+          <h3>平台管理后台</h3>
+          <div class="meta">面向运营 · 1920×1080 PC 端</div>
+        </div>
+      </div>
+      <p>覆盖经营驾驶舱、住宿管理、陪诊管理、营收统计 4 大业务域。数据可视化（折线/柱状/饼图/热力图）+ 完整管理表格 + 审核派单弹窗，开箱即用。</p>
+      <div class="modules">
+        <div class="mod"><span class="dot"></span>数据概览 + 营收统计<span class="count">2 页</span></div>
+        <div class="mod"><span class="dot"></span>住宿房源 + 住宿订单<span class="count">2 页</span></div>
+        <div class="mod"><span class="dot"></span>陪诊师管理 + 陪诊订单<span class="count">2 页</span></div>
+      </div>
+      <div class="actions">
+        <a href="03-平台管理后台原型.html" class="btn purple full lg">进入 PC 后台 →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 价值主张 -->
+  <h2 class="section">💎 核心价值主张</h2>
+  <div class="value-grid">
+    <div class="v-card">
+      <div class="ico">🏥</div>
+      <h4>一站式就医配套</h4>
+      <p>整合住宿 + 餐饮 + 陪诊三大场景，一次下单解决异地就医全部刚需，减少家属反复奔波与协调成本。</p>
+    </div>
+    <div class="v-card">
+      <div class="ico">🔠</div>
+      <h4>适老化交互设计</h4>
+      <p>大字号、高对比度、最少步骤、语音助手、子女代下单等专为中老年用户设计，降低使用门槛。</p>
+    </div>
+    <div class="v-card">
+      <div class="ico">📍</div>
+      <h4>实时透明的服务追踪</h4>
+      <p>房态 / 配送进度 / 陪诊师位置实时同步，三端联动；用户、家属、陪诊师、平台共享同一数据。</p>
+    </div>
+  </div>
+
+  <!-- 演示脚本 -->
+  <h2 class="section">🎬 4 分钟客户演示脚本</h2>
+  <div class="demo">
+    <div>
+      <h3>建议演示顺序</h3>
+      <p>从用户视角（家属为父亲预约）切入，依次串联三端，最终回到运营视角看后台数据闭环，整体体验 ≈ 4 分钟。</p>
+      <div style="margin-top:14px">
+        <span class="tag">📱 用户端</span><span class="tag">👩‍⚕️ 陪诊师端</span><span class="tag">💻 PC 后台</span>
+      </div>
+      <p style="margin-top:14px;font-size:12px;opacity:.85">📌 一期范围：陪护住宿 + 陪同就医（蔬菜配送列入二期）</p>
+    </div>
+    <ol>
+      <li><b>开场 (30s)：</b>「张先生 67 岁，需异地三甲医院就诊，子女在外地」打开<a href="01-用户端小程序原型.html" style="color:#fff;text-decoration:underline">用户端</a>，展示首页两大服务入口与适老化设计。</li>
+      <li><b>住宿场景 (60s)：</b>首页 → 住宿预订 → 房型详情 → 日期选择 → 订单确认 → 微信支付 → 订单详情，强调"房态自动锁定 + 一键导航"。</li>
+      <li><b>陪诊场景 (90s)：</b>陪诊服务 → 陪诊师列表 → 陪诊师详情 → 预约下单 → 支付。然后切到<a href="02-陪诊师端小程序原型.html" style="color:#fff;text-decoration:underline">陪诊师端</a>，演示「派单任务 / 待服务 → 进入服务 · 上报进度」（后台派单，端内无接单），再切回用户端看实时同步。</li>
+      <li><b>运营驾驶舱 (60s)：</b>切到 <a href="03-平台管理后台原型.html" style="color:#fff;text-decoration:underline">PC 后台</a>，展示「数据概览 → 待审核陪诊师审核 → 待派单订单分派 → 营收统计排行榜」，体现完整的业务闭环。</li>
+      <li><b>收尾 (30s)：</b>回到 <a href="01-用户端小程序原型.html" style="color:#fff;text-decoration:underline">用户端</a> 个人中心 + 在线客服，总结"3 端联动 · 4min 闭环 · 适老化首位"。</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    💡 提示：直接双击打开任意 HTML 文件即可在浏览器中演示，无需安装任何依赖。建议浏览器：Chrome / Edge / Safari 最新版。<br>
+    详细使用说明请查看 <a href="README.md">README.md</a>。
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>运营端登录 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+  body{background:linear-gradient(135deg,#1a3d36 0%,#0f6655 50%,#1a3d36 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  .login-box{display:grid;grid-template-columns:1fr 1fr;max-width:880px;width:90%;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.3);}
+  .login-hero{background:linear-gradient(135deg,#1a3d36 0%,#23c4a7 100%);color:#fff;padding:40px;display:flex;flex-direction:column;justify-content:space-between;}
+  .login-form{padding:40px;}
+  .login-form h2{margin:0 0 6px;font-family:'Noto Serif SC',serif;font-size:24px;}
+  .login-form p.sub{margin:0 0 24px;color:#888;font-size:13px;}
+  .field-row{position:relative;margin-bottom:14px;}
+  .field-row .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#888;}
+  .field-row input{padding-left:38px;padding-top:12px;padding-bottom:12px;}
+  .feature-list{font-size:13px;line-height:2;color:#d6c08a;}
+</style></head><body>
+
+<div class="login-box">
+  <div class="login-hero">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:20px;">琴</span>
+        <div><div style="font-weight:600;">古琴智能体</div><div style="font-size:11px;opacity:.7;">数字人直播运营平台</div></div>
+      </div>
+      <h1 style="font-family:'Noto Serif SC',serif;font-size:28px;margin:40px 0 14px;line-height:1.4;">让每一场<br/>数字人直播<br/>更懂琴友</h1>
+      <p style="color:rgba(255,255,255,.7);font-size:13px;line-height:1.7;">脚本编排 · 实时控场 · 智能答疑 · 转化分析</p>
+    </div>
+    <div class="feature-list">
+      <div>✦ 直播脚本时间轴可视化编排</div>
+      <div>✦ 数字人答疑 + 人工接管双轨</div>
+      <div>✦ 弹幕意图智能分类</div>
+      <div>✦ 实时转化数据看板</div>
+    </div>
+  </div>
+
+  <div class="login-form">
+    <h2>运营端登录</h2>
+    <p class="sub">仅限授权运营人员，账号问题请联系管理员</p>
+
+    <div style="display:flex;gap:6px;margin-bottom:18px;">
+      <button class="btn primary sm" onclick="switchTab(this,'account')">账号密码</button>
+      <button class="btn sm" onclick="switchTab(this,'sms')">短信验证</button>
+      <button class="btn sm" onclick="switchTab(this,'qr')">扫码登录</button>
+    </div>
+
+    <div id="tab-account">
+      <div class="field-row">
+        <span class="ic">👤</span>
+        <input type="text" placeholder="账号 / 工号" value="liyy@guqin.com"/>
+      </div>
+      <div class="field-row">
+        <span class="ic">🔒</span>
+        <input type="password" placeholder="密码" value="••••••••"/>
+      </div>
+      <div class="field-row" style="display:flex;gap:8px;">
+        <input type="text" placeholder="图形验证码" style="padding-left:14px;flex:1;"/>
+        <div style="background:linear-gradient(135deg,#dcf6f0,#a0e0c8);width:100px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:18px;color:#0f6655;cursor:pointer;letter-spacing:2px;" onclick="window.toast('验证码已刷新')">7K3M</div>
+      </div>
+    </div>
+
+    <div id="tab-sms" style="display:none;">
+      <div class="field-row"><span class="ic">📱</span><input type="tel" placeholder="手机号" value="138****8856"/></div>
+      <div class="field-row" style="display:flex;gap:8px;">
+        <span class="ic">📨</span>
+        <input type="text" placeholder="短信验证码" style="flex:1;"/>
+        <button class="btn sm" onclick="window.toast('验证码已发送','success')">获取验证码</button>
+      </div>
+    </div>
+
+    <div id="tab-qr" style="display:none;text-align:center;padding:20px 0;">
+      <div style="width:140px;height:140px;background:repeating-conic-gradient(#000 0% 25%,#fff 0% 50%) 50% / 8px 8px;margin:0 auto;border-radius:8px;border:8px solid #fff;box-shadow:0 0 0 1px #ddd;"></div>
+      <p style="font-size:13px;color:#888;margin:14px 0 0;">使用 <b>"古琴运营"</b> APP 扫码登录</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin:14px 0 18px;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" checked data-silent style="width:auto;"/> 7 天内自动登录
+      </label>
+      <a style="color:#23c4a7;cursor:pointer;">忘记密码？</a>
+    </div>
+
+    <button onclick="doLogin()" data-silent class="btn primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;background:#23c4a7;border-color:#23c4a7;">登录运营端</button>
+
+    <p style="font-size:11px;color:#aaa;text-align:center;margin:18px 0 0;line-height:1.7;">
+      🔒 本系统采用双因素认证<br/>
+      非授权访问将被记录并追责
+    </p>
+  </div>
+</div>
+
+<script src="../assets/interact.js"></script>
+<script>
+  function switchTab(btn, id){
+    btn.parentNode.querySelectorAll('.btn').forEach(b=>b.classList.remove('primary'));
+    btn.classList.add('primary');
+    ['account','sms','qr'].forEach(k=>document.getElementById('tab-'+k).style.display='none');
+    document.getElementById('tab-'+id).style.display = id==='qr' ? 'block' : '';
+  }
+  function doLogin(){
+    window.toast('身份验证中...');
+    setTimeout(()=>{ window.toast('登录成功，欢迎回来 ✓','success'); setTimeout(()=>location.href='index.html', 600); }, 800);
+  }
+</script>
+</body></html>

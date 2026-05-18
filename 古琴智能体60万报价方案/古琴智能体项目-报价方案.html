@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>古琴智能体三期 MVP · 产品功能方案 · 技术实施方案 · 项目报价单</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#b46a2b;
+      --primary-light:#d9a46d;
+      --primary-dark:#8b4e1e;
+      --secondary:#24404f;
+      --accent:#e8c48d;
+      --accent2:#7e9f8f;
+      --dark:#111827;
+      --text:#2f3a44;
+      --text-light:#6b7280;
+      --bg:#f7f5f2;
+      --white:#fff;
+      --border:#e7dfd5;
+      --alt:#f1ece6;
+      --gold:#d7b078;
+      --gold-soft:#f4ddbb;
+      --logo-line:#213a46;
+      --logo-word:#cc3d68;
+      --r:12px;
+      --rl:20px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Microsoft YaHei',sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.8;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{text-decoration:none}
+    @media print{
+      body{background:#fff;font-size:11pt}
+      .hero{min-height:auto;padding:110px 0 56px}
+      .m-card,.qt,.nb,.arch{break-inside:avoid;page-break-inside:avoid}
+    }
+
+    .hero-topbar{
+      position:fixed;top:0;left:0;right:0;z-index:30;
+      background:rgba(8,14,19,.56);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .hero-topbar-inner{
+      max-width:1400px;margin:0 auto;
+      padding:14px clamp(20px,3vw,36px);
+      display:flex;align-items:center;justify-content:space-between;gap:22px;
+    }
+    .opening-line{
+      font-family:'Noto Serif SC',serif;
+      font-size:clamp(16px,1.15vw,22px);
+      font-weight:700;
+      letter-spacing:.16em;
+      color:var(--gold-soft);
+      white-space:nowrap;
+    }
+    .hero-top-meta{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+    .hero-top-meta span{
+      display:inline-flex;align-items:center;min-height:42px;
+      padding:10px 16px;border-radius:999px;
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+      font-size:12px;color:rgba(255,255,255,.86);
+    }
+
+    .hero{
+      min-height:100dvh;
+      background:radial-gradient(circle at 18% 78%,rgba(215,176,120,.12),transparent 22%),
+                 radial-gradient(circle at 84% 18%,rgba(215,176,120,.08),transparent 24%),
+                 linear-gradient(135deg,#10161d 0%,#18232d 38%,#223744 100%);
+      display:flex;align-items:flex-start;justify-content:center;
+      position:relative;overflow:hidden;padding:132px 0 88px;
+    }
+    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%}
+    .hero::before{width:700px;height:700px;right:-220px;top:-280px;background:radial-gradient(circle,rgba(215,176,120,.18) 0%,transparent 68%)}
+    .hero::after{width:560px;height:560px;left:-150px;bottom:-220px;background:radial-gradient(circle,rgba(215,176,120,.12) 0%,transparent 68%)}
+    .hero-inner{position:relative;z-index:1;max-width:1440px;width:100%;padding:0 clamp(20px,4vw,56px);color:#fff}
+    .hero-shell{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,460px);gap:clamp(40px,6vw,120px);align-items:start}
+    .hero-copy{max-width:820px;text-align:left;padding-top:clamp(16px,3vw,40px)}
+    .hero-kicker{display:block;margin-bottom:20px;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+    .hero h1{
+      font-family:'Noto Serif SC',serif;
+      font-size:clamp(44px,5.3vw,84px);line-height:1.08;font-weight:900;margin-bottom:18px;
+      background:linear-gradient(135deg,#fff 0%,#f7ebd8 36%,#d7b078 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{font-size:clamp(18px,1.7vw,28px);letter-spacing:.08em;color:rgba(255,255,255,.82);margin-bottom:24px}
+    .hero-note{max-width:680px;color:rgba(255,255,255,.62);font-size:clamp(14px,1vw,16px);line-height:1.95;margin-bottom:42px}
+    .hero-side{display:grid;gap:18px;padding-top:clamp(28px,6vw,72px)}
+    .hero-side-intro{padding:20px 22px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.78);font-size:14px;line-height:1.95}
+    .hero-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:100%}
+    .meta-chip,.contact-chip{padding:16px 18px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(6px);min-height:84px}
+    .meta-chip dt,.contact-chip strong{display:block;font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.44);margin-bottom:8px;text-transform:uppercase}
+    .meta-chip dd,.contact-chip span{font-size:16px;font-weight:700;color:rgba(255,255,255,.96);line-height:1.5}
+
+    .container{max-width:1180px;margin:0 auto;padding:0 40px}
+    .sec{padding:78px 0}
+    .sec-alt{background:var(--alt)}
+    .sec-num{font-size:13px;font-weight:700;letter-spacing:3px;color:var(--primary);text-transform:uppercase;margin-bottom:8px}
+    .sec-title{font-family:'Noto Serif SC',serif;font-size:36px;color:var(--dark);margin-bottom:12px}
+    .sec-desc{max-width:720px;color:var(--text-light);font-size:16px}
+
+    .toc{background:#fff;border-bottom:1px solid var(--border);padding:54px 0}
+    .toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:28px}
+    .toc-item{
+      display:flex;align-items:center;gap:14px;
+      padding:16px 18px;border-radius:var(--r);
+      background:var(--bg);border:1px solid var(--border);
+      color:var(--text);transition:.28s;
+    }
+    .toc-item:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:0 8px 24px rgba(17,24,39,.08)}
+    .toc-n{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .toc-t{font-size:15px;font-weight:600}
+
+    .m-grid{display:grid;gap:18px;margin-top:38px}
+    .m-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .m-head{display:flex;align-items:center;gap:18px;padding:26px 30px;border-bottom:1px solid var(--border)}
+    .m-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+    .m-head h3{font-size:20px;color:var(--dark)}
+    .tag{margin-left:auto;padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+    .tag-core{background:rgba(180,106,43,.12);color:var(--primary-dark)}
+    .tag-flow{background:rgba(36,64,79,.1);color:var(--secondary)}
+    .tag-fin{background:rgba(126,159,143,.15);color:#47685a}
+    .m-body{padding:26px 30px}
+    .fg{margin-bottom:22px}.fg:last-child{margin-bottom:0}
+    .fg-title{font-size:14px;font-weight:700;color:var(--secondary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+    .fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 18px}
+    .fl li{position:relative;padding-left:18px;font-size:14px;color:var(--text)}
+    .fl li::before{content:"";position:absolute;left:2px;top:12px;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+    .tech-table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .tech-table thead th{background:var(--secondary);color:#fff;padding:14px 20px;text-align:left;font-size:13px;font-weight:600;letter-spacing:1px}
+    .tech-table tbody td{padding:14px 20px;font-size:14px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+    .tech-table tbody tr:hover td{background:rgba(180,106,43,.03)}
+    .tech-table tbody td:first-child{font-weight:600;color:var(--secondary);white-space:nowrap}
+
+    .arch{background:linear-gradient(135deg,#18232d,#243845);border-radius:var(--rl);padding:42px;margin-top:34px;color:#fff}
+    .arch-row{display:grid;grid-template-columns:150px 1fr;gap:20px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .arch-row:last-child{border-bottom:none}
+    .arch-label{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+    .arch-tags{display:flex;flex-wrap:wrap;gap:10px}
+    .arch-tag{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);font-size:13px;color:rgba(255,255,255,.92)}
+
+    .nb{background:#fff;border:1px solid var(--border);border-radius:var(--rl);padding:34px;margin-top:26px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .nb h4{font-size:17px;color:var(--secondary);margin-bottom:14px}
+    .nl{list-style:none;counter-reset:item}
+    .nl li{position:relative;padding:8px 0 8px 32px;color:var(--text);font-size:14px}
+    .nl li::before{counter-increment:item;content:counter(item);position:absolute;left:0;top:8px;width:20px;height:20px;border-radius:50%;background:var(--alt);font-size:11px;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;justify-content:center}
+
+    .qt-wrap{margin-top:32px;overflow-x:auto}
+    .qt{width:100%;min-width:920px;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .qt thead th{padding:16px 18px;background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;text-align:left;font-size:13px;letter-spacing:1px}
+    .qt thead th:last-child,.qt thead th:nth-child(5),.qt thead th:nth-child(6){text-align:right}
+    .qt tbody td{padding:14px 18px;border-bottom:1px solid var(--border);background:#fff;font-size:14px;vertical-align:top}
+    .qt tbody td:last-child,.qt tbody td:nth-child(5),.qt tbody td:nth-child(6){text-align:right;font-variant-numeric:tabular-nums}
+    .qt tbody tr:hover td{background:rgba(180,106,43,.03)}
+    .qt .gh td{background:#efe7dd;color:var(--secondary);font-weight:700;border-left:4px solid var(--primary)}
+    .qt .st td{background:#faf4ec;color:var(--primary-dark);font-weight:700}
+    .qt .gt2 td{background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;font-size:16px;font-weight:700;padding:20px 18px}
+    .amt{font-weight:700}
+
+    .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:34px 0}
+    .sc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:28px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .sc .num{font-family:'Noto Serif SC',serif;font-size:34px;font-weight:900;color:var(--primary);line-height:1.2}
+    .sc .unit{font-size:16px;color:var(--text-light);font-weight:500}
+    .sc .desc{font-size:14px;color:var(--text-light);margin-top:6px}
+
+    .tl{position:relative;margin-top:36px;padding-left:36px}
+    .tl::before{content:"";position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--primary),var(--accent2))}
+    .tl-item{position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:24px 26px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .tl-item::before{content:"";position:absolute;left:-28px;top:28px;width:12px;height:12px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 4px var(--bg)}
+    .tl-phase{font-size:12px;letter-spacing:2px;font-weight:700;color:var(--primary);text-transform:uppercase}
+    .tl-title{font-size:18px;font-weight:700;color:var(--dark);margin:4px 0 8px}
+    .tl-dur{display:inline-block;padding:4px 12px;border-radius:999px;background:rgba(180,106,43,.1);color:var(--primary-dark);font-size:13px;font-weight:700;margin-bottom:12px}
+    .tl-tasks{list-style:none}
+    .tl-tasks li{position:relative;padding-left:18px;font-size:14px;color:var(--text);margin-bottom:4px}
+    .tl-tasks li::before{content:"→";position:absolute;left:0;color:var(--primary)}
+
+    .footer{background:var(--dark);color:rgba(255,255,255,.58);padding:46px 0;text-align:center}
+    .footer-brand{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:10px}
+    .footer p{font-size:13px;line-height:2}
+
+    @media(max-width:1024px){
+      .hero{padding-top:120px}
+      .hero-shell{grid-template-columns:1fr;gap:32px}
+      .hero-copy{padding-top:0;text-align:left}
+      .hero-side{padding-top:0}
+      .hero-info-grid{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr))}
+    }
+    @media(max-width:768px){
+      .container{padding:0 20px}
+      .hero{padding:138px 0 72px}
+      .hero-topbar-inner{padding:12px 16px;flex-direction:column;align-items:flex-start}
+      .opening-line{white-space:normal;line-height:1.6}
+      .hero-top-meta{justify-content:flex-start}
+      .hero-top-meta span{min-height:40px;padding:9px 13px}
+      .hero-inner{padding:0 20px}
+      .hero-kicker{margin-bottom:14px}
+      .hero h1{font-size:42px}
+      .hero-sub{font-size:18px;line-height:1.8}
+      .hero-note{font-size:14px}
+      .hero-info-grid{gap:12px}
+      .meta-chip,.contact-chip{min-height:76px;padding:14px 16px}
+      .hero-side-intro{padding:18px 18px}
+      .sec{padding:52px 0}
+      .sec-title{font-size:28px}
+      .m-head{flex-wrap:wrap}
+      .tag{margin-left:0}
+      .fl{grid-template-columns:1fr}
+      .arch-row{grid-template-columns:1fr}
+      .tl{padding-left:30px}
+    }
+    @media(max-width:560px){
+      .hero-info-grid{grid-template-columns:1fr}
+      .hero-top-meta{width:100%}
+      .hero-top-meta span{width:100%;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-topbar">
+    <div class="hero-topbar-inner">
+      <div class="opening-line">铁肩担荣耀，妙手筑梦想</div>
+      <div class="hero-top-meta">
+        <span>商务：待签约确认</span>
+        <span>报价单位：郑州八角信息技术有限公司</span>
+        <span>联系电话：待签约确认</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <span class="hero-kicker">项目方案封面</span>
+          <h1>古琴智能体三期 MVP</h1>
+          <p class="hero-sub">用户端 APP · 运营端 · 管理后台 · AI 能力集成 · 直播转化闭环</p>
+          <p class="hero-note">垂直古琴领域的智能体系统，覆盖知识库问答、课程推荐、哼唱识曲与曲目推荐、数字人视频与直播、弹幕互动及课程转化。建设口径为完整三期 MVP：成熟服务集成 + 定制业务流程 + 分阶段交付。</p>
+        </div>
+        <div class="hero-side">
+          <div class="hero-side-intro">含税总价 60 万元整；来源依据为《古琴智能体三期功能清单》及 MVP 实施口径。交付包含产品设计、三端功能开发、AI 能力集成、数据处理、测试上线与基础文档培训。</div>
+          <div class="hero-info-grid">
+            <div class="meta-chip"><dt>文档类型</dt><dd>产品方案 &amp; 报价单</dd></div>
+            <div class="meta-chip"><dt>版本</dt><dd>V1.0</dd></div>
+            <div class="meta-chip"><dt>日期</dt><dd>2026-05-15</dd></div>
+            <div class="meta-chip"><dt>交付形态</dt><dd>APP + 运营端 + PC 管理后台</dd></div>
+            <div class="contact-chip"><strong>报价单位</strong><span>郑州八角信息技术有限公司</span></div>
+            <div class="contact-chip"><strong>联系电话</strong><span>待签约确认</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="toc" id="toc">
+    <div class="container">
+      <div class="sec-num">CONTENTS</div>
+      <h2 class="sec-title">目录导航</h2>
+      <div class="toc-grid">
+        <a class="toc-item" href="#s1"><span class="toc-n">01</span><span class="toc-t">产品概述</span></a>
+        <a class="toc-item" href="#s2"><span class="toc-n">02</span><span class="toc-t">需求分析</span></a>
+        <a class="toc-item" href="#s3"><span class="toc-n">03</span><span class="toc-t">功能清单</span></a>
+        <a class="toc-item" href="#s4"><span class="toc-n">04</span><span class="toc-t">技术选型</span></a>
+        <a class="toc-item" href="#s5"><span class="toc-n">05</span><span class="toc-t">技术难点与方案</span></a>
+        <a class="toc-item" href="#s6"><span class="toc-n">06</span><span class="toc-t">技术实施方案</span></a>
+        <a class="toc-item" href="#s7"><span class="toc-n">07</span><span class="toc-t">实施排期</span></a>
+        <a class="toc-item" href="#s8"><span class="toc-n">08</span><span class="toc-t">项目报价清单</span></a>
+        <a class="toc-item" href="#s9"><span class="toc-n">09</span><span class="toc-t">商务条款说明</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s1">
+    <div class="container">
+      <div class="sec-num">Part 01</div>
+      <h2 class="sec-title">产品概述</h2>
+      <p class="sec-desc" style="max-width:none">古琴垂直领域智能体系统，串联学习内容运营、智能问答、哼唱识曲与推荐、数字人视频与直播，以及课程卡片与优惠转化。系统由用户端 APP、运营端、管理后台与 AI 服务能力共同构成，数据侧覆盖知识素材、曲库与样本、问答与识别记录、直播互动与转化统计。</p>
+      <div class="sg">
+        <div class="sc"><div class="num">9<span class="unit"> 项</span></div><div class="desc">报价分项模块（含税包干）</div></div>
+        <div class="sc"><div class="num">18–22<span class="unit"> 周</span></div><div class="desc">建议总工期（约 4.5–5.5 个月）</div></div>
+        <div class="sc"><div class="num">60<span class="unit"> 万</span></div><div class="desc">含税总价（人民币）</div></div>
+        <div class="sc"><div class="num">7<span class="unit"> 类角色</span></div><div class="desc">项目投入角色（见人员估算）</div></div>
+      </div>
+      <div class="nb">
+        <h4>建设目标</h4>
+        <ul class="nl">
+          <li>通过古琴知识库问答承接学习咨询、课程咨询与常见问题，降低人工答疑成本。</li>
+          <li>打通问答、识曲、曲目详情、直播互动与课程推荐，形成内容到销售转化的路径。</li>
+          <li>通过数字人视频生成能力支撑运营批量产出课程介绍、知识科普与活动推广素材。</li>
+          <li>以哼唱识曲、相似曲目与课程推荐、曲库管理构建差异化 AI 体验与专业度。</li>
+          <li>通过数字人直播、弹幕互动、课程卡片与优惠配置承接私域获客与直播卖课。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="s2">
+    <div class="container">
+      <div class="sec-num">Part 02</div>
+      <h2 class="sec-title">需求分析</h2>
+      <table class="tech-table">
+        <thead><tr><th>维度</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>需求背景</td><td>古琴教培与内容运营需要在垂直场景内统一「答疑—内容—识曲—直播—卖课」链路；人工成本高，需 AI 与流程化后台支撑规模化运营。</td></tr>
+          <tr><td>核心诉求</td><td>智能问答与语音交互、课程视频推荐与学习进度、哼唱识曲与曲目/课程推荐、数字人视频与直播、弹幕理解与即时应答、优惠与课程卡片转化、全链路后台与数据统计。</td></tr>
+          <tr><td>目标用户画像</td><td>C 端：古琴学习者与潜在购课用户；B 端：运营人员（视频与直播策划、活动配置）；管理员：内容审核、曲库与授权、数字人资产与风控规则维护。</td></tr>
+          <tr><td>交付范围（三期 MVP）</td><td>用户端 APP：一期问答与课程推荐；二期哼唱识曲与匹配推荐；三期直播入口、弹幕互动与课程转化。运营端：一期数字人视频生成；三期直播运营与转化配置。管理后台：一期知识库与课程、数字人素材；二期曲库与相似推荐、音频匹配管理；三期数字人资产、弹幕审核规则与直播统计。AI 服务：问答 RAG、音频匹配、数字人驱动、弹幕理解与异常降级。</td></tr>
+          <tr><td>关键假设</td><td>现有 APP 可按约定技术栈接入或以内嵌页方式集成；大模型、语音识别、数字人与直播能力以国内合规第三方成熟服务集成为主；曲库与版权素材由甲方提供并完成授权背书。</td></tr>
+        </tbody>
+      </table>
+      <h3 style="margin:32px 0 16px;font-size:18px;color:var(--dark)">非功能性需求</h3>
+      <table class="tech-table">
+        <thead><tr><th>类别</th><th>要求</th></tr></thead>
+        <tbody>
+          <tr><td>性能</td><td>问答与列表类接口响应满足常规移动端体验；生成类与直播类任务异步队列化，状态可查询；高峰期通过队列与限流保障可用性。</td></tr>
+          <tr><td>安全</td><td>后台权限分级；操作日志与关键配置留痕；敏感词与弹幕风控可配置；用户内容与授权字段可追溯。</td></tr>
+          <tr><td>兼容</td><td>用户端以甲方现有 APP 载体为准完成接入；管理后台与运营端以主流 PC 浏览器可用为目标。</td></tr>
+          <tr><td>合规</td><td>云服务与 AI、直播、支付等三方选用国内合规供应商；内容由甲方负责版权与授权合规，系统侧记录授权与备注字段。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" id="s3">
+    <div class="container">
+      <div class="sec-num">Part 03</div>
+      <h2 class="sec-title">功能清单</h2>
+      <p class="sec-desc">按用户端、运营端、管理后台、AI 能力服务四类梳理；阶段标注一期 / 二期 / 三期。以下为可验收级别的功能点汇总（含核心操作粒度）。</p>
+      <div class="m-grid">
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">01</div>
+            <h3>用户端 APP</h3>
+            <span class="tag tag-core">用户端 · 三期</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">一期 · 知识库问答</div>
+              <ul class="fl">
+                <li>进入问答入口；文字提问提交；语音提问录音与提交</li>
+                <li>多轮追问发送；答案来源区块展开/收起；满意度反馈提交</li>
+                <li>人工咨询转接入口点击；问答历史列表查看与单条详情</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">一期 · 课程视频推荐</div>
+              <ul class="fl">
+                <li>课程分类 Tab 切换与列表加载；关键词搜索与结果清空</li>
+                <li>问答关联推荐卡片点击跳转；视频播放/暂停与试看边界提示</li>
+                <li>学习进度上报展示；课程收藏/取消收藏；分享触发系统分享面板</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">二期 · 哼唱识曲与推荐</div>
+              <ul class="fl">
+                <li>哼唱录音入口；录音时长与质量提示；音频上传与识别中状态</li>
+                <li>识别结果展示；曲目详情页查看；纠错反馈提交</li>
+                <li>相似曲目列表滑动与点击；相似课程推荐点击进入详情</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">三期 · 直播与转化</div>
+              <ul class="fl">
+                <li>直播入口 Banner/列表点击进入；直播预约与提醒开关</li>
+                <li>弹幕输入发送；数字人回答气泡展示与滚动</li>
+                <li>课程卡片领取点击；优惠信息区块展开；跳转课程详情或报名页</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">02</div>
+            <h3>运营端</h3>
+            <span class="tag tag-flow">运营 · 一/三期</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">一期 · 数字人视频生成</div>
+              <ul class="fl">
+                <li>讲解文案录入与保存；模板选择与预览配置</li>
+                <li>生成任务提交；生成进度与失败态展示；成片预览播放与下载</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">三期 · 数字人直播运营</div>
+              <ul class="fl">
+                <li>直播间创建与基础信息编辑；直播脚本分段编排与排序</li>
+                <li>实时互动控制台：播报控制、插播答疑、异常预案话术切换</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">三期 · 课程转化运营</div>
+              <ul class="fl">
+                <li>优惠活动新建/编辑/停用；课程卡片素材与跳转链接配置</li>
+                <li>报名入口 URL 或原生路由配置；预览校验</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#24404f)">03</div>
+            <h3>管理后台</h3>
+            <span class="tag tag-fin">PC Web · 三阶段</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">一期</div>
+              <ul class="fl">
+                <li>知识素材批量导入；标签新建/编辑/绑定；标准问答维护；问答审核通过/驳回</li>
+                <li>课程资料 CRUD；推荐位拖拽或排序保存</li>
+                <li>数字人形象上传；声音克隆素材采集入口；授权信息表单保存</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">二期</div>
+              <ul class="fl">
+                <li>曲库批量导入与模板校验；曲目元数据编辑；音频样本上传与替换</li>
+                <li>版权与授权备注字段维护；识别记录列表筛选；匹配结果与异常原因查看</li>
+                <li>相似曲手工关联；推荐权重数值保存；关联课程绑定</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">三期</div>
+              <ul class="fl">
+                <li>数字人形象/声音/授权文件台账；可用场景标签；启用/停用状态切换</li>
+                <li>弹幕审核规则：敏感词库维护、刷屏阈值、禁言策略、人工审核开关</li>
+                <li>直播转化报表：观看、互动、课程点击、报名转化导出或筛选</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="m-card">
+          <div class="m-head">
+            <div class="m-icon" style="background:linear-gradient(135deg,#7e9f8f,#b46a2b)">04</div>
+            <h3>AI 能力服务（集成与编排）</h3>
+            <span class="tag tag-core">服务端 · 三期</span>
+          </div>
+          <div class="m-body">
+            <div class="fg">
+              <div class="fg-title">一期</div>
+              <ul class="fl">
+                <li>多源内容入库管道；检索增强生成；答案来源标注与低置信度兜底策略</li>
+                <li>数字人生成任务队列、重试与状态回传</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">二期</div>
+              <ul class="fl">
+                <li>曲目特征库构建；哼唱匹配服务；匹配规则配置后台驱动</li>
+                <li>识别效果抽样评估与报表字段预留</li>
+              </ul>
+            </div>
+            <div class="fg">
+              <div class="fg-title">三期</div>
+              <ul class="fl">
+                <li>数字人直播驱动：脚本播报与互动插播</li>
+                <li>弹幕意图分类（课程咨询/价格/曲目/闲聊/违规等）</li>
+                <li>异常降级：数字人异常、问答异常、网络异常时预设话术、人工接管或回放兜底</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="s4">
+    <div class="container">
+      <div class="sec-num">Part 04</div>
+      <h2 class="sec-title">技术选型</h2>
+      <p class="sec-desc">后端优先 PHP；用户端与后台前端优先 Vue；APP 侧以接入既有容器为准（含 H5 内嵌）。AI 与音视频能力以成熟国内合规云服务及供应商 API 集成为主。</p>
+      <table class="tech-table">
+        <thead><tr><th>层级</th><th>选型</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr><td>后端</td><td>PHP</td><td>业务接口、权限、任务队列、统计报表与三方回调聚合；交付节奏与运维成本低，适配中小型垂直业务快速迭代。</td></tr>
+          <tr><td>前端（移动端）</td><td>Vue</td><td>组件化交付 H5/内嵌模块或与原生壳通信页面；与 PC 后台技术栈统一，降低联调与人力切换成本。</td></tr>
+          <tr><td>管理后台 / 运营端（PC Web）</td><td>Vue</td><td>表格、表单、审核流与配置类页面密集场景下维护性好；与移动端共用设计语言与组件沉淀。</td></tr>
+          <tr><td>UI 设计</td><td>全套视觉稿</td><td>覆盖 APP 核心路径与后台关键页面，输出交互规范与标注，保障多端一致性。</td></tr>
+        </tbody>
+      </table>
+      <h3 style="margin:32px 0 16px;font-size:18px;color:var(--dark)">三方服务集成（本项目涉及类别）</h3>
+      <table class="tech-table">
+        <thead><tr><th>服务类别</th><th>推荐厂商</th><th>备选厂商</th><th>推荐理由</th></tr></thead>
+        <tbody>
+          <tr><td>云服务器 / 弹性计算</td><td>腾讯云 CVM</td><td>阿里云 ECS、华为云 ECS</td><td>与对象存储、CDN、直播生态联动成本低；控制台与备案链路成熟。</td></tr>
+          <tr><td>对象存储（音视频 / 素材）</td><td>腾讯云 COS</td><td>阿里云 OSS、华为云 OBS</td><td>大文件上传回调与 CDN 联动便利；权限策略与生命周期规则适配素材归档。</td></tr>
+          <tr><td>CDN 加速</td><td>腾讯云 CDN</td><td>阿里云 CDN</td><td>与 COS 一体化配置；静态资源与点播分发常用组合。</td></tr>
+          <tr><td>直播 / 点播</td><td>腾讯云直播 &amp; VOD</td><td>阿里云视频直播 / 点播</td><td>低延迟直播与转码截图能力适配直播卖课场景。</td></tr>
+          <tr><td>消息推送（APP）</td><td>腾讯移动推送 TPNS</td><td>极光推送、个推</td><td>双端统一接入；到达率与统计分析满足运营提醒。</td></tr>
+          <tr><td>内容安全 / 文本审核</td><td>腾讯云天御</td><td>阿里云内容安全</td><td>弹幕与 UGC 文本审核接口覆盖主要风控类别。</td></tr>
+          <tr><td>大模型 / 语音（按甲方账号）</td><td>国内合规云厂商模型与语音产品线</td><td>—</td><td>按甲方已采购或指定账号接入；费用按量结算，不含在本开发含税总价内。</td></tr>
+          <tr><td>数字人视频 / 直播 SDK</td><td>成熟数字人服务商（国内）</td><td>备选同类 SaaS</td><td>MVP 采用商用 SDK/API，避免从零自研数字人引擎。</td></tr>
+        </tbody>
+      </table>
+      <div class="nb">
+        <h4>三方服务费用说明</h4>
+        <ul class="nl">
+          <li>三方服务的<strong>按量/套餐实付费用</strong>不含在本开发报价内，由甲方直接向供应商开通并支付。</li>
+          <li>本报价<strong>已包含</strong>上述三方服务的接口对接、回调处理与业务编排开发工时。</li>
+          <li>厂商最终以合同附件《三方账号与接入清单》为准。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s5">
+    <div class="container">
+      <div class="sec-num">Part 05</div>
+      <h2 class="sec-title">技术难点与解决方案</h2>
+      <table class="tech-table">
+        <thead><tr><th>难点</th><th>解决方案要点</th></tr></thead>
+        <tbody>
+          <tr><td>问答幻觉与无来源答复风险</td><td>检索增强生成 + 来源段落绑定展示；低置信度触发兜底话术或转人工入口；后台问答审核与知识标签约束。</td></tr>
+          <tr><td>哼唱识曲准确率波动</td><td>曲库样本标准化与分批导入；指纹/特征匹配规则可配置；结果以「候选 + 相似度 + 不确定提示」为验收口径，试运行数据驱动阈值调优。</td></tr>
+          <tr><td>数字人直播稳定性与时延</td><td>脚本化播报主路径 + 异步弹幕理解插入；异常降级到预设话术 / 人工接管 / 回放垫片；服务商 SLA 与重连策略前置验证。</td></tr>
+          <tr><td>直播弹幕风控与体验平衡</td><td>敏感词与频率限制可配置；人工审核开关与黑名单；违规分类联动屏蔽策略。</td></tr>
+          <tr><td>与既有 APP 账号 / 支付 / 课程体系对接</td><td>启动阶段冻结接口契约与联调环境；Mock 服务并行开发；字段映射表与版本兼容策略文档化。</td></tr>
+          <tr><td>版权与授权合规留痕</td><td>曲目与素材后台强制维护授权字段；未授权状态限制前台曝光或加水印提示（规则由甲方确认）。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="s6">
+    <div class="container">
+      <div class="sec-num">Part 06</div>
+      <h2 class="sec-title">技术实施方案</h2>
+      <p class="sec-desc" style="max-width:none">整体采用<strong>前后端分离</strong>：移动端与 PC 端通过 HTTPS 调用统一业务 API；异步任务（生成、识别、直播辅助）经消息队列或任务表驱动工作进程；AI 与直播相关能力通过适配层对接第三方。数据层采用关系型数据库承载业务实体，对象存储承载音视频与素材文件。</p>
+      <div class="arch">
+        <div class="arch-row">
+          <div class="arch-label">表现层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">现有 APP 容器 + H5/Vue 页面</span>
+            <span class="arch-tag">运营端 Vue（PC）</span>
+            <span class="arch-tag">管理后台 Vue（PC）</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">服务层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">PHP 业务 API（REST）</span>
+            <span class="arch-tag">权限与审计中间件</span>
+            <span class="arch-tag">任务队列（生成 / 识别）</span>
+            <span class="arch-tag">AI 适配层（RAG / ASR / 数字人 / 弹幕 NLP）</span>
+            <span class="arch-tag">第三方 Webhook 接入</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">数据层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">关系型数据库（业务与配置）</span>
+            <span class="arch-tag">对象存储 COS/OSS（音视频与素材）</span>
+            <span class="arch-tag">检索索引（知识库 / 曲库特征）</span>
+            <span class="arch-tag">日志与运营报表明细表</span>
+          </div>
+        </div>
+        <div class="arch-row">
+          <div class="arch-label">交付层</div>
+          <div class="arch-tags">
+            <span class="arch-tag">部署文档与环境变量说明</span>
+            <span class="arch-tag">接口说明与回调约定</span>
+            <span class="arch-tag">验收用例与培训材料</span>
+            <span class="arch-tag">上线运维交接清单</span>
+          </div>
+        </div>
+      </div>
+      <div class="nb">
+        <h4>方案边界说明</h4>
+        <ul class="nl">
+          <li><strong>不包含</strong>自研大模型训练；采用模型 API + 知识库检索增强。</li>
+          <li><strong>不包含</strong>从零自研数字人底层引擎；采用第三方数字人 SaaS/SDK。</li>
+          <li><strong>不包含</strong>高精度音乐识别算法从零研发；MVP 采用特征库匹配与可配置规则，可选叠加第三方识别。</li>
+          <li><strong>不包含</strong>甲方历史 APP 大规模架构重构；超出范围的改造单独评估。</li>
+          <li><strong>不包含</strong>云资源费、模型按量费、直播流量费、短信推送费及版权采购费。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s7">
+    <div class="container">
+      <div class="sec-num">Part 07</div>
+      <h2 class="sec-title">实施排期</h2>
+      <p class="sec-desc">建议总工期 18–22 周（约 4.5–5.5 个月）。甲方 APP、账号、支付、内容及数字人账号就绪时可压缩至 16–18 周。以下为阶段交付主线。</p>
+      <div class="tl">
+        <div class="tl-item">
+          <div class="tl-phase">Phase 1</div>
+          <div class="tl-title">需求与设计</div>
+          <div class="tl-dur">第 1–2 周</div>
+          <ul class="tl-tasks">
+            <li>需求确认与范围冻结</li>
+            <li>产品原型、页面流转与字段字典</li>
+            <li>技术实施方案与验收标准书面化</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 2</div>
+          <div class="tl-title">一期功能开发</div>
+          <div class="tl-dur">第 3–8 周</div>
+          <ul class="tl-tasks">
+            <li>知识库问答与用户端课程推荐主链路</li>
+            <li>后台知识库、课程管理与推荐位</li>
+            <li>基础数字人视频生成与素材管理联调</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 3</div>
+          <div class="tl-title">二期功能开发</div>
+          <div class="tl-dur">第 9–13 周</div>
+          <ul class="tl-tasks">
+            <li>哼唱识曲、上传与识别反馈链路</li>
+            <li>曲库批量导入、曲目详情与相似推荐配置</li>
+            <li>识别记录、匹配追踪与效果评估报表字段</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 4</div>
+          <div class="tl-title">三期功能开发</div>
+          <div class="tl-dur">第 14–18 周</div>
+          <ul class="tl-tasks">
+            <li>数字人直播、弹幕理解与即时应答集成</li>
+            <li>直播运营控制台、课程卡片与优惠配置</li>
+            <li>弹幕审核规则与直播转化统计</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-phase">Phase 5</div>
+          <div class="tl-title">测试验收与上线</div>
+          <div class="tl-dur">第 19–22 周</div>
+          <ul class="tl-tasks">
+            <li>全链路联调、性能与安全基线检查</li>
+            <li>缺陷修复与验收演示</li>
+            <li>部署上线、培训与文档交付</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec-alt" id="s8">
+    <div class="container">
+      <div class="sec-num">Part 08</div>
+      <h2 class="sec-title">项目报价清单</h2>
+      <p class="sec-desc">计价口径：<strong>含税包干分项报价</strong>，总价人民币 <strong>600,000</strong> 元整（增值税税率 6%）。分项不适用「人天 × 单价」线性折算；表中「人天」「单价」列标注为包干计价。</p>
+      <table class="tech-table" style="margin-bottom:8px">
+        <thead><tr><th>项目</th><th style="text-align:right">金额（元）</th></tr></thead>
+        <tbody>
+          <tr><td>未税金额</td><td style="text-align:right;font-variant-numeric:tabular-nums">566,037.74</td></tr>
+          <tr><td>增值税 6%</td><td style="text-align:right;font-variant-numeric:tabular-nums">33,962.26</td></tr>
+          <tr><td><strong>含税总价</strong></td><td style="text-align:right;font-variant-numeric:tabular-nums"><strong>600,000.00</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="sec-desc" style="margin-top:12px">说明：若合同约定「未税总价 60 万元」，则含税金额应为 636,000 元（税率 6% 情形下），与本页口径不同，以合同为准。</p>
+      <div class="qt-wrap">
+        <table class="qt">
+          <thead>
+            <tr>
+              <th style="width:55px">序号</th>
+              <th>功能模块 / 工作项</th>
+              <th>工作内容说明</th>
+              <th style="width:80px">人天</th>
+              <th style="width:100px">单价（元/天）</th>
+              <th style="width:130px">报价（元）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="gh"><td colspan="6">含税分项包干报价（与《古琴智能体项目 60w 报价方案》模块明细一致）</td></tr>
+            <tr>
+              <td>1</td>
+              <td>产品设计与项目管理</td>
+              <td>需求确认、原型设计、交互流程、字段设计、项目计划、会议沟通、验收管理</td>
+              <td>—</td><td>包干</td><td class="amt">50,000</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>一期：知识库问答与课程推荐</td>
+              <td>APP 智能问答、语音提问、多轮追问、来源展示、反馈、历史记录、课程分类、搜索、推荐、试看、进度、收藏分享</td>
+              <td>—</td><td>包干</td><td class="amt">95,000</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>一期：后台知识库与课程管理</td>
+              <td>知识素材导入、标签管理、标准问答维护、问答审核、课程资料管理、推荐位配置</td>
+              <td>—</td><td>包干</td><td class="amt">55,000</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>一期：基础数字人视频生成</td>
+              <td>数字人形象与声音素材管理、讲解文案录入、模板选择、生成任务管理、预览下载、失败重试</td>
+              <td>—</td><td>包干</td><td class="amt">60,000</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>二期：哼唱识曲与音频匹配</td>
+              <td>录音入口、音频上传、录音质量提示、识别结果、曲目详情、反馈纠错、匹配规则、识别效果评估</td>
+              <td>—</td><td>包干</td><td class="amt">95,000</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>二期：曲库与相似推荐管理</td>
+              <td>曲库批量导入、曲目元数据维护、音频样本管理、版权授权备注、相似曲配置、相似课程推荐</td>
+              <td>—</td><td>包干</td><td class="amt">70,000</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>三期：数字人直播与弹幕互动</td>
+              <td>直播入口、预约提醒、弹幕提问、数字人即时回答、弹幕意图识别、异常降级、人工接管</td>
+              <td>—</td><td>包干</td><td class="amt">95,000</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>三期：直播运营与课程转化</td>
+              <td>直播间创建、脚本编排、实时互动控制台、课程卡片、优惠活动配置、直播转化统计、弹幕审核规则</td>
+              <td>—</td><td>包干</td><td class="amt">70,000</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>测试、部署、培训与交付</td>
+              <td>功能测试、联调测试、上线部署、操作培训、验收文档、基础运维交接</td>
+              <td>—</td><td>包干</td><td class="amt">10,000</td>
+            </tr>
+            <tr class="gt2">
+              <td></td>
+              <td colspan="4">项目总价（含税）</td>
+              <td>¥ 600,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nb">
+        <h4>费用说明</h4>
+        <ul class="nl">
+          <li>本报价覆盖三期 MVP 建设与文档交付；项目总价（含税）为 <strong>¥ 600,000</strong>，以分项合计为准。</li>
+          <li>分项为<strong>含税包干价</strong>；表中「人天」「单价」列为不适用线性工时折算时的占位列示。</li>
+          <li><strong>含</strong>第三方能力的接口对接与业务编排工时；<strong>不含</strong>云资源与三方平台按量/套餐实付费用。</li>
+          <li>报价有效期 30 天，自 2026-05-15 起算；范围变更或新增系统集成另行核价。</li>
+        </ul>
+      </div>
+
+      <div class="sg">
+        <div class="sc"><div class="num">60<span class="unit"> 万元</span></div><div class="desc">项目总价（含税）</div></div>
+        <div class="sc"><div class="num">18–22<span class="unit"> 周</span></div><div class="desc">预计总工期</div></div>
+        <div class="sc"><div class="num">7<span class="unit"> 角色</span></div><div class="desc">建议投入角色类型</div></div>
+        <div class="sc"><div class="num">3<span class="unit"> 个月</span></div><div class="desc">免费质保期</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s9">
+    <div class="container">
+      <div class="sec-num">Part 09</div>
+      <h2 class="sec-title">商务条款说明</h2>
+      <p class="sec-desc">以下条款以双方签订的正式合同为准。分期金额按<strong>总价 ¥ 600,000</strong>计算。</p>
+      <div class="nb">
+        <h4>一、付款方式（分三期）</h4>
+        <table class="tech-table" style="margin-top:12px">
+          <thead><tr><th>节点</th><th style="text-align:right">比例</th><th style="text-align:right">金额（元）</th><th>触发条件</th></tr></thead>
+          <tbody>
+            <tr><td>合同签订</td><td style="text-align:right">50%</td><td style="text-align:right;font-variant-numeric:tabular-nums">300,000</td><td>合同签订后项目启动</td></tr>
+            <tr><td>核心功能联调完成</td><td style="text-align:right">30%</td><td style="text-align:right;font-variant-numeric:tabular-nums">180,000</td><td>一、二、三期核心流程开发完成并进入联调</td></tr>
+            <tr><td>验收上线</td><td style="text-align:right">20%</td><td style="text-align:right;font-variant-numeric:tabular-nums">120,000</td><td>系统验收通过并完成上线交付</td></tr>
+            <tr><td><strong>合计</strong></td><td style="text-align:right"><strong>100%</strong></td><td style="text-align:right;font-variant-numeric:tabular-nums"><strong>600,000</strong></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="nb">
+        <h4>二、知识产权</h4>
+        <ul class="nl">
+          <li>尾款结清后，约定交付范围内的源代码、设计稿、文档等知识产权归<strong>甲方</strong>所有。</li>
+          <li>开源组件遵循原协议；乙方不得将甲方定制源码用于其他商业项目。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>三、质保与售后</h4>
+        <ul class="nl">
+          <li>验收通过之日起 <strong>3 个月</strong>免费质保：已验收功能的缺陷修复、配置问题排查、基础使用答疑。</li>
+          <li>新增功能、需求变更、第三方服务费、数据清洗外包、内容录入不属于免费质保范围。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>四、需求变更与效果依赖</h4>
+        <ul class="nl">
+          <li>报价基于当前三期功能清单与 MVP 口径；大规模功能新增、流程重构、复杂权限或多端适配另行评估工期与费用。</li>
+          <li>AI 识别准确率、数字人直播并发、音视频延迟等依赖第三方服务、素材质量、网络环境与曲库建设水平，以试运行数据为基础持续调优。</li>
+        </ul>
+      </div>
+      <div class="nb">
+        <h4>五、交付清单（摘要）</h4>
+        <ul class="nl">
+          <li>可运行的用户端接入模块、运营端与管理后台程序及部署包（约定环境）。</li>
+          <li>接口说明、字段字典、管理员操作说明与验收记录模板。</li>
+          <li>联调与上线阶段培训记录、基础运维交接清单。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-brand">郑州八角信息技术有限公司</div>
+      <p>古琴智能体三期 MVP · 产品方案与报价单</p>
+      <p>报价单位：郑州八角信息技术有限公司 · 商务：待签约确认 · 联系电话：待签约确认</p>
+      <p>文档版本 V1.0 ｜ 2026-05-15 ｜ 报价有效期 30 天</p>
+    </div>
+  </footer>
+</body>
+</html>

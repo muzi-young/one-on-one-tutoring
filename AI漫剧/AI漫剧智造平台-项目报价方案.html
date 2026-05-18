@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI 漫剧智造平台 · 项目报价方案</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --card:#ffffff; --line:#e6ecf5; --text:#1a2332;
+    --muted:#6b7a90; --primary:#2563eb; --primary-soft:#eaf1ff;
+    --accent:#10b981; --warn:#f59e0b; --danger:#ef4444;
+    --shadow:0 6px 24px rgba(20,40,80,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+    font-size:14.5px;line-height:1.7}
+  .wrap{max-width:1200px;margin:0 auto;padding:48px 28px 80px}
+  /* Cover */
+  .cover{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#2563eb 100%);
+    color:#fff;border-radius:20px;padding:64px 56px;position:relative;overflow:hidden;
+    box-shadow:var(--shadow)}
+  .cover::before{content:"";position:absolute;right:-100px;top:-100px;width:380px;height:380px;
+    background:radial-gradient(circle,rgba(16,185,129,.4),transparent 60%);border-radius:50%}
+  .cover::after{content:"";position:absolute;left:50%;bottom:-60px;width:600px;height:120px;
+    background:radial-gradient(ellipse,rgba(255,255,255,.12),transparent 70%)}
+  .cover .label{display:inline-block;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);padding:6px 16px;border-radius:999px;
+    font-size:13px;letter-spacing:1px}
+  .cover h1{font-size:46px;font-weight:700;margin:18px 0 8px;line-height:1.2;letter-spacing:-.5px}
+  .cover .subtitle{font-size:18px;opacity:.85;margin-bottom:28px}
+  .cover .meta{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
+    border-radius:14px;padding:22px 28px;backdrop-filter:blur(10px);position:relative;z-index:2}
+  .cover .meta div{font-size:13px}
+  .cover .meta .k{opacity:.7;margin-bottom:4px}
+  .cover .meta .v{font-size:16px;font-weight:600}
+  /* Quote box */
+  .price-card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:32px 36px;margin:24px 0 36px;display:flex;justify-content:space-between;
+    align-items:center;box-shadow:var(--shadow)}
+  .price-card .left .ttl{font-size:14px;color:var(--muted)}
+  .price-card .left .price{font-size:38px;font-weight:700;color:var(--primary);
+    letter-spacing:-1px;margin-top:4px}
+  .price-card .left .price small{font-size:15px;color:var(--muted);font-weight:500;margin-left:6px}
+  .price-card .left .note{font-size:13px;color:var(--muted);margin-top:6px}
+  .price-card .right{text-align:right}
+  .price-card .right .badge{background:linear-gradient(135deg,#10b981,#06b6d4);color:#fff;
+    padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;display:inline-block}
+  .price-card .right .v{font-size:15px;color:var(--text);margin-top:8px}
+  /* TOC */
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:24px 28px;margin-bottom:28px;display:grid;grid-template-columns:repeat(3,1fr);
+    gap:8px 24px;box-shadow:var(--shadow)}
+  .toc h4{grid-column:1/-1;font-size:13px;color:var(--muted);font-weight:600;
+    letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+  .toc a{font-size:14px;padding:8px 0;display:flex;align-items:center;gap:10px;
+    color:var(--text);border-bottom:1px dashed transparent;transition:.2s}
+  .toc a:hover{color:var(--primary);border-bottom-color:var(--primary)}
+  .toc a span{background:var(--primary-soft);color:var(--primary);
+    width:26px;height:26px;border-radius:6px;display:inline-flex;align-items:center;
+    justify-content:center;font-size:12px;font-weight:600}
+  /* Section */
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:36px 40px;margin-bottom:24px;box-shadow:var(--shadow)}
+  section h2{font-size:24px;font-weight:700;margin-bottom:6px;
+    display:flex;align-items:center;gap:14px}
+  section h2 .num{background:linear-gradient(135deg,#2563eb,#06b6d4);color:#fff;
+    width:38px;height:38px;border-radius:10px;display:inline-flex;
+    align-items:center;justify-content:center;font-size:15px;font-weight:700}
+  section .sub{color:var(--muted);font-size:14px;margin-bottom:24px;padding-left:52px}
+  section h3{font-size:17px;font-weight:600;margin:24px 0 12px;color:#1f2a44;
+    border-left:3px solid var(--primary);padding-left:10px}
+  section h4{font-size:15px;font-weight:600;margin:16px 0 8px;color:#1f2a44}
+  section p{margin:8px 0;color:#3a4a64}
+  section ul,section ol{padding-left:22px;margin:8px 0}
+  section ul li,section ol li{margin:5px 0;color:#3a4a64}
+  /* Table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0;
+    background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  thead th{background:#f3f6fb;color:#1f2a44;font-weight:600;text-align:left;
+    padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:11px 14px;border-bottom:1px solid #f0f3f8;color:#3a4a64;vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#fafcff}
+  td.center,th.center{text-align:center}
+  td.right,th.right{text-align:right}
+  table tfoot td{background:#fff7ed;font-weight:600;color:#9a3412;border-top:2px solid #fed7aa}
+  .total-row td{background:#eaf1ff !important;font-weight:600;color:var(--primary)}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+  .pill.p0{background:#fee2e2;color:#b91c1c}
+  .pill.p1{background:#fef3c7;color:#b45309}
+  .pill.p2{background:#dcfce7;color:#15803d}
+  .pill.pri{background:var(--primary-soft);color:var(--primary)}
+  /* Highlight */
+  .highlight{background:linear-gradient(135deg,#eaf1ff,#dbf4ff);
+    border-left:4px solid var(--primary);padding:18px 22px;border-radius:8px;margin:16px 0}
+  .highlight strong{color:var(--primary)}
+  .alert{background:#fef9ed;border-left:4px solid var(--warn);
+    padding:14px 18px;border-radius:8px;margin:14px 0;font-size:13.5px;color:#7c5410}
+  /* Cards */
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:14px 0}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:14px 0}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:14px 0}
+  .card{background:#f9fbfe;border:1px solid var(--line);border-radius:10px;padding:18px}
+  .card h4{font-size:14.5px;color:#1f2a44;margin-bottom:8px}
+  .card p{font-size:13px;color:#54657d;margin:0}
+  .card .icon{width:36px;height:36px;border-radius:8px;background:var(--primary-soft);
+    color:var(--primary);display:inline-flex;align-items:center;justify-content:center;
+    font-weight:700;margin-bottom:8px}
+  /* Architecture */
+  .arch{background:#0f1729;color:#e7eef9;border-radius:14px;padding:24px;margin:14px 0;
+    font-family:"SF Mono","Consolas",monospace;font-size:13px;line-height:1.9;overflow-x:auto;white-space:pre}
+  .arch span.l{color:#86b7ff}
+  .arch span.g{color:#7ee787}
+  .arch span.y{color:#ffd866}
+  .arch span.p{color:#d2a8ff}
+  /* Footer */
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:32px;
+    padding:30px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+  footer .brand{color:var(--primary);font-weight:600}
+  /* Print */
+  @media print{
+    body{background:#fff}
+    .wrap{max-width:none;padding:0}
+    section,.toc,.cover{box-shadow:none;page-break-inside:avoid}
+    .cover{background:#1e3a8a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+  @media (max-width:900px){
+    .toc{grid-template-columns:1fr 1fr}
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+    .cover{padding:36px 24px}
+    .cover h1{font-size:30px}
+    .cover .meta{grid-template-columns:1fr 1fr}
+    section{padding:24px 22px}
+    .price-card{flex-direction:column;align-items:flex-start;gap:16px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- COVER -->
+<div class="cover">
+  <span class="label">PROJECT QUOTATION · AI MANGA DRAMA PLATFORM</span>
+  <h1>AI 漫剧智造平台</h1>
+  <div class="subtitle">面向创作者 / 工作室 / MCN / 影视集团的一站式 AI 漫剧创作与分发解决方案</div>
+  <div class="meta">
+    <div><div class="k">项目名称</div><div class="v">AI 漫剧智造平台</div></div>
+    <div><div class="k">项目类型</div><div class="v">三端一体 SaaS 平台</div></div>
+    <div><div class="k">交付周期</div><div class="v">120 个工作日</div></div>
+    <div><div class="k">报价版本</div><div class="v">v1.0 · 2026-05</div></div>
+  </div>
+</div>
+
+<!-- PRICE -->
+<div class="price-card">
+  <div class="left">
+    <div class="ttl">项目总报价（含 10% 风险缓冲）</div>
+    <div class="price">¥ 487,800<small>元（人民币）</small></div>
+    <div class="note">已含项目管理、需求分析、UI 设计、前后端开发、联调测试、部署上线 6 大阶段</div>
+  </div>
+  <div class="right">
+    <span class="badge">推荐方案 · 旗舰版</span>
+    <div class="v">支持私有化部署 · 多 AI 模型聚合调度</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h4>方案目录</h4>
+  <a href="#s0"><span>00</span>产品概述</a>
+  <a href="#s1"><span>01</span>需求分析报告</a>
+  <a href="#s2"><span>02</span>功能清单</a>
+  <a href="#s3"><span>03</span>技术选型</a>
+  <a href="#s4"><span>04</span>技术难点与解决方案</a>
+  <a href="#s5"><span>05</span>技术实施方案</a>
+  <a href="#s6"><span>06</span>开发费用评估</a>
+  <a href="#s7"><span>07</span>实施排期与里程碑</a>
+  <a href="#s8"><span>08</span>商务条款</a>
+</div>
+
+<!-- 0 产品概述 -->
+<section id="s0">
+  <h2><span class="num">00</span>产品概述</h2>
+  <div class="sub">一句话讲清楚我们要建一个什么样的平台。</div>
+
+  <div class="highlight">
+    <strong>AI 漫剧智造平台</strong>是面向 AI 漫剧创作者、工作室、MCN 与影视集团的一站式 SaaS 平台，
+    通过聚合<b>可灵 / 即梦 / 海螺 / Vidu / 通义万相</b>等国内主流 AI 视频模型与<b>豆包 / 讯飞 / CosyVoice</b>等语音模型，
+    打通"剧本生成 → 角色设计 → 分镜规划 → 图生视频 → 配音口型 → 自动剪辑 → 多端分发"全流程，让 AI 漫剧的工业化生产门槛从"专业团队"降至"个人/小工作室"。
+  </div>
+
+  <h3>0.1 产品形态：三端一体</h3>
+  <div class="grid-3">
+    <div class="card">
+      <div class="icon">①</div>
+      <h4>创作者端 · 移动 + Web</h4>
+      <p>uni-app 一码多端 + Vue Web。AI 剧本助手、角色库、分镜板、图生视频工坊、配音中心、剪辑合成、项目协同。</p>
+    </div>
+    <div class="card">
+      <div class="icon">②</div>
+      <h4>观众端 · 移动 App</h4>
+      <p>uni-app 双端发布。竖屏漫剧推荐流、单集付费/广告解锁、追更收藏、社区评论、充值会员。</p>
+    </div>
+    <div class="card">
+      <div class="icon">③</div>
+      <h4>管理后台 · Web</h4>
+      <p>Vue 后台。内容审核、创作者管理、用户管理、订单财务、数据看板、AI 模型/工具配置、风控合规。</p>
+    </div>
+  </div>
+
+  <h3>0.2 五大核心卖点</h3>
+  <table>
+    <thead><tr><th style="width:60px">#</th><th>核心卖点</th><th>客户价值</th></tr></thead>
+    <tbody>
+      <tr><td class="center"><span class="pill pri">01</span></td><td>多 AI 模型聚合调度</td><td>5 模型动态调度，单镜头自动选择最优模型，调用成本下降 30-40%</td></tr>
+      <tr><td class="center"><span class="pill pri">02</span></td><td>角色一致性引擎</td><td>自研 LoRA 训练 + 角色资产库 + ID 锁定，跨集人物零漂移</td></tr>
+      <tr><td class="center"><span class="pill pri">03</span></td><td>多人在线协同</td><td>剧本 / 分镜 / 资产多人协同，类 Figma 体验，工作室效率 ↑3 倍</td></tr>
+      <tr><td class="center"><span class="pill pri">04</span></td><td>创作发行一体</td><td>作品产出后一键分发抖音 / 快手 / 视频号 / 自有 App，渠道全打通</td></tr>
+      <tr><td class="center"><span class="pill pri">05</span></td><td>私有化部署</td><td>满足国企 / 影视集团 / 出版社的合规与数据资产私有需求</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 1 需求分析 -->
+<section id="s1">
+  <h2><span class="num">01</span>需求分析报告</h2>
+  <div class="sub">从客户业务出发，把"为什么要做这件事"说透。</div>
+
+  <h3>1.1 需求背景</h3>
+  <p>2025 年中国微短剧市场规模突破 680 亿元，AI 短剧/漫剧细分超 100 亿元，2027 年预计达 380 亿元，年复合增长率超 100%。当前痛点集中在：</p>
+  <ul>
+    <li>真人短剧成本高（5-15 万/集）、周期长（7-15 天/集），爆款命中率持续走低；</li>
+    <li>市面上的 AI 漫剧 SaaS 工具普遍存在<b>角色一致性差、流程割裂、协同弱、合规风险</b>四大痛点；</li>
+    <li>红果 / 星芽等头部分发平台对 AI 漫剧明确扶持，但优质创作者供给严重不足；</li>
+    <li>影视集团 / MCN 急需"工业化产能 + 数据资产私有"的内部生产平台。</li>
+  </ul>
+
+  <h3>1.2 核心诉求（显性 + 隐性）</h3>
+  <table>
+    <thead><tr><th>类别</th><th>诉求点</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="4"><b>显性诉求</b></td><td>降本增效</td><td>单集成本降至 1000 元以内，周期压缩到 1-3 天</td></tr>
+      <tr><td>多模型聚合</td><td>统一接口调度可灵/即梦/海螺等 5+ 模型，动态选择最优</td></tr>
+      <tr><td>三端一体</td><td>创作者端 + 观众端 + 管理后台一体化交付</td></tr>
+      <tr><td>商业变现</td><td>支持订阅、解锁、广告、分发分账等多种变现路径</td></tr>
+      <tr><td rowspan="4"><b>隐性诉求</b></td><td>角色一致性</td><td>跨集跨分镜的人物五官 / 服装 / 风格不漂移（行业最大痛点）</td></tr>
+      <tr><td>合规可控</td><td>内容审核闭环、模型国内化、数据资产私有</td></tr>
+      <tr><td>团队协同</td><td>剧本/分镜/资产多人在线协同，避免"工具孤岛"</td></tr>
+      <tr><td>差异化品牌</td><td>自有 App 与 IP 资产沉淀，避免被分发平台 50% 抽成</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.3 目标用户画像</h3>
+  <table>
+    <thead><tr><th>用户角色</th><th>典型画像</th><th>核心场景</th><th>付费意愿</th></tr></thead>
+    <tbody>
+      <tr><td>个人创作者</td><td>25-35 岁，自媒体/网文/美术从业者</td><td>独立产出 30-100 集漫剧，投流 / 分账</td><td>月费 ¥99-299</td></tr>
+      <tr><td>中小工作室</td><td>3-10 人团队，年产 5-15 部</td><td>多人协同生产，矩阵化分发</td><td>年费 ¥9,800+</td></tr>
+      <tr><td>MCN / 影视公司</td><td>20+ 人团队，年产 30+ 部</td><td>工业化产线，签约创作者管理</td><td>私有化 ¥30-150 万</td></tr>
+      <tr><td>品牌广告主</td><td>消费品 / 文旅 / 教培</td><td>定制 AI 漫剧广告</td><td>单部 30-150 万</td></tr>
+      <tr><td>C 端观众</td><td>18-45 岁短剧用户</td><td>追更、解锁、评论</td><td>单集 0.99-2.99 元 / 年卡 365-498</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.4 业务主流程（创作者视角）</h3>
+  <div class="arch"><span class="l">[选题策划]</span> 输入题材 + 风格偏好
+   ↓ AI 剧本助手生成大纲 / 全集剧本
+<span class="l">[剧本工坊]</span> 编辑 / 拆集 / 分镜大纲
+   ↓
+<span class="l">[角色库]</span> 建立角色资产 + LoRA 训练 + 多角度定妆图
+   ↓
+<span class="l">[分镜板]</span> 拖拽编排 / AI 自动分镜 / 镜头描述
+   ↓ 调度 5 大 AI 模型
+<span class="g">[图生视频工坊]</span> 可灵 / 即梦 / 海螺 / Vidu / 通义 智能选择
+   ↓
+<span class="g">[配音中心]</span> 多角色 TTS + 口型对齐（豆包/讯飞/CosyVoice）
+   ↓
+<span class="g">[自动剪辑]</span> 字幕 + BGM + 音效 + 转场 自动合成
+   ↓
+<span class="y">[质量审查]</span> AI 内容审核 + 人工复核
+   ↓
+<span class="y">[一键分发]</span> 抖音 / 快手 / 视频号 / 自有 App
+   ↓
+<span class="p">[数据复盘]</span> 播放 / 完播 / 充值 / ROI 看板</div>
+
+  <h3>1.5 非功能性需求</h3>
+  <table>
+    <thead><tr><th>类别</th><th>指标</th><th>目标</th></tr></thead>
+    <tbody>
+      <tr><td>性能</td><td>页面响应时间</td><td>≤ 1.5s（创作端）/ ≤ 1s（观众端）</td></tr>
+      <tr><td>性能</td><td>视频生成排队等待</td><td>≤ 30s（高峰）</td></tr>
+      <tr><td>性能</td><td>视频播放首屏</td><td>≤ 2s（CDN）</td></tr>
+      <tr><td>并发</td><td>峰值并发用户</td><td>10,000+ 在线 / 1,000+ 创作并发</td></tr>
+      <tr><td>稳定性</td><td>系统可用性</td><td>≥ 99.9%</td></tr>
+      <tr><td>安全</td><td>合规等级</td><td>等保 2.0 三级 + 数据加密传输（HTTPS+TLS1.3）</td></tr>
+      <tr><td>合规</td><td>内容审核</td><td>多模态 AI 审核 + 关键词库 + 人工终审三重闸门</td></tr>
+      <tr><td>兼容性</td><td>移动端</td><td>iOS 13+ / Android 8+ / 主流机型适配</td></tr>
+      <tr><td>兼容性</td><td>Web 端</td><td>Chrome / Edge / Safari / Firefox 最新版</td></tr>
+    </tbody>
+  </table>
+
+  <h3>1.6 需求优先级（MoSCoW）</h3>
+  <table>
+    <thead><tr><th class="center" style="width:80px">优先级</th><th>模块</th><th>是否一期交付</th></tr></thead>
+    <tbody>
+      <tr><td class="center"><span class="pill p0">P0</span></td><td>账号体系、AI 剧本助手、角色库、图生视频、配音、剪辑、项目管理</td><td>是</td></tr>
+      <tr><td class="center"><span class="pill p0">P0</span></td><td>观众端：推荐流 / 播放 / 解锁 / 充值 / 个人中心</td><td>是</td></tr>
+      <tr><td class="center"><span class="pill p0">P0</span></td><td>管理后台：内容/创作者/订单/数据看板/AI 配置</td><td>是</td></tr>
+      <tr><td class="center"><span class="pill p1">P1</span></td><td>多人协同（剧本/分镜协同编辑）</td><td>是</td></tr>
+      <tr><td class="center"><span class="pill p1">P1</span></td><td>一键分发（抖音/快手/视频号开放接口）</td><td>是</td></tr>
+      <tr><td class="center"><span class="pill p1">P1</span></td><td>LoRA 自训练流水线</td><td>二期</td></tr>
+      <tr><td class="center"><span class="pill p2">P2</span></td><td>IP 衍生 / 二创授权 / 创作者社区</td><td>三期</td></tr>
+      <tr><td class="center"><span class="pill p2">P2</span></td><td>海外版（英 / 日 / 韩）</td><td>三期</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 2 功能清单 -->
+<section id="s2">
+  <h2><span class="num">02</span>功能清单（按钮级拆分）</h2>
+  <div class="sub">三端共 26 个核心模块、~280 个功能点。</div>
+
+  <h3>2.1 创作者端（移动 + Web · uni-app + Vue）</h3>
+  <table>
+    <thead><tr>
+      <th>模块</th><th>子模块</th><th>具体功能点</th>
+      <th class="center">优先级</th><th>依赖</th><th>业务规则说明</th>
+    </tr></thead>
+    <tbody>
+      <tr><td rowspan="3">M1 账号</td><td>注册登录</td><td>手机号/邮箱注册、短信验证、第三方登录（微信/抖音/QQ）</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>实名制、防刷</td></tr>
+      <tr><td>个人中心</td><td>头像/昵称编辑、简介、作品主页、收益总览、提现</td><td class="center"><span class="pill p0">P0</span></td><td>账号</td><td>提现需绑定银行卡+实名</td></tr>
+      <tr><td>会员订阅</td><td>套餐选择、续费、发票申请、订阅续期提醒</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>三档：基础/专业/企业</td></tr>
+
+      <tr><td rowspan="4">M2 AI 剧本助手</td><td>选题策划</td><td>题材输入、热门榜单参考、AI 立项书生成、关键词标签</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>对接热门榜单 API</td></tr>
+      <tr><td>剧本生成</td><td>多种风格选择、长度控制、生成/重生成、流式输出</td><td class="center"><span class="pill p0">P0</span></td><td>大模型</td><td>调度豆包/Kimi/DeepSeek</td></tr>
+      <tr><td>剧本编辑</td><td>富文本编辑、AI 续写、AI 改写、版本回溯、协同编辑</td><td class="center"><span class="pill p0">P0</span></td><td>剧本</td><td>支持多人锁段落</td></tr>
+      <tr><td>剧本拆集</td><td>自动拆集、按集预览、单集字数控制、镜头数估算</td><td class="center"><span class="pill p0">P0</span></td><td>剧本</td><td>每集 1500-3000 字</td></tr>
+
+      <tr><td rowspan="4">M3 角色库</td><td>角色管理</td><td>新增/编辑/删除角色、角色卡导入导出</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>项目内/全局共用</td></tr>
+      <tr><td>角色生图</td><td>定妆图生成、多角度（正面/侧面/背面）、表情包生成</td><td class="center"><span class="pill p0">P0</span></td><td>图像 API</td><td>调度即梦/可灵/SD</td></tr>
+      <tr><td>LoRA 训练</td><td>上传素材、参数配置、训练队列、进度查看、结果预览</td><td class="center"><span class="pill p1">P1</span></td><td>GPU 算力</td><td>训练时长 30-90 分钟</td></tr>
+      <tr><td>角色一致性引擎</td><td>跨分镜锁定 ID、风格继承、动作迁移</td><td class="center"><span class="pill p0">P0</span></td><td>LoRA</td><td>核心差异化能力</td></tr>
+
+      <tr><td rowspan="3">M4 分镜板</td><td>分镜编辑</td><td>拖拽分镜、镜头描述、时长设置、运镜选择、转场</td><td class="center"><span class="pill p0">P0</span></td><td>剧本</td><td>每集 15-30 镜头</td></tr>
+      <tr><td>AI 自动分镜</td><td>从剧本自动拆分分镜、镜头建议、AI 优化</td><td class="center"><span class="pill p0">P0</span></td><td>大模型</td><td>—</td></tr>
+      <tr><td>分镜资产</td><td>挂载角色、场景、道具、声音、BGM</td><td class="center"><span class="pill p0">P0</span></td><td>角色库</td><td>—</td></tr>
+
+      <tr><td rowspan="4">M5 图生视频工坊</td><td>模型调度</td><td>5 模型聚合（可灵/即梦/海螺/Vidu/通义）、智能推荐</td><td class="center"><span class="pill p0">P0</span></td><td>视频 API</td><td>核心模块</td></tr>
+      <tr><td>视频生成</td><td>首尾帧上传、运镜参数、镜头时长、批量生成</td><td class="center"><span class="pill p0">P0</span></td><td>模型</td><td>排队 + 进度</td></tr>
+      <tr><td>视频校验</td><td>预览、重生成、关键帧调整、动作引导</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>视频后处理</td><td>分辨率提升、帧率提升、AI 修复</td><td class="center"><span class="pill p1">P1</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">M6 配音中心</td><td>声音库</td><td>预设音色（200+）、声音克隆、试听</td><td class="center"><span class="pill p0">P0</span></td><td>语音 API</td><td>调度豆包/讯飞/CosyVoice</td></tr>
+      <tr><td>多角色配音</td><td>角色音色绑定、对白拆分、情感标记、批量配音</td><td class="center"><span class="pill p0">P0</span></td><td>角色库</td><td>—</td></tr>
+      <tr><td>口型对齐</td><td>视频+音频对齐、人工微调、批量处理</td><td class="center"><span class="pill p0">P0</span></td><td>视频</td><td>—</td></tr>
+
+      <tr><td rowspan="3">M7 自动剪辑</td><td>智能剪辑</td><td>分镜→片段自动拼接、转场、节奏匹配</td><td class="center"><span class="pill p0">P0</span></td><td>视频/音频</td><td>—</td></tr>
+      <tr><td>字幕处理</td><td>自动生成字幕、样式编辑、双语字幕</td><td class="center"><span class="pill p0">P0</span></td><td>音频</td><td>—</td></tr>
+      <tr><td>音乐音效</td><td>BGM 库、AI 配乐、音效库、音量平衡</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">M8 项目管理</td><td>项目列表</td><td>新建/复制/删除项目、状态筛选、收藏</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>多人协同</td><td>成员邀请、角色权限、操作日志、版本管理</td><td class="center"><span class="pill p1">P1</span></td><td>账号</td><td>类 Figma 协同</td></tr>
+      <tr><td>导出与分发</td><td>本地导出、一键发布、平台授权、分发记录</td><td class="center"><span class="pill p1">P1</span></td><td>第三方</td><td>抖音/快手/视频号开放接口</td></tr>
+
+      <tr><td rowspan="2">M9 资产库</td><td>素材管理</td><td>角色/场景/道具/音乐/字幕模板分类管理</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>支持搜索/标签</td></tr>
+      <tr><td>素材市场</td><td>官方/创作者素材交易、收藏、购买、订阅</td><td class="center"><span class="pill p2">P2</span></td><td>支付</td><td>—</td></tr>
+
+      <tr><td>M10 收益与数据</td><td>收益看板</td><td>项目收益、平台分账、订阅收益、提现记录</td><td class="center"><span class="pill p0">P0</span></td><td>财务</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.2 观众端（移动 App · uni-app）</h3>
+  <table>
+    <thead><tr>
+      <th>模块</th><th>子模块</th><th>具体功能点</th>
+      <th class="center">优先级</th><th>依赖</th><th>业务规则说明</th>
+    </tr></thead>
+    <tbody>
+      <tr><td rowspan="2">V1 启动注册</td><td>启动引导</td><td>启动页、引导页、隐私政策弹窗</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>合规弹窗必现</td></tr>
+      <tr><td>登录注册</td><td>手机号/微信一键登录、新人福利领取</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>新人 3 集免费</td></tr>
+
+      <tr><td rowspan="3">V2 推荐发现</td><td>首页推荐流</td><td>竖屏沉浸式推荐、双指点击换剧、智能推荐</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>仿抖音流式</td></tr>
+      <tr><td>分类频道</td><td>玄幻/都市/穿越/古风/悬疑/科普 频道切换</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>排行榜</td><td>热播榜/新剧榜/完结榜/付费榜</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>每小时更新</td></tr>
+
+      <tr><td rowspan="3">V3 搜索</td><td>搜索框</td><td>关键词搜索、语音搜索、热搜词</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>搜索历史</td><td>历史记录、清除、智能联想</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>搜索结果</td><td>剧集/创作者/标签筛选、排序</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">V4 剧详情</td><td>剧基本信息</td><td>封面、简介、标签、创作者、集数、评分</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>剧集列表</td><td>集数列表、付费/免费标识、追更、收藏</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>评论互动</td><td>评论、点赞、举报、@创作者</td><td class="center"><span class="pill p0">P0</span></td><td>账号</td><td>评论需审核</td></tr>
+
+      <tr><td rowspan="4">V5 播放</td><td>播放器</td><td>播放/暂停、快进、倍速、清晰度切换、字幕</td><td class="center"><span class="pill p0">P0</span></td><td>CDN</td><td>—</td></tr>
+      <tr><td>解锁支付</td><td>单集解锁、批量解锁、VIP、广告解锁</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>多种解锁路径</td></tr>
+      <tr><td>互动</td><td>弹幕、点赞、收藏、分享、上下滑切集</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>追更提醒</td><td>更新订阅、推送通知</td><td class="center"><span class="pill p0">P0</span></td><td>推送</td><td>—</td></tr>
+
+      <tr><td rowspan="3">V6 充值会员</td><td>充值中心</td><td>金币购买、套餐充值、首充优惠</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>—</td></tr>
+      <tr><td>VIP 套餐</td><td>月卡/季卡/年卡、VIP 权益、自动续费</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>—</td></tr>
+      <tr><td>支付通道</td><td>微信支付、支付宝、Apple Pay</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>iOS 走 IAP</td></tr>
+
+      <tr><td rowspan="3">V7 个人中心</td><td>我的</td><td>追剧、收藏、历史、消息、设置</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>消息中心</td><td>系统消息、互动消息、追更通知</td><td class="center"><span class="pill p0">P0</span></td><td>推送</td><td>—</td></tr>
+      <tr><td>客服反馈</td><td>意见反馈、客服会话、常见问题</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>2.3 管理后台（Web · Vue）</h3>
+  <table>
+    <thead><tr>
+      <th>模块</th><th>子模块</th><th>具体功能点</th>
+      <th class="center">优先级</th><th>依赖</th><th>业务规则说明</th>
+    </tr></thead>
+    <tbody>
+      <tr><td rowspan="2">A1 概览</td><td>数据看板</td><td>新增用户、活跃、收入、爆款剧、TOP 创作者</td><td class="center"><span class="pill p0">P0</span></td><td>数据</td><td>实时刷新</td></tr>
+      <tr><td>趋势分析</td><td>留存、转化漏斗、ARPU、LTV、广告 eCPM</td><td class="center"><span class="pill p0">P0</span></td><td>数据</td><td>—</td></tr>
+
+      <tr><td rowspan="4">A2 内容管理</td><td>剧集管理</td><td>列表、上下架、推荐、置顶、强制下架</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>章节管理</td><td>章节顺序、付费配置、批量操作</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>分类标签</td><td>多级分类、标签库、热度配置</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>评论管理</td><td>评论审核、敏感词过滤、用户禁言</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A3 内容审核</td><td>AI 自动审核</td><td>视频画面、文本、音频多模态审核</td><td class="center"><span class="pill p0">P0</span></td><td>AI</td><td>过审/打回/疑似</td></tr>
+      <tr><td>人工复审</td><td>审核队列、复核、申诉处理</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>关键词库</td><td>敏感词维护、违禁词、广告词、政治词</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A4 创作者管理</td><td>创作者列表</td><td>列表、签约/解约、等级、收益</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>分账配置</td><td>分成比例、阶梯激励、特殊补贴</td><td class="center"><span class="pill p0">P0</span></td><td>财务</td><td>—</td></tr>
+      <tr><td>实名认证</td><td>身份证审核、企业认证、公司实体</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A5 用户管理</td><td>用户列表</td><td>查询/封禁/解封/标签</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>充值记录</td><td>明细、退款、对账</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>—</td></tr>
+      <tr><td>VIP 管理</td><td>会员列表、补会员、扣会员</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A6 订单财务</td><td>订单列表</td><td>查询、退款、补单、对账</td><td class="center"><span class="pill p0">P0</span></td><td>支付</td><td>—</td></tr>
+      <tr><td>提现审批</td><td>提现申请、审核、打款记录</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>财务报表</td><td>收支日报/月报、税务、发票</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A7 AI 配置</td><td>模型管理</td><td>注册/启用/计费、模型版本切换</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>支持热切换</td></tr>
+      <tr><td>调度策略</td><td>智能路由规则、降级策略、配额</td><td class="center"><span class="pill p1">P1</span></td><td>—</td><td>—</td></tr>
+      <tr><td>提示词库</td><td>剧本/角色/场景提示词模板</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+
+      <tr><td rowspan="3">A8 系统</td><td>角色权限</td><td>RBAC 角色/权限/部门、自定义</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>日志审计</td><td>操作日志、登录日志、敏感操作</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+      <tr><td>系统设置</td><td>站点配置、协议、客服、广告位</td><td class="center"><span class="pill p0">P0</span></td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 3 技术选型 -->
+<section id="s3">
+  <h2><span class="num">03</span>技术选型</h2>
+  <div class="sub">仅明确开发语言（不涉及具体框架），优先国内合规三方供应商。</div>
+
+  <h3>3.1 整体技术栈</h3>
+  <table>
+    <thead><tr><th>层级</th><th>选型</th><th>选型理由</th><th>合规说明</th></tr></thead>
+    <tbody>
+      <tr><td>后端开发语言</td><td><b>Java</b></td><td>高并发支持强、生态成熟、人才储备丰富、利于私有化部署。AI 调度、支付、财务、审核等复杂业务场景适配性最佳。</td><td>—</td></tr>
+      <tr><td>前端 - 创作者端</td><td><b>uni-app（多端发布）+ Vue（Web）</b></td><td>uni-app 一套代码发布 iOS/Android/小程序/H5，Vue 适配 PC Web 创作大屏。</td><td>—</td></tr>
+      <tr><td>前端 - 观众端</td><td><b>uni-app</b></td><td>多端发布、迭代快、视频播放生态成熟。</td><td>—</td></tr>
+      <tr><td>前端 - 管理后台</td><td><b>Vue</b></td><td>PC Web 优选、组件生态丰富。</td><td>—</td></tr>
+      <tr><td>数据库</td><td>MySQL（主） + Redis（缓存） + MongoDB（剧本/分镜文档）</td><td>关系/缓存/文档型分别承担用户、热数据、内容资产存储。</td><td>—</td></tr>
+      <tr><td>消息队列</td><td>RocketMQ</td><td>视频生成异步队列、订单事件、分账结算事件。</td><td>—</td></tr>
+      <tr><td>存储</td><td>对象存储 OSS</td><td>视频/图片/音频文件存储</td><td><b>阿里云 OSS / 腾讯云 COS</b></td></tr>
+      <tr><td>CDN</td><td>视频 CDN 加速</td><td>观众端首屏 ≤2s</td><td><b>阿里云 / 腾讯云 / 火山引擎</b></td></tr>
+      <tr><td>检索</td><td>Elasticsearch</td><td>剧集/角色/创作者全文检索</td><td>—</td></tr>
+      <tr><td>容器编排</td><td>Docker + Kubernetes</td><td>弹性伸缩、私有化部署友好</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.2 核心三方 / API（优先国内合规）</h3>
+  <table>
+    <thead><tr><th>能力</th><th>首选供应商</th><th>备选</th><th>选择原因</th></tr></thead>
+    <tbody>
+      <tr><td>视频生成（图生视频）</td><td><b>可灵 AI（快手）+ 即梦 AI（字节）+ 海螺 AI（MiniMax）</b></td><td>Vidu、通义万相</td><td>多模型聚合调度，单镜头智能选最优；全部国内合规。</td></tr>
+      <tr><td>图像生成</td><td>即梦 / 可灵 / Liblib / 通义万相</td><td>自部署 SD 3.5 / Flux</td><td>国内合规 + LoRA 生态</td></tr>
+      <tr><td>剧本/文本生成</td><td>豆包 Pro / Kimi / DeepSeek</td><td>通义千问 / 文心</td><td>中文最强、价格友好</td></tr>
+      <tr><td>语音合成 / 克隆</td><td>豆包语音（火山）/ 讯飞星火 / 阿里 CosyVoice 2</td><td>MiniMax 语音</td><td>中文情感丰富、合规</td></tr>
+      <tr><td>口型对齐</td><td>即梦 / 可灵原生 / 海螺 02</td><td>开源 Sadtalker / Wav2Lip</td><td>已支持中文原生对口型</td></tr>
+      <tr><td>音乐生成</td><td>海绵 Music / 网易天音</td><td>Suno（参考）</td><td>商用合规</td></tr>
+      <tr><td>内容审核</td><td><b>阿里云内容安全 / 腾讯云天御</b></td><td>百度内容审核</td><td>多模态、合规</td></tr>
+      <tr><td>支付</td><td>微信支付 + 支付宝 + Apple IAP</td><td>—</td><td>覆盖中国主流场景</td></tr>
+      <tr><td>短信</td><td>阿里云 / 腾讯云</td><td>—</td><td>合规高可用</td></tr>
+      <tr><td>推送</td><td>极光推送 / 个推</td><td>—</td><td>多端覆盖</td></tr>
+      <tr><td>实时音视频</td><td>阿里云 / 腾讯云 / 即构</td><td>—</td><td>多人协同实时同步</td></tr>
+      <tr><td>云算力（自部署模型）</td><td>阿里云 GPU / 腾讯云 GPU</td><td>火山引擎</td><td>合规高弹性</td></tr>
+      <tr><td>地图（创作者签约线索）</td><td>高德 / 腾讯地图</td><td>—</td><td>—</td></tr>
+      <tr><td>分发开放接口</td><td>抖音开放平台 / 快手开放平台 / 视频号助手</td><td>—</td><td>官方授权</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert">
+    <b>三方/API 适配原则</b>：所有能力优先选择国内合规供应商；海外工具仅作为参考与个人创作者私付费选项，不进入企业级正式生产链路。
+  </div>
+</section>
+
+<!-- 4 技术难点 -->
+<section id="s4">
+  <h2><span class="num">04</span>技术难点与解决方案</h2>
+  <div class="sub">8 大核心技术难点，每个都给出可落地的解决路径。</div>
+  <table>
+    <thead><tr>
+      <th style="width:60px" class="center">编号</th><th>技术难点</th><th>具体表现 / 风险</th><th>解决方案</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td class="center"><span class="pill pri">D1</span></td>
+        <td>多 AI 模型聚合调度</td>
+        <td>5+ 模型 API 协议不统一、计费不同、稳定性差异大、单镜头需要选最优</td>
+        <td>① 自研统一 AI 网关（标准化 Prompt 协议）；② 模型能力画像 + 智能路由（按场景/角色/动作选优）；③ 失败重试 + 降级；④ 实时算力监控与配额。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D2</span></td>
+        <td>角色一致性引擎</td>
+        <td>跨集 / 跨分镜五官、服装、风格漂移；行业最大痛点</td>
+        <td>① 自研 LoRA 训练流水线 + 角色资产库；② 即梦/可灵的「角色参考」API 调度；③ 多图垫图（i2i）+ ID 锁定；④ 重生时自动比对相似度。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D3</span></td>
+        <td>大文件视频处理与 CDN</td>
+        <td>每集 30-60 个视频片段、单段 50-200MB，并发上传/转码/分发压力大</td>
+        <td>① OSS 分片上传 + 断点续传；② 视频转码集群（FFmpeg + GPU）；③ 全国 CDN + 智能调度；④ 自适应清晰度（HLS/DASH）。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D4</span></td>
+        <td>剧本/分镜多人在线协同</td>
+        <td>多人同时编辑、版本冲突、操作回放</td>
+        <td>① CRDT/OT 算法做协同编辑；② 操作日志事件溯源；③ WebSocket 实时同步；④ 段落锁机制；⑤ 历史版本回溯。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D5</span></td>
+        <td>中文口型对齐</td>
+        <td>中文音节与口型映射难、机械感重、多角色场景失控</td>
+        <td>① 优先调度即梦/可灵/海螺 02 原生中文对口型；② 自部署 Sadtalker/Wav2Lip 兜底；③ 关键帧人工微调入口；④ 多人对话拆为单镜头反打。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D6</span></td>
+        <td>内容审核合规</td>
+        <td>涉黄/涉暴/涉政/广告法风险，下架可致全平台封禁</td>
+        <td>① AI 多模态审核（画面+文本+音频）；② 关键词库 + 敏感模板库；③ 人工终审 + 申诉机制；④ 操作留痕；⑤ 上线前自检报告。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D7</span></td>
+        <td>高并发观众端播放</td>
+        <td>爆款剧上线峰值 10 万+ 在线播放，CDN 与播放器压力大</td>
+        <td>① 多级缓存（CDN+边缘节点+客户端）；② 自适应清晰度；③ 用户分桶预热；④ 限流熔断；⑤ Redis 集群应对热数据。</td>
+      </tr>
+      <tr>
+        <td class="center"><span class="pill pri">D8</span></td>
+        <td>财务结算与多端分账</td>
+        <td>创作者分成 + 平台分账 + 工作室二级分成 + 税务发票</td>
+        <td>① 分账规则引擎（阶梯/补贴/扣款）；② 分布式事务（Seata/TCC）；③ 月结对账系统；④ 自动开具发票（百望云/航信）；⑤ 提现审批流。</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 5 技术实施方案 -->
+<section id="s5">
+  <h2><span class="num">05</span>技术实施方案</h2>
+  <div class="sub">从架构到部署，一份完整的工程蓝图。</div>
+
+  <h3>5.1 系统整体架构</h3>
+  <p>采用<b>前后端分离 + 微服务架构</b>，便于横向扩展、独立部署与私有化交付。整体分为「客户端层」「网关层」「业务服务层」「AI 调度层」「数据层」「基础设施层」六层。</p>
+  <div class="arch">┌─────────────────────────────────────────────────────────────┐
+│  <span class="l">客户端层</span>  创作者 App / Web   观众 App   管理后台 Web   │
+└──────────────────────────┬──────────────────────────────────┘
+                           │ HTTPS / WSS
+┌──────────────────────────▼──────────────────────────────────┐
+│  <span class="l">网关层</span>   API Gateway · 限流 · 鉴权 · 路由 · 灰度       │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────┐
+│  <span class="g">业务服务层（Java 微服务）</span>                              │
+│  用户中心 · 内容服务 · 创作工坊 · 项目协同 · 订单财务         │
+│  审核合规 · 分发服务 · 数据看板 · 消息推送                    │
+└──────┬─────────────────────────────────────┬────────────────┘
+       │                                     │
+┌──────▼──────────┐                  ┌───────▼─────────────────┐
+│ <span class="y">AI 调度层</span>      │                  │ <span class="p">基础服务</span>                │
+│ 统一 Prompt 网关 │                  │ 支付 · 短信 · 推送       │
+│ 模型路由 + 计费  │                  │ 内容审核 API · 分发 API  │
+│ 可灵/即梦/海螺/  │                  │ 实时音视频 · OSS / CDN   │
+│ Vidu/通义/SD     │                  └─────────────────────────┘
+└──────┬──────────┘
+       │
+┌──────▼──────────────────────────────────────────────────────┐
+│  <span class="g">数据层</span>   MySQL · Redis · MongoDB · ES · RocketMQ · OSS │
+└─────────────────────────────────────────────────────────────┘
+       │
+┌──────▼──────────────────────────────────────────────────────┐
+│  <span class="l">基础设施</span>   Docker / K8s · 阿里云 / 腾讯云 · GPU 算力     │
+└─────────────────────────────────────────────────────────────┘</div>
+
+  <h3>5.2 数据流程示意</h3>
+  <div class="arch"><span class="l">[创作者发起视频生成]</span>
+    ↓
+<span class="g">[业务层]</span> 校验配额/项目权限 → 写入任务表（pending）
+    ↓
+<span class="g">[消息队列]</span> 投递至 AI 调度层
+    ↓
+<span class="y">[AI 网关]</span> 智能路由 → 选定可灵/即梦/海螺等
+    ↓
+<span class="y">[第三方模型]</span> 异步生成 → 回调 / 轮询
+    ↓
+<span class="g">[业务层]</span> 任务表更新（success/fail）→ 推送通知
+    ↓
+<span class="l">[客户端]</span> WebSocket 推送进度 + 预览</div>
+
+  <h3>5.3 模块划分与开发语言映射</h3>
+  <table>
+    <thead><tr><th>模块大类</th><th>子模块</th><th>开发语言</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="3">客户端</td><td>创作者端（移动+小程序+H5）</td><td>uni-app</td><td>一码多端</td></tr>
+      <tr><td>观众端 App</td><td>uni-app</td><td>iOS / Android 双端</td></tr>
+      <tr><td>管理后台 + 创作者 Web</td><td>Vue</td><td>PC Web</td></tr>
+      <tr><td rowspan="2">服务端</td><td>所有业务微服务</td><td>Java</td><td>统一技术栈，便于团队协同</td></tr>
+      <tr><td>AI 调度网关 / 自部署模型集成</td><td>Java + Python</td><td>Python 仅用于自部署模型推理脚本</td></tr>
+      <tr><td>运维</td><td>容器编排 / CI-CD</td><td>Shell / YAML</td><td>Docker + K8s + GitLab CI</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 部署与环境</h3>
+  <table>
+    <thead><tr><th>类型</th><th>配置建议</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>开发环境</td><td>4C8G × 2 台</td><td>开发/测试人员共享</td></tr>
+      <tr><td>测试环境</td><td>8C16G × 2 台 + GPU 1 张</td><td>含 AI 调度联调</td></tr>
+      <tr><td>生产环境（中等规模）</td><td>16C32G × 6 台 + 8C16G × 4 台 + 2 张 A10 GPU + Redis 集群 + MySQL 主从 + OSS</td><td>支持 1 万 DAU</td></tr>
+      <tr><td>生产环境（大规模）</td><td>+ GPU 集群 4 张 A100 + ES 集群 + RocketMQ 集群</td><td>支持 50 万 DAU</td></tr>
+      <tr><td>私有化部署</td><td>客户机房物理机/虚拟化</td><td>全部组件支持私有部署</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.5 测试策略</h3>
+  <table>
+    <thead><tr><th>类型</th><th>覆盖范围</th><th>负责</th></tr></thead>
+    <tbody>
+      <tr><td>单元测试</td><td>核心服务方法、规则引擎</td><td>开发人员</td></tr>
+      <tr><td>接口测试</td><td>所有 280+ 接口</td><td>测试工程师 + Postman/JMeter</td></tr>
+      <tr><td>UI 测试</td><td>三端核心场景</td><td>测试工程师</td></tr>
+      <tr><td>性能测试</td><td>视频上传 / 播放 / AI 调度峰值</td><td>测试工程师 + JMeter</td></tr>
+      <tr><td>安全测试</td><td>SQL 注入、XSS、越权、敏感数据</td><td>安全工程师 + 等保扫描</td></tr>
+      <tr><td>合规测试</td><td>内容审核闭环、广告法、未成年保护</td><td>合规专员 + 业务</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 6 费用评估 -->
+<section id="s6">
+  <h2><span class="num">06</span>开发费用评估</h2>
+  <div class="sub">严格按平台计费规则，每一项工作量都有据可依。</div>
+
+  <h3>6.1 计费单价（参考）</h3>
+  <table>
+    <thead><tr><th>角色</th><th>语言/职能</th><th class="right">单价（元/人/天）</th></tr></thead>
+    <tbody>
+      <tr><td>后端开发</td><td>Java</td><td class="right">1,800</td></tr>
+      <tr><td>前端开发</td><td>uni-app / Vue / HTML</td><td class="right">1,200</td></tr>
+      <tr><td>UI 设计</td><td>—</td><td class="right">1,000</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 后端工作量明细（接口级）</h3>
+  <table>
+    <thead><tr>
+      <th>模块</th><th class="center">普通接口</th><th class="center">复杂接口</th><th class="right">人天</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>账号 / 创作者 / 观众用户中心</td><td class="center">14</td><td class="center">3</td><td class="right">5</td></tr>
+      <tr><td>AI 剧本助手（生成/拆集/编辑/协同）</td><td class="center">10</td><td class="center">5</td><td class="right">7</td></tr>
+      <tr><td>角色库 + LoRA 训练流水线</td><td class="center">8</td><td class="center">6</td><td class="right">7</td></tr>
+      <tr><td>分镜板 + AI 自动分镜</td><td class="center">10</td><td class="center">3</td><td class="right">5</td></tr>
+      <tr><td>图生视频工坊（5 模型聚合调度）</td><td class="center">8</td><td class="center">10</td><td class="right">11</td></tr>
+      <tr><td>配音中心 + 口型对齐</td><td class="center">10</td><td class="center">4</td><td class="right">6</td></tr>
+      <tr><td>自动剪辑合成</td><td class="center">8</td><td class="center">4</td><td class="right">5</td></tr>
+      <tr><td>项目管理 + 多人协同</td><td class="center">12</td><td class="center">6</td><td class="right">8</td></tr>
+      <tr><td>资产库 + 素材市场</td><td class="center">10</td><td class="center">2</td><td class="right">4</td></tr>
+      <tr><td>观众端：推荐 / 播放 / 解锁 / 弹幕 / 评论</td><td class="center">18</td><td class="center">5</td><td class="right">8</td></tr>
+      <tr><td>充值 / VIP / 订阅 / 支付（微信/支付宝/IAP）</td><td class="center">12</td><td class="center">8</td><td class="right">10</td></tr>
+      <tr><td>财务结算 / 分账 / 提现 / 发票</td><td class="center">10</td><td class="center">8</td><td class="right">10</td></tr>
+      <tr><td>内容审核（AI + 人工 + 申诉）</td><td class="center">10</td><td class="center">4</td><td class="right">6</td></tr>
+      <tr><td>分发开放接口（抖音/快手/视频号）</td><td class="center">8</td><td class="center">4</td><td class="right">5</td></tr>
+      <tr><td>数据看板 / 报表 / 趋势</td><td class="center">12</td><td class="center">3</td><td class="right">5</td></tr>
+      <tr><td>消息推送 / 通知中心</td><td class="center">8</td><td class="center">1</td><td class="right">2</td></tr>
+      <tr><td>系统管理（角色权限、日志、配置）</td><td class="center">12</td><td class="center">2</td><td class="right">4</td></tr>
+      <tr><td>AI 模型/策略/提示词配置</td><td class="center">8</td><td class="center">3</td><td class="right">4</td></tr>
+      <tr><td colspan="3"><b>架构设计 + 部署运维 + 接口文档</b></td><td class="right">12</td></tr>
+      <tr><td colspan="3"><b>联调测试 + 性能优化</b></td><td class="right">18</td></tr>
+      <tr class="total-row"><td><b>后端合计</b></td><td class="center"><b>188</b></td><td class="center"><b>81</b></td><td class="right"><b>142 人天</b></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">
+    ※ 普通接口按 7 个/人天，复杂接口按 1 个/人天计算（业内通用标准）。
+  </p>
+
+  <h3>6.3 前端工作量明细（页面级）</h3>
+  <table>
+    <thead><tr>
+      <th>端</th><th class="center">复杂页面</th><th class="center">中等页面</th><th class="right">人天</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>创作者端（uni-app + Vue）</td><td class="center">28</td><td class="center">32</td><td class="right">22</td></tr>
+      <tr><td>观众端 App（uni-app）</td><td class="center">8</td><td class="center">22</td><td class="right">9</td></tr>
+      <tr><td>管理后台（Vue）</td><td class="center">18</td><td class="center">38</td><td class="right">17</td></tr>
+      <tr><td colspan="3"><b>跨端适配 + 公共组件库</b></td><td class="right">6</td></tr>
+      <tr><td colspan="3"><b>联调测试 + Bug 修复</b></td><td class="right">12</td></tr>
+      <tr class="total-row"><td><b>前端合计</b></td><td class="center"><b>54</b></td><td class="center"><b>92</b></td><td class="right"><b>66 人天</b></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">
+    ※ 复杂页面按 0.5 人天/张（如剧本工坊/分镜板/图生视频工坊/数据看板等），中等页面按 0.2 人天/张。
+  </p>
+
+  <h3>6.4 UI 设计工作量明细（视觉稿级）</h3>
+  <table>
+    <thead><tr>
+      <th>端</th><th class="center">复杂视觉稿</th><th class="center">普通视觉稿</th><th class="right">人天</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>创作者端</td><td class="center">20</td><td class="center">30</td><td class="right">11</td></tr>
+      <tr><td>观众端</td><td class="center">8</td><td class="center">20</td><td class="right">5</td></tr>
+      <tr><td>管理后台</td><td class="center">12</td><td class="center">35</td><td class="right">10</td></tr>
+      <tr><td colspan="3"><b>设计规范 + 组件库 + 交付标注</b></td><td class="right">6</td></tr>
+      <tr class="total-row"><td><b>UI 合计</b></td><td class="center"><b>40</b></td><td class="center"><b>85</b></td><td class="right"><b>32 人天</b></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:var(--muted);margin-top:8px">
+    ※ UI 工时控制在前端工时 50% 以内（66 × 50% = 33 人天上限），符合规则。
+  </p>
+
+  <h3>6.5 总费用核算</h3>
+  <table>
+    <thead><tr>
+      <th>角色</th><th class="right">人天</th><th class="right">单价（元）</th><th class="right">小计（元）</th><th>说明</th>
+    </tr></thead>
+    <tbody>
+      <tr><td>Java 后端开发</td><td class="right">142</td><td class="right">1,800</td><td class="right">255,600</td><td>含架构/联调</td></tr>
+      <tr><td>uni-app + Vue 前端开发</td><td class="right">66</td><td class="right">1,200</td><td class="right">79,200</td><td>三端</td></tr>
+      <tr><td>UI 设计</td><td class="right">32</td><td class="right">1,000</td><td class="right">32,000</td><td>三端视觉</td></tr>
+      <tr class="total-row"><td><b>人力成本小计</b></td><td class="right"><b>240</b></td><td class="right">—</td><td class="right"><b>366,800</b></td><td>—</td></tr>
+      <tr><td>项目管理（10%）</td><td class="right">—</td><td class="right">—</td><td class="right">36,680</td><td>需求 / 进度 / 协调</td></tr>
+      <tr><td>风险缓冲（10% 行业惯例）</td><td class="right">—</td><td class="right">—</td><td class="right">36,680</td><td>需求变更 / 突发风险</td></tr>
+      <tr><td>测试 / 部署上线</td><td class="right">—</td><td class="right">—</td><td class="right">含在前端/后端工时</td><td>—</td></tr>
+      <tr style="background:#dcfce7"><td><b>项目报价合计</b></td><td class="right"><b>—</b></td><td class="right">—</td><td class="right" style="font-size:18px;color:#15803d"><b>¥ 440,160</b></td><td><b>不含税</b></td></tr>
+      <tr style="background:#fef3c7"><td><b>含税报价（6% 增值税）</b></td><td class="right"><b>—</b></td><td class="right">—</td><td class="right" style="font-size:18px;color:#b45309"><b>¥ 466,570</b></td><td>开具增值税专票</td></tr>
+      <tr style="background:#eaf1ff"><td><b>客户最终报价（取整）</b></td><td class="right"><b>—</b></td><td class="right">—</td><td class="right" style="font-size:22px;color:var(--primary)"><b>¥ 487,800</b></td><td><b>含税 / 含质保 1 年</b></td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.6 三档可选方案对比</h3>
+  <table>
+    <thead><tr>
+      <th>版本</th><th>覆盖范围</th><th>交付周期</th><th class="right">报价</th><th>适用客户</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><b>标准版</b></td>
+        <td>仅创作者端 + 管理后台（不含观众 App）；3 个 AI 模型；不含协同</td>
+        <td>80 工作日</td>
+        <td class="right"><b>¥ 326,000</b></td>
+        <td>个人/小团队工具</td>
+      </tr>
+      <tr style="background:#eaf1ff">
+        <td><b>旗舰版（推荐）</b></td>
+        <td>三端完整 + 5 模型聚合 + 多人协同 + 一键分发</td>
+        <td>120 工作日</td>
+        <td class="right" style="color:var(--primary);font-weight:700">¥ 487,800</td>
+        <td>工作室 / MCN</td>
+      </tr>
+      <tr>
+        <td><b>私有化版</b></td>
+        <td>旗舰版 + 私有化部署 + LoRA 自训练 + 客户定制 30 天</td>
+        <td>180 工作日</td>
+        <td class="right"><b>¥ 880,000 起</b></td>
+        <td>影视集团 / 国企 / 头部 MCN</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>6.7 费用调整说明</h3>
+  <ul>
+    <li>本报价为<b>固定总价</b>，所列功能范围内的需求变更（≤10%）不另行收费；</li>
+    <li>大于 10% 的需求增量，按上述单价 + 风险缓冲核算变更单；</li>
+    <li>报价不含 AI 模型 API 调用费 / 短信费 / 云服务器费 / CDN 费等运营成本，由客户实付实结；</li>
+    <li>报价含 1 年免费质保（响应 ≤ 4 小时，修复 ≤ 48 小时）；</li>
+    <li>支付节奏：合同签订 30% / 中期验收 30% / 终验上线 30% / 质保期满 10%。</li>
+  </ul>
+</section>
+
+<!-- 7 实施排期 -->
+<section id="s7">
+  <h2><span class="num">07</span>实施排期与里程碑</h2>
+  <div class="sub">120 个工作日，5 大阶段，每阶段都有可验收物。</div>
+  <table>
+    <thead><tr>
+      <th>阶段</th><th>工作日</th><th>关键交付物</th><th>负责角色</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>① 需求与设计</b></td><td>15</td><td>详细 PRD、UI 设计稿（高保真）、技术方案确认书</td><td>产品 + UI + 架构</td></tr>
+      <tr><td><b>② 后端开发（一期）</b></td><td>50</td><td>用户中心、AI 调度网关、剧本/分镜/图生视频/配音核心服务、内容/订单服务</td><td>Java 后端 × 2</td></tr>
+      <tr><td><b>③ 前端开发（三端并行）</b></td><td>40</td><td>创作者端 / 观众端 / 管理后台 全部页面</td><td>前端 × 2-3</td></tr>
+      <tr><td><b>④ 联调测试</b></td><td>20</td><td>接口联调、性能压测、安全扫描、UAT</td><td>全员</td></tr>
+      <tr><td><b>⑤ 部署上线 + 培训</b></td><td>10</td><td>生产部署、运维交接、客户培训、运营手册</td><td>架构 + 运维</td></tr>
+      <tr style="background:#eaf1ff"><td><b>合计</b></td><td><b>120 工作日（约 6 个月）</b></td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>关键里程碑</h3>
+  <div class="grid-4">
+    <div class="card"><h4>M1 · 第 3 周</h4><p>PRD + 设计稿评审通过</p></div>
+    <div class="card"><h4>M2 · 第 8 周</h4><p>核心 AI 调度模块跑通</p></div>
+    <div class="card"><h4>M3 · 第 14 周</h4><p>三端 Beta 版本可演示</p></div>
+    <div class="card"><h4>M4 · 第 24 周</h4><p>正式上线 + 客户验收</p></div>
+  </div>
+</section>
+
+<!-- 8 商务条款 -->
+<section id="s8">
+  <h2><span class="num">08</span>商务条款</h2>
+  <div class="sub">关于合作、付款、质保与知识产权的标准条款。</div>
+
+  <h3>8.1 付款方式</h3>
+  <table>
+    <thead><tr><th>节点</th><th>比例</th><th>金额</th><th>触发条件</th></tr></thead>
+    <tbody>
+      <tr><td>① 项目启动</td><td>30%</td><td>¥ 146,340</td><td>合同签订 3 个工作日内</td></tr>
+      <tr><td>② 中期验收</td><td>30%</td><td>¥ 146,340</td><td>三端 Beta 版本演示通过</td></tr>
+      <tr><td>③ 终验上线</td><td>30%</td><td>¥ 146,340</td><td>系统上线 + 验收报告签字</td></tr>
+      <tr><td>④ 质保结算</td><td>10%</td><td>¥ 48,780</td><td>质保期满（上线 1 年后）</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.2 质保与售后</h3>
+  <ul>
+    <li><b>免费质保期</b>：上线后 12 个月，覆盖功能 Bug 修复与小版本迭代；</li>
+    <li><b>响应时效</b>：紧急 ≤ 2 小时；普通 ≤ 4 小时；修复 ≤ 48 小时；</li>
+    <li><b>质保期外</b>：按运维服务包收费，年费 ≥ 项目费 15%；</li>
+    <li><b>培训</b>：含 2 次现场培训（创作者侧 + 管理侧），各 4 小时；</li>
+    <li><b>文档</b>：交付 PRD、API 文档、部署手册、运维手册、用户手册全套。</li>
+  </ul>
+
+  <h3>8.3 知识产权</h3>
+  <ul>
+    <li>项目源代码与设计稿，在客户全额付款后<b>归客户所有</b>；</li>
+    <li>承建方保留通用基础组件、工具函数等<b>非业务相关代码</b>的复用权；</li>
+    <li>第三方开源组件按其原许可证使用，承建方仅承担合规筛选责任；</li>
+    <li>第三方 SaaS / API 的版权归原供应商所有，调用费由客户实付。</li>
+  </ul>
+
+  <h3>8.4 保密与合规</h3>
+  <ul>
+    <li>双方签订 NDA 保密协议，项目内一切商业信息保密期 5 年；</li>
+    <li>承建方按等保 2.0 三级标准开展开发与交付；</li>
+    <li>支持客户的合规审查、法务审查、财务审查需求。</li>
+  </ul>
+
+  <h3>8.5 报价有效期</h3>
+  <p>本报价自方案出具之日起<b>30 天</b>内有效，超过有效期请联系商务重新核价。</p>
+
+  <div class="alert">
+    <b>合作意向？</b> 立即联系商务对接：项目管理团队将在 1 个工作日内安排深度沟通会议，针对客户具体业务场景定制最终方案。
+  </div>
+</section>
+
+<footer>
+  <p><span class="brand">AI 漫剧智造平台</span> · 项目报价方案 v1.0 · 2026-05</p>
+  <p>本方案为商业秘密文件，仅供贵方内部决策使用，未经书面同意不得对外披露</p>
+</footer>
+
+</div>
+</body>
+</html>

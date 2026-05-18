@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>古琴智能体三期 · 用户交互原型 Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --ink:#1f2330; --ink-2:#3a3f55; --gold:#b08949; --gold-2:#d6b06b;
+    --bg:#f4efe6; --bg-2:#ece4d3; --line:#e2d6bd;
+    --user:#5b8def; --ops:#23c4a7; --admin:#a266f4; --ai:#ff8a3c;
+  }
+  html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Serif SC","Microsoft YaHei",serif;background:linear-gradient(135deg,#f7f1e3 0%,#ece2c8 100%);color:var(--ink);}
+  .ink-title{font-family:"Noto Serif SC","Songti SC",serif;letter-spacing:.08em;}
+  .seal{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;background:#a8341e;color:#fff;border-radius:4px;font-family:"Songti SC",serif;}
+  /* 设备外壳 */
+  .phone{width:340px;height:700px;background:#111;border-radius:38px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.25);}
+  .phone-inner{width:100%;height:100%;background:#fff;border-radius:28px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:110px;height:22px;background:#111;border-radius:14px;z-index:30;}
+  .pc{width:100%;background:#1d2030;border-radius:14px;padding:10px 10px 14px;box-shadow:0 24px 60px rgba(0,0,0,.2);}
+  .pc-bar{display:flex;gap:6px;padding:4px 6px 10px;}
+  .pc-bar i{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .pc-screen{background:#f7f8fb;border-radius:8px;overflow:hidden;}
+  .tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;}
+  .tag-user{background:#e7efff;color:#3463d8;}
+  .tag-ops{background:#dcf6f0;color:#108a72;}
+  .tag-admin{background:#ede2ff;color:#7333d4;}
+  .tag-ai{background:#ffe6d2;color:#c75418;}
+  .chip{display:inline-block;padding:2px 8px;font-size:11px;border-radius:6px;background:#f1e8d4;color:#7a5b22;border:1px solid #e2d2a8;}
+  .danmu{animation:fly 10s linear infinite;}
+  @keyframes fly{0%{transform:translateX(110%);}100%{transform:translateX(-110%);}}
+  .glow{box-shadow:0 0 0 2px rgba(176,137,73,.2),0 8px 24px rgba(176,137,73,.15);}
+  .scroll-area{scrollbar-width:thin;}
+  .grid-paper{background-image:linear-gradient(#eee 1px,transparent 1px),linear-gradient(90deg,#eee 1px,transparent 1px);background-size:18px 18px;}
+  .label{font-size:11px;color:#888;}
+  .mini-card{background:#fff;border:1px solid #ecdfc4;border-radius:10px;}
+  details>summary{list-style:none;cursor:pointer;}
+  details>summary::-webkit-details-marker{display:none;}
+  .feat{transition:all .2s;}
+  .feat:hover{background:#fffaf0;border-color:#d6b06b;transform:translateY(-1px);}
+  .ribbon{background:linear-gradient(90deg,#b08949,#d6b06b);}
+</style>
+</head>
+<body class="pb-20">
+
+<!-- 顶部 -->
+<header class="ribbon text-white">
+  <div class="max-w-7xl mx-auto px-6 py-8 flex items-center gap-4">
+    <span class="seal">琴</span>
+    <div class="flex-1">
+      <h1 class="ink-title text-2xl font-bold">古琴智能体 · 三期 用户交互原型 Demo</h1>
+      <p class="text-sm opacity-90 mt-1">数字人直播 · 弹幕互动 · 课程转化 ｜ 覆盖 用户端APP / 运营端 / 管理后台 / AI 能力服务</p>
+    </div>
+    <div class="hidden md:flex flex-wrap gap-2 justify-end">
+      <span class="tag tag-user">● 用户端APP</span>
+      <span class="tag tag-ops">● 运营端</span>
+      <span class="tag tag-admin">● 管理后台</span>
+      <span class="tag tag-ai">● AI 能力服务</span>
+    </div>
+  </div>
+</header>
+
+<!-- 锚点导航 -->
+<nav class="sticky top-0 z-40 bg-[#f7f1e3]/90 backdrop-blur border-b border-[var(--line)]">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex flex-wrap gap-3 text-sm">
+    <a href="#user" class="px-3 py-1 rounded-full border border-[var(--line)] hover:bg-white">📱 用户端APP</a>
+    <a href="#ops" class="px-3 py-1 rounded-full border border-[var(--line)] hover:bg-white">🛠 运营端</a>
+    <a href="#admin" class="px-3 py-1 rounded-full border border-[var(--line)] hover:bg-white">🗂 管理后台</a>
+    <a href="#ai" class="px-3 py-1 rounded-full border border-[var(--line)] hover:bg-white">🤖 AI 能力服务</a>
+    <a href="#flow" class="px-3 py-1 rounded-full border border-[var(--line)] hover:bg-white">🔁 端到端流程</a>
+  </div>
+</nav>
+
+<!-- ============ 用户端APP ============ -->
+<section id="user" class="max-w-7xl mx-auto px-6 py-10">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <h2 class="ink-title text-xl font-bold">📱 用户端 APP — 数字人直播间体验</h2>
+      <p class="text-sm text-gray-600 mt-1">在 APP 首页/课程页接入直播入口；进入后体验「数字人讲解 + 弹幕问答 + 课程卡片转化 + 直播预约」全链路。</p>
+    </div>
+    <div class="flex gap-2"><span class="tag tag-user">直播入口</span><span class="tag tag-user">弹幕提问</span><span class="tag tag-user">数字人即时回答</span><span class="tag tag-user">课程卡片</span><span class="tag tag-user">预约提醒</span></div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+
+    <!-- 屏 1：APP 首页直播入口 -->
+    <div>
+      <div class="phone"><div class="phone-inner"><div class="notch"></div>
+        <div class="bg-gradient-to-b from-[#2a1d0f] to-[#5b3a18] text-white p-4 pt-10">
+          <div class="flex items-center justify-between text-xs opacity-80"><span>9:41</span><span>古琴智能体</span><span>●●●</span></div>
+          <h3 class="ink-title text-lg mt-3">您好，琴友 ✦</h3>
+          <p class="text-xs opacity-80">今日推荐：《流水》数字人公开课</p>
+          <div class="grid grid-cols-4 gap-2 mt-4 text-center text-[11px]">
+            <div><div class="bg-white/15 rounded-lg py-2">🎼</div>课程</div>
+            <div><div class="bg-white/15 rounded-lg py-2">🎙</div>识曲</div>
+            <div><div class="bg-white/15 rounded-lg py-2">📚</div>曲谱</div>
+            <div><div class="bg-white/15 rounded-lg py-2">💬</div>问答</div>
+          </div>
+        </div>
+        <div class="flex-1 overflow-auto p-3 bg-[#fbf6ec]">
+          <div class="text-xs text-gray-500 mb-2 flex justify-between"><span>🔴 正在直播</span><a class="text-[var(--gold)]">查看全部</a></div>
+
+          <!-- 直播卡片（直播中） -->
+          <div class="rounded-xl overflow-hidden mb-3 glow bg-white">
+            <div class="relative h-32 bg-gradient-to-br from-[#3a2f1e] to-[#7a5a2c] text-white flex items-end p-3">
+              <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full animate-pulse">● LIVE 1.2k</span>
+              <span class="absolute top-2 right-2 bg-black/40 text-[10px] px-2 py-0.5 rounded">数字人 · 师姐 阿琴</span>
+              <div>
+                <div class="ink-title font-bold">《流水》技法直播课</div>
+                <div class="text-[11px] opacity-90">名家授课 · 直播专享 7折</div>
+              </div>
+            </div>
+            <button class="w-full py-2 text-sm bg-[var(--gold)] text-white">进入直播间 →</button>
+          </div>
+
+          <!-- 直播预约卡片 -->
+          <div class="mini-card p-3 mb-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold">《广陵散》赏析夜话</div>
+                <div class="text-[11px] text-gray-500">明晚 20:00 · 已 328 人预约</div>
+              </div>
+              <button class="text-xs px-3 py-1 rounded-full border border-[var(--gold)] text-[var(--gold)]">预约提醒</button>
+            </div>
+            <div class="mt-2 text-[11px] text-gray-500">💡 开播前 10 分钟将通过 APP 消息提醒您</div>
+          </div>
+
+          <!-- 回放 -->
+          <div class="text-xs text-gray-500 mb-2">📺 精选回放</div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="mini-card p-2"><div class="bg-gradient-to-br from-amber-200 to-amber-400 h-16 rounded mb-1"></div><div class="text-[11px]">《阳关三叠》入门</div></div>
+            <div class="mini-card p-2"><div class="bg-gradient-to-br from-amber-300 to-rose-300 h-16 rounded mb-1"></div><div class="text-[11px]">琴弦保养答疑</div></div>
+          </div>
+        </div>
+      </div></div>
+      <p class="text-center text-xs text-gray-500 mt-2">① 首页 — 直播入口 / 预约 / 回放</p>
+    </div>
+
+    <!-- 屏 2：直播间（核心） -->
+    <div>
+      <div class="phone"><div class="phone-inner"><div class="notch"></div>
+        <!-- 直播视频区 -->
+        <div class="relative h-[300px] bg-gradient-to-b from-[#1a1408] via-[#3b2812] to-[#7a5a2c] text-white">
+          <div class="absolute top-10 left-3 right-3 flex items-center justify-between text-[11px]">
+            <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-white/30 flex items-center justify-center">琴</div><div><div class="font-semibold">阿琴 数字人</div><div class="opacity-80">古琴智能体官方</div></div></div>
+            <div class="flex items-center gap-1"><span class="bg-red-600 px-2 py-0.5 rounded-full animate-pulse">● LIVE</span><span class="bg-black/40 px-2 py-0.5 rounded-full">👁 1,243</span></div>
+          </div>
+          <!-- 数字人示意 -->
+          <div class="absolute inset-0 flex items-end justify-center pb-6">
+            <div class="w-40 h-52 rounded-t-[80px] bg-gradient-to-b from-[#f4d9a8] to-[#a06a2c] relative shadow-2xl">
+              <div class="absolute top-6 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-[#3b2206]"></div>
+              <div class="absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] bg-black/40 px-2 py-0.5 rounded-full">🎙 正在讲解《流水》滚拂</div>
+            </div>
+          </div>
+          <!-- 飘动弹幕 -->
+          <div class="absolute top-[110px] left-0 right-0 overflow-hidden h-20 pointer-events-none">
+            <div class="danmu whitespace-nowrap text-[12px] mb-1 ml-2 bg-black/30 inline-block px-2 py-0.5 rounded" style="animation-delay:0s">琴友A：滚拂的发力点在腕部还是指尖？</div><br/>
+            <div class="danmu whitespace-nowrap text-[12px] mb-1 ml-2 bg-black/30 inline-block px-2 py-0.5 rounded" style="animation-delay:-3s">小白：直播课会有回放吗？</div><br/>
+            <div class="danmu whitespace-nowrap text-[12px] ml-2 bg-[var(--gold)]/80 inline-block px-2 py-0.5 rounded" style="animation-delay:-6s">阿琴 ▸ 同学你好，回放将在课程结束后 2 小时内上线 ✦</div>
+          </div>
+          <!-- 字幕条 -->
+          <div class="absolute bottom-0 left-0 right-0 bg-black/55 px-3 py-2 text-[12px] leading-snug">「滚拂以腕带指、虚实相生，先慢后快感受余韵。」</div>
+        </div>
+        <!-- 课程卡片悬浮 -->
+        <div class="bg-white px-3 py-2 border-b">
+          <div class="rounded-lg border border-[var(--gold)] bg-[#fffaf0] p-2 flex items-center gap-2">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-300 to-amber-600 rounded-lg flex items-center justify-center text-white">琴</div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold">《流水》系统课 · 直播专享</div>
+              <div class="text-[11px] text-gray-500">原价 ¥1280 · <span class="text-red-600 font-bold">直播价 ¥896</span> · 剩 23 席</div>
+            </div>
+            <button class="text-xs bg-[var(--gold)] text-white px-3 py-1.5 rounded-full">立即报名</button>
+          </div>
+          <div class="text-[10px] text-gray-400 mt-1">⏱ 优惠倒计时 12:34 · 课程卡片由运营端「优惠活动配置」下发</div>
+        </div>
+        <!-- 弹幕列表 -->
+        <div class="flex-1 overflow-auto px-3 py-2 text-xs space-y-1.5 bg-[#fafafa]">
+          <div><b class="text-blue-600">琴友A</b><span class="chip ml-1">课程咨询</span>：能否再讲一下勾挑的差别？</div>
+          <div><b class="text-rose-600">阿琴 ✦</b>：勾用指肚向内、挑用指甲向外，下一节我们专门示范。</div>
+          <div><b class="text-blue-600">小白</b><span class="chip ml-1">价格问题</span>：直播课怎么付款？</div>
+          <div><b class="text-rose-600">阿琴 ✦</b>：可点上方课程卡片，享受直播专属 7 折。</div>
+          <div class="text-[10px] text-gray-400 italic">⚠ 含敏感词的弹幕已被自动拦截 1 条（管理后台「弹幕审核规则」生效）</div>
+        </div>
+        <!-- 输入栏 -->
+        <div class="border-t bg-white p-2 flex items-center gap-2">
+          <input class="flex-1 bg-[#f3efe6] rounded-full px-3 py-1.5 text-xs" placeholder="说点什么…（敏感词将被拦截）"/>
+          <button class="text-xs bg-[var(--gold)] text-white px-3 py-1.5 rounded-full">发送</button>
+        </div>
+      </div></div>
+      <p class="text-center text-xs text-gray-500 mt-2">② 直播间 — 数字人 + 弹幕 + 课程卡片</p>
+    </div>
+
+    <!-- 屏 3：弹幕提问详情 / 预约成功 -->
+    <div>
+      <div class="phone"><div class="phone-inner"><div class="notch"></div>
+        <div class="bg-[#f7f1e3] p-4 pt-10 flex-1 overflow-auto">
+          <div class="text-center mb-4">
+            <div class="w-14 h-14 rounded-full bg-[var(--gold)] mx-auto flex items-center justify-center text-white text-2xl">✓</div>
+            <div class="ink-title text-lg mt-2">预约成功</div>
+            <div class="text-xs text-gray-600">《广陵散》赏析夜话 · 5月17日 20:00</div>
+          </div>
+          <div class="mini-card p-3 mb-3">
+            <div class="text-xs text-gray-500 mb-1">提醒方式</div>
+            <label class="flex items-center justify-between text-sm py-1"><span>APP 站内消息</span><input type="checkbox" checked></label>
+            <label class="flex items-center justify-between text-sm py-1"><span>手机短信（开播前 10 分钟）</span><input type="checkbox" checked></label>
+            <label class="flex items-center justify-between text-sm py-1"><span>微信服务通知</span><input type="checkbox"></label>
+          </div>
+          <div class="mini-card p-3 mb-3">
+            <div class="text-xs text-gray-500 mb-2">直播脚本预告（来自运营端编排）</div>
+            <ol class="text-xs space-y-1 list-decimal pl-4">
+              <li>开场寒暄 · 介绍曲目背景（3min）</li>
+              <li>名家弹奏《广陵散》节选（10min）</li>
+              <li>弹幕答疑：曲目内涵 / 学习路径</li>
+              <li>课程卡片：广陵散精修班 立减 ¥200</li>
+              <li>收尾抽奖 · 引导关注</li>
+            </ol>
+          </div>
+          <div class="mini-card p-3">
+            <div class="text-xs text-gray-500 mb-2">您可能感兴趣</div>
+            <div class="text-sm flex justify-between items-center py-1"><span>📜《广陵散》历史脉络</span><span class="text-[var(--gold)] text-xs">查看 ›</span></div>
+            <div class="text-sm flex justify-between items-center py-1"><span>🎼 试听：嵇康典故选段</span><span class="text-[var(--gold)] text-xs">播放 ›</span></div>
+          </div>
+        </div>
+      </div></div>
+      <p class="text-center text-xs text-gray-500 mt-2">③ 预约成功 — 多通道开播提醒</p>
+    </div>
+
+  </div>
+
+  <!-- 用户端功能卡 -->
+  <div class="grid md:grid-cols-3 gap-3 mt-8">
+    <div class="feat mini-card p-4"><div class="flex items-center gap-2 mb-1"><span class="tag tag-user">用户端</span><b>直播入口展示</b></div><p class="text-xs text-gray-600">首页 / 课程页 / 活动页统一直播入口；按状态显示「直播中 · 预约 · 回放」三态，并记录来源渠道用于直播转化分析。</p></div>
+    <div class="feat mini-card p-4"><div class="flex items-center gap-2 mb-1"><span class="tag tag-user">用户端</span><b>弹幕提问 + 数字人即时回答</b></div><p class="text-xs text-gray-600">用户发送弹幕 → AI 识别意图 → 高置信度由数字人口播；低置信度走人工兜底；敏感词与刷屏自动拦截。</p></div>
+    <div class="feat mini-card p-4"><div class="flex items-center gap-2 mb-1"><span class="tag tag-user">用户端</span><b>课程卡片领取 / 预约提醒</b></div><p class="text-xs text-gray-600">直播间内课程卡片可一键报名；预约成功支持站内信 / 短信 / 微信通知，开播前定时推送，取消即停推。</p></div>
+  </div>
+</section>
+
+<!-- ============ 运营端 ============ -->
+<section id="ops" class="bg-white border-y border-[var(--line)]">
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="ink-title text-xl font-bold">🛠 运营端 — 直播间创建 · 脚本编排 · 实时控制台</h2>
+        <p class="text-sm text-gray-600 mt-1">运营人员配置直播活动、编排数字人脚本、在直播过程中实时监控弹幕与互动。</p>
+      </div>
+      <div class="flex gap-2"><span class="tag tag-ops">直播间创建</span><span class="tag tag-ops">脚本编排</span><span class="tag tag-ops">实时互动控制台</span><span class="tag tag-ops">优惠活动配置</span></div>
+    </div>
+
+    <!-- PC 直播间创建 + 脚本编排 -->
+    <div class="pc mb-8">
+      <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">运营后台 / 直播管理 / 创建直播</span></div>
+      <div class="pc-screen p-5 grid md:grid-cols-3 gap-5">
+        <!-- 表单 -->
+        <div class="md:col-span-1 space-y-3">
+          <div><div class="label">直播主题</div><div class="bg-white border rounded p-2 text-sm">《流水》技法直播课</div></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><div class="label">开播时间</div><div class="bg-white border rounded p-2 text-sm">5/17 20:00</div></div>
+            <div><div class="label">时长</div><div class="bg-white border rounded p-2 text-sm">60 min</div></div>
+          </div>
+          <div><div class="label">数字人形象</div>
+            <div class="flex gap-2 mt-1">
+              <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-200 to-amber-500 ring-2 ring-[var(--gold)]"></div>
+              <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-rose-200 to-rose-500"></div>
+              <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-200 to-emerald-500"></div>
+            </div>
+            <div class="text-[11px] text-gray-500 mt-1">来源：管理后台「数字人资产管理」 · 已授权</div>
+          </div>
+          <div><div class="label">关联课程 / 引流入口</div>
+            <div class="bg-white border rounded p-2 text-sm">《流水》系统课 · 直播专享 7 折</div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2 rounded">⚠ 数字人或课程未配置，系统禁止发布。</div>
+          <div class="flex gap-2"><button class="bg-[var(--gold)] text-white px-3 py-1.5 rounded text-sm">保存草稿</button><button class="bg-[var(--ink)] text-white px-3 py-1.5 rounded text-sm">提交审核</button></div>
+        </div>
+        <!-- 脚本编排 -->
+        <div class="md:col-span-2">
+          <div class="flex items-center justify-between mb-2"><b>直播脚本编排</b><span class="text-xs text-gray-500">脚本未审核 → 不可正式开播</span></div>
+          <div class="space-y-2">
+            <div class="bg-white border rounded p-3 flex gap-3 items-start"><span class="chip">00:00</span><div class="flex-1"><b class="text-sm">开场寒暄</b><div class="text-xs text-gray-600">数字人台词：「各位琴友晚上好，今夜我们一起走进《流水》……」</div></div><span class="text-xs text-gray-400">3 min</span></div>
+            <div class="bg-white border rounded p-3 flex gap-3 items-start"><span class="chip">03:00</span><div class="flex-1"><b class="text-sm">知识讲解 · 滚拂技法</b><div class="text-xs text-gray-600">配合谱面动画，分解动作；触发关联曲目特征片段。</div></div><span class="text-xs text-gray-400">15 min</span></div>
+            <div class="bg-white border rounded p-3 flex gap-3 items-start"><span class="chip">18:00</span><div class="flex-1"><b class="text-sm">课程介绍 + 卡片下发</b><div class="text-xs text-gray-600">展示《流水》系统课卡片，倒计时 15 分钟。</div></div><span class="text-xs text-gray-400">5 min</span></div>
+            <div class="bg-white border rounded p-3 flex gap-3 items-start ring-2 ring-[var(--gold)]"><span class="chip">23:00</span><div class="flex-1"><b class="text-sm">弹幕答疑 <span class="text-[var(--gold)]">（编辑中）</span></b><div class="text-xs text-gray-600">智能体根据意图分发，遇低置信度问题转人工。</div></div><span class="text-xs text-gray-400">25 min</span></div>
+            <div class="bg-white border rounded p-3 flex gap-3 items-start"><span class="chip">48:00</span><div class="flex-1"><b class="text-sm">收尾转化</b><div class="text-xs text-gray-600">引导关注 + 最后名额提醒 + 抽奖。</div></div><span class="text-xs text-gray-400">12 min</span></div>
+          </div>
+          <div class="text-[11px] text-gray-500 mt-2">脚本版本 v3 · 由 运营·李 编辑于 5/16 14:22 · 系统按节点驱动数字人播报</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PC 实时互动控制台 + 优惠活动 -->
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="pc">
+        <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">实时互动控制台 · LIVE</span></div>
+        <div class="pc-screen p-4">
+          <div class="grid grid-cols-4 gap-2 text-center text-xs mb-3">
+            <div class="bg-white border rounded p-2"><div class="text-lg font-bold">1,243</div>在线</div>
+            <div class="bg-white border rounded p-2"><div class="text-lg font-bold text-emerald-600">86</div>课程点击</div>
+            <div class="bg-white border rounded p-2"><div class="text-lg font-bold text-rose-600">23</div>报名</div>
+            <div class="bg-white border rounded p-2"><div class="text-lg font-bold text-amber-600">5</div>待人工</div>
+          </div>
+          <div class="text-xs font-semibold mb-1">待回答问题队列（按意图分类）</div>
+          <div class="space-y-1.5 text-xs">
+            <div class="bg-white border rounded p-2 flex justify-between"><span><span class="chip">课程咨询</span> 滚拂如何练习？</span><button class="text-[var(--gold)]">数字人回答</button></div>
+            <div class="bg-white border rounded p-2 flex justify-between"><span><span class="chip">价格</span> 直播价后续还会有吗？</span><button class="text-[var(--gold)]">数字人回答</button></div>
+            <div class="bg-white border rounded p-2 flex justify-between bg-amber-50"><span><span class="chip" style="background:#ffe2c0;color:#a15300">低置信度</span> 嵇康为什么写广陵散？</span><button class="text-rose-600">人工接管</button></div>
+            <div class="bg-white border rounded p-2 flex justify-between"><span><span class="chip">闲聊</span> 阿琴好可爱～</span><button class="text-gray-400">忽略</button></div>
+          </div>
+          <div class="mt-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs p-2 rounded">⚠ 检测到 1 条违规弹幕，已自动拦截并记录</div>
+        </div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">优惠活动配置 · 直播专属</span></div>
+        <div class="pc-screen p-4 space-y-2 text-sm">
+          <div class="grid grid-cols-2 gap-2">
+            <div><div class="label">活动名称</div><div class="bg-white border rounded p-2">《流水》直播专享 7 折</div></div>
+            <div><div class="label">关联直播</div><div class="bg-white border rounded p-2">5/17 流水技法课</div></div>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div><div class="label">原价</div><div class="bg-white border rounded p-2">¥1280</div></div>
+            <div><div class="label">直播价</div><div class="bg-white border rounded p-2 text-rose-600 font-bold">¥896</div></div>
+            <div><div class="label">库存</div><div class="bg-white border rounded p-2">100 / 23 剩</div></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><div class="label">领取截止</div><div class="bg-white border rounded p-2">直播结束 +30min</div></div>
+            <div><div class="label">参与门槛</div><div class="bg-white border rounded p-2">所有用户</div></div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2 rounded">活动过期 / 库存不足 / 不符合条件 → 用户端展示对应不可领取提示。<br/>支付与核销对接客户 APP 既有能力。</div>
+          <div class="flex gap-2 pt-1"><button class="bg-[var(--ops)] text-white px-3 py-1.5 rounded">下发到直播间</button><button class="border px-3 py-1.5 rounded">预览效果</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 管理后台 ============ -->
+<section id="admin" class="max-w-7xl mx-auto px-6 py-10">
+  <div class="flex items-end justify-between mb-6">
+    <div>
+      <h2 class="ink-title text-xl font-bold">🗂 管理后台 — 资产 · 合规 · 数据</h2>
+      <p class="text-sm text-gray-600 mt-1">数字人资产授权、弹幕审核策略、直播转化数据。</p>
+    </div>
+    <div class="flex gap-2"><span class="tag tag-admin">数字人资产管理</span><span class="tag tag-admin">弹幕审核规则</span><span class="tag tag-admin">直播转化统计</span></div>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-5">
+    <!-- 数字人资产管理 -->
+    <div class="pc">
+      <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">数字人资产</span></div>
+      <div class="pc-screen p-3 text-xs space-y-2">
+        <div class="bg-white border rounded p-2 flex gap-2 items-center">
+          <div class="w-12 h-12 rounded bg-gradient-to-br from-amber-200 to-amber-500"></div>
+          <div class="flex-1"><b>阿琴 · 形象+声音</b><div class="text-gray-500">授权至 2027-12-31 · 可用于直播 / 课件</div></div>
+          <span class="chip" style="background:#dcf6f0;color:#108a72">启用</span>
+        </div>
+        <div class="bg-white border rounded p-2 flex gap-2 items-center">
+          <div class="w-12 h-12 rounded bg-gradient-to-br from-rose-200 to-rose-500"></div>
+          <div class="flex-1"><b>清音 · 克隆声音</b><div class="text-gray-500">授权至 2026-08-01 ⚠ 临近到期</div></div>
+          <span class="chip" style="background:#fff3c7;color:#a06400">即将到期</span>
+        </div>
+        <div class="bg-white border rounded p-2 flex gap-2 items-center opacity-60">
+          <div class="w-12 h-12 rounded bg-gradient-to-br from-gray-200 to-gray-500"></div>
+          <div class="flex-1"><b>素心 · 客户自有</b><div class="text-gray-500">授权已过期 · 不可用于直播</div></div>
+          <span class="chip" style="background:#fde2e2;color:#a13a3a">停用</span>
+        </div>
+        <div class="text-[11px] text-gray-500">系统按状态限制使用；过期 / 停用资产无法在运营端被选中。</div>
+      </div>
+    </div>
+
+    <!-- 弹幕审核规则 -->
+    <div class="pc">
+      <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">弹幕审核规则</span></div>
+      <div class="pc-screen p-3 text-xs space-y-2">
+        <div class="bg-white border rounded p-2">
+          <div class="font-semibold mb-1">敏感词库（共 1,284 条）</div>
+          <div class="flex flex-wrap gap-1">
+            <span class="chip">违规词1</span><span class="chip">违规词2</span><span class="chip">违规词3</span><span class="chip">+1281</span>
+          </div>
+        </div>
+        <div class="bg-white border rounded p-2">
+          <div class="flex items-center justify-between"><span>刷屏限制</span><span>10 秒内 ≤ 3 条</span></div>
+          <div class="flex items-center justify-between"><span>禁言策略</span><span>违规 3 次 → 禁言 24h</span></div>
+          <div class="flex items-center justify-between"><span>人工审核</span><span class="text-emerald-600">已开启</span></div>
+        </div>
+        <div class="bg-white border rounded p-2">
+          <div class="font-semibold mb-1">最近拦截记录</div>
+          <div class="text-gray-600">14:22 用户#882 触发敏感词「***」 <a class="text-[var(--gold)]">恢复</a></div>
+          <div class="text-gray-600">14:18 用户#771 刷屏 <a class="text-[var(--gold)]">恢复</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 直播转化统计 -->
+    <div class="pc">
+      <div class="pc-bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span class="text-white/60 text-xs ml-3">直播转化统计</span></div>
+      <div class="pc-screen p-3 text-xs space-y-2">
+        <div class="grid grid-cols-2 gap-2 text-center">
+          <div class="bg-white border rounded p-2"><div class="text-lg font-bold">12,430</div>累计观看</div>
+          <div class="bg-white border rounded p-2"><div class="text-lg font-bold">3,127</div>互动人次</div>
+          <div class="bg-white border rounded p-2"><div class="text-lg font-bold text-emerald-600">486</div>课程点击</div>
+          <div class="bg-white border rounded p-2"><div class="text-lg font-bold text-rose-600">132</div>报名转化</div>
+        </div>
+        <div class="bg-white border rounded p-2">
+          <div class="font-semibold mb-1">报名漏斗</div>
+          <div class="space-y-1">
+            <div>观看 100% <div class="h-2 bg-amber-200 rounded"></div></div>
+            <div>互动 25% <div class="h-2 bg-amber-300 rounded" style="width:25%"></div></div>
+            <div>点击 3.9% <div class="h-2 bg-amber-400 rounded" style="width:8%"></div></div>
+            <div>报名 1.06% <div class="h-2 bg-amber-600 rounded" style="width:3%"></div></div>
+          </div>
+        </div>
+        <div class="text-[11px] text-gray-500">支持按活动 / 时间 / 数字人维度生成报表，可导出。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI 能力服务 ============ -->
+<section id="ai" class="bg-white border-y border-[var(--line)]">
+  <div class="max-w-7xl mx-auto px-6 py-10">
+    <div class="flex items-end justify-between mb-6">
+      <div>
+        <h2 class="ink-title text-xl font-bold">🤖 AI 能力服务 — 直播驱动 / 意图识别 / 异常降级</h2>
+        <p class="text-sm text-gray-600 mt-1">支撑直播全链路的 AI 中台能力监控，重点评审资源成本与稳定性。</p>
+      </div>
+      <div class="flex gap-2"><span class="tag tag-ai">数字人直播驱动</span><span class="tag tag-ai">弹幕意图识别</span><span class="tag tag-ai">直播异常降级</span></div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+      <!-- 数字人驱动监控 -->
+      <div class="mini-card p-4">
+        <div class="flex items-center justify-between mb-2"><b>数字人直播驱动</b><span class="chip" style="background:#dcf6f0;color:#108a72">运行中</span></div>
+        <div class="text-xs text-gray-600 mb-2">按脚本节点驱动数字人音视频输出，并根据互动队列插入答疑。</div>
+        <div class="text-xs space-y-1">
+          <div class="flex justify-between"><span>脚本节点 4/12</span><span class="text-emerald-600">正常</span></div>
+          <div class="flex justify-between"><span>音视频生成耗时</span><span>820ms</span></div>
+          <div class="flex justify-between"><span>本场资源成本（估算）</span><span>¥ 86.40</span></div>
+        </div>
+        <div class="mt-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs p-2 rounded">三期核心能力，建议直播前进行算力预扩容。</div>
+      </div>
+
+      <!-- 弹幕意图识别 -->
+      <div class="mini-card p-4">
+        <div class="flex items-center justify-between mb-2"><b>弹幕意图识别</b><span class="chip" style="background:#e7efff;color:#3463d8">置信度 0.92</span></div>
+        <div class="text-xs text-gray-600 mb-2">识别课程咨询 / 曲目 / 价格 / 闲聊 / 违规，分发到回答 / 转化 / 审核流程。</div>
+        <div class="text-xs space-y-1">
+          <div class="flex justify-between"><span>课程咨询</span><span class="text-emerald-600">42%</span></div>
+          <div class="flex justify-between"><span>曲目问题</span><span>18%</span></div>
+          <div class="flex justify-between"><span>价格问题</span><span class="text-rose-600">15%</span></div>
+          <div class="flex justify-between"><span>闲聊 / 其他</span><span>21%</span></div>
+          <div class="flex justify-between"><span>违规拦截</span><span class="text-gray-400">4%</span></div>
+        </div>
+        <div class="text-[11px] text-gray-500 mt-2">低置信度问题自动进入人工待处理队列，复用一期知识库与运营话术。</div>
+      </div>
+
+      <!-- 异常降级 -->
+      <div class="mini-card p-4">
+        <div class="flex items-center justify-between mb-2"><b>直播异常降级</b><span class="chip" style="background:#fff3c7;color:#a06400">守护中</span></div>
+        <div class="text-xs text-gray-600 mb-2">数字人 / 问答 / 互动异常 → 切换预设话术 / 人工接管 / 回放内容。</div>
+        <div class="text-xs space-y-1.5">
+          <div class="bg-emerald-50 border border-emerald-200 rounded p-1.5 text-emerald-700">✓ 网络波动 14:08 - 自动切换预设话术 12 秒，已恢复</div>
+          <div class="bg-amber-50 border border-amber-200 rounded p-1.5 text-amber-700">⚠ 生成超时 13:45 - 人工接管 1 段</div>
+          <div class="bg-white border rounded p-1.5">⏱ 当前可用度 99.2%</div>
+        </div>
+        <div class="text-[11px] text-gray-500 mt-2">恢复后提示运营确认是否继续自动播报。</div>
+      </div>
+    </div>
+
+    <!-- 二期能力延展（曲目特征库 / 哼唱识曲）-->
+    <div class="mt-6 grid md:grid-cols-2 gap-5">
+      <div class="mini-card p-4">
+        <b>🎼 曲目特征库（二期能力，三期复用）</b>
+        <p class="text-xs text-gray-600 mt-1">几千首古琴曲音频整理为可识别匹配的曲目特征库；不合格音频进入异常清单。</p>
+        <div class="grid grid-cols-3 gap-2 mt-2 text-center text-xs">
+          <div class="bg-white border rounded p-2"><div class="font-bold">3,128</div>已入库</div>
+          <div class="bg-white border rounded p-2"><div class="font-bold text-amber-600">42</div>异常待处理</div>
+          <div class="bg-white border rounded p-2"><div class="font-bold">98.4%</div>样本覆盖</div>
+        </div>
+      </div>
+      <div class="mini-card p-4">
+        <b>🎙 哼唱识曲匹配服务</b>
+        <p class="text-xs text-gray-600 mt-1">用户哼唱或上传音频与曲目特征库比对返回候选；匹配不足时给出相似候选而非强制命中。</p>
+        <div class="text-xs mt-2 space-y-1">
+          <div class="flex justify-between"><span>识别成功率</span><span class="text-emerald-600">87.3%</span></div>
+          <div class="flex justify-between"><span>用户纠错率</span><span>5.1%</span></div>
+          <div class="flex justify-between"><span>平均耗时</span><span>1.4s</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 端到端流程 ============ -->
+<section id="flow" class="max-w-7xl mx-auto px-6 py-10">
+  <h2 class="ink-title text-xl font-bold mb-6">🔁 端到端流程 — 一场数字人直播的全链路</h2>
+  <div class="grid md:grid-cols-5 gap-3 text-xs">
+    <div class="mini-card p-3"><span class="tag tag-ops">运营端</span><div class="font-semibold mt-1">①创建直播 + 编排脚本</div><p class="text-gray-600 mt-1">配置主题、时间、数字人、关联课程；脚本审核后才可发布。</p></div>
+    <div class="mini-card p-3"><span class="tag tag-admin">管理后台</span><div class="font-semibold mt-1">②校验授权 + 下发规则</div><p class="text-gray-600 mt-1">数字人资产授权校验 + 弹幕审核规则下发到直播间。</p></div>
+    <div class="mini-card p-3"><span class="tag tag-user">用户端</span><div class="font-semibold mt-1">③用户预约 / 进入直播间</div><p class="text-gray-600 mt-1">入口展示状态；预约后多通道开播提醒。</p></div>
+    <div class="mini-card p-3"><span class="tag tag-ai">AI 能力</span><div class="font-semibold mt-1">④数字人播报 + 意图分发</div><p class="text-gray-600 mt-1">脚本驱动播报；弹幕意图识别 → 答疑 / 转化 / 审核。</p></div>
+    <div class="mini-card p-3"><span class="tag tag-admin">管理后台</span><div class="font-semibold mt-1">⑤转化统计 + 异常复盘</div><p class="text-gray-600 mt-1">观看 / 互动 / 点击 / 报名漏斗 + 异常降级记录。</p></div>
+  </div>
+</section>
+
+<footer class="text-center text-xs text-gray-500 py-8">古琴智能体 · 三期 用户交互原型 Demo · 仅用于需求评审，正式 UI 以最终设计稿为准</footer>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>智能问答 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+  .msg{display:flex;gap:8px;margin-bottom:14px;}
+  .msg .ava{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;}
+  .msg .bub{max-width:74%;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6;white-space:pre-wrap;}
+  .msg.ai .ava{background:linear-gradient(135deg,#d6b06b,#8b6a36);font-family:'Songti SC',serif;}
+  .msg.ai .bub{background:#fff;border:1px solid #ece4d3;color:#3a3f55;border-top-left-radius:4px;}
+  .msg.me{flex-direction:row-reverse;}
+  .msg.me .ava{background:linear-gradient(135deg,#5b8def,#3463d8);}
+  .msg.me .bub{background:linear-gradient(135deg,#5b8def,#3463d8);color:#fff;border-top-right-radius:4px;}
+  .typing span{display:inline-block;width:6px;height:6px;background:#888;border-radius:50%;margin:0 2px;animation:typing 1.2s infinite;}
+  .typing span:nth-child(2){animation-delay:.2s;}
+  .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes typing{0%,100%{opacity:.3;transform:translateY(0);}50%{opacity:1;transform:translateY(-3px);}}
+  .quick-chip{background:#fff;border:1px solid #ece4d3;color:#444;padding:6px 12px;border-radius:99px;font-size:12px;cursor:pointer;white-space:nowrap;}
+  .quick-chip:hover{border-color:var(--gold);color:var(--gold);}
+</style></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div style="background:#fff;padding:8px 14px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;">
+      <a href="home.html" style="font-size:20px;color:#333;">‹</a>
+      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#d6b06b,#8b6a36);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:14px;">琴</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;">阿琴 · 智能助手</div>
+        <div style="font-size:10px;color:#23a06b;">● 在线 · 7×24h 答疑</div>
+      </div>
+      <span style="font-size:18px;color:#888;">⋮</span>
+    </div>
+
+    <div id="chat" class="app-body" style="padding:14px;background:#f7f3e9;">
+      <div style="text-align:center;color:#888;font-size:11px;margin-bottom:14px;">今天 · 9:41</div>
+
+      <div class="msg ai">
+        <div class="ava">琴</div>
+        <div class="bub">您好，琴友 ✦ 我是数字人助手「阿琴」，可以问我：<br/>· 古琴指法与技巧<br/>· 曲目典故与赏析<br/>· 选琴 / 调弦 / 保养<br/>· 课程报名咨询</div>
+      </div>
+
+      <div style="margin-bottom:14px;display:flex;gap:6px;flex-wrap:wrap;">
+        <span class="quick-chip" onclick="ask(this.textContent)">滚拂技法怎么练？</span>
+        <span class="quick-chip" onclick="ask(this.textContent)">流水的背景故事</span>
+        <span class="quick-chip" onclick="ask(this.textContent)">推荐入门琴</span>
+        <span class="quick-chip" onclick="ask(this.textContent)">琴弦多久换一次</span>
+      </div>
+
+      <div class="msg me">
+        <div class="ava">我</div>
+        <div class="bub">勾挑和抹托有什么区别？</div>
+      </div>
+
+      <div class="msg ai">
+        <div class="ava">琴</div>
+        <div class="bub"><b>勾挑</b>用大指与食指完成：<br/>· <b>勾</b>：食指指肚向内拨弦（向身体方向）<br/>· <b>挑</b>：食指指甲向外拨弦（远离身体）<br/><br/><b>抹托</b>则用拇指完成：<br/>· <b>抹</b>：拇指甲向内<br/>· <b>托</b>：拇指肚向外<br/><br/>勾挑常用于旋律线条，抹托适合低音浑厚处。需要看动作示范吗？</div>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:40px;margin-bottom:14px;">
+        <span class="quick-chip" onclick="window.toast('正在打开示范视频...','success')">▶ 看示范</span>
+        <span class="quick-chip" onclick="window.toast('已加入收藏','success')">⭐ 收藏</span>
+        <span class="quick-chip" onclick="window.toast('已不满意，AI 会改进','warn')">👎 不准确</span>
+      </div>
+    </div>
+
+    <!-- 输入栏 -->
+    <div style="background:#fff;border-top:1px solid #eee;padding:8px 12px;display:flex;gap:8px;align-items:center;">
+      <span style="font-size:22px;color:#888;cursor:pointer;" onclick="window.toast('开始录音...','success')">🎙</span>
+      <input id="qa-input" type="text" placeholder="向阿琴提问…" onkeydown="if(event.key==='Enter')send()" style="flex:1;background:#f4ede0;border:none;border-radius:99px;padding:9px 14px;"/>
+      <button onclick="send()" data-silent style="background:linear-gradient(90deg,#d6b06b,#b08949);color:#fff;border:none;border-radius:99px;padding:8px 16px;font-size:13px;">发送</button>
+    </div>
+  </div></div>
+</div>
+</div>
+<script>
+  const REPLIES = {
+    '滚拂': '滚拂是古琴右手特色技法之一：\n\n· <b>滚</b>：食指、中指、无名指自高音弦向低音弦连续向外拨\n· <b>拂</b>：反方向从低向高连续拨\n\n练习要点：以腕带指、虚实相生，初学先慢后快，重在体会余韵。',
+    '流水': '《流水》出自《神奇秘谱》，相传是伯牙所作。\n\n伯牙鼓琴，志在高山流水，唯子期能解其意。子期亡后，伯牙摔琴绝弦，"知音"典故由此而来。\n\n这首曲子以滚拂技法描摹流水奔腾，是古琴技法集大成之作。',
+    '入门琴': '建议入门预算 3000-8000 元，重点关注：\n\n1. <b>琴体</b>：杉木/桐木面板，梓木底板\n2. <b>琴弦</b>：钢丝尼龙弦音色稳定易上手\n3. <b>制作</b>：选合琴较老的师傅手工琴\n\n建议先到实体店上手试音，避免网购图便宜买到"装饰琴"。',
+    '琴弦': '正常使用 1-2 年需更换一次：\n\n· 音色明显发闷或不准时\n· 弦表面起毛、生锈\n· 频繁断弦\n\n保养建议：每次弹完用干布擦弦，避免汗渍。南方梅雨季可在琴囊中放干燥剂。',
+    'default': '这个问题我帮您查询一下…\n\n根据古琴智能体知识库，相关参考资料已为您准备：\n\n· 名家张老师 5/13《阳关三叠》直播回放有详细解答\n· 课程《古琴入门 14 课》第 3 章涉及此话题\n\n是否需要为您打开？'
+  };
+  function ask(q){
+    document.getElementById('qa-input').value = q;
+    send();
+  }
+  function send(){
+    const input = document.getElementById('qa-input');
+    const txt = input.value.trim();
+    if(!txt) return;
+    const chat = document.getElementById('chat');
+    // 我的消息
+    const me = document.createElement('div'); me.className='msg me';
+    me.innerHTML = '<div class="ava">我</div><div class="bub">'+txt+'</div>';
+    chat.appendChild(me);
+    input.value=''; chat.scrollTop = chat.scrollHeight;
+
+    // 打字中
+    const typing = document.createElement('div'); typing.className='msg ai'; typing.id='typing';
+    typing.innerHTML = '<div class="ava">琴</div><div class="bub typing"><span></span><span></span><span></span></div>';
+    chat.appendChild(typing); chat.scrollTop = chat.scrollHeight;
+
+    // 匹配回复
+    let reply = REPLIES.default;
+    for(const k of Object.keys(REPLIES)){
+      if(k!=='default' && txt.includes(k)){ reply = REPLIES[k]; break; }
+    }
+    setTimeout(()=>{
+      typing.remove();
+      const ai = document.createElement('div'); ai.className='msg ai';
+      ai.innerHTML = '<div class="ava">琴</div><div class="bub">'+reply+'</div>';
+      chat.appendChild(ai); chat.scrollTop = chat.scrollHeight;
+    }, 900);
+  }
+</script>
+<script src="../assets/sidebar.js" data-active="app/qa.html" data-crumbs="用户端APP / <b>智能问答</b>" data-depth="1"></script>
+</body></html>

@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洗车小程序交互原型</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .prototype-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .phone-mockup {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .home-screen {
+            padding: 20px;
+        }
+        
+        .store-info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .store-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .change-store {
+            font-size: 12px;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        
+        .main-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .main-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .service-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .service-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .service-desc {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .banner {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .service-list {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .service-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .service-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .service-info h4 {
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .service-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .service-price {
+            text-align: right;
+        }
+        
+        .price-current {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .price-original {
+            color: #999;
+            font-size: 12px;
+            text-decoration: line-through;
+        }
+        
+        .order-form {
+            padding: 20px;
+        }
+        
+        .form-step {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        
+        .time-slot {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .time-slot.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .switch.active {
+            background: #3498db;
+        }
+        
+        .switch-handle {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .switch.active .switch-handle {
+            transform: translateX(24px);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .order-detail {
+            padding: 20px;
+        }
+        
+        .detail-header {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+        
+        .order-status {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .order-number {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .detail-content {
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .detail-section {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .detail-label {
+            color: #666;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .monitor-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .monitor-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        
+        .monitor-view {
+            background: #000;
+            height: 200px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+        }
+        
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        
+        .nav-item:hover {
+            color: #3498db;
+        }
+        
+        .nav-item.active {
+            color: #3498db;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .nav-text {
+            font-size: 12px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .modal-text {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .modal-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .prototype-info {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .prototype-info h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .feature-item h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .feature-item p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .interaction-hint {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .phone-mockup {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .phone {
+                width: 320px;
+                height: 640px;
+            }
+            
+            .prototype-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prototype-container">
+        <div class="header">
+            <h1>🚗 洗车小程序交互原型</h1>
+            <p>多门店 + 柜体存取钥匙 + 监控查看功能演示</p>
+        </div>
+        
+        <div class="prototype-info">
+            <h2>原型功能说明</h2>
+            <div class="interaction-hint">
+                💡 点击各个界面元素体验交互效果，所有按钮和卡片都可点击
+            </div>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🏠 首页</h4>
+                    <p>门店信息、服务入口、快速下单、活动展示</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📝 服务下单</h4>
+                    <p>四步表单：时间选择、服务方式、车辆信息、拍照留言</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📋 订单详情</h4>
+                    <p>订单状态、服务信息、监控查看（权限控制）</p>
+                </div>
+                <div class="feature-item">
+                    <h4>👤 个人中心</h4>
+                    <p>车辆管理、订单历史、客服联系</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="phone-mockup">
+            <!-- 首页 -->
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="screen-content home-screen">
+                        <div class="store-info">
+                            <div>
+                                <div class="store-name">📍 石家庄·裕华店</div>
+                                <div style="font-size: 12px; opacity: 0.8;">营业时间: 8:00-20:00</div>
+                            </div>
+                            <div class="change-store">切换门店 ></div>
+                        </div>
+                        
+                        <button class="main-btn" onclick="showOrderForm()">
+                            🚘 立即下单
+                        </button>
+                        
+                        <div class="service-grid">
+                            <div class="service-card" onclick="showServiceList()">
+                                <div class="service-icon">🚗</div>
+                                <div class="service-name">洗车服务</div>
+                                <div class="service-desc">专业洗车</div>
+                            </div>
+                            <div class="service-card">
+                                <div class="service-icon">✨</div>
+                                <div class="service-name">汽车美容</div>
+                                <div class="service-desc">精致护理</div>
+                            </div>
+                        </div>
+                        
+                        <div class="banner">
+                            <h3>🎉 新用户专享</h3>
+                            <p>首次下单立减20元</p>
+                        </div>
+                        
+                        <div class="service-list">
+                            <div class="service-item" onclick="selectService('标准洗车')">
+                                <div class="service-info">
+                                    <h4>标准洗车</h4>
+                                    <div class="service-meta">⏱ 30分钟 | ⭐ 4.8分</div>
+                                </div>
+                                <div class="service-price">
+                                    <div class="price-current">¥35</div>
+                                    <div class="price-original">¥45</div>
+                                </div>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-info">
+                                    <h4>精洗服务</h4>
+                                    <div class="service-meta">⏱ 45分钟 | ⭐ 4.9分</div>
+                                </div>
+                                <div class="service-price">
+                                    <div class="price-current">¥58</div>
+                                    <div class="price-original">¥68</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav">
+                            <div class="nav-item active">
+                                <div class="nav-icon">🏠</div>
+                                <div class="nav-text">首页</div>
+                            </div>
+                            <div class="nav-item" onclick="showOrders()">
+                                <div class="nav-icon">📋</div>
+                                <div class="nav-text">订单</div>
+                            </div>
+                            <div class="nav-item" onclick="showProfile()">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-text">我的</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 下单表单 -->
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="screen-content order-form">
+                        <h2 style="margin-bottom: 20px; color: #2c3e50;">服务下单</h2>
+                        
+                        <div class="form-step">
+                            <div class="step-title">
+                                <div class="step-number">1</div>
+                                选择服务时间
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">选择日期</label>
+                                <select class="form-input">
+                                    <option>今天 (5月11日)</option>
+                                    <option>明天 (5月12日)</option>
+                                    <option>后天 (5月13日)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">选择时间段</label>
+                                <div class="time-slots">
+                                    <div class="time-slot">08:00-10:00</div>
+                                    <div class="time-slot selected">10:00-12:00</div>
+                                    <div class="time-slot">14:00-16:00</div>
+                                    <div class="time-slot">16:00-18:00</div>
+                                    <div class="time-slot">18:00-20:00</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-step">
+                            <div class="step-title">
+                                <div class="step-number">2</div>
+                                选择服务方式
+                            </div>
+                            <div class="switch-container">
+                                <span>需要上门取送钥匙</span>
+                                <div class="switch active" onclick="toggleSwitch(this)">
+                                    <div class="switch-handle"></div>
+                                </div>
+                            </div>
+                            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                                员工将上门取车钥匙，洗车完成后送回
+                            </p>
+                        </div>
+                        
+                        <div class="form-step">
+                            <div class="step-title">
+                                <div class="step-number">3</div>
+                                填写车辆信息
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">选择车辆</label>
+                                <select class="form-input">
+                                    <option>冀A·88888 (特斯拉 Model 3)</option>
+                                    <option>+ 添加新车辆</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">车位地址</label>
+                                <input type="text" class="form-input" placeholder="例：1号楼1单元负1层A区015号" value="1号楼1单元负1层A区015号">
+                            </div>
+                        </div>
+                        
+                        <div class="form-step">
+                            <div class="step-title">
+                                <div class="step-number">4</div>
+                                拍照留言
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">上传照片</label>
+                                <div style="border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; color: #666; cursor: pointer;">
+                                    📷 点击上传车辆/车位照片
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">备注</label>
+                                <textarea class="form-input" rows="3" placeholder="请输入特殊要求或说明..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <button class="submit-btn" onclick="submitOrder()">
+                            确认下单 ¥35
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 订单详情 -->
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="screen-content order-detail">
+                        <div class="detail-header">
+                            <div class="order-status">服务中</div>
+                            <div class="order-number">订单号：202405110001</div>
+                        </div>
+                        
+                        <div class="detail-content">
+                            <div class="detail-section">
+                                <div class="detail-title">服务信息</div>
+                                <div class="detail-item">
+                                    <span class="detail-label">服务项目</span>
+                                    <span class="detail-value">标准洗车</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">预约时间</span>
+                                    <span class="detail-value">5月11日 10:00-12:00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">服务方式</span>
+                                    <span class="detail-value">上门取送钥匙</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">服务门店</span>
+                                    <span class="detail-value">石家庄·裕华店</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">车辆信息</div>
+                                <div class="detail-item">
+                                    <span class="detail-label">车牌号</span>
+                                    <span class="detail-value">冀A·88888</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">车辆型号</span>
+                                    <span class="detail-value">特斯拉 Model 3</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">车位地址</span>
+                                    <span class="detail-value">1号楼1单元负1层A区015号</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">费用信息</div>
+                                <div class="detail-item">
+                                    <span class="detail-label">服务费用</span>
+                                    <span class="detail-value">¥35.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">优惠金额</span>
+                                    <span class="detail-value">-¥0.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">实付金额</span>
+                                    <span class="detail-value" style="color: #e74c3c; font-weight: 600;">¥35.00</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-section">
+                                <div class="detail-title">服务监控</div>
+                                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                                    仅限服务进行中查看，禁止传播录屏
+                                </p>
+                                <button class="monitor-btn" onclick="toggleMonitor(this)">
+                                    📹 查看实时监控
+                                </button>
+                                <div class="monitor-view" style="display: none;">
+                                    📹 监控画面加载中...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bottom-nav">
+                            <div class="nav-item" onclick="showHome()">
+                                <div class="nav-icon">🏠</div>
+                                <div class="nav-text">首页</div>
+                            </div>
+                            <div class="nav-item active">
+                                <div class="nav-icon">📋</div>
+                                <div class="nav-text">订单</div>
+                            </div>
+                            <div class="nav-item" onclick="showProfile()">
+                                <div class="nav-icon">👤</div>
+                                <div class="nav-text">我的</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">提示</div>
+            <div class="modal-text" id="modalText">操作成功</div>
+            <button class="modal-btn" onclick="closeModal()">确定</button>
+        </div>
+    </div>
+    
+    <script>
+        function showModal(title, text) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalText').textContent = text;
+            document.getElementById('messageModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('messageModal').classList.remove('show');
+        }
+        
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+        
+        function selectService(serviceName) {
+            showModal('服务选择', `已选择：${serviceName}`);
+        }
+        
+        function showOrderForm() {
+            showModal('下单流程', '正在进入服务下单页面...');
+        }
+        
+        function submitOrder() {
+            showModal('下单成功', '订单已提交，请等待员工处理');
+        }
+        
+        function toggleMonitor(button) {
+            const monitorView = button.nextElementSibling;
+            if (monitorView.style.display === 'none') {
+                monitorView.style.display = 'flex';
+                button.textContent = '📹 关闭监控';
+                setTimeout(() => {
+                    monitorView.innerHTML = '📹 <span style="color: #27ae60;">监控画面已连接</span>';
+                }, 1000);
+            } else {
+                monitorView.style.display = 'none';
+                button.textContent = '📹 查看实时监控';
+            }
+        }
+        
+        function showServiceList() {
+            showModal('服务列表', '查看所有洗车服务项目');
+        }
+        
+        function showOrders() {
+            showModal('订单中心', '查看历史订单记录');
+        }
+        
+        function showProfile() {
+            showModal('个人中心', '管理个人信息和车辆');
+        }
+        
+        function showHome() {
+            showModal('返回首页', '正在返回首页...');
+        }
+        
+        // 时间槽选择
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.addEventListener('click', function() {
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // 服务卡片点击效果
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+        
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.phone').forEach((phone, index) => {
+                phone.style.opacity = '0';
+                phone.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    phone.style.transition = 'opacity 0.5s, transform 0.5s';
+                    phone.style.opacity = '1';
+                    phone.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>妈祖 / 关公 神仙智能体双 APP - 产品方案 · 技术实施方案 · 项目报价单</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #1B4965;
+  --primary-light: #3A7CA5;
+  --primary-dark: #0D2B3E;
+  --secondary: #FF6B35;
+  --accent: #FFD166;
+  --accent2: #06D6A0;
+  --accent3: #118AB2;
+  --dark: #0F1923;
+  --text: #2D3748;
+  --text-light: #718096;
+  --bg: #FAFBFC;
+  --white: #FFFFFF;
+  --border: #E2E8F0;
+  --alt: #F7F8FA;
+  --r: 12px;
+  --rl: 20px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--text);background:var(--bg);line-height:1.8;-webkit-font-smoothing:antialiased}
+
+@media print{
+  body{background:#fff;font-size:11pt}
+  .hero{min-height:auto;padding:40px 0}
+  section{break-inside:avoid;page-break-inside:avoid}
+  .module-card,.quote-table{break-inside:avoid}
+}
+
+.hero{min-height:100vh;background:linear-gradient(135deg,var(--dark) 0%,#0A1628 40%,var(--primary) 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(27,73,101,.25) 0%,transparent 70%);top:-200px;right:-100px}
+.hero::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(6,214,160,.1) 0%,transparent 70%);bottom:-100px;left:-50px}
+.hero-inner{text-align:center;color:#fff;z-index:2;padding:40px}
+.hero-badge{display:inline-block;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);color:var(--secondary);padding:8px 24px;border-radius:50px;font-size:14px;font-weight:500;letter-spacing:2px;margin-bottom:32px}
+.hero h1{font-family:'Noto Serif SC',serif;font-size:48px;font-weight:900;line-height:1.25;margin-bottom:8px;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--secondary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:20px;font-weight:300;color:rgba(255,255,255,.7);margin-bottom:48px;letter-spacing:3px}
+.hero-meta{display:flex;gap:40px;justify-content:center;flex-wrap:wrap}
+.hero-meta dt{font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:2px}
+.hero-meta dd{font-size:16px;color:rgba(255,255,255,.9);font-weight:500;margin:4px 0 0}
+
+.container{max-width:1200px;margin:0 auto;padding:0 40px}
+.sec{padding:80px 0}
+.sec-alt{background:var(--alt)}
+.sec-num{font-size:13px;font-weight:700;color:var(--secondary);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px}
+.sec-title{font-family:'Noto Serif SC',serif;font-size:36px;font-weight:700;color:var(--dark);margin-bottom:12px}
+.sec-desc{font-size:16px;color:var(--text-light);max-width:720px}
+
+.toc{background:var(--white);border-bottom:1px solid var(--border);padding:60px 0}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:32px}
+.toc-item{display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);transition:all .3s;cursor:pointer;text-decoration:none;color:var(--text)}
+.toc-item:hover{border-color:var(--primary);background:rgba(27,73,101,.04);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.toc-n{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.toc-t{font-weight:500;font-size:15px}
+
+.m-grid{display:grid;gap:32px}
+.m-card{background:var(--white);border-radius:var(--rl);border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.m-head{padding:28px 32px;display:flex;align-items:center;gap:20px;border-bottom:1px solid var(--border)}
+.m-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.m-head h3{font-size:20px;font-weight:700;color:var(--dark)}
+.tag{margin-left:auto;font-size:12px;padding:4px 14px;border-radius:20px;font-weight:500;white-space:nowrap}
+.tag-core{background:rgba(255,107,53,.1);color:var(--secondary)}
+.tag-p0{background:rgba(255,107,53,.15);color:#E55A25}
+.tag-p1{background:rgba(17,138,178,.1);color:var(--accent3)}
+.tag-p2{background:rgba(113,128,150,.1);color:var(--text-light)}
+.m-body{padding:28px 32px}
+.fg{margin-bottom:24px}
+.fg:last-child{margin-bottom:0}
+.fg-title{font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.fl li{font-size:14px;color:var(--text);padding:6px 0 6px 24px;position:relative;line-height:1.6}
+.fl li::before{content:'';position:absolute;left:6px;top:14px;width:6px;height:6px;border-radius:50%;background:var(--primary);opacity:.6}
+
+.arch{background:var(--dark);border-radius:var(--rl);padding:48px;color:#fff;margin:32px 0;overflow-x:auto}
+.arch-layer{margin-bottom:24px;padding:24px;border-radius:var(--r);border:1px solid rgba(255,255,255,.1)}
+.arch-layer:last-child{margin-bottom:0}
+.arch-label{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)}
+.arch-tags{display:flex;flex-wrap:wrap;gap:10px}
+.arch-tag{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500}
+.l1 .arch-label{color:var(--accent)}.l1 .arch-tag{background:rgba(255,209,102,.15);color:var(--accent)}
+.l2 .arch-label{color:var(--secondary)}.l2 .arch-tag{background:rgba(255,107,53,.15);color:var(--secondary)}
+.l3 .arch-label{color:var(--accent2)}.l3 .arch-tag{background:rgba(6,214,160,.15);color:var(--accent2)}
+.l4 .arch-label{color:var(--accent3)}.l4 .arch-tag{background:rgba(17,138,178,.15);color:#5CC8E8}
+.l5 .arch-label{color:#A78BFA}.l5 .arch-tag{background:rgba(167,139,250,.15);color:#C4B5FD}
+
+.tech-table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tech-table thead th{background:var(--primary);color:#fff;padding:14px 20px;text-align:left;font-size:13px;font-weight:600;letter-spacing:1px}
+.tech-table tbody td{padding:14px 20px;font-size:14px;border-bottom:1px solid var(--border);background:var(--white)}
+.tech-table tbody tr:hover td{background:rgba(27,73,101,.02)}
+.tech-table tbody td:first-child{font-weight:600;color:var(--primary);white-space:nowrap}
+
+.qt-wrap{margin:32px 0;overflow-x:auto}
+.qt{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1);min-width:900px}
+.qt thead th{background:linear-gradient(135deg,var(--dark),var(--primary));color:#fff;padding:16px 20px;text-align:left;font-size:13px;font-weight:600;letter-spacing:1px}
+.qt thead th:last-child,.qt thead th:nth-child(4),.qt thead th:nth-child(5){text-align:right}
+.qt tbody td{padding:14px 20px;font-size:14px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+.qt tbody td:last-child,.qt tbody td:nth-child(4),.qt tbody td:nth-child(5){text-align:right;font-variant-numeric:tabular-nums}
+.qt tbody tr:hover td{background:rgba(27,73,101,.03)}
+.qt .gh td{background:var(--alt);font-weight:700;color:var(--primary);font-size:15px;border-left:4px solid var(--secondary)}
+.qt .st td{background:#FFF7ED;font-weight:600;color:var(--secondary)}
+.qt .gt td{background:linear-gradient(135deg,var(--dark),var(--primary));color:#fff;font-weight:700;font-size:16px;padding:20px}
+.amt{font-weight:600}
+
+.tl{position:relative;padding:0 0 0 40px}
+.tl::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--primary),var(--accent2))}
+.tl-item{position:relative;margin-bottom:32px;padding:24px 28px;background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tl-item::before{content:'';position:absolute;left:-33px;top:28px;width:12px;height:12px;border-radius:50%;background:var(--primary);border:3px solid var(--bg);box-shadow:0 0 0 2px var(--primary)}
+.tl-phase{font-size:12px;font-weight:700;color:var(--secondary);letter-spacing:2px;text-transform:uppercase}
+.tl-title{font-size:18px;font-weight:700;color:var(--dark);margin:4px 0 8px}
+.tl-dur{display:inline-block;background:rgba(27,73,101,.1);color:var(--primary);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:12px}
+.tl-tasks{list-style:none}
+.tl-tasks li{font-size:14px;padding:4px 0 4px 20px;position:relative;color:var(--text)}
+.tl-tasks li::before{content:'\2192';position:absolute;left:0;color:var(--secondary);font-weight:700}
+
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin:32px 0}
+.sc{background:var(--white);border-radius:var(--r);padding:28px;text-align:center;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sc .num{font-family:'Noto Serif SC',serif;font-size:36px;font-weight:900;color:var(--primary);line-height:1.2}
+.sc .unit{font-size:16px;font-weight:400;color:var(--text-light)}
+.sc .desc{font-size:14px;color:var(--text-light);margin-top:4px}
+
+.nb{background:var(--white);border-radius:var(--rl);border:1px solid var(--border);padding:36px;margin:32px 0}
+.nb h4{font-size:16px;font-weight:700;color:var(--primary);margin-bottom:16px}
+.nl{list-style:none;counter-reset:n}
+.nl li{font-size:14px;padding:8px 0 8px 32px;position:relative;color:var(--text);line-height:1.7}
+.nl li::before{counter-increment:n;content:counter(n);position:absolute;left:0;top:8px;width:20px;height:20px;border-radius:50%;background:var(--alt);color:var(--text-light);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+.footer{background:var(--dark);color:rgba(255,255,255,.5);padding:48px 0;text-align:center}
+.footer-brand{font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;color:var(--primary-light);margin-bottom:8px}
+.footer p{font-size:13px;line-height:2}
+
+@media(max-width:768px){
+  .container{padding:0 20px}
+  .hero h1{font-size:32px}
+  .hero-sub{font-size:16px}
+  .sec{padding:48px 0}
+  .sec-title{font-size:28px}
+  .m-head{flex-wrap:wrap}
+  .tag{margin-left:0}
+  .fl{grid-template-columns:1fr}
+  .arch{padding:24px}
+  .tl{padding-left:30px}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">PRODUCT PROPOSAL · MAZU &amp; GUANGONG</div>
+    <h1>妈祖 / 关公 神仙智能体<br>双 APP 产品方案</h1>
+    <p class="hero-sub">产品方案 · 技术实施方案 · 项目报价单</p>
+    <dl class="hero-meta">
+      <div><dt>文档类型</dt><dd>产品方案 &amp; 报价单</dd></div>
+      <div><dt>版本</dt><dd>V1.0</dd></div>
+      <div><dt>日期</dt><dd>2026年4月17日</dd></div>
+      <div><dt>交付范围</dt><dd>双 APP 全功能（需求文档所列模块）</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="toc" id="toc">
+  <div class="container">
+    <div><div class="sec-num">CONTENTS</div><h2 class="sec-title">目录导航</h2></div>
+    <div class="toc-grid">
+      <a class="toc-item" href="#s1"><span class="toc-n">01</span><span class="toc-t">产品概述</span></a>
+      <a class="toc-item" href="#s2"><span class="toc-n">02</span><span class="toc-t">功能模块详解</span></a>
+      <a class="toc-item" href="#s3"><span class="toc-n">03</span><span class="toc-t">技术架构方案</span></a>
+      <a class="toc-item" href="#s4"><span class="toc-n">04</span><span class="toc-t">技术选型清单</span></a>
+      <a class="toc-item" href="#s5"><span class="toc-n">05</span><span class="toc-t">实施排期计划</span></a>
+      <a class="toc-item" href="#s6"><span class="toc-n">06</span><span class="toc-t">项目报价清单</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="s1">
+  <div class="container">
+    <div class="sec-num">PART 01</div>
+    <h2 class="sec-title">产品概述</h2>
+    <p class="sec-desc">妈祖智能体 APP 与关公智能体 APP 双端独立运营：整体视觉配色、品牌形象、IP 风格保持统一，仅核心 IP 形象与文化内容区分。用户端支持 NFC 一碰拉起，自动识别并跳转对应 APP 下载落地页；落地页自动判断展示妈祖 / 关公形象与下载入口。</p>
+
+    <div class="sg">
+      <div class="sc"><div class="num">2<span class="unit"> 款 APP</span></div><div class="desc">妈祖智能体 / 关公智能体</div></div>
+      <div class="sc"><div class="num">13<span class="unit">+ 能力域</span></div><div class="desc">覆盖需求文档全部模块</div></div>
+      <div class="sc"><div class="num">中 / 英<span class="unit"></span></div><div class="desc">国内中文 · 国外英文</div></div>
+      <div class="sc"><div class="num">¥189,200<span class="unit"></span></div><div class="desc">项目总报价（见报价章）</div></div>
+    </div>
+
+    <div class="nb">
+      <h4>产品定位与核心价值（与需求文档一致）</h4>
+      <ul class="nl">
+        <li><strong>产品定位：</strong>面向大众用户的「神仙智能体」私属万年历与生活陪伴应用，融合传统黄历、个人命盘、择吉、AI 对话与助运内容。</li>
+        <li><strong>核心入口：</strong>NFC 触碰 → 打开专属下载落地页 → 自动识别妈祖 / 关公分支与下载入口。</li>
+        <li><strong>新用户路径：</strong>欢迎页（IP 主视觉、动效、三列卖点、琥珀金主 CTA）→ 统一 4 步注册 / 登录（国内手机号 / 国外邮箱等多方式）→ 资料与兴趣完善。</li>
+        <li><strong>首页价值：</strong>农历生辰摘要、当日皇历与运程、宜忌速览、快捷入口（择天时 / 窥天机 / 助运势 / 万事通）及运势详情（五维雷达、助运元素、个性化建议）。</li>
+        <li><strong>私属黄历：</strong>客户 Java 黄历算法 + 四柱八字等命盘；天人合一综合评分；宜忌与吉时、助运元素；算法字段结合大模型生成解读与建议。</li>
+        <li><strong>合规表达：</strong>注册前强制展示《用户隐私保护及免责须知》；全页底部统一标注「基于经典国学算法推演建议 · 仅作生活娱乐参考」，不构成医疗、法律、投资等专业建议。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="s2">
+  <div class="container">
+    <div class="sec-num">PART 02</div>
+    <h2 class="sec-title">功能模块详解</h2>
+    <p class="sec-desc">以下模块与贵方需求文档逐条对齐，仅做结构化呈现，不增删需求内容。</p>
+
+    <div class="m-grid" style="margin-top:40px">
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#FF6B35,#FFD166)">&#x1F4F1;</div>
+          <h3>模块一：产品形态与 NFC 下载链路</h3>
+          <span class="tag tag-p0">核心入口</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">双 APP · 落地页 · NFC</div>
+            <ul class="fl">
+              <li>妈祖智能体 APP、关公智能体 APP 独立运营</li>
+              <li>视觉与品牌统一，IP 与文化内容区分</li>
+              <li>NFC 一碰拉起 → 专属下载落地页</li>
+              <li>自动识别并展示妈祖 / 关公形象与对应下载入口</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#5B86E5,#36D1DC)">&#x2728;</div>
+          <h3>模块二：欢迎页（新用户首屏）</h3>
+          <span class="tag tag-p0">品牌首屏</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">主视觉 · 卖点 · CTA</div>
+            <ul class="fl">
+              <li>大幅妈祖 / 关公 IP 主视觉；背景 + 浮动动画 + 光晕脉冲动效</li>
+              <li>主标题 MAZU 妈祖 / GUANGONG 关公；副标题「只为你服务的神仙智能体」</li>
+              <li>三列卖点：私人万年历、个人吉日挑选、生活陪伴建议（图标 + 文案）</li>
+              <li>主 CTA「开始体验」：琥珀金渐变、光泽扫过、外发光；跳转注册 Step1</li>
+              <li>辅助文案「限时免费・1 分钟极速注册」；「已有账号？直接登录」文字链</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#06D6A0,#118AB2)">&#x1F510;</div>
+          <h3>模块三：登录注册（统一 4 步）</h3>
+          <span class="tag tag-p0">账号体系</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">通用头部 + Step1~4</div>
+            <ul class="fl">
+              <li>通用头部：返回、48px IP 头像、标题副标题、横向进度条与 1/4~4/4 标注</li>
+              <li>Step1：国内手机号 + 验证码；国外邮箱 + 验证码；密码登录；协议勾选；未注册验证通过后自动注册登录</li>
+              <li>Step2：昵称、性别；阳历 / 阴历（联动月份）；出生年月日；阴历闰月开关；出生时辰（含不清楚与十二时辰网格）；出生城市；实时「你属 X，日主 X」</li>
+              <li>Step3：文档未提供具体内容，流程占位与进度展示保留</li>
+              <li>Step4：兴趣偏好多选（职业身份、行业方向、兴趣爱好）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#8E2DE2,#4A00E0)">&#x1F3E0;</div>
+          <h3>模块四：基础通用 · 首页 · 导航</h3>
+          <span class="tag tag-p0">主界面</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">加载 · 推送 · 首页 · Tab</div>
+            <ul class="fl">
+              <li>界面加载模糊过渡动画</li>
+              <li>每日黄历核心解读推送；每周运势周报推送（服务号等通道）</li>
+              <li>新用户首次登录助运壁纸弹窗与本地保存</li>
+              <li>顶部信息栏：LOGO、农历生辰摘要、头像、IP 背景与时间</li>
+              <li>日历主卡片：公历 / 农历 / 干支 / 今日五行等</li>
+              <li>今日运程核心区：解盘得分、速览、宜忌、每日一言；点击进入运势详情（雷达图、各维度解读、幸运时段、助运元素、职业兴趣建议）</li>
+              <li>底部导航：首页、择日、AI 陪伴、我的</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#E63946,#F4A261)">&#x1F4C5;</div>
+          <h3>模块五：私属黄历解读</h3>
+          <span class="tag tag-p0">算法与内容</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">日缓存 · 皇历 · 命盘 · 评分</div>
+            <ul class="fl">
+              <li>一天首次打开生成数据，二次读取缓存</li>
+              <li>客户 Java 黄历算法：日期、节气、宜忌等标准皇历展示</li>
+              <li>个人命理：四柱八字、生肖、纳音、十神；真太阳时校准；命盘入个人向量库</li>
+              <li>天人合一综合评分：五维得分与总分；幸运指数与助运元素；投喂大模型生成幸运密码与穿搭建议等</li>
+              <li>当日宜忌解读、幸运时段、助运元素（色、财位、数字等）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#25D366,#128C7E)">&#x1F300;</div>
+          <h3>模块六：妈祖 / 关公择日</h3>
+          <span class="tag tag-p0">择吉流程</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">动效 · 流程 · 结果</div>
+            <ul class="fl">
+              <li>中心 IP；周围毛玻璃「天人合一」分区元素正 / 逆转；触摸放大</li>
+              <li>描述事件 → 选择时间范围 → 开始择日 → 结果展示</li>
+              <li>事件类型（搬家、谈加薪、签约、相亲等）；自定义起止时间</li>
+              <li>联动：事件类型 + 时间范围 + 个人命盘 + 天时数据</li>
+              <li>吉日详情、匹配度星级、备选吉日 ≥3、择日记录与报告（头像旋转、呼吸灯等）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#D63031,#E17055)">&#x1F916;</div>
+          <h3>模块七：AI 私属生活陪伴</h3>
+          <span class="tag tag-p0">智能体</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">对话 · 语音 · 图片</div>
+            <ul class="fl">
+              <li>文字 + 语音输入，语音转文字</li>
+              <li>IP 神仙身份回应与生活建议</li>
+              <li>图片识别与上传（+ 号唤起）</li>
+              <li>固定开场白、快捷问题、基于用户信息的主动互动、历史记录入口</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-head">
+          <div class="m-icon" style="background:linear-gradient(135deg,#1B4965,#3A7CA5)">&#x1F3A8;</div>
+          <h3>模块八：助运推荐 · IP 文化 · 我的</h3>
+          <span class="tag tag-core">增值与中心</span>
+        </div>
+        <div class="m-body">
+          <div class="fg">
+            <div class="fg-title">壁纸 · 文化 · 会员 · 记录</div>
+            <ul class="fl">
+              <li>节气 / 助运壁纸生成、说明、后台替换、下载相册、分享品牌水印</li>
+              <li>神仙背景动画（5–10 秒循环、后台可换）；文化介绍（妈祖海洋文化；关公洛阳文旅、祖庭等）；切换 IP 同步切换文化内容</li>
+              <li>我的：基本资料展示与可改项、终身绑定提示、密码、VIP 体系与权益、签到与择日 / 解读 / 壁纸记录、反馈、关于与协议隐私</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="s3">
+  <div class="container">
+    <div class="sec-num">PART 03</div>
+    <h2 class="sec-title">技术架构方案</h2>
+    <p class="sec-desc">移动端双 APP 采用 <strong>uni-app</strong> 一套代码多端发行（妈祖 / 关公独立应用标识与主题资源分包）+ Java 后端服务；黄历与命理计算采用客户提供的 Java 算法；AI 解读与对话通过大模型与向量库编排实现。</p>
+
+    <div class="arch">
+      <div class="arch-layer l1">
+        <div class="arch-label">客户端层 · Apps（uni-app）</div>
+        <div class="arch-tags">
+          <span class="arch-tag">uni-app + Vue 3（双 APP 独立打包配置）</span>
+          <span class="arch-tag">妈祖 APP（独立包名 / AppID / 品牌资源）</span>
+          <span class="arch-tag">关公 APP（独立包名 / AppID / 品牌资源）</span>
+          <span class="arch-tag">欢迎页 / 注册四步 / 首页运程</span>
+          <span class="arch-tag">择日动效页 / AI 会话 / 个人中心</span>
+          <span class="arch-tag">NFC 落地 H5（uni-app 条件编译或独立页）</span>
+        </div>
+      </div>
+      <div class="arch-layer l2">
+        <div class="arch-label">接入层 · Gateway</div>
+        <div class="arch-tags">
+          <span class="arch-tag">HTTPS API 网关</span>
+          <span class="arch-tag">鉴权与刷新策略（可配置会话时长）</span>
+          <span class="arch-tag">静态资源与壁纸 CDN</span>
+        </div>
+      </div>
+      <div class="arch-layer l3">
+        <div class="arch-label">服务层 · Java 业务中台</div>
+        <div class="arch-tags">
+          <span class="arch-tag">用户与多方式登录（手机 / 邮箱 / 密码 / 验证码）</span>
+          <span class="arch-tag">资料与兴趣标签</span>
+          <span class="arch-tag">客户 Java 黄历算法接入</span>
+          <span class="arch-tag">命盘计算 · 真太阳时 · 天人合一评分</span>
+          <span class="arch-tag">择日引擎与记录 / 报告</span>
+          <span class="arch-tag">会员与限次策略（后台可配）</span>
+          <span class="arch-tag">推送任务（每日黄历 / 每周周报）</span>
+          <span class="arch-tag">向量库与个人命盘存储</span>
+          <span class="arch-tag">大模型编排（运程文案、对话、图片理解）</span>
+          <span class="arch-tag">壁纸生成与分享水印参数</span>
+        </div>
+      </div>
+      <div class="arch-layer l4">
+        <div class="arch-label">数据层 · Data</div>
+        <div class="arch-tags">
+          <span class="arch-tag">关系型数据库（用户、订单、记录）</span>
+          <span class="arch-tag">缓存（日运、黄历日粒度缓存）</span>
+          <span class="arch-tag">对象存储（头像、壁纸、上传图片）</span>
+        </div>
+      </div>
+      <div class="arch-layer l5">
+        <div class="arch-label">第三方与合规 · Integrations</div>
+        <div class="arch-tags">
+          <span class="arch-tag">短信 / 邮件验证码</span>
+          <span class="arch-tag">应用内推送 / 服务号模板（按实际通道）</span>
+          <span class="arch-tag">大模型与多模态 API</span>
+          <span class="arch-tag">语音转写与图片识别服务</span>
+          <span class="arch-tag">应用商店分发与 NFC URL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nb">
+      <h4>架构设计要点</h4>
+      <ul class="nl">
+        <li><strong>双 APP 工程策略（uni-app）：</strong>共享业务页面与网络层，通过 manifest 多环境、主题 SCSS 变量、static 资源分包与条件编译区分妈祖 / 关公 IP 与文化模块，分别打包上架 App Store / 各安卓应用市场。</li>
+        <li><strong>Java 算法边界：</strong>皇历、四柱、纳音、十神、择日核心数值均在服务端 Java 内完成，保证与天文台闰年闰月及客户算法一致；客户端负责展示与动效。</li>
+        <li><strong>缓存策略：</strong>私属黄历解读按「自然日 + 用户」维度缓存，满足「一天首次生成、二次秒开」体验。</li>
+        <li><strong>AI 层：</strong>结构化算法输出字段作为 Prompt 输入，生成每日一言、深度解读、穿搭建议等自然语言内容。</li>
+        <li><strong>合规：</strong>注册前强制协议页、全站底部免责文案由配置中心或前端统一组件承载，便于多语言切换。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="s4">
+  <div class="container">
+    <div class="sec-num">PART 04</div>
+    <h2 class="sec-title">技术选型清单</h2>
+    <p class="sec-desc">具体栈可在立项会确认；下表与「<strong>uni-app</strong> 前端 + Java 后端 + 移动双 APP」需求对齐，供评审参考。</p>
+
+    <table class="tech-table">
+      <thead><tr><th>技术领域</th><th>技术选型（建议）</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>移动端</td><td><strong>uni-app</strong>（Vue 3 + Vite）+ uView Plus / uni-ui</td><td>一套代码维护双 APP；独立 appid、图标、启动图与主题；App 端原生能力插件市场扩展（推送、支付等）</td></tr>
+        <tr><td>后端框架</td><td>Java 17 + Spring Boot 3.x</td><td>与需求中 Java 黄历算法、企业级服务一致</td></tr>
+        <tr><td>安全与登录</td><td>Spring Security + JWT / 刷新令牌</td><td>支持可配置登录失效时长</td></tr>
+        <tr><td>数据访问</td><td>MyBatis-Plus / JPA</td><td>用户、会员、择日记录、推送日志等</td></tr>
+        <tr><td>缓存</td><td>Redis</td><td>日运缓存、限次计数、会话</td></tr>
+        <tr><td>向量检索</td><td>向量数据库或向量引擎 SDK</td><td>个人命盘与解读素材的向量化存储（按选型）</td></tr>
+        <tr><td>对象存储</td><td>云厂商 OSS / COS</td><td>壁纸、头像、上传图片</td></tr>
+        <tr><td>消息推送</td><td>厂商推送 + 服务号模板消息</td><td>每日黄历提醒、每周运势周报</td></tr>
+        <tr><td>AI 服务</td><td>大模型 API + 多模态接口</td><td>对话、运程文案、图片理解</td></tr>
+        <tr><td>NFC 落地</td><td>H5 落地页 + Universal Link / App Link</td><td>识别分支并引导下载</td></tr>
+        <tr><td>CI/CD</td><td>GitLab CI / GitHub Actions + HBuilderX / CLI 打包</td><td>妈祖 / 关公双包流水线与灰度</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:'Noto Serif SC',serif;font-size:24px;font-weight:700;color:var(--dark);margin:48px 0 12px">第三方服务及参考价格</h3>
+    <p class="sec-desc">以下价格为<strong>市场公开价或常见档位估算</strong>，随厂商政策与用量波动，<strong>不含在项目开发总报价 ¥189,200 内</strong>，由甲方开立账号并按实际用量向服务商结算。</p>
+
+    <table class="tech-table">
+      <thead><tr><th>第三方 / 服务</th><th>在本项目中的用途</th><th>计费方式</th><th>参考价格（人民币）</th></tr></thead>
+      <tbody>
+        <tr><td>阿里云短信</td><td>国内手机号验证码</td><td>按成功条数</td><td>约 ¥0.035~0.045 / 条；套餐包常见 ¥200~2,000 起</td></tr>
+        <tr><td>腾讯云邮件推送</td><td>国外邮箱验证码、通知邮件</td><td>按封数或套餐</td><td>SendGrid 免费档约 100 封/日；国内邮件推送约 ¥1~2 / 千封起</td></tr>
+        <tr><td>微信服务号（认证）</td><td>每日黄历 / 每周周报等模板消息</td><td>认证费 + 发送量</td><td>认证 <strong>¥300 / 年</strong>；模板消息一般按类目免费额度内，超额按平台规则</td></tr>
+        <tr><td>阿里云 OSS + CDN</td><td>头像、壁纸、上传图片与静态资源</td><td>存储 + 流量 + 请求</td><td>存储约 ¥0.12 / GB·月；下行流量 CDN 约 ¥0.20~0.35 / GB（地域不同）</td></tr>
+        <tr><td>阿里云国际节点服务器</td><td>Java API、定时任务、推送回调</td><td>包年包月或按量</td><td>生产环境常见 <strong>¥300~1,200 / 月</strong>（规格与带宽决定）</td></tr>
+        <tr><td>AI 模型</td><td>运程解读、AI 对话、多模态理解</td><td>按 Token / 次数</td><td>国内大模型常见 以各厂商官网为准</td></tr>
+        <tr><td>阿里云智能语音 / 讯飞开放平台</td><td>语音输入转文字</td><td>按调用时长或次数</td><td>约 <strong>¥1.2~2.5 / 千次</strong> 或按时长计费（以开通产品为准）</td></tr>
+        <tr><td>阿里云视觉智能 / 腾讯云图像分析</td><td>图片识别、内容审核（如需要）</td><td>按张数</td><td>约 <strong>¥0.001~0.02 / 次</strong> 量级</td></tr>
+        <tr><td>苹果 Apple Developer</td><td>iOS 上架与内购（若使用 IAP）</td><td>年费</td><td><strong>$99 / 年</strong>（以美元结算，约合 ¥700~800）</td></tr>
+        <tr><td>安卓各应用市场</td><td>软著 / 备案 / 市场认证</td><td>一次性</td><td>软著代办常见 1500 15 个工作日 2000 5 个工作日；网安 3000；商上架认证费用不等 苹果 10000 华为 3600 谷歌15000 其他 1200 一个</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="sec" id="s5">
+  <div class="container">
+    <div class="sec-num">PART 05</div>
+    <h2 class="sec-title">实施排期计划</h2>
+    <p class="sec-desc">先完成 UI 设计（约 <strong>10~18</strong> 个工作日，视评审轮次而定），UI 定稿后进入开发；开发按阶段并行推进。人天规划口径可参考 <strong>¥1,000 / UI 人天、¥1,200 / 前端人天、¥1,500 / Java 人天</strong>，与 <strong>PART 06</strong> 商务拆分合计相互对照；日历周数以团队配置为准。</p>
+
+    <div class="tl" style="margin-top:40px">
+      <div class="tl-item">
+        <div class="tl-phase">Phase 0</div>
+        <div class="tl-title">UI / UX 设计（开发前置）</div>
+        <div class="tl-dur">约 10~18 个工作日（与评审轮次相关）</div>
+        <ul class="tl-tasks">
+          <li>双 APP 统一设计系统 + 妈祖 / 关公 IP 差异（色彩、组件、插画位）</li>
+          <li>欢迎页、注册四步、首页、运程详情、择日、AI 会话、个人中心、文化页等核心界面高保真</li>
+          <li>关键动效说明（光晕脉冲、琥珀金 CTA、择日环绕旋转、加载模糊过渡）</li>
+          <li>切图与标注交付开发</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 1</div>
+        <div class="tl-title">基础工程 + 账号与注册链路</div>
+        <div class="tl-dur">开发第 1 阶段（并行）</div>
+        <ul class="tl-tasks">
+          <li>uni-app 双 APP 工程骨架（双 manifest / 环境变量）、主题切换、网络层与多语言（vue-i18n）</li>
+          <li>Java：用户体系、手机 / 邮箱验证码、密码登录、会话策略、协议记录</li>
+          <li>客户端：欢迎页、Step1~4 流程、进度头与表单校验</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 2</div>
+        <div class="tl-title">首页 · 黄历 · 运程 · 推送</div>
+        <div class="tl-dur">开发第 2 阶段</div>
+        <ul class="tl-tasks">
+          <li>Java：接入客户黄历算法、命盘计算、天人合一评分字段、日缓存 API</li>
+          <li>大模型编排：每日解读、宜忌说明、幸运密码与穿搭建议生成链路</li>
+          <li>uni-app 客户端：首页信息栏、日历主卡片、今日运程区、运势详情雷达与文案展示</li>
+          <li>每日 / 每周推送对接与后台配置项</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 3</div>
+        <div class="tl-title">择日 · AI 陪伴 · 助运壁纸</div>
+        <div class="tl-dur">开发第 3 阶段</div>
+        <ul class="tl-tasks">
+          <li>择日：事件模型、时间范围检索、结果排序与记录 / 报告接口</li>
+          <li>uni-app：择日动效页、结果列表与详情、记录列表动效</li>
+          <li>AI：会话、语音转写、图片上传识别、历史记录</li>
+          <li>壁纸生成、下载、分享水印；新用户壁纸弹窗</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 4</div>
+        <div class="tl-title">会员 · 我的 · 文化模块 · NFC 落地</div>
+        <div class="tl-dur">开发第 4 阶段</div>
+        <ul class="tl-tasks">
+          <li>VIP 订阅与限次策略（对话、择日、壁纸、运程提前查看等后台可配）</li>
+          <li>个人中心、签到与各类记录、反馈与关于页</li>
+          <li>IP 文化动画与图文内容后台可替换</li>
+          <li>NFC 落地页识别与商店跳转联调</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">Phase 5</div>
+        <div class="tl-title">联调测试 · 上架交付</div>
+        <div class="tl-dur">开发第 5 阶段</div>
+        <ul class="tl-tasks">
+          <li>双 APP 端到端回归、性能与安全基线检查</li>
+          <li>合规文案与隐私流程走查</li>
+          <li>应用商店资料与生产环境部署、验收交付</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-alt" id="s6">
+  <div class="container">
+    <div class="sec-num">PART 06</div>
+    <h2 class="sec-title">项目报价清单</h2>
+    <p class="sec-desc">单位：人民币（元）。开发人工成本仅列三项合计；第三方费用见 PART 04，不含在本总价内。</p>
+
+    <div class="qt-wrap">
+      <table class="qt">
+        <thead>
+          <tr>
+            <th style="width:56px">序号</th>
+            <th>工作项</th>
+            <th style="width:140px">报价（元）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>UI 设计</td>
+            <td class="amt">18,000</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>前端开发（uni-app）</td>
+            <td class="amt">68,400</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>后端开发（Java）</td>
+            <td class="amt">102,800</td>
+          </tr>
+          <tr class="gt">
+            <td></td>
+            <td>项目总报价</td>
+            <td>¥ 189,200</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sg">
+      <div class="sc"><div class="num">18.92<span class="unit"> 万</span></div><div class="desc">项目总报价</div></div>
+      <div class="sc"><div class="num">1.8<span class="unit"> 万</span></div><div class="desc">UI 设计</div></div>
+      <div class="sc"><div class="num">6.84<span class="unit"> 万</span></div><div class="desc">uni-app 前端</div></div>
+      <div class="sc"><div class="num">10.28<span class="unit"> 万</span></div><div class="desc">Java 后端</div></div>
+    </div>
+
+    <div class="nb">
+      <h4>报价说明</h4>
+      <ul class="nl">
+        <li>本报价为 <strong>UI + uni-app 前端 + Java 后端</strong>开发人工成本合计 <strong>¥189,200</strong>；<strong>不含</strong> PART 04 所列第三方及云资源费用（甲方自付或代充）。</li>
+        <li>客户提供的 <strong>Java 黄历算法</strong>以可集成源码 / SDK 形式交付为前提；若需逆向或重写，费用另议。</li>
+        <li>「后台可配置」若含独立运营管理端，需单列范围与报价。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-brand">妈祖 / 关公 神仙智能体 · 双 APP</div>
+    <p>产品功能方案 · 技术实施方案 · 项目报价单</p>
+    <p>文档版本 V1.0 &nbsp;|&nbsp; 2026年4月17日 &nbsp; </p>
+  </div>
+</footer>
+
+</body>
+</html>

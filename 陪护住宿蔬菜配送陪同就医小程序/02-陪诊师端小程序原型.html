@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>陪诊师工作台 · 陪诊师端小程序原型（全页面交互版）</title>
+<style>
+  :root{
+    --bg:#eef2f6; --panel:#ffffff; --ink:#152226; --muted:#6b7a80; --line:#e1e8ee;
+    --blue:#2f6fed; --blue-2:#e8f0ff; --blue-3:#1e4ec0;
+    --green:#1f8a70; --green-2:#e3f4ee;
+    --orange:#f59e0b; --orange-2:#fff5e0;
+    --red:#e45454; --red-2:#fde7e7;
+    --shadow:0 24px 60px rgba(31,42,46,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    min-height:100vh;color:var(--ink);
+    background:radial-gradient(circle at top right,#dde9ff 0,transparent 30%),linear-gradient(135deg,#f7f9fc 0%,var(--bg) 100%);
+    font-family:"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+    padding:24px 18px 60px;
+  }
+  button,input,textarea,select{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:transparent}
+  a{color:inherit;text-decoration:none}
+  .shell{max-width:1380px;margin:0 auto}
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px;flex-wrap:wrap}
+  .eyebrow{color:var(--blue);font-weight:700;letter-spacing:.08em;font-size:13px}
+  h1{margin:8px 0 6px;font-size:clamp(26px,3.6vw,42px);line-height:1.1;letter-spacing:-.03em}
+  .hero p{margin:0;color:var(--muted);max-width:760px;line-height:1.7}
+  .topnav{display:flex;gap:10px;flex-wrap:wrap}
+  .topnav a{padding:10px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.04)}
+  .topnav a.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .workspace{display:grid;grid-template-columns:430px 1fr;gap:28px;align-items:start}
+  .phone-wrap{position:sticky;top:20px}
+  .phone{
+    width:390px;min-height:844px;margin:0 auto;padding:14px;
+    border-radius:50px;background:#0e1a1d;box-shadow:var(--shadow);position:relative;
+  }
+  .phone::before{
+    content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);
+    width:120px;height:32px;border-radius:18px;background:#0a1416;z-index:5;
+  }
+  .screen{
+    overflow:hidden;height:816px;border-radius:38px;background:#f4f7fa;
+    position:relative;display:flex;flex-direction:column;
+  }
+  .statusbar{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 24px;font-size:13px;font-weight:700;flex-shrink:0}
+  .app-header{padding:6px 18px 14px;flex-shrink:0;background:linear-gradient(180deg,#e8f0ff,transparent);position:relative;z-index:1}
+  .app-header.plain{background:#fff;border-bottom:1px solid var(--line)}
+  .app-header .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .app-header .title{font-size:20px;font-weight:900;letter-spacing:-.03em}
+  .app-header .back{width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:18px;display:flex;align-items:center;justify-content:center}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--blue-2);color:var(--blue);font-size:12px;font-weight:700}
+  .pill.green{background:var(--green-2);color:var(--green)}
+  .pill.warn{background:var(--orange-2);color:var(--orange)}
+  .pill.red{background:var(--red-2);color:var(--red)}
+  .switch{position:relative;display:inline-block;width:44px;height:24px}
+  .switch input{display:none}
+  .switch .slider{position:absolute;inset:0;background:#cad8d3;border-radius:99px;transition:.2s}
+  .switch .slider::before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  .switch input:checked + .slider{background:var(--green)}
+  .switch input:checked + .slider::before{transform:translateX(20px)}
+  .content{flex:1;padding:14px 16px 90px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scroll-behavior:smooth}
+  .content::-webkit-scrollbar{width:4px}
+  .content::-webkit-scrollbar-thumb{background:#cad8d3;border-radius:8px}
+  .bottom-nav{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:8px 8px 14px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(14px);z-index:4}
+  .bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:14px;color:var(--muted);font-size:11px;font-weight:600}
+  .bottom-nav button .ico{font-size:20px;line-height:1}
+  .bottom-nav button.active{color:var(--blue)}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+  .card.flat{border:0;box-shadow:0 4px 14px rgba(31,42,46,.05)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .col{display:flex;flex-direction:column;gap:6px}
+  .muted{color:var(--muted);font-size:13px;line-height:1.55}
+  .small{font-size:12px}
+  .price{color:var(--blue);font-weight:900;font-size:18px}
+  .price .unit{font-size:12px;color:var(--muted);font-weight:400;margin-left:2px}
+  .tag{display:inline-block;padding:3px 8px;border-radius:8px;background:#f1f5f4;color:var(--muted);font-size:11px;margin:0 4px 4px 0}
+  .tag.blue{background:var(--blue-2);color:var(--blue)}
+  .tag.green{background:var(--green-2);color:var(--green)}
+  .tag.orange{background:var(--orange-2);color:var(--orange)}
+  .tag.red{background:var(--red-2);color:var(--red)}
+  .btn{min-height:44px;padding:0 18px;border-radius:14px;background:var(--blue);color:#fff;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 18px rgba(47,111,237,.18);transition:transform .12s ease}
+  .btn:active{transform:scale(.97)}
+  .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn.warn{background:var(--orange);box-shadow:0 8px 18px rgba(245,158,11,.22)}
+  .btn.success{background:var(--green);box-shadow:0 8px 18px rgba(31,138,112,.22)}
+  .btn.danger{background:var(--red);box-shadow:0 8px 18px rgba(228,84,84,.18)}
+  .btn.ghost{background:transparent;color:var(--blue);box-shadow:none;border:1px dashed var(--blue)}
+  .btn.full{width:100%}
+  .btn.lg{min-height:50px;font-size:16px;border-radius:16px}
+  .image-box{height:100px;border-radius:14px;background:linear-gradient(135deg,#cfdcf3,#edf2fb);display:flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:10px;position:relative;overflow:hidden}
+  .image-box .corner{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;padding:3px 8px;border-radius:8px;font-size:11px}
+  .seg{display:flex;gap:6px;margin-bottom:12px;overflow:auto;padding-bottom:2px;flex-wrap:nowrap}
+  .seg button{flex:0 0 auto;min-height:36px;padding:0 14px;border-radius:999px;background:#fff;color:var(--muted);border:1px solid var(--line);font-size:13px}
+  .seg button.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .form{display:flex;flex-direction:column;gap:12px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 4px;font-weight:600}
+  .field input,.field select,.field textarea{width:100%;min-height:44px;border-radius:13px;border:1px solid var(--line);background:#fff;padding:0 12px;color:var(--ink);outline:none;font-size:14px}
+  .field textarea{padding:10px 12px;min-height:80px;resize:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(47,111,237,.1)}
+  .stepper{display:flex;gap:6px;margin:12px 0}
+  .step{flex:1;text-align:center;font-size:11px;color:var(--muted)}
+  .step::before{content:"";display:block;width:10px;height:10px;margin:0 auto 6px;border-radius:50%;background:#cad8d3;position:relative}
+  .step.done{color:var(--blue);font-weight:700}
+  .step.done::before{background:var(--blue)}
+  .step.now{color:var(--blue);font-weight:700}
+  .step.now::before{background:var(--blue);box-shadow:0 0 0 5px rgba(47,111,237,.18)}
+  .progress-line{height:8px;border-radius:999px;background:#e7eeeb;overflow:hidden;margin:8px 0 12px}
+  .progress-line span{display:block;height:100%;background:var(--blue)}
+  .toast{position:absolute;left:22px;right:22px;bottom:90px;padding:13px 14px;border-radius:14px;background:#0e1a1d;color:#fff;box-shadow:0 16px 32px rgba(0,0,0,.22);transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s ease;font-size:13px;z-index:50}
+  .toast.show{transform:translateY(0);opacity:1}
+  .drawer{position:absolute;inset:auto 0 0 0;background:#fff;border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -20px 60px rgba(31,42,46,.2);transform:translateY(110%);transition:.28s ease;z-index:30;max-height:80%;overflow:auto}
+  .drawer.show{transform:translateY(0)}
+  .drawer .handle{width:36px;height:4px;border-radius:99px;background:#cfd9d4;margin:-8px auto 12px}
+  .modal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(14,26,29,.45);opacity:0;pointer-events:none;transition:.2s ease;z-index:40}
+  .modal.show{opacity:1;pointer-events:auto}
+  .modal-card{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:320px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+  .mask{position:absolute;inset:0;background:rgba(14,26,29,.35);opacity:0;pointer-events:none;transition:.2s ease;z-index:25}
+  .mask.show{opacity:1;pointer-events:auto}
+  .empty{padding:48px 0;text-align:center;color:var(--muted)}
+  .empty .ico{font-size:48px;margin-bottom:8px;opacity:.6}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .quick-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center;font-size:12px}
+  .quick-card .ico{font-size:24px;display:block;margin-bottom:4px}
+  .metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .metric span{color:var(--muted);font-size:12px}
+  .metric strong{display:block;margin-top:6px;font-size:20px}
+  .metric .delta{font-size:11px;margin-top:2px}
+  .metric .up{color:var(--green)}
+  .metric .down{color:var(--red)}
+  .order-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+  .order-card .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px}
+  .order-card.urgent{border-left:4px solid var(--orange);background:linear-gradient(90deg,#fff8e7,#fff)}
+  .map-mock{height:160px;border-radius:14px;background:linear-gradient(135deg,#dde9f3,#f1f5fb);position:relative;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);background-image:repeating-linear-gradient(45deg,rgba(47,111,237,.06) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(47,111,237,.06) 0 2px,transparent 2px 14px)}
+  .map-mock .pin{position:absolute;font-size:24px}
+  .map-mock .pin.user{top:60%;left:30%}
+  .map-mock .pin.nurse{top:25%;right:18%;animation:bounce 1.6s infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .map-mock .label{position:absolute;bottom:8px;right:10px;background:rgba(255,255,255,.9);padding:4px 10px;border-radius:99px;font-size:11px}
+  .avatar{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#cfdcf3,#edf2fb);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .income-bar{height:140px;background:#fff;border:1px solid var(--line);border-radius:14px;display:flex;align-items:flex-end;justify-content:space-around;padding:14px;gap:6px}
+  .income-bar .bar{width:24px;background:linear-gradient(180deg,var(--blue),#9bb9ff);border-radius:6px 6px 0 0;position:relative}
+  .income-bar .bar span{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}
+  .income-bar .lbl{font-size:11px;color:var(--muted);text-align:center;margin-top:6px}
+  .upload-box{border:2px dashed #cad8d3;border-radius:14px;padding:30px 14px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer;background:#fff}
+  .upload-box .ico{font-size:32px;margin-bottom:6px;display:block}
+  .upload-box.uploaded{border-color:var(--green);color:var(--green);background:#e3f4ee}
+  /* side panel */
+  .side-panel{display:flex;flex-direction:column;gap:18px}
+  .panel-card{background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 18px 44px rgba(31,42,46,.08);backdrop-filter:blur(12px)}
+  .panel-card h2{margin:0 0 12px;font-size:20px;letter-spacing:-.02em}
+  .pages-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .pages-grid button{padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--line);text-align:left;font-size:12px;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:6px;transition:.15s ease}
+  .pages-grid button:hover{border-color:var(--blue);background:var(--blue-2);color:var(--blue)}
+  .pages-grid button .num{display:inline-flex;width:22px;height:22px;border-radius:8px;background:var(--blue-2);color:var(--blue);font-size:10px;align-items:center;justify-content:center;font-weight:800}
+  .module-title{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font-size:13px;color:var(--blue);font-weight:800}
+  .module-title::before{content:"";width:14px;height:2px;background:var(--blue)}
+  .demo-script{font-size:13px;line-height:1.7}
+  .demo-script ol{padding-left:20px;margin:0}
+  @media (max-width:1080px){
+    .workspace{grid-template-columns:1fr}
+    .phone-wrap{position:relative;top:0}
+    .phone{width:min(390px,100%)}
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">NURSE / COMPANION MINI PROGRAM PROTOTYPE</div>
+      <h1>陪诊师工作台<br/>陪诊师端小程序原型</h1>
+      <p>覆盖<b>首页订单概览</b>、<b>订单管理</b>、<b>订单详情</b>、<b>服务进度</b>、<b>个人资料</b>、<b>收入明细</b>、<b>入驻申请</b>共 7 个核心页面。<b>订单均由后台派单</b>，陪诊端仅查看任务、上报进度与结算，无「接单/拒单」操作。</p>
+    </div>
+    <nav class="topnav">
+      <a href="index.html">总览</a>
+      <a href="01-用户端小程序原型.html">用户端</a>
+      <a href="02-陪诊师端小程序原型.html" class="active">陪诊师端</a>
+      <a href="03-平台管理后台原型.html">PC 后台</a>
+    </nav>
+  </section>
+
+  <section class="workspace">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen" id="screen">
+          <div class="statusbar">
+            <span id="clock">8:44</span>
+            <span>·····</span>
+            <span>5G ▮▮▮ 100%</span>
+          </div>
+          <div class="app-header" id="appHeader"></div>
+          <div class="content" id="appContent"></div>
+          <nav class="bottom-nav" id="bottomNav"></nav>
+          <div class="mask" id="mask" onclick="closeAll()"></div>
+          <div class="drawer" id="drawer"></div>
+          <div class="modal" id="modal"><div class="modal-card" id="modalCard"></div></div>
+          <div class="toast" id="toast">操作成功</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:10px;color:var(--muted);font-size:12px">
+        iPhone 15 Pro Max 模拟（390×844）
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="panel-card">
+        <h2>📱 全部页面索引（7 页）</h2>
+        <p class="muted small" style="margin:0 0 4px">点击直达任意页面，完整覆盖陪诊师业务闭环。</p>
+        <div class="module-title">订单管理</div>
+        <div class="pages-grid">
+          <button onclick="go('home')"><span class="num">1</span>首页 / 概览</button>
+          <button onclick="go('orders')"><span class="num">2</span>我的订单</button>
+          <button onclick="go('order-detail')"><span class="num">3</span>订单详情</button>
+          <button onclick="go('progress')"><span class="num">4</span>服务进度</button>
+        </div>
+        <div class="module-title">个人中心</div>
+        <div class="pages-grid">
+          <button onclick="go('profile')"><span class="num">5</span>个人资料</button>
+          <button onclick="go('income')"><span class="num">6</span>收入明细</button>
+          <button onclick="go('apply')"><span class="num">7</span>入驻申请</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>🎬 客户演示脚本（3 分钟）</h2>
+        <div class="demo-script">
+          <ol>
+            <li><b>登录与首页（30s）：</b>展示首页「在岗开关 + 今日概览 + <b>平台已派单</b>待服务提醒」。</li>
+            <li><b>派单任务（40s）：</b>「我的订单 → 待服务」查看后台指派的订单，<b>无接单按钮</b>；进入详情后点「进入服务 / 上报进度」。</li>
+            <li><b>服务进度（45s）：</b>演示节点上报（前往中 / 会合 / 完成），用户端与后台同步进度。</li>
+            <li><b>收入与提现（30s）：</b>切到「收入明细」，演示账单 + 一键提现。</li>
+            <li><b>入驻申请（30s）：</b>「个人中心 → 入驻申请」，演示资料与资质提交。</li>
+          </ol>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script>
+const state = {
+  page: 'home',
+  prev: [],
+  online: true,
+  serviceStarted: false,
+};
+
+const TABS = [
+  { key:'home',    icon:'🏠', label:'首页' },
+  { key:'orders',  icon:'📋', label:'订单' },
+  { key:'income',  icon:'💰', label:'收入' },
+  { key:'profile', icon:'👤', label:'我的' },
+];
+
+const $ = (id)=>document.getElementById(id);
+function toast(text){ const el=$('toast'); el.textContent=text; el.classList.add('show'); clearTimeout(window.__t); window.__t=setTimeout(()=>el.classList.remove('show'),2200); }
+function showDrawer(html){ $('drawer').innerHTML=html; $('mask').classList.add('show'); $('drawer').classList.add('show'); }
+function closeDrawer(){ $('mask').classList.remove('show'); $('drawer').classList.remove('show'); }
+function showModal(html){ $('modalCard').innerHTML=html; $('modal').classList.add('show'); }
+function closeModal(){ $('modal').classList.remove('show'); }
+function closeAll(){ closeDrawer(); closeModal(); }
+
+function go(page){
+  if(!pages[page]){ toast('页面开发中'); return; }
+  if(state.page!==page) state.prev.push(state.page);
+  state.page = page;
+  closeAll();
+  render();
+}
+function back(){ if(state.prev.length===0){ go('home'); return; } state.page = state.prev.pop(); render(); }
+
+function renderHeader(meta){
+  if(meta.hideHeader){ $('appHeader').innerHTML=''; return; }
+  $('appHeader').className = 'app-header' + (meta.plain?' plain':'');
+  const showBack = !meta.isTab;
+  $('appHeader').innerHTML = `
+    <div class="row">
+      ${showBack ? `<button class="back" onclick="back()">‹</button>` : `<div></div>`}
+      <div class="title">${meta.title || '陪诊师'}</div>
+      <div>${meta.actions||''}</div>
+    </div>
+    ${meta.subtitle ? `<div class="muted small" style="margin-top:4px;text-align:center">${meta.subtitle}</div>`:''}
+  `;
+}
+function renderBottomNav(){
+  const isTab = TABS.some(t=>t.key===state.page);
+  if(!isTab){ $('bottomNav').style.display='none'; return; }
+  $('bottomNav').style.display='grid';
+  $('bottomNav').innerHTML = TABS.map(t=>`
+    <button class="${state.page===t.key?'active':''}" onclick="go('${t.key}')">
+      <span class="ico">${t.icon}</span>${t.label}
+    </button>
+  `).join('');
+}
+
+function toggleOnline(){
+  state.online = !state.online;
+  toast(state.online ? '已上岗 · 可接收平台派单' : '已下班 · 本期暂停接收派单');
+  render();
+}
+function startService(){
+  state.serviceStarted = true;
+  toast('服务已开始 · 进度已上报');
+  render();
+}
+function finishService(){
+  showModal(`
+    <div style="font-size:48px">✅</div>
+    <h3 style="margin:6px 0">服务已完成</h3>
+    <p class="muted small">收入 ¥268 已计入账户，预计 5 分钟后可提现</p>
+    <button class="btn full" style="margin-top:14px" onclick="closeModal();state.serviceStarted=false;go('income')">查看收入</button>
+  `);
+}
+
+const pages = {};
+
+/* 1. 首页 */
+pages.home = ()=>({
+  meta:{ title:'陪诊师工作台', isTab:true,
+    actions:`<label class="switch"><input type="checkbox" ${state.online?'checked':''} onchange="toggleOnline()"><span class="slider"></span></label>` },
+  body:`
+    <div class="card flat" style="background:linear-gradient(135deg,${state.online?'#2f6fed,#78a4ff':'#9aa5ad,#cad8d3'});color:#fff;border:0">
+      <div class="row">
+        <div>
+          <div style="opacity:.85;font-size:12px">${state.online?'🟢 在岗 · 可接收平台派单':'⚪ 已下班 · 暂停派单'}</div>
+          <h3 style="margin:6px 0 4px">您好，王护理师</h3>
+          <div style="opacity:.85;font-size:13px">今天是 ${new Date().getMonth()+1}月${new Date().getDate()}日，加油哦 💪</div>
+        </div>
+        <div style="font-size:48px">${state.online?'👩‍⚕️':'😴'}</div>
+      </div>
+      <div class="grid-3" style="margin-top:14px;gap:6px">
+        <div style="text-align:center"><b style="font-size:18px">${state.serviceStarted?2:3}</b><div style="opacity:.85;font-size:11px">待服务</div></div>
+        <div style="text-align:center"><b style="font-size:18px">${state.serviceStarted?1:0}</b><div style="opacity:.85;font-size:11px">服务中</div></div>
+        <div style="text-align:center"><b style="font-size:18px">¥${state.serviceStarted?'804':'536'}</b><div style="opacity:.85;font-size:11px">今日收入</div></div>
+      </div>
+    </div>
+
+    <div class="grid-4">
+      <button class="quick-card" onclick="go('orders')"><span class="ico">📋</span>派单任务</button>
+      <button class="quick-card" onclick="go('orders')"><span class="ico">🩺</span>服务中</button>
+      <button class="quick-card" onclick="go('income')"><span class="ico">💰</span>提现</button>
+      <button class="quick-card" onclick="go('profile')"><span class="ico">⚙</span>设置</button>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:8px"><h3 style="margin:0;font-size:14px">🔔 平台已派单 · 待服务</h3><span class="pill">${state.serviceStarted?'2':'3'} 单</span></div>
+      <div class="order-card urgent" style="margin-bottom:0">
+        <div class="meta"><span>📍 距您 2.4km</span><span class="pill blue">平台派单</span></div>
+        <b>全程陪诊 4 小时</b>
+        <div class="muted small" style="margin:4px 0">明天 08:30 · 省人民医院 心内科 · 张先生 67岁</div>
+        <p class="muted small" style="margin:8px 0 0">订单由后台指派，无需抢单/接单，请按时到岗。</p>
+        <button class="btn full" style="margin-top:8px" onclick="go('order-detail')">查看任务详情 ›</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:8px"><h3 style="margin:0;font-size:14px">📊 本月数据</h3><span class="muted small">${new Date().getMonth()+1}月</span></div>
+      <div class="grid-3">
+        <div class="metric"><span>完成订单</span><strong>32</strong><div class="delta up">↑ 12%</div></div>
+        <div class="metric"><span>评分</span><strong>4.9</strong><div class="delta up">↑ 0.1</div></div>
+        <div class="metric"><span>准时到岗</span><strong>96%</strong><div class="delta up">↑ 3%</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📢 平台公告</h3>
+      <div class="muted small" style="margin-bottom:6px">· 5月新政：评分 4.9+ 陪诊师可优先派单</div>
+      <div class="muted small" style="margin-bottom:6px">· 新增「住院陪护」服务类型，欢迎报名</div>
+      <div class="muted small">· 提现到账时间从 T+2 缩短至 T+1</div>
+    </div>
+  `
+});
+
+/* 2. 我的订单（全部为后台派单，无接单操作） */
+pages.orders = ()=>({
+  meta:{ title:'我的订单', isTab:true },
+  body:`
+    <div class="seg">
+      <button class="active">待服务 (${state.serviceStarted?2:3})</button>
+      <button onclick="toast('筛选：服务中')">服务中 (${state.serviceStarted?1:0})</button>
+      <button onclick="toast('筛选：已完成')">已完成</button>
+      <button onclick="toast('筛选：已取消')">已取消</button>
+    </div>
+
+    ${state.serviceStarted?`
+      <div style="margin:6px 0 8px;font-weight:700;font-size:13px;color:var(--blue)">— 服务中（平台已派单）—</div>
+      <div class="order-card" onclick="go('progress')" style="cursor:pointer;border-color:var(--blue)">
+        <div class="meta"><span>进行中</span><span class="pill">服务中</span></div>
+        <div class="row">
+          <div style="font-size:32px">🩺</div>
+          <div style="flex:1">
+            <b>全程陪诊 · 张先生</b>
+            <div class="muted small">明天 08:30 · 省人民医院 心内科</div>
+          </div>
+          <div class="price">¥268</div>
+        </div>
+        <button class="btn full" style="margin-top:8px" onclick="event.stopPropagation();go('progress')">上报服务进度 ›</button>
+      </div>
+    `:''}
+
+    ${!state.serviceStarted?`
+    <div class="order-card urgent" onclick="go('order-detail')" style="cursor:pointer">
+      <div class="meta"><span>平台指派 · 30 分钟前</span><span class="pill blue">待服务</span></div>
+      <div class="row">
+        <div style="font-size:32px">🩺</div>
+        <div style="flex:1">
+          <b>全程陪诊 4 小时</b>
+          <div class="muted small">明天 08:30 · 省人民医院 心内科</div>
+          <div style="margin-top:4px"><span class="tag blue">距您 2.4km</span><span class="tag green">老人</span></div>
+        </div>
+        <div class="price">¥268</div>
+      </div>
+    </div>
+    `:''}
+
+    <div class="order-card" onclick="go('order-detail')" style="cursor:pointer">
+      <div class="meta"><span>平台指派 · 2 小时前</span><span class="pill blue">待服务</span></div>
+      <div class="row">
+        <div style="font-size:32px">🧪</div>
+        <div style="flex:1">
+          <b>检查陪同 2 小时</b>
+          <div class="muted small">5/12 14:00 · 浙大二院 影像科</div>
+          <div style="margin-top:4px"><span class="tag blue">距您 5.6km</span></div>
+        </div>
+        <div class="price">¥158</div>
+      </div>
+    </div>
+
+    <div class="order-card" onclick="go('order-detail')" style="cursor:pointer">
+      <div class="meta"><span>平台指派 · 昨天</span><span class="pill blue">待服务</span></div>
+      <div class="row">
+        <div style="font-size:32px">💊</div>
+        <div style="flex:1">
+          <b>代办取药 1 小时</b>
+          <div class="muted small">今天 16:00 · 邵逸夫医院 西药房</div>
+          <div style="margin-top:4px"><span class="tag blue">距您 1.8km</span><span class="tag orange">仅取药</span></div>
+        </div>
+        <div class="price">¥88</div>
+      </div>
+    </div>
+  `
+});
+
+/* 3. 订单详情 */
+pages['order-detail'] = ()=>({
+  meta:{ title:'订单详情' },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e8f0ff,#fff);border-color:var(--blue)">
+      <div class="row">
+        <div>
+          <div class="pill blue">平台已指派 · 请按时到岗</div>
+          <h3 style="margin:8px 0 4px;font-size:17px">全程陪诊 4 小时</h3>
+          <div class="muted small">明日 08:30 · 省人民医院 心内科</div>
+        </div>
+        <div class="price" style="font-size:24px">¥268</div>
+      </div>
+      <p class="muted small" style="margin:10px 0 0">本单由运营后台派单至您，无需在端内接单。若有冲突请联系平台改派。</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">👤 就诊人信息</h3>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">姓名</span><b>张先生</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">年龄 / 性别</span><b>67岁 / 男</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">联系电话</span><b>138****8888</b></div>
+      <div class="row"><span class="muted small">家属备注</span><b style="font-size:12px;text-align:right">耳背需大声说话<br>轮椅可上下楼</b></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📍 服务地点</h3>
+      <div class="map-mock"><div class="pin user">📍</div><div class="pin nurse" style="top:30%;left:35%">🏥</div><div class="label">距您 2.4km · 步行 28 分钟</div></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">医院</span><b>浙江省人民医院</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">会合点</span><b>1 楼门诊大厅 8 号自助机</b></div>
+      <div class="row"><span class="muted small">就诊事项</span><b style="font-size:12px;text-align:right">挂号 → 抽血 → 心电图 → 缴费 → 取药</b></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">💰 收入明细</h3>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">订单金额</span><span>¥268.00</span></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">平台服务费 (8%)</span><span style="color:var(--red)">-¥21.44</span></div>
+      <div class="row" style="border-top:1px dashed var(--line);padding-top:6px"><b>实际到账</b><div class="price">¥246.56</div></div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="toast('已打开与平台客服会话，可申请改派')">联系平台</button>
+      <button class="btn lg" style="flex:1.4" onclick="go('progress')">进入服务 · 上报进度</button>
+    </div>
+  `
+});
+
+/* 4. 服务进度 */
+pages.progress = ()=>({
+  meta:{ title:'服务进度', actions:`<button class="back" onclick="toast('已联系用户')">📞</button>` },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e8f0ff,#fff)">
+      <div class="row">
+        <div>
+          <div class="pill">${state.serviceStarted?'服务中':'前往中'}</div>
+          <h3 style="margin:6px 0 4px">全程陪诊 4 小时</h3>
+          <div class="muted small">张先生 · 省人民医院 心内科</div>
+        </div>
+        <div style="font-size:48px">${state.serviceStarted?'🏥':'🚶'}</div>
+      </div>
+      <div class="stepper">
+        <div class="step done">平台派单</div>
+        <div class="step ${state.serviceStarted?'done':'now'}">前往中</div>
+        <div class="step ${state.serviceStarted?'now':''}">服务中</div>
+        <div class="step">完成</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📍 实时位置</h3>
+      <div class="map-mock"><div class="pin user">🏥</div><div class="pin nurse">🚶</div><div class="label">${state.serviceStarted?'已抵达医院':'距医院 1.2km · 约 12 分钟'}</div></div>
+      <button class="btn secondary full" onclick="toast('位置每 30s 上报，用户端可见')">📡 共享实时位置中</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📋 服务节点上报</h3>
+      <div class="col">
+        <button class="row" style="background:#e3f4ee;color:var(--green);padding:10px 12px;border-radius:12px;width:100%;font-weight:700">
+          ✅ 已确认就诊人信息<span style="font-size:12px;color:var(--muted);font-weight:400">08:25 已上报</span>
+        </button>
+        <button class="row" style="background:#e3f4ee;color:var(--green);padding:10px 12px;border-radius:12px;width:100%;font-weight:700">
+          ✅ 已抵达医院附近<span style="font-size:12px;color:var(--muted);font-weight:400">08:42 已上报</span>
+        </button>
+        <button class="row" style="background:${state.serviceStarted?'#e3f4ee;color:var(--green)':'#fff;border:1px dashed var(--blue);color:var(--blue)'};padding:10px 12px;border-radius:12px;width:100%;font-weight:700" onclick="${state.serviceStarted?'':'startService()'}">
+          ${state.serviceStarted?'✅ 已与用户会合':'📍 上报：已与用户会合'}<span style="font-size:12px;color:var(--muted);font-weight:400">${state.serviceStarted?'08:55 已上报':'点击上报'}</span>
+        </button>
+        <button class="row" style="background:#fff;border:1px dashed var(--blue);color:var(--blue);padding:10px 12px;border-radius:12px;width:100%;font-weight:700" onclick="toast('已上报：完成挂号')">
+          📍 上报：完成挂号 / 取号<span style="font-size:12px;color:var(--muted);font-weight:400">点击上报</span>
+        </button>
+        <button class="row" style="background:#fff;border:1px dashed var(--blue);color:var(--blue);padding:10px 12px;border-radius:12px;width:100%;font-weight:700" onclick="toast('已上报：检查完成')">
+          📍 上报：检查 / 取药完成<span style="font-size:12px;color:var(--muted);font-weight:400">点击上报</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📷 服务凭证（可选）</h3>
+      <div class="grid-3">
+        <div class="upload-box uploaded" style="padding:16px 6px;font-size:11px">✅<br>挂号凭证</div>
+        <div class="upload-box" style="padding:16px 6px;font-size:11px" onclick="toast('已上传凭证')"><span class="ico" style="font-size:22px">📷</span>检查报告</div>
+        <div class="upload-box" style="padding:16px 6px;font-size:11px" onclick="toast('已上传凭证')"><span class="ico" style="font-size:22px">📷</span>取药小票</div>
+      </div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="toast('已通话用户')">📞 联系用户</button>
+      ${state.serviceStarted ? `
+        <button class="btn success lg" style="flex:1.4" onclick="finishService()">✅ 确认服务完成</button>
+      ` : `
+        <button class="btn lg" style="flex:1.4" onclick="startService()">📍 上报：已与用户会合</button>
+      `}
+    </div>
+  `
+});
+
+/* 5. 个人资料 */
+pages.profile = ()=>({
+  meta:{ title:'我的', isTab:true, plain:true },
+  body:`
+    <div class="card flat" style="background:linear-gradient(135deg,#2f6fed,#78a4ff);color:#fff;border:0">
+      <div class="row">
+        <div class="avatar" style="background:rgba(255,255,255,.22);font-size:32px">👩‍⚕️</div>
+        <div style="flex:1">
+          <b style="font-size:18px">王护理师</b>
+          <div style="opacity:.85;font-size:12px;margin-top:2px">护理 6 年 · 评分 ★ 4.9 · 已认证</div>
+          <div style="margin-top:4px"><span class="tag" style="background:rgba(255,255,255,.22);color:#fff">资质认证</span><span class="tag" style="background:rgba(255,255,255,.22);color:#fff">三甲医院</span></div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:14px;gap:6px">
+        <div style="text-align:center"><b style="font-size:18px">326</b><div style="opacity:.85;font-size:11px">总订单</div></div>
+        <div style="text-align:center"><b style="font-size:18px">¥58,720</b><div style="opacity:.85;font-size:11px">总收入</div></div>
+        <div style="text-align:center"><b style="font-size:18px">98%</b><div style="opacity:.85;font-size:11px">好评率</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📋 个人资料</h3>
+      <div class="form">
+        <div class="field"><label>姓名</label><input value="王护理师"></div>
+        <div class="field"><label>个人简介</label><textarea>6 年护理经验，熟悉省人民医院、邵逸夫医院流程，普通话/河北话均可，擅长老年病人陪护。</textarea></div>
+        <div class="field"><label>擅长服务</label><input value="全程陪诊 / 检查陪同 / 住院陪护"></div>
+        <div class="field"><label>服务价格（平台审核）</label><input value="268 元/次（4 小时）"></div>
+        <div class="field"><label>每日服务上限（平台派单）</label><input value="2 单"></div>
+      </div>
+      <button class="btn full" style="margin-top:14px" onclick="toast('资料已保存 · 价格修改需平台审核')">保存修改</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">🛡 资质证书</h3>
+      <div class="grid-3">
+        <div class="upload-box uploaded" style="padding:14px 6px;font-size:11px">✅<br>护士证</div>
+        <div class="upload-box uploaded" style="padding:14px 6px;font-size:11px">✅<br>院感培训</div>
+        <div class="upload-box uploaded" style="padding:14px 6px;font-size:11px">✅<br>健康证</div>
+      </div>
+      <p class="muted small" style="margin:10px 0 0">证书有效期：2026-12-30，到期前 30 天平台会提醒更新。</p>
+    </div>
+
+    <div class="card">
+      <button class="row" style="width:100%;padding:6px 0" onclick="go('income')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">💰</span>收入明细 / 提现</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="go('apply')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">📝</span>入驻 / 资质重审</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="toast('已打开服务规范')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">📖</span>陪诊师服务规范</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="toast('已联系平台客服')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">💬</span>联系平台客服</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0;color:var(--red)" onclick="toast('已退出登录')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🔓</span>退出登录</span><span>›</span></button>
+    </div>
+  `
+});
+
+/* 6. 收入明细 */
+pages.income = ()=>({
+  meta:{ title:'收入明细', isTab:true, actions:`<button class="back" onclick="toast('查看月度账单')">📊</button>` },
+  body:`
+    <div class="card flat" style="background:linear-gradient(135deg,#2f6fed,#78a4ff);color:#fff;border:0">
+      <div style="opacity:.85;font-size:13px">可提现余额</div>
+      <div style="font-size:32px;font-weight:900;margin:8px 0">¥1,268.00</div>
+      <div class="row" style="margin-top:10px;gap:8px">
+        <button class="btn" style="background:#fff;color:var(--blue);flex:1;box-shadow:none" onclick="showModal('<div style=&quot;font-size:48px&quot;>💰</div><h3>提现申请</h3><p class=&quot;muted small&quot;>¥1,268.00 → 微信零钱</p><p class=&quot;muted small&quot;>预计 T+1 到账</p><div style=&quot;display:flex;gap:8px;margin-top:14px&quot;><button class=&quot;btn secondary full&quot; onclick=&quot;closeModal()&quot;>取消</button><button class=&quot;btn full&quot; onclick=&quot;closeModal();toast(&apos;提现申请已提交&apos;)&quot;>确认</button></div>')">立即提现</button>
+        <button class="btn" style="background:rgba(255,255,255,.22);color:#fff;flex:1;box-shadow:none" onclick="toast('查看提现记录')">提现记录</button>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="metric"><span>本月收入</span><strong>¥4,520</strong><div class="delta up">↑ 18%</div></div>
+      <div class="metric"><span>已结算</span><strong>¥3,250</strong></div>
+      <div class="metric"><span>待结算</span><strong>¥1,270</strong></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 style="margin:0;font-size:14px">📈 近 7 日收入</h3>
+        <span class="muted small">日均 ¥542</span>
+      </div>
+      <div class="income-bar">
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:60%"><span>¥420</span></div><div class="lbl">5/4</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:78%"><span>¥520</span></div><div class="lbl">5/5</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:55%"><span>¥360</span></div><div class="lbl">5/6</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:90%"><span>¥620</span></div><div class="lbl">5/7</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:85%"><span>¥580</span></div><div class="lbl">5/8</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:72%"><span>¥486</span></div><div class="lbl">5/9</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center"><div class="bar" style="height:96%"><span>¥672</span></div><div class="lbl">今日</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 style="margin:0;font-size:14px">📋 收入流水</h3>
+        <select onchange="toast('已切换月份')" style="border:1px solid var(--line);border-radius:10px;padding:4px 8px;font-size:12px;background:#fff"><option>本月</option><option>上月</option><option>近 3 月</option></select>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
+          <div><b>全程陪诊 · 张先生</b><div class="muted small">2026-05-10 12:36</div></div>
+          <div style="text-align:right"><div class="price">+¥246.56</div><div class="muted small">已结算</div></div>
+        </div>
+        <div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
+          <div><b>检查陪同 · 李女士</b><div class="muted small">2026-05-09 14:20</div></div>
+          <div style="text-align:right"><div class="price">+¥145.36</div><div class="muted small">已结算</div></div>
+        </div>
+        <div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
+          <div><b>全程陪诊 · 王先生</b><div class="muted small">2026-05-09 09:00</div></div>
+          <div style="text-align:right"><div class="price">+¥246.56</div><div class="muted small">已结算</div></div>
+        </div>
+        <div class="row" style="padding:10px 0;border-bottom:1px solid var(--line)">
+          <div><b>住院陪护 · 周大爷</b><div class="muted small">2026-05-08 20:00</div></div>
+          <div style="text-align:right"><div class="price">+¥366.16</div><div class="muted small">已结算</div></div>
+        </div>
+        <div class="row" style="padding:10px 0">
+          <div><b>提现到微信</b><div class="muted small">2026-05-07 10:32</div></div>
+          <div style="text-align:right"><div class="price" style="color:var(--red)">-¥3,000</div><div class="muted small">已到账</div></div>
+        </div>
+      </div>
+      <button class="btn ghost full" style="margin-top:10px" onclick="toast('加载更多')">查看更多 ›</button>
+    </div>
+  `
+});
+
+/* 7. 入驻申请 */
+pages.apply = ()=>({
+  meta:{ title:'陪诊师入驻申请', subtitle:'填写信息后 1-3 个工作日内审核完成' },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e3f4ee,#fff)">
+      <h3 style="margin:0 0 6px;font-size:15px">🎉 加入安心陪护</h3>
+      <p class="muted small" style="margin:0">订单由平台统一派单，稳定客源 · 平台仅收 8% 服务费 · T+1 快速结算</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">① 个人基本信息</h3>
+      <div class="form">
+        <div class="field"><label>真实姓名 <span style="color:var(--red)">*</span></label><input value="王护理师"></div>
+        <div class="field"><label>身份证号 <span style="color:var(--red)">*</span></label><input value="3301**********0928"></div>
+        <div class="field"><label>性别 / 年龄</label><input value="女 / 35岁"></div>
+        <div class="field"><label>手机号 <span style="color:var(--red)">*</span></label><input value="138****6688"></div>
+        <div class="field"><label>常驻城市 / 区</label><input value="杭州市 上城区"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">② 专业经历</h3>
+      <div class="form">
+        <div class="field"><label>护理 / 医疗经验</label><select><option>1 年以下</option><option>1-3 年</option><option selected>3-6 年</option><option>6 年以上</option></select></div>
+        <div class="field"><label>擅长服务类型</label><div class="seg" style="margin:0;flex-wrap:wrap"><button class="active" onclick="this.classList.toggle('active')">全程陪诊</button><button onclick="this.classList.toggle('active');this.classList.add('active')">检查陪同</button><button class="active" onclick="this.classList.toggle('active')">代办取药</button><button onclick="this.classList.toggle('active')">住院陪护</button></div></div>
+        <div class="field"><label>熟悉的医院</label><input value="省人民医院、邵逸夫医院、浙大二院"></div>
+        <div class="field"><label>个人简介（用户可见）</label><textarea>6 年护理经验，普通话/河北话均可，擅长老年病人陪护，沟通耐心。</textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">③ 上传资质证书 <span class="muted small">(必传 ≥ 2 项)</span></h3>
+      <div class="grid-3">
+        <div class="upload-box uploaded">✅<br>护士证</div>
+        <div class="upload-box uploaded">✅<br>院感培训</div>
+        <div class="upload-box" onclick="this.classList.toggle('uploaded');this.innerHTML=this.classList.contains('uploaded')?'✅<br>健康证':'<span class=\\'ico\\'>📷</span>健康证';toast('已上传')"><span class="ico">📷</span>健康证</div>
+        <div class="upload-box" onclick="this.classList.toggle('uploaded');this.innerHTML=this.classList.contains('uploaded')?'✅<br>身份证正':'<span class=\\'ico\\'>📷</span>身份证正';toast('已上传')"><span class="ico">📷</span>身份证正</div>
+        <div class="upload-box" onclick="this.classList.toggle('uploaded');this.innerHTML=this.classList.contains('uploaded')?'✅<br>身份证反':'<span class=\\'ico\\'>📷</span>身份证反';toast('已上传')"><span class="ico">📷</span>身份证反</div>
+        <div class="upload-box" onclick="this.classList.toggle('uploaded');this.innerHTML=this.classList.contains('uploaded')?'✅<br>无犯罪证明':'<span class=\\'ico\\'>📷</span>无犯罪证明';toast('已上传')"><span class="ico">📷</span>无犯罪证明</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">④ 结算账户</h3>
+      <div class="form">
+        <div class="field"><label>结算方式</label><select><option selected>微信零钱</option><option>支付宝</option><option>银行卡</option></select></div>
+        <div class="field"><label>账户姓名（必须本人）</label><input value="王*护"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="muted small" style="margin:0;line-height:1.7">
+        ⚠️ 提交后请耐心等待平台审核（1-3 个工作日）。审核期间如需补充资料，平台客服将通过短信/电话联系您。
+        提交即表示同意《陪诊师入驻协议》《平台服务规范》。
+      </p>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="toast('草稿已保存')">保存草稿</button>
+      <button class="btn lg" style="flex:1.5" onclick="showModal('<div style=&quot;font-size:48px&quot;>📨</div><h3>申请已提交</h3><p class=&quot;muted small&quot;>预计 1-3 个工作日完成审核<br>结果将通过短信通知您</p><button class=&quot;btn full&quot; style=&quot;margin-top:14px&quot; onclick=&quot;closeModal();go(&apos;home&apos;)&quot;>返回首页</button>')">提交申请</button>
+    </div>
+  `
+});
+
+function render(){
+  const def = pages[state.page] && pages[state.page]();
+  if(!def){ go('home'); return; }
+  renderHeader(def.meta || {});
+  $('appContent').innerHTML = def.body || '';
+  renderBottomNav();
+  $('appContent').scrollTop = 0;
+}
+
+function tickClock(){
+  const d = new Date();
+  $('clock').textContent = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+setInterval(tickClock, 30000); tickClock();
+
+render();
+</script>
+</body>
+</html>

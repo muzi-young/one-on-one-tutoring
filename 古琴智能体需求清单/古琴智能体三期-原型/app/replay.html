@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>直播回放 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="phone-stage">
+  <div class="phone"><div class="phone-screen">
+    <div class="status-bar dark" style="background:#000;color:#fff;"><span>9:41</span><span>●●●● 📶 🔋</span></div>
+    <div class="app-body" style="background:#fff;">
+      <!-- 视频播放器 -->
+      <div style="position:relative;height:230px;background:linear-gradient(135deg,#3a2f1e,#7a5a2c);color:#fff;">
+        <div style="position:absolute;top:10px;left:14px;right:14px;display:flex;justify-content:space-between;">
+          <a href="home.html" style="color:#fff;font-size:22px;">‹</a>
+          <span style="font-size:18px;">⋮</span>
+        </div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:24px;">▶</div>
+        <!-- 进度条 -->
+        <div style="position:absolute;bottom:14px;left:14px;right:14px;display:flex;align-items:center;gap:10px;font-size:11px;">
+          <span>12:38</span>
+          <div style="flex:1;height:4px;background:rgba(255,255,255,.3);border-radius:2px;position:relative;">
+            <div style="width:30%;height:100%;background:var(--gold);border-radius:2px;"></div>
+            <div style="position:absolute;left:30%;top:-3px;width:10px;height:10px;background:#fff;border-radius:50%;transform:translateX(-50%);"></div>
+          </div>
+          <span>42:18</span>
+          <span style="font-size:14px;">⛶</span>
+        </div>
+      </div>
+
+      <!-- 标题信息 -->
+      <div style="padding:14px;border-bottom:8px solid #f7f3e9;">
+        <h2 class="ink-title" style="margin:0 0 6px;font-size:17px;">《阳关三叠》入门直播回放</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;">
+          <span>👁 8.2万 · 3天前 · 数字人 阿琴 主持</span>
+          <span style="display:flex;gap:14px;font-size:18px;color:#333;">♥ ⭐ ↗</span>
+        </div>
+      </div>
+
+      <!-- Tab 切换 -->
+      <div style="display:flex;border-bottom:1px solid #eee;background:#fff;position:sticky;top:0;z-index:5;font-size:13px;">
+        <div style="flex:1;text-align:center;padding:12px;border-bottom:2px solid var(--gold);color:var(--gold);font-weight:600;">章节</div>
+        <div style="flex:1;text-align:center;padding:12px;color:#888;">弹幕</div>
+        <div style="flex:1;text-align:center;padding:12px;color:#888;">问答</div>
+        <div style="flex:1;text-align:center;padding:12px;color:#888;">课程</div>
+      </div>
+
+      <!-- 章节列表 -->
+      <div style="padding:8px 14px;">
+        <div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--gold);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><b style="color:var(--gold);font-size:13px;">▶ 第 2 段 · 滚拂技法讲解</b><div style="font-size:11px;color:#888;margin-top:3px;">10:00 - 18:30 · 名家示范 + 分解动作</div></div>
+            <span style="font-size:11px;color:var(--gold);">观看中</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><b>第 1 段 · 开场与曲目背景</b><div style="font-size:11px;color:#888;margin-top:3px;">00:00 - 10:00</div></div>
+            <span style="color:#888;">▶</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><b>第 3 段 · 课程介绍 + 优惠卡片</b><div style="font-size:11px;color:#888;margin-top:3px;">18:30 - 23:00 · 直播专属优惠</div></div>
+            <span style="color:#888;">▶</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:12px;font-size:13px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div><b>第 4 段 · 弹幕答疑精华</b><div style="font-size:11px;color:#888;margin-top:3px;">23:00 - 42:18 · 12 个热门问题</div></div>
+            <span style="color:#888;">▶</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 相关推荐 -->
+      <div class="section">
+        <h4 class="ink-title" style="font-size:14px;margin:0 0 8px;">更多回放</h4>
+        <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;">
+          <div style="min-width:140px;background:#fff;border-radius:10px;overflow:hidden;">
+            <div style="height:80px;background:linear-gradient(135deg,#f0c2a0,#c5836d);position:relative;">
+              <span style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.5);color:#fff;font-size:9px;padding:1px 4px;border-radius:3px;">28:46</span>
+            </div>
+            <div style="padding:6px 8px;font-size:12px;">琴弦保养答疑</div>
+          </div>
+          <div style="min-width:140px;background:#fff;border-radius:10px;overflow:hidden;">
+            <div style="height:80px;background:linear-gradient(135deg,#a8c0e0,#5b7ba6);position:relative;">
+              <span style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.5);color:#fff;font-size:9px;padding:1px 4px;border-radius:3px;">35:12</span>
+            </div>
+            <div style="padding:6px 8px;font-size:12px;">《梅花三弄》直播</div>
+          </div>
+        </div>
+      </div>
+      <div style="height:20px;"></div>
+    </div>
+  </div></div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="app/replay.html" data-crumbs="用户端APP / <b>直播回放</b>" data-depth="1"></script>
+</body></html>

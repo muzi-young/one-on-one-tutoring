@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>社区洗车小程序 · 产品功能方案 · 技术实施方案 · 项目报价单</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    @page{size:A4 portrait;margin:0}
+    :root{
+      --primary:#b46a2b;
+      --primary-light:#d9a46d;
+      --primary-dark:#8b4e1e;
+      --secondary:#24404f;
+      --accent:#e8c48d;
+      --accent2:#7e9f8f;
+      --dark:#111827;
+      --text:#2f3a44;
+      --text-light:#6b7280;
+      --bg:#f7f5f2;
+      --white:#fff;
+      --border:#d4c8b8;
+      --alt:#f1ece6;
+      --gold:#d7b078;
+      --gold-soft:#f4ddbb;
+      --r:10px;
+      --rl:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{-webkit-font-smoothing:antialiased}
+    body{
+      font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'Microsoft YaHei',sans-serif;
+      color:var(--text);background:#c8c4be;line-height:1.75;
+      width:210mm;margin:0 auto;
+    }
+    a{text-decoration:none}
+
+    /* ===== 页面容器 ===== */
+    .page{
+      width:210mm;min-height:297mm;padding:18mm;
+      background:var(--bg);position:relative;overflow:hidden;
+    }
+    .page-alt{background:var(--alt)}
+    .page-cover{
+      padding:0;height:297mm;min-height:297mm;
+      background:#18232d;
+      background:radial-gradient(circle at 18% 78%,rgba(215,176,120,.12),transparent 22%),
+                 radial-gradient(circle at 84% 18%,rgba(215,176,120,.08),transparent 24%),
+                 linear-gradient(135deg,#10161d 0%,#18232d 38%,#223744 100%);
+      display:flex;flex-direction:column;
+    }
+    .page-summary{
+      padding:0;height:297mm;min-height:297mm;
+      background:#18232d;
+      background:radial-gradient(circle at 15% 80%,rgba(215,176,120,.1),transparent 30%),
+                 radial-gradient(circle at 85% 15%,rgba(215,176,120,.06),transparent 28%),
+                 linear-gradient(160deg,#10161d 0%,#18232d 40%,#1e3040 100%);
+      display:flex;flex-direction:column;justify-content:space-between;
+      color:#fff;position:relative;overflow:hidden;
+    }
+    .summary-inner{padding:40px 24mm 0;display:flex;flex-direction:column;gap:36px;flex:1;justify-content:center}
+    .summary-header .sec-bar{background:linear-gradient(90deg,var(--gold),var(--accent))}
+    .summary-header .sec-num{color:var(--accent)}
+    .summary-header .sec-title{color:#fff;font-size:28px}
+    .summary-header .sec-desc{color:rgba(255,255,255,.5)}
+    .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .summary-card{padding:24px 28px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);min-height:100px;display:flex;flex-direction:column;justify-content:center}
+    .summary-card-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:10px;font-weight:600}
+    .summary-card-value{font-family:'Noto Serif SC',serif;font-size:28px;font-weight:900;color:var(--gold-soft);line-height:1.2}
+    .summary-card-value .s-unit{font-size:14px;font-weight:500;color:rgba(255,255,255,.6);margin-left:4px}
+    .summary-note{padding:24px 28px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.72);font-size:13px;line-height:2}
+    .summary-note strong{color:var(--gold-soft);font-weight:700}
+    .summary-note-title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38);margin-bottom:12px;font-weight:700}
+    .footer-summary{
+      text-align:center;padding:20px 24mm 24px;
+      color:rgba(255,255,255,.48);font-size:11px;line-height:1.8;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+    .footer-summary .footer-brand{font-family:'Noto Serif SC',serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:6px}
+
+    .page-accent{position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:#b46a2b;background:linear-gradient(90deg,var(--primary),var(--primary-light))}
+    .page-alt .page-accent{background:#24404f;background:linear-gradient(90deg,var(--secondary),var(--accent2))}
+    .sec-bar{width:48px;height:3px;border-radius:2px;margin-bottom:10px;background:#b46a2b;background:linear-gradient(90deg,var(--primary),var(--accent))}
+    .center-fill{display:flex;flex-direction:column;justify-content:center;min-height:221mm;gap:24px}
+
+    @media screen{.page,.page-summary{margin:24px auto;box-shadow:0 4px 24px rgba(0,0,0,.18)}}
+    @media print{
+      *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+      html,body{width:210mm;margin:0;padding:0}
+      body{background:#fff;font-size:10pt;line-height:1.6}
+      .page{
+        width:210mm;height:297mm;min-height:297mm;
+        margin:0;box-shadow:none;
+        overflow:hidden;
+        break-after:page;page-break-after:always;
+        background:#f7f5f2!important;
+      }
+      .page:last-child{break-after:auto;page-break-after:auto}
+      .page-alt{background:#f1ece6!important}
+      .page-cover{height:297mm;min-height:297mm;background:#18232d!important}
+      .page-summary{height:297mm;min-height:297mm;background:#18232d!important}
+      .hero-topbar{background:#0d1520!important;backdrop-filter:none!important;position:relative!important}
+      .hero-top-meta span{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.2)!important}
+      .summary-card{background:rgba(255,255,255,.08)!important;border-color:rgba(255,255,255,.15)!important}
+      .summary-note,.footer-summary{background:rgba(255,255,255,.04)!important}
+      .page-accent{background:#b46a2b!important}
+      .page-alt .page-accent{background:#24404f!important}
+      .sec-bar{background:#b46a2b!important}
+      .tech-table{border:1px solid #b8a898!important}
+      .tech-table thead th{background:#24404f!important}
+      .tech-table tbody td{border-bottom:1px solid #c8b8a8!important}
+      .m-card{border:1px solid #b8a898!important}
+      .nb{border:1px solid #b8a898!important;border-left:3px solid #8b4e1e!important}
+      .sc{border:1px solid #b8a898!important}
+      .tl-item{border:1px solid #b8a898!important}
+      .qt thead th{background:#111827!important}
+      .qt .gh td{background:#efe7dd!important}
+      .qt .st td{background:#faf4ec!important}
+      .qt .gt2 td{background:#111827!important}
+      .arch{background:#18232d!important}
+      .toc-n{background:#8b4e1e!important}
+      .m-card,.nb,.arch,.tl-item,.sc,.sg,.qt-wrap{break-inside:avoid;page-break-inside:avoid}
+      .sec-num,.sec-title,.sec-desc,h3,h4,.fg-title{break-after:avoid;page-break-after:avoid}
+      thead{display:table-header-group}
+      tr{break-inside:avoid;page-break-inside:avoid}
+    }
+
+    .page-relaxed .sec-title{font-size:32px}
+    .page-relaxed .sec-desc{font-size:16px;line-height:1.85}
+    .page-relaxed .nb{padding:30px;margin-top:24px}
+    .page-relaxed .nb h4{font-size:17px}
+    .page-relaxed .nl li{font-size:14px;padding:8px 0 8px 30px}
+    .page-relaxed .nl li::before{width:18px;height:18px;font-size:10px}
+    .page-relaxed .tech-table thead th{padding:12px 16px;font-size:13px}
+    .page-relaxed .tech-table tbody td{padding:12px 16px;font-size:14px}
+    .page-relaxed .sg{gap:28px;margin:32px 0}
+    .page-relaxed .sc{padding:28px}
+    .page-relaxed .sc .num{font-size:32px}
+    .page-relaxed .sc .desc{font-size:13px}
+    .page-relaxed .toc-item{padding:18px 24px}
+    .page-relaxed .toc-n{width:48px;height:48px;font-size:18px}
+    .page-relaxed .toc-t{font-size:16px}
+
+    .page-compact .m-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .page-compact .m-card .m-head{padding:12px 16px}
+    .page-compact .m-card .m-body{padding:12px 16px}
+    .page-compact .m-card .fl{grid-template-columns:1fr}
+    .page-compact .qt tbody td{font-size:11px;padding:6px 10px}
+    .page-compact .qt thead th{font-size:10px;padding:8px 10px}
+    .page-compact .qt .gh td{font-size:11px}
+    .page-compact .qt .st td{font-size:11px}
+    .page-compact .qt .gt2 td{font-size:13px;padding:10px}
+    .page-compact .nb{margin-top:10px;padding:16px}
+    .page-compact .nb h4{font-size:13px}
+    .page-compact .nl li{font-size:11px;padding:3px 0 3px 26px}
+    .page-compact .sec-desc{font-size:12px;margin-bottom:14px}
+    .page-compact .sg{grid-template-columns:1fr 1fr}
+
+    .hero-topbar{background:rgba(8,14,19,.56);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+    .hero-topbar-inner{max-width:210mm;margin:0 auto;padding:10px 18mm;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .opening-line{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:700;letter-spacing:.16em;color:var(--gold-soft);white-space:nowrap}
+    .hero-top-meta{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .hero-top-meta span{display:inline-flex;align-items:center;min-height:34px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:11px;color:rgba(255,255,255,.86)}
+
+    .hero{
+      flex:1;display:flex;align-items:center;justify-content:center;
+      position:relative;overflow:hidden;
+      padding:50px 18mm 60px;
+    }
+    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%}
+    .hero::before{width:420px;height:420px;right:-120px;top:-160px;background:radial-gradient(circle,rgba(215,176,120,.18) 0%,transparent 68%)}
+    .hero::after{width:340px;height:340px;left:-90px;bottom:-140px;background:radial-gradient(circle,rgba(215,176,120,.12) 0%,transparent 68%)}
+    .hero-inner{position:relative;z-index:1;width:100%;color:#fff}
+    .hero-shell{display:flex;flex-direction:column;gap:36px}
+    .hero-copy{max-width:100%;text-align:left;padding-top:0}
+    .hero-kicker{display:block;margin-bottom:14px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+    .hero h1{
+      font-family:'Noto Serif SC',serif;
+      font-size:44px; line-height:1.1;font-weight:900;
+      margin-bottom:16px;
+      background:linear-gradient(135deg,#fff 0%,#f7ebd8 36%,#d7b078 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{font-size:18px;letter-spacing:.08em;color:rgba(255,255,255,.82);margin-bottom:18px}
+    .hero-note{max-width:100%;color:rgba(255,255,255,.62);font-size:13px;line-height:2.0;margin-bottom:32px}
+    .hero-side{display:grid;gap:14px;padding-top:0;max-width:100%}
+    .hero-side-intro{padding:16px 18px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.78);font-size:13px;line-height:1.85}
+    .hero-info-grid{
+      display:grid;grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .meta-chip,.contact-chip{
+      padding:14px 16px;
+      border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.09);backdrop-filter:blur(6px);min-height:68px
+    }
+    .meta-chip dt,.contact-chip strong{display:block;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.44);margin-bottom:6px;text-transform:uppercase}
+    .meta-chip dd,.contact-chip span{font-size:14px;font-weight:700;color:rgba(255,255,255,.96);line-height:1.4}
+
+    .sec-num{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--primary);text-transform:uppercase;margin-bottom:6px}
+    .sec-title{font-family:'Noto Serif SC',serif;font-size:26px;color:var(--dark);margin-bottom:8px}
+    .sec-desc{max-width:100%;color:var(--text-light);font-size:13px;margin-bottom:20px}
+
+    .toc-grid{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+    .toc-item{display:flex;align-items:center;gap:16px;padding:18px 24px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);color:var(--text);transition:.28s}
+    .toc-item:hover{transform:translateY(-2px);border-color:var(--primary);box-shadow:0 4px 12px rgba(17,24,39,.08)}
+    .toc-n{width:48px;height:48px;border-radius:10px;background:#8b4e1e;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0}
+    .toc-t{font-size:16px;font-weight:600}
+
+    .m-grid{display:grid;gap:14px;margin-top:20px}
+    .m-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .m-head{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .m-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+    .m-head h3{font-size:15px;color:var(--dark)}
+    .tag{margin-left:auto;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+    .tag-core{background:rgba(180,106,43,.12);color:var(--primary-dark)}
+    .tag-flow{background:rgba(36,64,79,.1);color:var(--secondary)}
+    .tag-fin{background:rgba(126,159,143,.15);color:#47685a}
+    .m-body{padding:16px 20px}
+    .fg{margin-bottom:14px}.fg:last-child{margin-bottom:0}
+    .fg-title{font-size:12px;font-weight:700;color:var(--secondary);margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--border)}
+    .fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 12px}
+    .fl li{position:relative;padding-left:14px;font-size:12px;color:var(--text)}
+    .fl li::before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+
+    .tech-table{width:100%;border-collapse:collapse;margin:14px 0;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .tech-table thead th{background:var(--secondary);color:#fff;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px}
+    .tech-table tbody td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+    .tech-table tbody tr:nth-child(even) td{background:#faf8f5}
+    .tech-table tbody tr:hover td{background:rgba(180,106,43,.03)}
+    .tech-table tbody td:first-child{font-weight:600;color:var(--secondary);white-space:nowrap}
+
+    .arch{background:#18232d;background:linear-gradient(135deg,#18232d,#243845);border-radius:var(--rl);padding:24px;margin-top:20px;color:#fff}
+    .arch-row{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .arch-row:last-child{border-bottom:none}
+    .arch-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+    .arch-tags{display:flex;flex-wrap:wrap;gap:8px}
+    .arch-tag{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.92)}
+
+    .nb{background:#fff;border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:0 var(--rl) var(--rl) 0;padding:20px 20px 20px 22px;margin-top:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .nb h4{font-size:14px;color:var(--secondary);margin-bottom:10px}
+    .nl{list-style:none;counter-reset:item}
+    .nl li{position:relative;padding:5px 0 5px 26px;color:var(--text);font-size:12px}
+    .nl li::before{counter-increment:item;content:counter(item);position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:50%;background:var(--primary);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+    .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+    .sc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .sc .num{font-family:'Noto Serif SC',serif;font-size:26px;font-weight:700;color:var(--primary);margin-bottom:4px}
+    .sc .desc{font-size:11px;color:var(--text-light)}
+
+    .tl{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+    .tl-item{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;display:grid;grid-template-columns:110px 1fr;gap:16px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .tl-time{font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;color:var(--primary);line-height:1.2}
+    .tl-time span{display:block;font-size:11px;font-weight:400;color:var(--text-light);margin-top:4px}
+    .tl-title{font-size:14px;font-weight:600;color:var(--dark);margin-bottom:6px}
+    .tl-desc{font-size:12px;color:var(--text-light);line-height:1.7}
+
+    .qt-wrap{margin-top:20px}
+    .qt{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+    .qt thead th{background:#111827;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px}
+    .qt tbody td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+    .qt tbody tr:nth-child(even) td{background:#faf8f5}
+    .qt .gh td{background:#efe7dd;font-weight:600;color:var(--primary-dark);font-size:12px}
+    .qt .st td{background:#faf4ec;font-weight:600;color:var(--dark)}
+    .qt .st td:last-child{color:var(--primary);font-weight:700}
+    .qt .gt2 td{background:#111827;color:#fff;font-weight:700;font-size:14px}
+    .qt .gt2 td:last-child{color:var(--accent);font-size:16px}
+
+    .fee-box{background:linear-gradient(135deg,#f7f5f2,#f1ece6);border:1px solid var(--border);border-radius:var(--rl);padding:20px;margin-top:20px}
+    .fee-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px}
+    .fee-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;color:var(--text)}
+    .fee-row.total{padding-top:10px;margin-top:10px;border-top:2px solid var(--border);font-weight:700;font-size:14px;color:var(--dark)}
+    .fee-row.total .fee-val{color:var(--primary);font-size:16px}
+    .fee-val{font-weight:600}
+
+    .terms-list{list-style:none}
+    .terms-list li{position:relative;padding:8px 0 8px 22px;font-size:13px;color:var(--text);line-height:1.8}
+    .terms-list li::before{content:"";position:absolute;left:0;top:15px;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+    .footer-page{text-align:center;padding-top:40px;color:var(--text-light);font-size:11px;line-height:1.8}
+    .footer-page .footer-brand{font-family:'Noto Serif SC',serif;font-size:18px;font-weight:700;color:var(--primary);margin-bottom:8px}
+  </style>
+</head>
+<body>
+
+<!-- ===== 封面 ===== -->
+<div class="page page-cover">
+  <div class="hero-topbar">
+    <div class="hero-topbar-inner">
+      <div class="opening-line">铁肩担荣耀，妙手筑梦想</div>
+      <div class="hero-top-meta">
+        <span>郑州八角信息技术有限公司</span>
+        <span>版本 V1.0</span>
+        <span>2026年5月</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-shell">
+        <div class="hero-copy">
+          <span class="hero-kicker">产品功能方案 · 技术实施方案 · 项目报价单</span>
+          <h1>社区洗车小程序</h1>
+          <div class="hero-sub">多门店 · 柜体存取钥匙 · 监控查看</div>
+          <div class="hero-note">
+            本项目面向社区地下车库场景，为业主提供线上预约洗车、柜体自助存取车钥匙、服务过程监控查看的完整闭环解决方案。系统覆盖用户端小程序、柜体平板控制面板、PC后台管理系统，并对接千鸣云柜体总控与监控设备，支持多门店运营与多角色权限管理。
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="hero-side-intro">
+            本期为一期（P0）交付，覆盖预约下单闭环、柜体存取钥匙闭环、监控权限查看、多门店管理等核心能力。营销模块（优惠券/次卡/储值）纳入二期迭代范围。
+          </div>
+          <div class="hero-info-grid">
+            <div class="meta-chip">
+              <dt>项目工期</dt>
+              <dd>35 个工作日</dd>
+            </div>
+            <div class="meta-chip">
+              <dt>交付版本</dt>
+              <dd>V1.0（一期 P0）</dd>
+            </div>
+            <div class="contact-chip">
+              <strong>商务负责人</strong>
+              <span>李岩</span>
+            </div>
+            <div class="contact-chip">
+              <strong>联系电话</strong>
+              <span>181-1633-9746</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 目录 ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div>
+      <div class="sec-num">CONTENTS</div>
+      <div class="sec-title">目录</div>
+      <div class="sec-bar"></div>
+    </div>
+    <div class="toc-grid">
+      <div class="toc-item"><div class="toc-n">01</div><div class="toc-t">产品概述</div></div>
+      <div class="toc-item"><div class="toc-n">02</div><div class="toc-t">需求分析</div></div>
+      <div class="toc-item"><div class="toc-n">03</div><div class="toc-t">功能清单</div></div>
+      <div class="toc-item"><div class="toc-n">04</div><div class="toc-t">技术选型与架构</div></div>
+      <div class="toc-item"><div class="toc-n">05</div><div class="toc-t">技术难点与方案</div></div>
+      <div class="toc-item"><div class="toc-n">06</div><div class="toc-t">技术实施方案</div></div>
+      <div class="toc-item"><div class="toc-n">07</div><div class="toc-t">实施排期</div></div>
+      <div class="toc-item"><div class="toc-n">08</div><div class="toc-t">项目报价</div></div>
+      <div class="toc-item"><div class="toc-n">09</div><div class="toc-t">商务条款</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 产品概述 ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div>
+      <div class="sec-num">PART 01</div>
+      <div class="sec-title">产品概述</div>
+      <div class="sec-desc">项目定位、覆盖端侧与核心价值</div>
+      <div class="sec-bar"></div>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="num">3</div><div class="desc">覆盖端侧<br>小程序/面板/后台</div></div>
+      <div class="sc"><div class="num">7</div><div class="desc">核心功能模块<br>一期P0交付</div></div>
+      <div class="sc"><div class="num">35</div><div class="desc">工作日<br>总工期</div></div>
+      <div class="sc"><div class="num">2</div><div class="desc">硬件对接<br>柜体+监控</div></div>
+    </div>
+    <div>
+      <div class="sec-title" style="font-size:20px;margin-bottom:12px">建设目标</div>
+      <div class="nb">
+        <ol class="nl">
+          <li>实现用户从选门店、选服务、填信息、支付到派单的完整线上预约闭环，减少人工沟通成本。</li>
+          <li>通过柜体平板与千鸣云API对接，实现钥匙存取全程自动化，每次开门动作可追溯。</li>
+          <li>建立强权限监控查看机制：用户仅能在已支付且服务中查看对应门店监控，保障隐私安全。</li>
+          <li>支持多门店运营与总部-店长-员工多角色权限体系，为后续规模化扩展奠定管理基础。</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 需求分析 ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div>
+    <div class="sec-num">PART 02</div>
+    <div class="sec-title">需求分析</div>
+    <div class="sec-desc">角色模型与业务流程梳理</div>
+    <div class="sec-bar"></div>
+  </div>
+
+  <div class="nb" style="margin-top:14px">
+    <h4>角色与权限模型</h4>
+    <table class="tech-table">
+      <thead><tr><th>角色</th><th>权限范围</th></tr></thead>
+      <tbody>
+        <tr><td>C端用户（业主）</td><td>浏览门店、预约下单、支付、管理车辆、查看订单状态与监控（满足权限时）</td></tr>
+        <tr><td>门店员工</td><td>查看待处理订单、接单/开始/完成、柜体开门操作（通过后台移动端适配页面）</td></tr>
+        <tr><td>门店店长</td><td>本门店订单/员工/设备/柜体/监控查看与管理</td></tr>
+        <tr><td>总部管理员</td><td>全门店数据、营销配置、角色与权限、监控配置、设备配置</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nb" style="margin-top:14px">
+    <h4>核心业务流程（P0）</h4>
+    <table class="tech-table">
+      <thead><tr><th>流程</th><th>关键步骤</th></tr></thead>
+      <tbody>
+        <tr><td>用户下单</td><td>选门店 → 选服务 → 四步表单（时间/方式/车辆/拍照）→ 支付 → 生成待处理订单</td></tr>
+        <tr><td>柜体存取钥匙</td><td>用户支付后存钥匙（自动分箱）→ 员工接单后取钥匙 → 洗车完成还钥匙 → 用户取回钥匙</td></tr>
+        <tr><td>监控查看</td><td>订单已支付且服务中 → 用户可查看对应门店实时监控 → 完成后自动关闭权限</td></tr>
+        <tr><td>门店运营</td><td>总部创建门店 → 配置服务/柜体/摄像头 → 店长管理本店订单与员工 → 员工执行服务</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 功能清单 ① ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div>
+    <div class="sec-num">PART 03</div>
+    <div class="sec-title">功能清单</div>
+    <div class="sec-desc">按端侧拆分的核心功能模块（一期P0范围）</div>
+    <div class="sec-bar"></div>
+  </div>
+
+  <div class="m-grid">
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#b46a2b,#e8c48d)">🚗</div>
+        <h3>首页与门店选择</h3>
+        <span class="tag tag-core">核心</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">用户端</div>
+          <ul class="fl">
+            <li>定位授权与城市门店列表</li>
+            <li>地图展示门店点位与距离</li>
+            <li>门店搜索与切换</li>
+            <li>活动Banner与服务入口</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#24404f,#7e9f8f)">📝</div>
+        <h3>服务下单流程</h3>
+        <span class="tag tag-core">核心</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">四步表单</div>
+          <ul class="fl">
+            <li>Step1 日期+时间段选择</li>
+            <li>Step2 上门取送钥匙开关</li>
+            <li>Step3 车辆与车位信息填写</li>
+            <li>Step4 车辆/车位照片上传与备注</li>
+            <li>服务协议勾选与支付</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#965d38,#d9a46d)">📋</div>
+        <h3>订单中心与监控</h3>
+        <span class="tag tag-flow">流程</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">订单与监控</div>
+          <ul class="fl">
+            <li>订单列表（待处理/服务中/已完成）</li>
+            <li>订单详情与状态流转</li>
+            <li>监控查看权限校验</li>
+            <li>实时视频播放（服务中可用）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 功能清单 ②（续页） ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div class="m-grid">
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#1f4f7a,#6ea9d7)">🚙</div>
+        <h3>我的车辆管理</h3>
+        <span class="tag tag-fin">辅助</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">车辆信息</div>
+          <ul class="fl">
+            <li>新增/编辑车辆（车牌号）</li>
+            <li>默认车位地址维护</li>
+            <li>车辆列表展示</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#37525b,#85aa9c)">🔧</div>
+        <h3>柜体控制面板</h3>
+        <span class="tag tag-core">核心</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">平板端</div>
+          <ul class="fl">
+            <li>下单入口与扫码进入</li>
+            <li>柜门控制（存/取/还钥匙）</li>
+            <li>格口状态实时显示</li>
+            <li>操作结果反馈</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#47685a,#96baa7)">👤</div>
+        <h3>后台管理系统</h3>
+        <span class="tag tag-core">核心</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">管理端</div>
+          <ul class="fl">
+            <li>门店/服务/员工/角色管理</li>
+            <li>订单处理与派单</li>
+            <li>柜体设备与格口管理</li>
+            <li>监控配置与实时查看</li>
+            <li>操作日志与数据报表</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head">
+        <div class="m-icon" style="background:linear-gradient(135deg,#7d5b43,#c79b79)">📹</div>
+        <h3>监控查看模块</h3>
+        <span class="tag tag-flow">流程</span>
+      </div>
+      <div class="m-body">
+        <div class="fg">
+          <div class="fg-title">权限与播放</div>
+          <ul class="fl">
+            <li>摄像头通道配置（1~N路）</li>
+            <li>播放鉴权参数管理</li>
+            <li>用户端权限校验（已支付+服务中）</li>
+            <li>实时预览与多路切换</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 技术选型 ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div>
+    <div class="sec-num">PART 04</div>
+    <div class="sec-title">技术选型与架构</div>
+    <div class="sec-desc">主技术栈与第三方服务</div>
+    <div class="sec-bar"></div>
+  </div>
+
+  <div class="arch">
+    <div class="arch-row">
+      <div class="arch-label">后端</div>
+      <div class="arch-tags">
+        <span class="arch-tag">PHP</span>
+        <span class="arch-tag">Laravel / ThinkPHP</span>
+        <span class="arch-tag">MySQL</span>
+        <span class="arch-tag">Redis</span>
+      </div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-label">用户端</div>
+      <div class="arch-tags">
+        <span class="arch-tag">uni-app</span>
+        <span class="arch-tag">微信小程序</span>
+        <span class="arch-tag">Vue3</span>
+      </div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-label">后台</div>
+      <div class="arch-tags">
+        <span class="arch-tag">Vue3</span>
+        <span class="arch-tag">Element Plus</span>
+        <span class="arch-tag">Vite</span>
+      </div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-label">柜体端</div>
+      <div class="arch-tags">
+        <span class="arch-tag">HTML5</span>
+        <span class="arch-tag">Vue3（轻量）</span>
+        <span class="arch-tag">平板锁屏适配</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="sec-title" style="font-size:20px;margin-bottom:12px">第三方服务</div>
+    <table class="tech-table">
+      <thead><tr><th>服务类别</th><th>推荐厂商</th><th>用途说明</th></tr></thead>
+      <tbody>
+        <tr><td>云服务器</td><td>腾讯云 CVM</td><td>应用部署与数据库托管</td></tr>
+        <tr><td>对象存储</td><td>腾讯云 COS</td><td>车辆/车位照片上传存储</td></tr>
+        <tr><td>支付</td><td>微信支付</td><td>小程序内在线支付</td></tr>
+        <tr><td>地图与定位</td><td>腾讯地图</td><td>门店定位与距离计算</td></tr>
+        <tr><td>微信生态</td><td>微信开放平台</td><td>登录/授权/分享/小程序</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 技术难点 ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div>
+      <div class="sec-num">PART 05</div>
+      <div class="sec-title">技术难点与方案</div>
+      <div class="sec-desc">本项目需要重点攻克的技术问题</div>
+      <div class="sec-bar"></div>
+    </div>
+
+    <div class="nb">
+      <h4>1. 千鸣云柜体API限频与并发控制</h4>
+      <ul class="nl">
+        <li>厂商限制：单 sign 3次/分钟，单设备 100次/分钟，单 appKey 5000次/分钟。</li>
+        <li>方案：后端实现请求队列与合并机制，对同一设备的连续指令做节流；引入分布式锁防止并发分箱冲突。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>2. 设备回调幂等性保障</h4>
+      <ul class="nl">
+        <li>厂商回调（开门记录/测物结果）可能重复推送，需保证订单状态与操作日志不重复写入。</li>
+        <li>方案：以 Base62(deviceId+openDate+boxNo+offlineRecordId) 为幂等键，入库前做唯一性校验。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>3. 监控查看强权限控制</h4>
+      <ul class="nl">
+        <li>用户仅在「已支付 + 服务中」时可查看监控，完成后立即失效；管理员可随时查看。</li>
+        <li>方案：播放鉴权接口实时校验订单状态，token 设置短有效期（5分钟），播放页定期心跳校验权限。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>4. 柜体离线与服务降级</h4>
+      <ul class="nl">
+        <li>柜体断网或厂商服务异常时，需阻止用户进入「存钥匙」阶段，避免订单卡死。</li>
+        <li>方案：下单前调用 chkDevice 校验在线状态；开门指令超时未回执触发 query_boxInfo 补偿查询。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>5. 多门店数据隔离与权限链</h4>
+      <ul class="nl">
+        <li>店长只能查看本店数据，员工只能操作本店订单，总部可查看全部。</li>
+        <li>方案：所有业务表增加 store_id 字段，接口层统一挂载当前用户所属门店范围进行数据过滤。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 技术实施方案 ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div>
+      <div class="sec-num">PART 06</div>
+      <div class="sec-title">技术实施方案</div>
+      <div class="sec-desc">开发、测试与交付的标准流程</div>
+      <div class="sec-bar"></div>
+    </div>
+
+    <div class="nb">
+      <h4>开发流程</h4>
+      <ul class="nl">
+        <li>采用前后端分离架构，接口优先：先定义 API 文档（Swagger），再并行开发。</li>
+        <li>Git 分支管理：main / develop / feature / hotfix，所有代码变更通过 Pull Request 审查合并。</li>
+        <li>接口联调：本地环境 → 测试环境 → 预发布环境 → 生产环境，四层隔离。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>测试策略</h4>
+      <ul class="nl">
+        <li>单元测试：后端核心服务（订单状态机、柜体指令签名、权限校验）覆盖率不低于 70%。</li>
+        <li>集成测试：模拟千鸣云回调，验证开门成功/失败/超时各分支的状态回写正确性。</li>
+        <li>验收测试：甲方业务方参与，覆盖完整下单→存钥匙→取钥匙→还钥匙→取回钥匙主流程。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>交付标准</h4>
+      <ul class="nl">
+        <li>源代码完整交付（Git 仓库权限移交），含部署文档与接口文档。</li>
+        <li>提供 3 个月免费维护期：Bug 修复、紧急问题响应（工作日 4 小时内）。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 实施排期 ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div>
+    <div class="sec-num">PART 07</div>
+    <div class="sec-title">实施排期</div>
+    <div class="sec-desc">四阶段推进，总计 35 个工作日</div>
+    <div class="sec-bar"></div>
+  </div>
+
+  <div class="tl">
+    <div class="tl-item">
+      <div class="tl-time">Phase 1<span>第 1-4 天</span></div>
+      <div>
+        <div class="tl-title">需求确认与系统设计</div>
+        <div class="tl-desc">需求细化与边界确认；数据库 ERD 设计；接口契约定义（Swagger）；UI 风格确认与首屏稿输出；千鸣云/监控厂商对接人拉群。</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">Phase 2<span>第 5-30 天</span></div>
+      <div>
+        <div class="tl-title">核心功能开发</div>
+        <div class="tl-desc">用户端小程序页面开发（并行）；后台管理系统页面开发（并行）；后端 API 与业务逻辑开发（并行）；柜体端面板开发；UI 全量稿输出与走查。</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">Phase 3<span>第 31-33 天</span></div>
+      <div>
+        <div class="tl-title">联调测试</div>
+        <div class="tl-desc">前后端接口联调；千鸣云 API 对接与柜体实机测试；监控设备接入测试；权限规则端到端验证；Bug 修复与体验优化。</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-time">Phase 4<span>第 34-35 天</span></div>
+      <div>
+        <div class="tl-title">部署上线</div>
+        <div class="tl-desc">生产环境部署与域名配置；SSL 证书与 CDN 配置；小程序提交审核；后台培训与使用手册交付；项目验收。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 项目报价 ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div>
+    <div class="sec-num">PART 08</div>
+    <div class="sec-title">项目报价</div>
+    <div class="sec-desc">按工作项与人天单价明细核算，总价闭合</div>
+    <div class="sec-bar"></div>
+  </div>
+
+  <div class="qt-wrap">
+    <table class="qt">
+      <thead>
+        <tr>
+          <th style="width:40px">序号</th>
+          <th>功能点/工作项</th>
+          <th>工作内容说明</th>
+          <th style="width:50px">人天</th>
+          <th style="width:70px">单价</th>
+          <th style="width:80px">报价</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="gh"><td colspan="6">一、需求与设计</td></tr>
+        <tr><td>1</td><td>需求梳理、原型确认与数据库设计</td><td>需求细化、边界确认、ERD设计、接口契约定义</td><td>4</td><td>混合</td><td>¥4,400</td></tr>
+        <tr class="st"><td colspan="3">小计</td><td>4</td><td></td><td>¥4,400</td></tr>
+
+        <tr class="gh"><td colspan="6">二、用户端小程序（uni-app）</td></tr>
+        <tr><td>2</td><td>登录/首页/门店/服务列表</td><td>微信授权、定位、门店列表与切换、服务展示</td><td>4</td><td>¥1,200</td><td>¥4,800</td></tr>
+        <tr><td>3</td><td>四步下单流程</td><td>时间选择、服务方式、车辆信息、拍照留言、协议与支付</td><td>5</td><td>¥1,200</td><td>¥6,000</td></tr>
+        <tr><td>4</td><td>订单/车辆/我的/监控查看</td><td>订单列表与详情、车辆管理、个人中心、监控播放页</td><td>5</td><td>¥1,200</td><td>¥6,000</td></tr>
+        <tr><td>5</td><td>小程序UI设计</td><td>全部页面UI稿、图标、切图、走查</td><td>5</td><td>¥1,000</td><td>¥5,000</td></tr>
+        <tr class="st"><td colspan="3">小计</td><td>19</td><td></td><td>¥21,800</td></tr>
+
+        <tr class="gh"><td colspan="6">三、后台管理系统（Vue）</td></tr>
+        <tr><td>6</td><td>后台系统（权限/门店/订单/服务/设备）</td><td>登录、角色权限、门店/员工/服务/订单/柜体/监控配置</td><td>10</td><td>¥1,200</td><td>¥12,000</td></tr>
+        <tr><td>7</td><td>后台UI设计</td><td>后台页面UI稿、表格、表单、图表样式</td><td>3</td><td>¥1,000</td><td>¥3,000</td></tr>
+        <tr class="st"><td colspan="3">小计</td><td>13</td><td></td><td>¥15,000</td></tr>
+
+        <tr class="gh"><td colspan="6">四、后端服务（PHP）</td></tr>
+        <tr><td>8</td><td>业务接口（用户/车辆/门店/订单/支付）</td><td>用户车辆CRUD、门店管理、订单状态机、微信支付对接、派单逻辑</td><td>12</td><td>¥1,200</td><td>¥14,400</td></tr>
+        <tr><td>9</td><td>硬件对接（柜体API/监控/回调）</td><td>千鸣云API对接（分箱/开箱/巡检）、监控鉴权、设备回调接收与幂等处理</td><td>11</td><td>¥1,200</td><td>¥13,200</td></tr>
+        <tr class="st"><td colspan="3">小计</td><td>23</td><td></td><td>¥27,600</td></tr>
+
+        <tr class="gh"><td colspan="6">五、柜体端与测试部署</td></tr>
+        <tr><td>10</td><td>柜体面板（下单/扫码/控制）</td><td>平板下单入口、扫码进入、柜门控制界面、状态显示</td><td>4</td><td>¥1,200</td><td>¥4,800</td></tr>
+        <tr><td>11</td><td>柜体端UI适配</td><td>平板分辨率适配、锁屏界面、操作反馈</td><td>1</td><td>¥1,000</td><td>¥1,000</td></tr>
+        <tr><td>12</td><td>测试联调与上线部署</td><td>功能测试、三方联调、性能优化、生产部署、域名SSL配置</td><td>5</td><td>¥1,200</td><td>¥6,000</td></tr>
+        <tr class="st"><td colspan="3">小计</td><td>10</td><td></td><td>¥11,800</td></tr>
+
+        <tr class="gt2"><td colspan="3">总计</td><td>56</td><td></td><td>¥78,200</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="fee-box">
+      <div class="fee-title">费用说明</div>
+      <div class="fee-row"><span>人天单价（前端/后端）</span><span class="fee-val">¥1,200</span></div>
+      <div class="fee-row"><span>人天单价（UI）</span><span class="fee-val">¥1,000</span></div>
+      <div class="fee-row"><span>最小单位</span><span class="fee-val">0.25 人天</span></div>
+      <div class="fee-row"><span>开发费含对接工时</span><span class="fee-val">已包含</span></div>
+      <div class="fee-row"><span>云资源与厂商按量费</span><span class="fee-val">甲方自担</span></div>
+    </div>
+    <div class="fee-box">
+      <div class="fee-title">付款计划</div>
+      <div class="fee-row"><span>预付款（项目启动）</span><span class="fee-val">50% — ¥39,100</span></div>
+      <div class="fee-row"><span>中期款（核心功能完成）</span><span class="fee-val">30% — ¥23,460</span></div>
+      <div class="fee-row"><span>验收款（项目交付）</span><span class="fee-val">20% — ¥15,640</span></div>
+      <div class="fee-row total"><span>合计</span><span class="fee-val">¥78,200</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 商务条款 ===== -->
+<div class="page page-alt">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div>
+      <div class="sec-num">PART 09</div>
+      <div class="sec-title">商务条款</div>
+      <div class="sec-desc">合作约定与双方权责</div>
+      <div class="sec-bar"></div>
+    </div>
+
+    <div class="nb">
+      <h4>1. 需求变更</h4>
+      <ul class="nl">
+        <li>合同签署后，甲方提出超出本报价范围的新增需求，双方另行评估工时与费用，签订补充协议。</li>
+        <li>现有功能范围内的逻辑调整与优化，不额外收费；涉及新增端侧或第三方对接，按实结算。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>2. 验收标准</h4>
+      <ul class="nl">
+        <li>全部P0功能按本文档「功能清单」逐项通过甲方确认。</li>
+        <li>千鸣云柜体实机联调通过：下单→自动分箱→用户存钥匙→员工取钥匙→还钥匙→用户取回钥匙全流程跑通。</li>
+        <li>监控设备联调通过：权限校验正确，实时画面正常播放。</li>
+        <li>所有严重/致命Bug修复完毕，系统连续稳定运行72小时以上。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>3. 知识产权与保密</h4>
+      <ul class="nl">
+        <li>项目交付后，全部源代码、设计稿、文档的知识产权归甲方所有。</li>
+        <li>乙方对甲方业务数据、用户数据、监控内容承担保密义务，不得用于任何其他项目或对外披露。</li>
+      </ul>
+    </div>
+
+    <div class="nb">
+      <h4>4. 维护与售后</h4>
+      <ul class="nl">
+        <li>免费维护期：项目验收通过后 3 个月，覆盖Bug修复与紧急技术支持（工作日4小时内响应）。</li>
+        <li>维护期结束后，甲方可选择按人天单价续签年度维护合同。</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 页脚 ===== -->
+<div class="page">
+  <div class="page-accent"></div>
+  <div class="center-fill">
+    <div class="footer-page" style="padding-top:0">
+      <div class="footer-brand">郑州八角信息技术有限公司</div>
+      <p>铁肩担荣耀，妙手筑梦想</p>
+      <p style="margin-top:8px">商务负责人：李岩 | 联系电话：181-1633-9746</p>
+      <p style="margin-top:20px;color:var(--text-light)">文档版本 V1.0 | 2026年5月</p>
+      <p style="margin-top:6px;font-size:10px;color:var(--text-light)">本报价方案仅供商务洽谈使用，具体条款以正式合同为准。</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>五色土 - 贵金属价格</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold-primary: #C9A962;
+            --gold-light: #F5E6C8;
+            --gold-dark: #8B6914;
+            --bg-dark: #1A1A2E;
+            --bg-card: #16213E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --accent-green: #00D26A;
+            --accent-red: #FF4757;
+            --border-color: rgba(201, 169, 98, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #0F0F1A 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            padding-bottom: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, #1A1A3E 100%);
+            padding: 20px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slogan {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .datetime {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gold-primary);
+        }
+
+        .datetime .date {
+            font-weight: 500;
+        }
+
+        .datetime .time {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-weight: 600;
+        }
+
+        .datetime .weekday {
+            background: rgba(201, 169, 98, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .market-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 4px 12px;
+            background: rgba(0, 210, 106, 0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent-green);
+        }
+
+        .market-status.closed {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--accent-red);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .container {
+            padding: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        .price-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            background: rgba(201, 169, 98, 0.1);
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 3px;
+            height: 14px;
+            background: var(--gold-primary);
+            border-radius: 2px;
+        }
+
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .price-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 8px;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .price-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .price-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .price-table .product-name {
+            text-align: left;
+            padding-left: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .price-table .product-name .purity {
+            display: block;
+            font-size: 10px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .price-table .unit {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .price-table .price {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-weight: 600;
+            color: var(--gold-primary);
+        }
+
+        .price-table .price.buy {
+            color: var(--accent-green);
+        }
+
+        .price-table .price.sell {
+            color: var(--accent-red);
+        }
+
+        .price-table .basis {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+        }
+
+        .price-table .basis.positive {
+            color: var(--accent-green);
+        }
+
+        .price-table .basis.negative {
+            color: var(--accent-red);
+        }
+
+        .price-table .ratio {
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .price-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .price-change.up {
+            color: var(--accent-green);
+        }
+
+        .price-change.down {
+            color: var(--accent-red);
+        }
+
+        .note-card {
+            background: rgba(201, 169, 98, 0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 8px;
+        }
+
+        .note-card .note-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--gold-primary);
+            margin-bottom: 4px;
+        }
+
+        .note-card .note-content {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .disclaimer {
+            text-align: center;
+            padding: 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .disclaimer::before {
+            content: '⚠️';
+            margin-right: 4px;
+        }
+
+        .refresh-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(201, 169, 98, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .refresh-indicator:active {
+            transform: scale(0.95);
+        }
+
+        .refresh-indicator svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .refresh-indicator.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 360px) {
+            .price-table th,
+            .price-table td {
+                padding: 8px 4px;
+                font-size: 11px;
+            }
+            
+            .price-table .price {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">金</div>
+            <span class="brand-name">五色土</span>
+        </div>
+        <p class="slogan">为下一代保住财富</p>
+        <div class="datetime">
+            <span class="date" id="currentDate">2026-04-21</span>
+            <span class="time" id="currentTime">15:30:45</span>
+            <span class="weekday" id="currentWeekday">星期一</span>
+        </div>
+        <div class="market-status" id="marketStatus">
+            <span class="status-dot"></span>
+            <span>交易中</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 金砖银砖板块 -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">🥇</div>
+                <span class="section-title">金砖银砖</span>
+                <span class="section-subtitle">实时行情</span>
+            </div>
+
+            <div class="price-card">
+                <div class="card-title">一手大盘价</div>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>品种</th>
+                            <th>单位</th>
+                            <th>上海价格</th>
+                            <th>伦敦价格</th>
+                            <th>基差</th>
+                            <th>比值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-name">黄金9999</td>
+                            <td class="unit">克</td>
+                            <td class="price" id="gold_sh">688.50</td>
+                            <td class="price" id="gold_ld">680.20</td>
+                            <td class="basis positive" id="gold_basis">+8.30</td>
+                            <td class="ratio">-</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">白银T+D</td>
+                            <td class="unit">千克</td>
+                            <td class="price" id="silver_sh">8,850.00</td>
+                            <td class="price" id="silver_ld">8,680.50</td>
+                            <td class="basis positive" id="silver_basis">+169.50</td>
+                            <td class="ratio" id="gold_silver_ratio">77.8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="price-card">
+                <div class="card-title">二手大盘价</div>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>品种</th>
+                            <th>单位</th>
+                            <th>回购价</th>
+                            <th>销售价</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-name">
+                                99.99金条/金砖/金猫
+                                <span class="purity">免备案</span>
+                            </td>
+                            <td class="unit">克</td>
+                            <td class="price buy" id="gold_bar_buy">670.20</td>
+                            <td class="price sell" id="gold_bar_sell">691.20</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">
+                                99.9黄金首饰
+                            </td>
+                            <td class="unit">克</td>
+                            <td class="price buy" id="gold_jewelry_buy">669.20</td>
+                            <td class="price sell" id="gold_jewelry_sell">836.65</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">
+                                99.99银砖/银猫
+                            </td>
+                            <td class="unit">克</td>
+                            <td class="price buy" id="silver_bar_buy">8.59</td>
+                            <td class="price sell" id="silver_bar_sell">8.79</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">黄金加工费</div>
+                <div class="note-content">二手9999旧金条加工成新金砖：<strong style="color: var(--gold-primary);">2.5元/克</strong></div>
+            </div>
+        </section>
+
+        <!-- 铂铜锡板块 -->
+        <section class="section">
+            <div class="section-header">
+                <div class="section-icon">🏭</div>
+                <span class="section-title">铂铜锡</span>
+                <span class="section-subtitle">实时行情</span>
+            </div>
+
+            <div class="price-card">
+                <div class="card-title">一手大盘价</div>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>品种</th>
+                            <th>单位</th>
+                            <th>上海价格</th>
+                            <th>伦敦价格</th>
+                            <th>基差</th>
+                            <th>比值</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-name">铂金9995</td>
+                            <td class="unit">克</td>
+                            <td class="price" id="pt_sh">280.50</td>
+                            <td class="price" id="pt_ld">275.20</td>
+                            <td class="basis positive" id="pt_basis">+5.30</td>
+                            <td class="ratio" id="gold_pt_ratio">2.45</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">沪铜</td>
+                            <td class="unit">吨</td>
+                            <td class="price" id="cu_sh">75,850</td>
+                            <td class="price" id="cu_ld">74,520</td>
+                            <td class="basis positive" id="cu_basis">+1,330</td>
+                            <td class="ratio" id="gold_cu_ratio">0.0091</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">沪锡</td>
+                            <td class="unit">吨</td>
+                            <td class="price" id="sn_sh">268,500</td>
+                            <td class="price" id="sn_ld">265,200</td>
+                            <td class="basis positive" id="sn_basis">+3,300</td>
+                            <td class="ratio" id="gold_sn_ratio">0.0026</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="price-card">
+                <div class="card-title">二手大盘价</div>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>品种</th>
+                            <th>单位</th>
+                            <th>回购价</th>
+                            <th>销售价</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-name">
+                                99.95铂金条
+                            </td>
+                            <td class="unit">克</td>
+                            <td class="price buy" id="pt_bar_buy">278.05</td>
+                            <td class="price sell" id="pt_bar_sell">280.70</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">
+                                A级铜板
+                                <span class="purity">99.9935</span>
+                            </td>
+                            <td class="unit">吨</td>
+                            <td class="price buy" id="cu_bar_buy">78,246</td>
+                            <td class="price sell" id="cu_bar_sell">80,482</td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">
+                                AA锡锭
+                                <span class="purity">99.90</span>
+                            </td>
+                            <td class="unit">吨</td>
+                            <td class="price buy" id="sn_bar_buy">278,460</td>
+                            <td class="price sell" id="sn_bar_sell">286,416</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="disclaimer">
+            特别提醒：以上金银铂铜锡价格仅供参考，实际交易价格以现场为准
+        </div>
+    </div>
+
+    <div class="refresh-indicator" id="refreshBtn" title="刷新价格">
+        <svg viewBox="0 0 24 24">
+            <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+    </div>
+
+    <script>
+        // 模拟数据配置（实际项目中从后端API获取）
+        const mockData = {
+            // 一手大盘价 - 上海价格
+            gold_sh: 688.50,
+            silver_sh: 8850.00,
+            pt_sh: 280.50,
+            cu_sh: 75850,
+            sn_sh: 268500,
+            
+            // 一手大盘价 - 伦敦价格
+            gold_ld: 680.20,
+            silver_ld: 8680.50,
+            pt_ld: 275.20,
+            cu_ld: 74520,
+            sn_ld: 265200,
+            
+            // 管理员参数配置
+            params: {
+                gold_bar_buy_adj: 10.00,      // 金条回购加减
+                gold_bar_sell_adj: 11.00,     // 金条销售加减
+                gold_jewelry_buy_adj: 11.00,  // 首饰回购加减
+                gold_jewelry_sell_mult: 1.23, // 首饰销售乘数
+                silver_bar_buy_adj: 10.00,    // 银砖回购加减
+                silver_bar_sell_adj: 10.00,   // 银砖销售加减
+                pt_bar_buy_mult: 1.01,        // 铂金回购乘数
+                pt_bar_sell_mult: 1.02,       // 铂金销售乘数
+                cu_bar_buy_mult: 1.05,        // 铜板回购乘数
+                cu_bar_sell_mult: 1.08,       // 铜板销售乘数
+                sn_bar_buy_mult: 1.05,        // 锡锭回购乘数
+                sn_bar_sell_mult: 1.08,       // 锡锭销售乘数
+                gold_process_fee: 2.5         // 黄金加工费
+            }
+        };
+
+        // 更新日期时间
+        function updateDateTime() {
+            const now = new Date();
+            const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            
+            document.getElementById('currentDate').textContent = 
+                now.getFullYear() + '-' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(now.getDate()).padStart(2, '0');
+            
+            document.getElementById('currentTime').textContent = 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0') + ':' + 
+                String(now.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('currentWeekday').textContent = weekdays[now.getDay()];
+
+            // 检查市场状态（简化：工作日9:00-15:30为交易时间）
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const day = now.getDay();
+            const isWeekday = day >= 1 && day <= 5;
+            const isTradeTime = (hour >= 9 && hour < 15) || (hour === 15 && minute <= 30);
+            
+            const statusEl = document.getElementById('marketStatus');
+            if (isWeekday && isTradeTime) {
+                statusEl.className = 'market-status';
+                statusEl.innerHTML = '<span class="status-dot"></span><span>交易中</span>';
+            } else {
+                statusEl.className = 'market-status closed';
+                statusEl.innerHTML = '<span class="status-dot"></span><span>已休市</span>';
+            }
+        }
+
+        // 格式化数字
+        function formatNumber(num, decimals = 2) {
+            return Number(num).toLocaleString('zh-CN', {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            });
+        }
+
+        // 模拟价格波动
+        function simulatePriceChange(basePrice, volatility = 0.001) {
+            const change = (Math.random() - 0.5) * 2 * volatility * basePrice;
+            return basePrice + change;
+        }
+
+        // 更新价格显示
+        function updatePrices() {
+            // 模拟价格波动
+            mockData.gold_sh = simulatePriceChange(mockData.gold_sh, 0.0005);
+            mockData.silver_sh = simulatePriceChange(mockData.silver_sh, 0.0008);
+            mockData.pt_sh = simulatePriceChange(mockData.pt_sh, 0.0006);
+            mockData.cu_sh = simulatePriceChange(mockData.cu_sh, 0.0004);
+            mockData.sn_sh = simulatePriceChange(mockData.sn_sh, 0.0005);
+
+            mockData.gold_ld = simulatePriceChange(mockData.gold_ld, 0.0005);
+            mockData.silver_ld = simulatePriceChange(mockData.silver_ld, 0.0008);
+            mockData.pt_ld = simulatePriceChange(mockData.pt_ld, 0.0006);
+            mockData.cu_ld = simulatePriceChange(mockData.cu_ld, 0.0004);
+            mockData.sn_ld = simulatePriceChange(mockData.sn_ld, 0.0005);
+
+            // 更新一手大盘价
+            document.getElementById('gold_sh').textContent = formatNumber(mockData.gold_sh);
+            document.getElementById('gold_ld').textContent = formatNumber(mockData.gold_ld);
+            document.getElementById('silver_sh').textContent = formatNumber(mockData.silver_sh);
+            document.getElementById('silver_ld').textContent = formatNumber(mockData.silver_ld);
+            document.getElementById('pt_sh').textContent = formatNumber(mockData.pt_sh);
+            document.getElementById('pt_ld').textContent = formatNumber(mockData.pt_ld);
+            document.getElementById('cu_sh').textContent = formatNumber(mockData.cu_sh, 0);
+            document.getElementById('cu_ld').textContent = formatNumber(mockData.cu_ld, 0);
+            document.getElementById('sn_sh').textContent = formatNumber(mockData.sn_sh, 0);
+            document.getElementById('sn_ld').textContent = formatNumber(mockData.sn_ld, 0);
+
+            // 计算并更新基差
+            const goldBasis = mockData.gold_sh - mockData.gold_ld;
+            const silverBasis = mockData.silver_sh - mockData.silver_ld;
+            const ptBasis = mockData.pt_sh - mockData.pt_ld;
+            const cuBasis = mockData.cu_sh - mockData.cu_ld;
+            const snBasis = mockData.sn_sh - mockData.sn_ld;
+
+            updateBasis('gold_basis', goldBasis);
+            updateBasis('silver_basis', silverBasis);
+            updateBasis('pt_basis', ptBasis);
+            updateBasis('cu_basis', cuBasis, 0);
+            updateBasis('sn_basis', snBasis, 0);
+
+            // 计算并更新比值
+            document.getElementById('gold_silver_ratio').textContent = 
+                formatNumber(mockData.gold_sh / (mockData.silver_sh / 1000), 1);
+            document.getElementById('gold_pt_ratio').textContent = 
+                formatNumber(mockData.gold_sh / mockData.pt_sh, 2);
+            document.getElementById('gold_cu_ratio').textContent = 
+                formatNumber(mockData.gold_sh / mockData.cu_sh, 4);
+            document.getElementById('gold_sn_ratio').textContent = 
+                formatNumber(mockData.gold_sh / mockData.sn_sh, 4);
+
+            // 计算二手价格（应用管理员参数）
+            const p = mockData.params;
+            
+            // 金条回购/销售
+            document.getElementById('gold_bar_buy').textContent = 
+                formatNumber(mockData.gold_ld - p.gold_bar_buy_adj);
+            document.getElementById('gold_bar_sell').textContent = 
+                formatNumber(mockData.gold_ld + p.gold_bar_sell_adj);
+            
+            // 首饰回购/销售
+            document.getElementById('gold_jewelry_buy').textContent = 
+                formatNumber(mockData.gold_ld - p.gold_jewelry_buy_adj);
+            document.getElementById('gold_jewelry_sell').textContent = 
+                formatNumber(mockData.gold_ld * p.gold_jewelry_sell_mult);
+            
+            // 银砖回购/销售
+            const silverPerGram = mockData.silver_ld / 1000;
+            document.getElementById('silver_bar_buy').textContent = 
+                formatNumber(silverPerGram - p.silver_bar_buy_adj / 1000);
+            document.getElementById('silver_bar_sell').textContent = 
+                formatNumber(silverPerGram + p.silver_bar_sell_adj / 1000);
+            
+            // 铂金条回购/销售
+            document.getElementById('pt_bar_buy').textContent = 
+                formatNumber(mockData.pt_ld * p.pt_bar_buy_mult);
+            document.getElementById('pt_bar_sell').textContent = 
+                formatNumber(mockData.pt_ld * p.pt_bar_sell_mult);
+            
+            // 铜板回购/销售
+            document.getElementById('cu_bar_buy').textContent = 
+                formatNumber(mockData.cu_ld * p.cu_bar_buy_mult, 0);
+            document.getElementById('cu_bar_sell').textContent = 
+                formatNumber(mockData.cu_ld * p.cu_bar_sell_mult, 0);
+            
+            // 锡锭回购/销售
+            document.getElementById('sn_bar_buy').textContent = 
+                formatNumber(mockData.sn_ld * p.sn_bar_buy_mult, 0);
+            document.getElementById('sn_bar_sell').textContent = 
+                formatNumber(mockData.sn_ld * p.sn_bar_sell_mult, 0);
+        }
+
+        function updateBasis(elementId, value, decimals = 2) {
+            const el = document.getElementById(elementId);
+            el.textContent = (value >= 0 ? '+' : '') + formatNumber(value, decimals);
+            el.className = 'basis ' + (value >= 0 ? 'positive' : 'negative');
+        }
+
+        // 刷新按钮
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.classList.add('loading');
+            updatePrices();
+            setTimeout(() => {
+                this.classList.remove('loading');
+            }, 500);
+        });
+
+        // 初始化
+        updateDateTime();
+        updatePrices();
+
+        // 定时更新
+        setInterval(updateDateTime, 1000);
+        setInterval(updatePrices, 1000); // 每秒更新价格
+    </script>
+</body>
+</html>

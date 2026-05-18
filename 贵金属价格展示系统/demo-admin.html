@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五色土 - 后台管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #C9A962;
+            --primary-dark: #8B6914;
+            --primary-light: #F5E6C8;
+            --bg-main: #F5F7FA;
+            --bg-white: #FFFFFF;
+            --bg-dark: #1A1A2E;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* 登录页面 */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #16213E 100%);
+        }
+
+        .login-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo .icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .login-logo h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .login-logo p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(201, 169, 98, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        /* 后台主界面 */
+        .admin-container {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .admin-container.active {
+            display: block;
+        }
+
+        .login-container.hidden {
+            display: none;
+        }
+
+        /* 顶部导航 */
+        .navbar {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-brand .icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .navbar-brand h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .navbar-brand span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: 8px;
+            padding: 2px 8px;
+            background: var(--bg-main);
+            border-radius: 4px;
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-user .user-info {
+            text-align: right;
+        }
+
+        .navbar-user .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .navbar-user .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .navbar-user .avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .stat-icon.gold {
+            background: rgba(201, 169, 98, 0.15);
+        }
+
+        .stat-card .stat-icon.silver {
+            background: rgba(192, 192, 192, 0.3);
+        }
+
+        .stat-card .stat-icon.platinum {
+            background: rgba(229, 228, 226, 0.5);
+        }
+
+        .stat-card .stat-icon.copper {
+            background: rgba(184, 115, 51, 0.15);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-card .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-card .stat-change.up {
+            color: var(--success);
+        }
+
+        .stat-card .stat-change.down {
+            color: var(--danger);
+        }
+
+        /* 参数配置卡片 */
+        .config-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .config-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .config-card-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-card-header .badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .config-card-header .badge.gold {
+            background: rgba(201, 169, 98, 0.15);
+            color: var(--primary-dark);
+        }
+
+        .config-card-header .badge.metal {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-secondary);
+        }
+
+        .config-card-body {
+            padding: 0;
+        }
+
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .config-table th {
+            text-align: left;
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--bg-main);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .config-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .config-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .config-table tr:hover {
+            background: rgba(201, 169, 98, 0.03);
+        }
+
+        .config-table .product-name {
+            font-weight: 500;
+        }
+
+        .config-table .product-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .config-table .param-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            background: var(--bg-main);
+        }
+
+        .config-table .param-type.add {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .config-table .param-type.multiply {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        .config-table .param-value {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-table .param-input {
+            width: 100px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'SF Mono', Monaco, monospace;
+            text-align: right;
+        }
+
+        .config-table .param-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(201, 169, 98, 0.1);
+        }
+
+        .config-table .param-unit {
+            font-size: 13px;
+            color: var(--text-secondary);
+            min-width: 40px;
+        }
+
+        .config-table .action-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .config-table .edit-btn {
+            background: rgba(201, 169, 98, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .config-table .edit-btn:hover {
+            background: rgba(201, 169, 98, 0.2);
+        }
+
+        .config-table .save-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .config-table .save-btn:hover {
+            background: #059669;
+        }
+
+        .config-table .cancel-btn {
+            background: var(--bg-main);
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        .config-table .cancel-btn:hover {
+            background: var(--border);
+        }
+
+        /* 操作按钮区 */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding: 20px;
+            background: var(--bg-main);
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* 预览面板 */
+        .preview-panel {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .preview-header .refresh-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .preview-header .refresh-btn:hover {
+            background: var(--bg-main);
+        }
+
+        .preview-body {
+            padding: 20px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        .preview-frame {
+            background: linear-gradient(180deg, #1A1A2E 0%, #0F0F1A 100%);
+            border-radius: 8px;
+            padding: 16px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-table th {
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            color: #A0A0A0;
+            border-bottom: 1px solid rgba(201, 169, 98, 0.3);
+        }
+
+        .preview-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .preview-table .product {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .preview-table .price {
+            font-family: 'SF Mono', Monaco, monospace;
+            color: var(--primary);
+        }
+
+        .preview-table .buy-price {
+            color: #00D26A;
+        }
+
+        .preview-table .sell-price {
+            color: #FF4757;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            background: var(--bg-dark);
+            color: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 16px;
+            }
+
+            .main-content {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .config-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .config-table th,
+            .config-table td {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="login-logo">
+                <div class="icon">金</div>
+                <h1>五色土后台管理</h1>
+                <p>贵金属价格参数配置系统</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名" value="admin">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" value="123456">
+                </div>
+                <button type="submit" class="btn btn-primary">登 录</button>
+            </form>
+            <p style="text-align: center; margin-top: 16px; font-size: 12px; color: var(--text-secondary);">
+                演示账号：admin / 123456
+            </p>
+        </div>
+    </div>
+
+    <!-- 后台主界面 -->
+    <div class="admin-container" id="adminPage">
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <div class="icon">金</div>
+                <h1>五色土</h1>
+                <span>后台管理系统</span>
+            </div>
+            <div class="navbar-user">
+                <div class="user-info">
+                    <div class="user-name">管理员</div>
+                    <div class="user-role">超级管理员</div>
+                </div>
+                <div class="avatar">管</div>
+                <button class="btn btn-secondary" onclick="logout()" style="padding: 8px 16px;">
+                    退出
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>参数配置</h2>
+                <p>配置各类贵金属的回购和销售价格参数，修改后立即生效</p>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon gold">🥇</div>
+                    <div class="stat-label">当前金价</div>
+                    <div class="stat-value" id="stat_gold">688.50</div>
+                    <div class="stat-change up">↑ 0.32%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon silver">🥈</div>
+                    <div class="stat-label">当前银价</div>
+                    <div class="stat-value" id="stat_silver">8.85</div>
+                    <div class="stat-change down">↓ 0.15%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon platinum">💎</div>
+                    <div class="stat-label">当前铂金价</div>
+                    <div class="stat-value" id="stat_platinum">280.50</div>
+                    <div class="stat-change up">↑ 0.18%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon copper">🏭</div>
+                    <div class="stat-label">当前铜价</div>
+                    <div class="stat-value" id="stat_copper">75,850</div>
+                    <div class="stat-change up">↑ 0.25%</div>
+                </div>
+            </div>
+
+            <!-- 金银类参数配置 -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <h3>
+                        🥇 金银类参数配置
+                        <span class="badge gold">6 项参数</span>
+                    </h3>
+                </div>
+                <div class="config-card-body">
+                    <table class="config-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">品种</th>
+                                <th style="width: 15%;">类型</th>
+                                <th style="width: 15%;">计算方式</th>
+                                <th style="width: 25%;">当前参数值</th>
+                                <th style="width: 20%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.99金条/金砖/金猫</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type add">± 加减</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="gold_bar_buy_adj" value="10.00" step="0.01">
+                                        <span class="param-unit">元/克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('gold_bar_buy_adj')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.99金条/金砖/金猫</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type add">± 加减</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="gold_bar_sell_adj" value="11.00" step="0.01">
+                                        <span class="param-unit">元/克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('gold_bar_sell_adj')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.9黄金首饰</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type add">± 加减</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="gold_jewelry_buy_adj" value="11.00" step="0.01">
+                                        <span class="param-unit">元/克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('gold_jewelry_buy_adj')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.9黄金首饰</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="gold_jewelry_sell_mult" value="1.23" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('gold_jewelry_sell_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.99银砖/银猫</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type add">± 加减</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="silver_bar_buy_adj" value="10.00" step="0.01">
+                                        <span class="param-unit">元/千克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('silver_bar_buy_adj')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.99银砖/银猫</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type add">± 加减</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="silver_bar_sell_adj" value="10.00" step="0.01">
+                                        <span class="param-unit">元/千克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('silver_bar_sell_adj')">保存</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 铂铜锡类参数配置 -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <h3>
+                        🏭 铂铜锡类参数配置
+                        <span class="badge metal">6 项参数</span>
+                    </h3>
+                </div>
+                <div class="config-card-body">
+                    <table class="config-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">品种</th>
+                                <th style="width: 15%;">类型</th>
+                                <th style="width: 15%;">计算方式</th>
+                                <th style="width: 25%;">当前参数值</th>
+                                <th style="width: 20%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.95铂金条</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="pt_bar_buy_mult" value="1.01" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('pt_bar_buy_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.95铂金条</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="pt_bar_sell_mult" value="1.02" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('pt_bar_sell_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.9935 A级铜板</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="cu_bar_buy_mult" value="1.05" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('cu_bar_buy_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.9935 A级铜板</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="cu_bar_sell_mult" value="1.08" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('cu_bar_sell_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.90 AA锡锭</div>
+                                    <div class="product-desc">回购价格</div>
+                                </td>
+                                <td>回购</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="sn_bar_buy_mult" value="1.05" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('sn_bar_buy_mult')">保存</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="product-name">99.90 AA锡锭</div>
+                                    <div class="product-desc">销售价格</div>
+                                </td>
+                                <td>销售</td>
+                                <td><span class="param-type multiply">× 乘数</span></td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="sn_bar_sell_mult" value="1.08" step="0.01">
+                                        <span class="param-unit">倍</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('sn_bar_sell_mult')">保存</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 其他参数配置 -->
+            <div class="config-card">
+                <div class="config-card-header">
+                    <h3>
+                        ⚙️ 其他参数配置
+                        <span class="badge metal">1 项参数</span>
+                    </h3>
+                </div>
+                <div class="config-card-body">
+                    <table class="config-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">参数名称</th>
+                                <th style="width: 30%;">说明</th>
+                                <th style="width: 25%;">当前参数值</th>
+                                <th style="width: 20%;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="product-name">黄金加工费</div>
+                                </td>
+                                <td>
+                                    <div class="product-desc">二手9999旧金条加工成新金砖</div>
+                                </td>
+                                <td>
+                                    <div class="param-value">
+                                        <input type="number" class="param-input" id="gold_process_fee" value="2.50" step="0.1">
+                                        <span class="param-unit">元/克</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="action-btn save-btn" onclick="saveParam('gold_process_fee')">保存</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-bar">
+                    <button class="btn btn-secondary" onclick="resetAll()">恢复默认值</button>
+                    <button class="btn btn-success" onclick="saveAll()">保存所有更改</button>
+                </div>
+            </div>
+
+            <!-- 预览面板 -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>📱 用户端预览</h3>
+                    <button class="refresh-btn" onclick="refreshPreview()">
+                        🔄 刷新预览
+                    </button>
+                </div>
+                <div class="preview-body">
+                    <div class="preview-frame">
+                        <h4 style="color: var(--primary); margin-bottom: 12px; font-size: 14px;">二手大盘价 - 金银</h4>
+                        <table class="preview-table">
+                            <thead>
+                                <tr>
+                                    <th>品种</th>
+                                    <th>单位</th>
+                                    <th>回购价</th>
+                                    <th>销售价</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="product">99.99金条</td>
+                                    <td>克</td>
+                                    <td class="price buy-price" id="preview_gold_buy">670.20</td>
+                                    <td class="price sell-price" id="preview_gold_sell">691.20</td>
+                                </tr>
+                                <tr>
+                                    <td class="product">99.9黄金首饰</td>
+                                    <td>克</td>
+                                    <td class="price buy-price" id="preview_jewelry_buy">669.20</td>
+                                    <td class="price sell-price" id="preview_jewelry_sell">836.65</td>
+                                </tr>
+                                <tr>
+                                    <td class="product">99.99银砖</td>
+                                    <td>克</td>
+                                    <td class="price buy-price" id="preview_silver_buy">8.59</td>
+                                    <td class="price sell-price" id="preview_silver_sell">8.79</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="text-align: center; margin-top: 12px; font-size: 11px; color: #A0A0A0;">
+                            * 预览价格基于当前参数实时计算
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div class="toast" id="toast">
+        <span id="toastMessage">保存成功</span>
+    </div>
+
+    <script>
+        // 默认参数值
+        const defaultParams = {
+            gold_bar_buy_adj: 10.00,
+            gold_bar_sell_adj: 11.00,
+            gold_jewelry_buy_adj: 11.00,
+            gold_jewelry_sell_mult: 1.23,
+            silver_bar_buy_adj: 10.00,
+            silver_bar_sell_adj: 10.00,
+            pt_bar_buy_mult: 1.01,
+            pt_bar_sell_mult: 1.02,
+            cu_bar_buy_mult: 1.05,
+            cu_bar_sell_mult: 1.08,
+            sn_bar_buy_mult: 1.05,
+            sn_bar_sell_mult: 1.08,
+            gold_process_fee: 2.50
+        };
+
+        // 模拟基础价格
+        const basePrices = {
+            gold_ld: 680.20,
+            silver_ld: 8850.00
+        };
+
+        // 登录处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === '123456') {
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('adminPage').classList.add('active');
+                showToast('登录成功', 'success');
+            } else {
+                showToast('用户名或密码错误', 'error');
+            }
+        });
+
+        // 退出登录
+        function logout() {
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('adminPage').classList.remove('active');
+            showToast('已退出登录');
+        }
+
+        // 保存单个参数
+        function saveParam(paramId) {
+            const input = document.getElementById(paramId);
+            const value = parseFloat(input.value);
+            
+            // 模拟保存到服务器
+            console.log(`保存参数: ${paramId} = ${value}`);
+            
+            // 更新预览
+            refreshPreview();
+            
+            showToast('参数保存成功', 'success');
+        }
+
+        // 保存所有参数
+        function saveAll() {
+            const params = {};
+            Object.keys(defaultParams).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    params[key] = parseFloat(input.value);
+                }
+            });
+            
+            console.log('保存所有参数:', params);
+            refreshPreview();
+            showToast('所有参数保存成功', 'success');
+        }
+
+        // 恢复默认值
+        function resetAll() {
+            Object.keys(defaultParams).forEach(key => {
+                const input = document.getElementById(key);
+                if (input) {
+                    input.value = defaultParams[key];
+                }
+            });
+            
+            refreshPreview();
+            showToast('已恢复默认值');
+        }
+
+        // 刷新预览
+        function refreshPreview() {
+            const goldBuyAdj = parseFloat(document.getElementById('gold_bar_buy_adj').value) || 0;
+            const goldSellAdj = parseFloat(document.getElementById('gold_bar_sell_adj').value) || 0;
+            const jewelryBuyAdj = parseFloat(document.getElementById('gold_jewelry_buy_adj').value) || 0;
+            const jewelrySellMult = parseFloat(document.getElementById('gold_jewelry_sell_mult').value) || 1;
+            const silverBuyAdj = parseFloat(document.getElementById('silver_bar_buy_adj').value) || 0;
+            const silverSellAdj = parseFloat(document.getElementById('silver_bar_sell_adj').value) || 0;
+
+            // 计算预览价格
+            document.getElementById('preview_gold_buy').textContent = 
+                (basePrices.gold_ld - goldBuyAdj).toFixed(2);
+            document.getElementById('preview_gold_sell').textContent = 
+                (basePrices.gold_ld + goldSellAdj).toFixed(2);
+            document.getElementById('preview_jewelry_buy').textContent = 
+                (basePrices.gold_ld - jewelryBuyAdj).toFixed(2);
+            document.getElementById('preview_jewelry_sell').textContent = 
+                (basePrices.gold_ld * jewelrySellMult).toFixed(2);
+            
+            const silverPerGram = basePrices.silver_ld / 1000;
+            document.getElementById('preview_silver_buy').textContent = 
+                (silverPerGram - silverBuyAdj / 1000).toFixed(2);
+            document.getElementById('preview_silver_sell').textContent = 
+                (silverPerGram + silverSellAdj / 1000).toFixed(2);
+        }
+
+        // 显示提示
+        function showToast(message, type = '') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast show ' + type;
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // 初始化预览
+        refreshPreview();
+
+        // 监听所有输入框变化，实时更新预览
+        document.querySelectorAll('.param-input').forEach(input => {
+            input.addEventListener('input', refreshPreview);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 教育培训 SaaS 平台 — 分模块开发报价方案</title>
+<style>
+  :root {
+    --bg: #f6f8fc;
+    --card: #ffffff;
+    --text: #1a2332;
+    --muted: #5c6b7f;
+    --line: #e2e8f0;
+    --accent: #3b82f6;
+    --accent-soft: #e8f0fe;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px 48px;
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  header {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 28px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+  section h2 {
+    margin: 0 0 16px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #0f172a;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-soft);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    vertical-align: top;
+  }
+  th {
+    background: var(--accent-soft);
+    color: #1e3a5f;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+  }
+  td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  td.small {
+    font-size: 13px;
+    color: #334155;
+    max-width: 320px;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .pill {
+    display: inline-block;
+    background: var(--accent-soft);
+    color: #1d4ed8;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 8px;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AI 教育培训 SaaS 平台 · 分模块开发报价方案</h1>
+    <p>依据《需求功能清单（通俗版）》结构化拆解；报价币种：人民币（元）；人天为估算工作量。</p>
+    <p style="margin-top:10px"><span class="pill">数据源</span>AI教育培训SaaS平台-需求功能清单_通俗版.xlsx · 工作表「通俗版需求」</p>
+  </header>
+
+  <section>
+    <h2>一、需求 / 功能摘要（来自清单表格）</h2>
+    <p>清单列为：<strong>端口</strong>、<strong>板块</strong>、<strong>功能点</strong>、<strong>详细功能描述</strong>、<strong>备注</strong>。本报价以「端口 + 板块」为模块粒度，共 <strong>68</strong> 个模块，合计 <strong>320</strong> 条功能点。</p>
+    <table>
+      <thead><tr><th>端口（端侧）</th><th style="text-align:right">功能点条数</th></tr></thead>
+      <tbody><tr><td>总后台</td><td style='text-align:right'>115</td></tr><tr><td>学生端</td><td style='text-align:right'>97</td></tr><tr><td>教师端</td><td style='text-align:right'>39</td></tr><tr><td>分店教务端</td><td style='text-align:right'>31</td></tr><tr><td>家长端</td><td style='text-align:right'>18</td></tr><tr><td>分机构端</td><td style='text-align:right'>14</td></tr><tr><td>APP合规隐私</td><td style='text-align:right'>6</td></tr></tbody>
+    </table>
+    <p class="note">说明：同一端口下多板块合并统计；详细功能点名称见下一节各模块「功能点概要」列。</p>
+  </section>
+
+  <section>
+    <h2>二、分模块工作量与费用</h2>
+    <p class="note">单价：后端 1800 元/人天；前端 1500 元/人天；UI 设计 1000 元/人天。设计人天按规则控制为不超过对应模块前端人天的 50%。</p>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>模块（端口 — 板块）</th>
+          <th>功能点概要</th>
+          <th>估算说明（与清单功能挂钩）</th>
+          <th>后端人天</th>
+          <th>前端人天</th>
+          <th>设计人天</th>
+          <th>小计人天</th>
+          <th>模块费用（元）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>学生端 — 账户与认证</td><td class='small'>邮箱注册、邮箱激活、邮箱登录、忘记密码 等共 11 项</td><td class='small'>共 11 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>7</td><td class='num'>6</td><td class='num'>3</td><td class='num'><strong>16</strong></td><td class='num'>24,600</td></tr><tr><td>学生端 — 课程中心</td><td class='small'>课程分类浏览、课程详情展示、试听片段播放、关键词搜索 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 8 项）。</td><td class='num'>4</td><td class='num'>7</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>19,700</td></tr><tr><td>学生端 — 在线学习</td><td class='small'>录播视频播放、时间轴笔记、直播-小班互动、1V1、弱网适配 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 8 项）；含音视频/直播链路，联调与弱网场景占用前后端工时。</td><td class='num'>4</td><td class='num'>7</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>19,700</td></tr><tr><td>学生端 — 学习管理</td><td class='small'>已购课程列表、进度追踪、学习日历、学习报告 等共 9 项</td><td class='small'>共 9 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 6 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）。</td><td class='num'>6</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>20,300</td></tr><tr><td>学生端 — 考试中心</td><td class='small'>考试场次列表、考试须知与范围、在线答题与倒计时、切屏与异常提醒 等共 9 项</td><td class='small'>共 9 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>5</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,500</td></tr><tr><td>学生端 — 我的证书</td><td class='small'>证书列表、证书详情、电子版下载、分享证书到 Telegram 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>5</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,500</td></tr><tr><td>学生端 — 本地知识库 AI 问答</td><td class='small'>学习知识提问、多轮对话、学习助手评价、会话历史 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）；含音视频/直播链路，联调与弱网场景占用前后端工时；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>4</td><td class='num'>4</td><td class='num'>2</td><td class='num'><strong>10</strong></td><td class='num'>15,200</td></tr><tr><td>学生端 — AI 客服</td><td class='small'>客服会话入口、机器应答、转人工、会话历史与满意度 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 6 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>学生端 — 营销参与</td><td class='small'>优惠券领取、优惠券使用、拼团参与、拼团进度 等共 9 项</td><td class='small'>共 9 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 5 项）。</td><td class='num'>5</td><td class='num'>6</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>20,000</td></tr><tr><td>学生端 — 分销推广</td><td class='small'>分销资格申请、我的推广物料、我的分销业绩、分销邀请分享到 Telegram</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>学生端 — 作业与练习</td><td class='small'>作业接收、作业提交、AI 预批改、错题本 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含音视频/直播链路，联调与弱网场景占用前后端工时；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>学生端 — 学习趋势与预警</td><td class='small'>个人进退步趋势、知识点雷达、学习建议、预警接收</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>学生端 — 订单与支付</td><td class='small'>下单流程、拼团下单、订单详情、发票申请 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 4 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 3 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>4</td><td class='num'>4</td><td class='num'>1</td><td class='num'><strong>9</strong></td><td class='num'>14,200</td></tr><tr><td>学生端 — 个人中心</td><td class='small'>个人资料、绑定关系查看、地址管理、消息中心 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 7 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>5</td><td class='num'>4</td><td class='num'>2</td><td class='num'><strong>11</strong></td><td class='num'>17,000</td></tr><tr><td>家长端 — 账户与绑定</td><td class='small'>家长注册登录、学员绑定、授权范围管理、永久绑定关系查看 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 7 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>5</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>9</strong></td><td class='num'>14,500</td></tr><tr><td>家长端 — 学情透明</td><td class='small'>学员学习报告查看、课表与出勤、进度查看、作业完成情况</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>家长端 — 学员证书查看</td><td class='small'>证书列表(只读)、电子版下载、分享到 Telegram</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>家长端 — 进退步趋势查看</td><td class='small'>学员进退步曲线、家长端预警接收</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>家长端 — 消息触达</td><td class='small'>Telegram 触达开关、邮箱 兜底接收</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>1</td><td class='num'>0</td><td class='num'><strong>3</strong></td><td class='num'>5,100</td></tr><tr><td>家长端 — 续费与支付</td><td class='small'>家长代续费、支付凭证</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>3</td><td class='num'>1</td><td class='num'>0</td><td class='num'><strong>4</strong></td><td class='num'>6,900</td></tr><tr><td>教师端 — 账户与入职</td><td class='small'>教师注册/入职申请、分店绑定、课酬协议、权限与角色 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>教师端 — 我的课程与课表</td><td class='small'>我的课程列表、我的课表、调课与请假、补课安排</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>教师端 — 直播课堂</td><td class='small'>直播间开课、白板与互动、出勤与点名、课堂回放 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 3 项）；含音视频/直播链路，联调与弱网场景占用前后端工时。</td><td class='num'>3</td><td class='num'>4</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,400</td></tr><tr><td>教师端 — 作业批改</td><td class='small'>作业布置、AI 预批改协同、批量批改、批语模板</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 4 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>教师端 — 学情管理</td><td class='small'>学员档案查看、个性化学习建议、进退步趋势查看、预警处理</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>2</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,100</td></tr><tr><td>教师端 — 证书与考务</td><td class='small'>达标学员发证提名、证书信息校对、批量签发执行、待补发处理 等共 7 项</td><td class='small'>共 7 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>4</td><td class='num'>4</td><td class='num'>2</td><td class='num'><strong>10</strong></td><td class='num'>15,200</td></tr><tr><td>教师端 — 分销</td><td class='small'>分销准入与协议、分销物料获取、我的分销业绩、永久绑定关系 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>教师端 — AI 教学助手(教师视角)</td><td class='small'>AI 备课助手、AI 学情诊断</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>教师端 — 教师业绩与奖惩</td><td class='small'>我的 关键指标、奖惩记录、申诉入口</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分店教务端 — 学员档案管理</td><td class='small'>新增学员档案、学员档案查询、学员转分店申请、绑定关系变更审计</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>分店教务端 — 排课与课表管理</td><td class='small'>班级管理、排课计划、教室/直播间分配、调课审批 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；含音视频/直播链路，联调与弱网场景占用前后端工时。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>分店教务端 — 招生与试听</td><td class='small'>线索管理、试听排课、试听转化漏斗</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分店教务端 — 订单与售后</td><td class='small'>订单查询、退款审批、补开发票、订单异常处理</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>分店教务端 — 证书初审与发放</td><td class='small'>待发证审核、证书发放记录、证书争议处理</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>分店教务端 — 续费与催费</td><td class='small'>续费名单、催费任务、续费看板</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 4 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>分店教务端 — 考试组织</td><td class='small'>分店考场维护、名单准入、成绩核对</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分店教务端 — 客服与投诉</td><td class='small'>AI 客服转人工接入、投诉工单处理</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分店教务端 — 分销员管理(分店)</td><td class='small'>分店分销员名单、分销员业绩核对</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分店教务端 — 本店报表</td><td class='small'>分店日报、分店周报/月报</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分机构端 — 分店运营驾驶舱</td><td class='small'>运营总览、趋势对比</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分机构端 — 招生计划与目标进度</td><td class='small'>目标与关键结果 进度看板、目标分解到教师、低于序时进度告警</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>分机构端 — 教师业绩与排名</td><td class='small'>教师业绩排行、教师业绩明细</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 0 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>1</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>4</strong></td><td class='num'>5,800</td></tr><tr><td>分机构端 — 续费看板(店长)</td><td class='small'>续费率与到期名单</td><td class='small'>共 1 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）。</td><td class='num'>1</td><td class='num'>1</td><td class='num'>0</td><td class='num'><strong>2</strong></td><td class='num'>3,300</td></tr><tr><td>分机构端 — 督办任务管理</td><td class='small'>待办任务列表、任务认领与回执</td><td class='small'>共 2 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 0 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>1</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>4</strong></td><td class='num'>5,800</td></tr><tr><td>分机构端 — 财务概览(本店)</td><td class='small'>本店应收/已收</td><td class='small'>共 1 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 1 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>1</td><td class='num'>1</td><td class='num'>0</td><td class='num'><strong>2</strong></td><td class='num'>3,300</td></tr><tr><td>分机构端 — 团队与奖惩</td><td class='small'>人员管理、奖惩执行查看、申诉复核</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）。</td><td class='num'>2</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>5</strong></td><td class='num'>7,600</td></tr><tr><td>总后台 — 组织架构与分店管理</td><td class='small'>集团组织树、分店档案、区域经理设置</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>总后台 — 招生计划与目标下达</td><td class='small'>年度/季度计划、分店目标下达、目标分解口径、达成预警与督办 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 7 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>5</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>9</strong></td><td class='num'>14,500</td></tr><tr><td>总后台 — 奖惩机制配置</td><td class='small'>目标设置、进度统计口径、达标判定规则、奖励发放规则 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 8 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；总后台含配置、审计与跨端数据聚合，后端略增；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>7</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>14</strong></td><td class='num'>22,100</td></tr><tr><td>总后台 — 课程内容管理</td><td class='small'>课程创建、章节管理、视频上传与转码、资料附件管理 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 5 项）；总后台含配置、审计与跨端数据聚合，后端略增；含音视频/直播链路，联调与弱网场景占用前后端工时。</td><td class='num'>5</td><td class='num'>6</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>20,000</td></tr><tr><td>总后台 — 考试中心(总后台)</td><td class='small'>题库录入、知识点标签、组卷策略、考场创建 等共 8 项</td><td class='small'>共 8 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>5</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,500</td></tr><tr><td>总后台 — 证书中心-模板与规则</td><td class='small'>证书模板管理、发证规则引擎、考试与证书绑定、补考证书策略</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>总后台 — 证书中心-编号与审计</td><td class='small'>证书编号规则、防伪校验码、签发与作废审计、待发证审核队列 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 4 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>总后台 — 本地知识库(AI 学习助手)</td><td class='small'>课程向量库管理、索引重建、检索权限边界、回答安全策略 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；总后台含配置、审计与跨端数据聚合，后端略增；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>总后台 — AI 客服运营</td><td class='small'>客服 常见问题 知识库、话术树设计、坐席工作台、质检与回流 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 1 项）；总后台含配置、审计与跨端数据聚合，后端略增；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>4</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,700</td></tr><tr><td>总后台 — 分销中心</td><td class='small'>分销员准入与合同、商品与佣金规则、结算周期 成交后第 N 个工作日 配置、归因规则 等共 9 项</td><td class='small'>共 9 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 10 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>8</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>15</strong></td><td class='num'>23,900</td></tr><tr><td>总后台 — 营销中心</td><td class='small'>优惠券中心、拼团中心、活动中心、本地节假日营销日历 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 6 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>4</td><td class='num'>6</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,200</td></tr><tr><td>总后台 — 数据看板与 商业智能统计分析</td><td class='small'>集团运营总览、分店多维对比、课程/教师维度、漏斗分析 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 8 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 3 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>6</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>13</strong></td><td class='num'>20,300</td></tr><tr><td>总后台 — 学员档案与永久绑定</td><td class='small'>学员档案视图、绑定关系审计、解绑审核、反作弊归因</td><td class='small'>共 4 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>总后台 — 消息中心（以 Telegram 为主通道）</td><td class='small'>消息模板管理、Telegram 机器人 接入、发送通道矩阵、发送日志 等共 7 项</td><td class='small'>共 7 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>5</td><td class='num'>5</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,500</td></tr><tr><td>总后台 — 财务与结算</td><td class='small'>营收报表、退款台账、分销佣金结算单、奖惩资金流水 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 8 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>6</td><td class='num'>4</td><td class='num'>2</td><td class='num'><strong>12</strong></td><td class='num'>18,800</td></tr><tr><td>总后台 — 运营营销-Banner &amp; Push</td><td class='small'>学员端 Banner 投放、Telegram Push 任务、活动效果分析</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 4 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>3</td><td class='num'>1</td><td class='num'><strong>7</strong></td><td class='num'>10,900</td></tr><tr><td>总后台 — 角色与权限</td><td class='small'>角色管理、权限矩阵、员工账号管理</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 3 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增；含交易/账务/对账逻辑，接口与幂等处理成本较高。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>总后台 — 操作审计</td><td class='small'>全局操作日志、敏感操作告警、审计报表导出</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>总后台 — 数据备份与恢复</td><td class='small'>自动备份策略、数据恢复演练、数据本地化策略</td><td class='small'>共 3 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 2 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 0 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>2</td><td class='num'>1</td><td class='num'><strong>6</strong></td><td class='num'>9,400</td></tr><tr><td>总后台 — 系统参数</td><td class='small'>全局参数配置、功能开关、环境与多语言、时区固定化 等共 5 项</td><td class='small'>共 5 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 0 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）；总后台含配置、审计与跨端数据聚合，后端略增。</td><td class='num'>3</td><td class='num'>4</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>12,400</td></tr><tr><td>总后台 — 三方对接管理</td><td class='small'>Telegram 机器人 管理、支付通道管理(Payme / Click 等本地支付（含 Uzum / Humo / Uzcard / Apelsin，按阶段接入）)、亚马逊云 资源管理、直播 音视频互动组件 管理 等共 9 项</td><td class='small'>共 9 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 8 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 2 项）；总后台含配置、审计与跨端数据聚合，后端略增；含音视频/直播链路，联调与弱网场景占用前后端工时；含交易/账务/对账逻辑，接口与幂等处理成本较高；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>7</td><td class='num'>6</td><td class='num'>2</td><td class='num'><strong>15</strong></td><td class='num'>23,600</td></tr><tr><td>APP合规隐私 — 合规与隐私</td><td class='small'>个人信息授权清单、数据导出与删除、内容合规审查、未成年人保护策略(美国儿童上网隐私相关规则) 等共 6 项</td><td class='small'>共 6 个功能点；后端侧重接口、权限、数据与业务规则（命中复杂度关键词约 5 项）；前端侧重页面、交互与可视化（命中交互/展示类关键词约 3 项）；含音视频/直播链路，联调与弱网场景占用前后端工时；含 AI/知识库检索与内容治理，涉及向量或检索服务对接。</td><td class='num'>4</td><td class='num'>4</td><td class='num'>2</td><td class='num'><strong>10</strong></td><td class='num'>15,200</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>三、汇总表</h2>
+    <table>
+      <thead>
+        <tr><th>项目</th><th style="text-align:right">数值</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>模块数量</td><td class="num">68</td></tr>
+        <tr><td>功能点条数（合计）</td><td class="num">320</td></tr>
+        <tr><td>后端人天合计</td><td class="num">242</td></tr>
+        <tr><td>前端人天合计</td><td class="num">222</td></tr>
+        <tr><td>UI 设计人天合计</td><td class="num">85</td></tr>
+        <tr><td><strong>人天总计（后端+前端+设计）</strong></td><td class="num"><strong>549</strong></td></tr>
+        <tr><td>人工成本小计（元，未含风险缓冲）</td><td class="num">853,600.00</td></tr>
+        <tr><td>风险缓冲（10%）</td><td class="num">85,360.00</td></tr>
+        <tr><td><strong>含税风险后总价（元）</strong></td><td class="num"><strong>938,960.00</strong></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>四、单价与计费说明</h2>
+    <table>
+      <thead><tr><th>角色</th><th>单价（元 / 人天）</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>后端开发</td><td class="num">1800</td><td>接口、业务规则、数据模型、第三方对接、联调与自测。</td></tr>
+        <tr><td>前端开发</td><td class="num">1500</td><td>Web/App 端页面、组件、状态与接口联调、兼容性处理。</td></tr>
+        <tr><td>UI 设计</td><td class="num">1000</td><td>关键页面视觉与交互稿；各模块设计人天 ≤ 该模块前端人天的 50%。</td></tr>
+      </tbody>
+    </table>
+    <p class="note">第三方服务（短信、对象存储、直播、支付等）产生的官方费用、服务器与域名等基础设施费用不含在本开发报价内，可按实际单独列支或代采。</p>
+  </section>
+
+  <section>
+    <h2>五、风险缓冲与总价</h2>
+    <table>
+      <thead><tr><th>项目</th><th style="text-align:right">金额（元）</th></tr></thead>
+      <tbody>
+        <tr><td>开发人工成本小计（未含风险）</td><td class="num">853,600.00</td></tr>
+        <tr><td>风险缓冲（10%）</td><td class="num">85,360.00</td></tr>
+        <tr><td><strong>推荐报价总价（含 10% 风险缓冲）</strong></td><td class="num"><strong>938,960.00</strong></td></tr>
+      </tbody>
+    </table>
+    <p class="note">人天为基于清单颗粒度的经验估算，签约前建议结合分期范围、MVP 裁剪与原型评审做一次联合评估微调。</p>
+  </section>
+
+  <footer>本文件由脚本根据需求清单自动生成，可直接用 Chrome / Safari / Firefox 打开浏览。</footer>
+</div>
+</body>
+</html>

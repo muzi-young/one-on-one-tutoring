@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>脚本编排 · 运营端</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+.scene{background:#fff;border:1px solid #ece4d3;border-radius:10px;padding:14px;margin-bottom:10px;display:grid;grid-template-columns:90px 1fr 90px;gap:14px;align-items:start;}
+.scene.active{border:2px solid var(--gold);background:#fffaf0;}
+.scene .time{font-family:'Songti SC',serif;font-size:18px;color:var(--gold);font-weight:bold;}
+.scene .dur{font-size:12px;color:#888;text-align:right;}
+</style>
+</head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">脚本编排 · 《流水》技法直播课</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">编排开场 / 知识 / 课程介绍 / 答疑 / 收尾节点，按时间轴驱动数字人播报</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span class="tag tag-yellow">v3 草稿 · 未审核</span>
+      <button class="btn">预览效果</button>
+      <button class="btn">保存草稿</button>
+      <button class="btn primary">提交审核</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:18px;">
+    <!-- 时间轴 -->
+    <div>
+      <div class="card" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#fffaf0,#fff);">
+        <div style="display:flex;gap:18px;font-size:13px;color:#444;">
+          <span>📅 5/17 20:00 开播</span>
+          <span>⏱ 总时长 60 min</span>
+          <span>🎬 节点 5 个</span>
+          <span>🎙 数字人 阿琴</span>
+        </div>
+        <button class="btn primary sm">+ 添加节点</button>
+      </div>
+
+      <div class="scene">
+        <div class="time">00:00</div>
+        <div>
+          <b>① 开场寒暄</b> <span class="tag tag-blue">开场</span>
+          <p style="margin:6px 0 0;font-size:13px;color:#444;line-height:1.7;">「各位琴友晚上好，今夜我们一起走进《流水》——伯牙子期高山流水的千古佳话……」</p>
+          <div style="font-size:11px;color:#888;margin-top:6px;">🎵 BGM：流水古琴片段 · 🎬 镜头：数字人特写</div>
+        </div>
+        <div class="dur">3 min<br/><button class="btn sm" style="margin-top:6px;">编辑</button></div>
+      </div>
+
+      <div class="scene">
+        <div class="time">03:00</div>
+        <div>
+          <b>② 知识讲解 · 滚拂技法</b> <span class="tag tag-green">知识</span>
+          <p style="margin:6px 0 0;font-size:13px;color:#444;line-height:1.7;">分解滚拂动作：以腕带指、虚实相生。配合谱面动画与名家示范视频，触发曲目特征片段播放。</p>
+          <div style="font-size:11px;color:#888;margin-top:6px;">📺 资源：滚拂分解动画.mp4 · 谱面.png · 名家示范.mp4</div>
+        </div>
+        <div class="dur">15 min<br/><button class="btn sm" style="margin-top:6px;">编辑</button></div>
+      </div>
+
+      <div class="scene">
+        <div class="time">18:00</div>
+        <div>
+          <b>③ 课程介绍 + 卡片下发</b> <span class="tag tag-orange">转化</span>
+          <p style="margin:6px 0 0;font-size:13px;color:#444;line-height:1.7;">展示《流水》系统课卡片，启动 15 分钟优惠倒计时；强调"直播专享 7 折 + 赠《广陵散》入门微课"。</p>
+          <div style="font-size:11px;color:#888;margin-top:6px;">🎁 关联：《流水》系统课 · 直播 7 折活动 · 引导报名</div>
+        </div>
+        <div class="dur">5 min<br/><button class="btn sm" style="margin-top:6px;">编辑</button></div>
+      </div>
+
+      <div class="scene active">
+        <div class="time">23:00</div>
+        <div>
+          <b>④ 弹幕答疑 ✏</b> <span class="tag tag-purple">答疑 · 编辑中</span>
+          <p style="margin:6px 0 0;font-size:13px;color:#444;line-height:1.7;">智能体根据弹幕意图分发（课程咨询 / 曲目 / 价格 / 闲聊），高置信度由数字人口播，低置信度转人工。</p>
+          <div style="background:#fff;border:1px dashed #d6b06b;border-radius:6px;padding:8px;margin-top:8px;font-size:12px;color:#7a5b22;">
+            🛡 兜底话术：「这个问题我需要请教张老师，请稍等～」<br/>
+            🔄 复用：一期知识库 · 运营话术库
+          </div>
+        </div>
+        <div class="dur">25 min<br/><button class="btn primary sm" style="margin-top:6px;">保存</button></div>
+      </div>
+
+      <div class="scene">
+        <div class="time">48:00</div>
+        <div>
+          <b>⑤ 收尾转化</b> <span class="tag tag-red">收尾</span>
+          <p style="margin:6px 0 0;font-size:13px;color:#444;line-height:1.7;">最后名额提醒 + 抽奖互动 + 引导关注「古琴智能体」公众号 + 预告下场直播。</p>
+          <div style="font-size:11px;color:#888;margin-top:6px;">🎁 抽奖：3 张《广陵散》体验券 · 📢 下场预告 5/19</div>
+        </div>
+        <div class="dur">12 min<br/><button class="btn sm" style="margin-top:6px;">编辑</button></div>
+      </div>
+    </div>
+
+    <!-- 右侧：节点编辑面板 -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>节点编辑：④ 弹幕答疑</h3>
+        <label class="field"><span class="lbl">节点类型</span>
+          <select><option>答疑互动</option><option>知识讲解</option><option>转化引导</option></select>
+        </label>
+        <label class="field"><span class="lbl">起始时间 / 时长</span>
+          <div style="display:flex;gap:8px;"><input value="23:00" style="flex:1;"/><input value="25 min" style="flex:1;"/></div>
+        </label>
+        <label class="field"><span class="lbl">数字人台词</span>
+          <textarea rows="3">同学们的问题我都看到了，我们逐一来回答。如果遇到我也拿不准的问题，我会请张老师在课后专门答复…</textarea>
+        </label>
+        <label class="field"><span class="lbl">意图分发策略</span>
+          <select><option>智能分发（推荐）</option><option>仅课程咨询</option><option>关闭智能分发</option></select>
+        </label>
+        <label class="field"><span class="lbl">兜底话术</span>
+          <textarea rows="2">这个问题我需要请教张老师，请稍等～</textarea>
+        </label>
+      </div>
+
+      <div class="card" style="background:#fff5e1;border-color:#d6b06b;">
+        <h3 style="color:#8b6a36;">📋 审核要点</h3>
+        <ul style="margin:0;padding-left:20px;font-size:13px;color:#7a5b22;line-height:1.9;">
+          <li>开场 / 收尾 / 转化节点齐全</li>
+          <li>所有台词已通过敏感词检测</li>
+          <li>关联课程在售且库存充足</li>
+          <li>兜底话术覆盖所有答疑节点</li>
+        </ul>
+        <button class="btn primary" style="width:100%;margin-top:10px;">提交脚本审核</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+  // 节点点击切换 active + 更新右侧编辑面板
+  document.querySelectorAll('.scene').forEach((s,idx)=>{
+    s.style.cursor='pointer';
+    s.addEventListener('click', e=>{
+      if(e.target.closest('button')) return;
+      document.querySelectorAll('.scene').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+      const title = s.querySelector('b').textContent;
+      const panel = document.querySelector('.card h3');
+      if(panel && panel.textContent.startsWith('节点编辑')) panel.textContent = '节点编辑：' + title;
+      window.toast('已切换到：' + title);
+    });
+  });
+  // 添加节点按钮
+  document.querySelectorAll('.btn').forEach(b=>{
+    if(b.textContent.trim()==='+ 添加节点'){
+      b.addEventListener('click', ()=>{
+        window.modal('添加新节点', `
+          <label class="field"><span class="lbl">节点类型</span><select><option>知识讲解</option><option>答疑互动</option><option>转化引导</option><option>开场/收尾</option></select></label>
+          <label class="field"><span class="lbl">起始时间</span><input value="48:00"/></label>
+          <label class="field"><span class="lbl">时长</span><input value="5 min"/></label>
+          <label class="field"><span class="lbl">节点标题</span><input placeholder="如：彩蛋互动"/></label>
+        `, ()=>window.toast('节点已添加 ✓','success'));
+      });
+    }
+    if(b.textContent.trim()==='提交脚本审核' || b.textContent.trim()==='提交审核'){
+      b.addEventListener('click', ()=>{
+        window.modal('提交脚本审核', '<p>确认将当前脚本 v3 提交审核？审核通过后方可正式开播。</p><p style="color:#888;font-size:12px;">预计审核时长 1-2 小时。</p>', ()=>{
+          window.toast('脚本已提交，等待审核中...','success');
+        });
+      });
+    }
+  });
+</script>
+<script src="../assets/sidebar.js" data-active="ops/script.html" data-crumbs="运营端 / <b>脚本编排</b>" data-depth="1"></script>
+</body></html>

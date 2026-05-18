@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>古琴智能体三期 · 端口选择</title>
+<link rel="stylesheet" href="assets/shell.css"/>
+<style>
+  body{background:linear-gradient(135deg,#3a2f1e 0%,#7a5a2c 50%,#3a2f1e 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;}
+  .portal{max-width:1100px;width:100%;padding:40px 24px;color:#fff;}
+  .portal-head{text-align:center;margin-bottom:40px;}
+  .portal-head .seal{width:64px;height:64px;background:#a8341e;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:32px;color:#fff;box-shadow:0 10px 30px rgba(168,52,30,.5);}
+  .portal-head h1{font-family:'Noto Serif SC',serif;font-size:32px;margin:16px 0 6px;letter-spacing:.1em;}
+  .portal-head p{color:#d6c08a;margin:0;font-size:14px;}
+  .ports-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .port-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:28px 24px;cursor:pointer;transition:all .3s;display:block;color:inherit;position:relative;overflow:hidden;}
+  .port-card:hover{transform:translateY(-6px);border-color:var(--c);box-shadow:0 20px 60px rgba(0,0,0,.4);background:rgba(255,255,255,.1);}
+  .port-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--c);}
+  .port-card .ico{font-size:42px;}
+  .port-card h2{font-family:'Noto Serif SC',serif;margin:14px 0 6px;font-size:22px;}
+  .port-card .role{font-size:12px;color:var(--c);background:rgba(255,255,255,.08);padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:14px;}
+  .port-card .desc{font-size:13px;color:#d6c08a;line-height:1.7;margin-bottom:18px;min-height:60px;}
+  .port-card .meta{font-size:12px;color:#a99b78;display:flex;flex-direction:column;gap:4px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);}
+  .port-card .enter{margin-top:14px;display:flex;align-items:center;justify-content:space-between;color:var(--c);font-weight:600;font-size:13px;}
+  .port-card .enter .arrow{transition:transform .2s;}
+  .port-card:hover .enter .arrow{transform:translateX(6px);}
+  .foot-note{text-align:center;color:#a99b78;font-size:12px;margin-top:32px;}
+</style>
+</head>
+<body>
+<div class="portal">
+  <div class="portal-head">
+    <span class="seal">琴</span>
+    <h1>古琴智能体 · 三期</h1>
+    <p>请选择您要进入的端口</p>
+  </div>
+
+  <div class="ports-grid">
+    <a class="port-card" href="app/login.html" style="--c:#5b8def;">
+      <div class="ico">📱</div>
+      <h2>用户端 APP</h2>
+      <span class="role">消费者用户</span>
+      <p class="desc">进入直播间、报名课程、预约提醒、回放学习。仿真 iPhone 真机壳交互。</p>
+      <div class="meta">
+        <span>🎯 适用：琴友、学员、付费用户</span>
+        <span>📄 共 8 个页面</span>
+      </div>
+      <div class="enter">进入用户端 <span class="arrow">→</span></div>
+    </a>
+
+    <a class="port-card" href="ops/login.html" style="--c:#23c4a7;">
+      <div class="ico">🛠</div>
+      <h2>运营端</h2>
+      <span class="role">运营人员工作台</span>
+      <p class="desc">创建直播、编排脚本、实时控场、配置优惠活动。专注内容生产与转化运营。</p>
+      <div class="meta">
+        <span>🎯 适用：内容运营、直播运营</span>
+        <span>📄 共 5 个工作页面</span>
+      </div>
+      <div class="enter">进入运营端 <span class="arrow">→</span></div>
+    </a>
+
+    <a class="port-card" href="admin/login.html" style="--c:#a266f4;">
+      <div class="ico">🗂</div>
+      <h2>管理后台</h2>
+      <span class="role">系统管理员</span>
+      <p class="desc">数字人资产、合规策略、转化数据、AI 能力监控。系统级配置与数据洞察。</p>
+      <div class="meta">
+        <span>🎯 适用：超级管理员、数据分析</span>
+        <span>📄 共 4 个管理页面</span>
+      </div>
+      <div class="enter">进入管理后台 <span class="arrow">→</span></div>
+    </a>
+  </div>
+
+  <div class="foot-note">
+    💡 三个端口彼此独立，各自有专属的导航与角色身份；进入任一端后，可通过侧边底部"切换端口"快速跨端跳转。
+  </div>
+</div>
+</body>
+</html>

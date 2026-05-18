@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI教育培训SaaS平台 · 分模块报价方案</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--line:#e2e8f0;--text:#1e293b;--muted:#64748b;--head:#0f172a;--accent:#2563eb;--accent2:#0ea5e9;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Microsoft YaHei','PingFang SC','Source Han Sans SC','Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 64px}
+.cover{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0c4a6e 100%);color:#fff;border-radius:20px;padding:40px 36px;margin-bottom:28px;box-shadow:0 12px 40px rgba(15,23,42,.18)}
+.cover h1{font-size:28px;font-weight:700;margin-bottom:10px;letter-spacing:.02em}
+.cover .meta{display:flex;flex-wrap:wrap;gap:12px 22px;margin-top:18px;font-size:14px;opacity:.92}
+.cover .meta span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:6px 14px;border-radius:999px}
+h2{font-size:20px;color:var(--head);margin:36px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+h3{font-size:16px;color:var(--head);margin:22px 0 10px}
+p{margin:10px 0;color:var(--text)}
+.note{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0 20px;background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#f1f5f9;font-weight:600;color:var(--head);font-size:13px}
+td small{color:var(--muted)}
+tr:last-child td{border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 8px;margin-bottom:18px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.footer{text-align:center;color:var(--muted);font-size:13px;margin-top:40px}
+</style></head><body><div class="wrap">
+<div class="cover">
+<h1>AI教育培训SaaS平台<br/>分模块开发报价方案</h1>
+<p style="opacity:.88;margin-top:8px">基于《需求功能清单·通俗版》行级归口与商务锚定预算对齐</p>
+<div class="meta"><span>版本：V1.0</span><span>日期：2026-05-15</span><span>报价编制单位：郑州八角信息技术有限公司</span></div>
+</div>
+<div class="note"><strong>解析说明（只读）</strong><br/>
+指定路径 <code>AI教育培训SaaS平台-需求功能清单_通俗版.xlsx</code> 在当前目录未检索到同名文件；已使用同目录、同结构的 UTF-8 CSV 源文件 <code>AI教育培训SaaS平台-需求功能清单_通俗版.csv</code>（与《通俗版_使用说明》一致：由主清单导出、行序一致）。<br/>
+列字段：<strong>端口、板块、功能点、详细功能描述、功能逻辑、备注</strong>；共 <strong>339</strong> 行需求行（表头除外），端口分布：学生端 103、家长端 18、教师端 39、分店教务端 31、店长端 14、总后台 94、系统后台 30、公共 10。<br/>
+归口规则：按「端口+板块」唯一划入一个报价模块；<strong>直播课堂</strong>与<strong>在线学习</strong>合并计入「直播相关」；<strong>考试组织</strong>并入「考试中心」；分店教务其余板块计入「分店教务端」；教师端剩余板块计入「教师端」。</div>
+<div class="sec toc"><strong>目录</strong><p class="toc">
+<a href="#m01">Telegram 推送</a>（2万） · 
+<a href="#m02">多语言（锚定：3个语言）</a>（3万） · 
+<a href="#m03">课程中心</a>（4.5万） · 
+<a href="#m04">直播相关</a>（25万） · 
+<a href="#m05">考试中心</a>（4万） · 
+<a href="#m06">本地知识库 AI 问答</a>（5万） · 
+<a href="#m07">AI 客服</a>（2万） · 
+<a href="#m08">营销参与</a>（5万） · 
+<a href="#m09">作业与练习</a>（3万） · 
+<a href="#m10">家长端</a>（6万） · 
+<a href="#m11">教师端</a>（10万） · 
+<a href="#m12">分店教务端</a>（6万） · 
+<a href="#m13">分机构端（总后台归口）</a>（6万） · 
+<a href="#m14">其他</a>（10万）
+</p></div>
+<h2>一、计费口径</h2>
+<table><thead><tr><th>角色</th><th>单价（元 / 人天）</th><th>说明</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>1,000</td><td>页面视觉、组件规范、关键状态与多语言版式适配</td></tr>
+<tr><td>前端开发</td><td class=num>1,500</td><td>Web/H5/小程序等前端实现（按项目实际端型交付）</td></tr>
+<tr><td>后端开发</td><td class=num>1,800</td><td>接口、业务规则、任务调度、数据与安全策略</td></tr>
+</tbody></table>
+<section class="sec" id="m01">
+<h2>Telegram 推送 <small style="color:#64748b">（锚定 2 万 = ¥20,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>总后台「消息中心（以 Telegram 为主通道）」全量功能点；与学员/家长触达相关的 Bot 绑定、模板与发送策略在清单中分散出现，本模块预算归口用于通道侧统一建设。</p>
+<p><strong>归口需求行数：</strong>9 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>3.00</td><td class=num>1,000</td><td class=num>3,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>6.00</td><td class=num>1,500</td><td class=num>9,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>4.44</td><td class=num>1,800</td><td class=num>8,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥20,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m02">
+<h2>多语言（锚定：3个语言） <small style="color:#64748b">（锚定 3 万 = ¥30,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>公共端「通用能力」全量功能点（文案路由、语言包、合规提示模板等）。说明：通俗版清单正文多处出现「4语言」表述，与商务锚定「3个语言」并存时，以本模块预算为归口上限，具体上线语种范围以合同附件为准。</p>
+<p><strong>归口需求行数：</strong>10 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>5.00</td><td class=num>1,000</td><td class=num>5,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>10.00</td><td class=num>1,500</td><td class=num>15,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>5.56</td><td class=num>1,800</td><td class=num>10,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥30,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m03">
+<h2>课程中心 <small style="color:#64748b">（锚定 4.5 万 = ¥45,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「课程中心」+ 总后台「课程内容管理」：分类/详情/试听/搜索筛选/收藏与浏览记录、后台课程主数据与资源编排等。</p>
+<p><strong>归口需求行数：</strong>16 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>6.00</td><td class=num>1,000</td><td class=num>6,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>14.00</td><td class=num>1,500</td><td class=num>21,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>10.00</td><td class=num>1,800</td><td class=num>18,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥45,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m04">
+<h2>直播相关 <small style="color:#64748b">（锚定 25 万 = ¥250,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「在线学习」（含直播/回放/弱网/字幕/资料等）+ 教师端「直播课堂」：小班/大班互动、RTC、录制转码与分发链路相关实现。</p>
+<p><strong>归口需求行数：</strong>14 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>28.00</td><td class=num>1,000</td><td class=num>28,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>52.00</td><td class=num>1,500</td><td class=num>78,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>80.00</td><td class=num>1,800</td><td class=num>144,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥250,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m05">
+<h2>考试中心 <small style="color:#64748b">（锚定 4 万 = ¥40,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「考试中心」+ 总后台「考试中心(总后台)」+ 分店教务端「考试组织」：组卷、监考策略、成绩/补考/排名与教务组织闭环。</p>
+<p><strong>归口需求行数：</strong>20 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>5.00</td><td class=num>1,000</td><td class=num>5,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>12.00</td><td class=num>1,500</td><td class=num>18,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>9.44</td><td class=num>1,800</td><td class=num>17,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥40,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m06">
+<h2>本地知识库 AI 问答 <small style="color:#64748b">（锚定 5 万 = ¥50,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「本地知识库 AI 问答」+ 总后台「本地知识库(AI 学习助手)」：检索增强生成、会话、反馈回流与运营配置。</p>
+<p><strong>归口需求行数：</strong>11 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>6.00</td><td class=num>1,000</td><td class=num>6,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>14.00</td><td class=num>1,500</td><td class=num>21,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>12.78</td><td class=num>1,800</td><td class=num>23,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥50,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m07">
+<h2>AI 客服 <small style="color:#64748b">（锚定 2 万 = ¥20,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「AI 客服」+ 总后台「AI 客服运营」：机器人应答、转人工、质检与运营配置。</p>
+<p><strong>归口需求行数：</strong>10 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>4.00</td><td class=num>1,000</td><td class=num>4,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>7.00</td><td class=num>1,500</td><td class=num>10,500.00</td></tr>
+<tr><td>后端开发</td><td class=num>3.06</td><td class=num>1,800</td><td class=num>5,500.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥20,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m08">
+<h2>营销参与 <small style="color:#64748b">（锚定 5 万 = ¥50,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「营销参与」「分销推广」+ 总后台「营销中心」「运营营销-Banner & Push」：优惠券/拼团/转介绍/活动与触达物料。</p>
+<p><strong>归口需求行数：</strong>22 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>7.00</td><td class=num>1,000</td><td class=num>7,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>18.00</td><td class=num>1,500</td><td class=num>27,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>8.89</td><td class=num>1,800</td><td class=num>16,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥50,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m09">
+<h2>作业与练习 <small style="color:#64748b">（锚定 3 万 = ¥30,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>学生端「作业与练习」+ 教师端「作业批改」：布置、作答、批改与统计。</p>
+<p><strong>归口需求行数：</strong>9 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>4.00</td><td class=num>1,000</td><td class=num>4,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>10.00</td><td class=num>1,500</td><td class=num>15,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>6.11</td><td class=num>1,800</td><td class=num>11,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥30,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m10">
+<h2>家长端 <small style="color:#64748b">（锚定 6 万 = ¥60,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>家长端全部板块：账户绑定、学情透明、证书查看、趋势、消息触达、续费支付等。</p>
+<p><strong>归口需求行数：</strong>18 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>8.00</td><td class=num>1,000</td><td class=num>8,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>20.00</td><td class=num>1,500</td><td class=num>30,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>12.22</td><td class=num>1,800</td><td class=num>22,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥60,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m11">
+<h2>教师端 <small style="color:#64748b">（锚定 10 万 = ¥100,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>教师端除「直播课堂」外的全部板块（直播已计入「直播相关」模块）：课表、学情、作业批改不在此重复计价、证书考务、分销与业绩等。</p>
+<p><strong>归口需求行数：</strong>30 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>16.00</td><td class=num>1,000</td><td class=num>16,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>32.00</td><td class=num>1,500</td><td class=num>48,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>20.00</td><td class=num>1,800</td><td class=num>36,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥100,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m12">
+<h2>分店教务端 <small style="color:#64748b">（锚定 6 万 = ¥60,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>分店教务端除「考试组织」外的全部板块（考试组织已计入「考试中心」模块）：排课、学员档案、订单售后、招生试听、证书初审、续费催费、报表与分店侧客服投诉等。</p>
+<p><strong>归口需求行数：</strong>28 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>10.00</td><td class=num>1,000</td><td class=num>10,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>22.00</td><td class=num>1,500</td><td class=num>33,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>9.44</td><td class=num>1,800</td><td class=num>17,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥60,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m13">
+<h2>分机构端（总后台归口） <small style="color:#64748b">（锚定 6 万 = ¥60,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>总后台「分销中心」「招生计划与目标下达」「学员档案与永久绑定」「组织架构与分店管理」：多机构组织、分销政策与招生目标链路。</p>
+<p><strong>归口需求行数：</strong>21 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>9.00</td><td class=num>1,000</td><td class=num>9,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>21.00</td><td class=num>1,500</td><td class=num>31,500.00</td></tr>
+<tr><td>后端开发</td><td class=num>10.83</td><td class=num>1,800</td><td class=num>19,500.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥60,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<section class="sec" id="m14">
+<h2>其他 <small style="color:#64748b">（锚定 10 万 = ¥100,000）</small></h2>
+<h3>范围摘要（Excel 归口）</h3><p>未纳入以上归口的其余清单行：学生端账户/订单/证书/学习管理/趋势/个人中心；店长端全量；总后台奖惩/BI/证书中心/财务；系统后台参数/权限/审计/备份/合规与三方对接等。</p>
+<p><strong>归口需求行数：</strong>121 行（通俗版 CSV）</p>
+<h3>工作量与费用拆分</h3>
+<table><thead><tr><th>角色</th><th class=num>人天</th><th class=num>单价（元/人天）</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>UI 设计</td><td class=num>14.00</td><td class=num>1,000</td><td class=num>14,000.00</td></tr>
+<tr><td>前端开发</td><td class=num>28.00</td><td class=num>1,500</td><td class=num>42,000.00</td></tr>
+<tr><td>后端开发</td><td class=num>24.44</td><td class=num>1,800</td><td class=num>44,000.00</td></tr>
+<tr><th colspan="3">模块小计（与锚定对齐）</th><th class=num>¥100,000</th></tr>
+</tbody></table>
+<p><small>说明：后端人天含小数，用于将 UI/前端整数人天与模块锚定总价严格对齐；实施阶段可折算为整数人天并同步调整前端/UI配比，总价以合同约定为准。</small></p>
+</section>
+<h2>二、费用调整与偏差说明</h2>
+<div class="note"><ul style="margin-left:18px">
+<li><strong>数据源偏差：</strong>通俗版 <code>.xlsx</code> 未在目录出现，已按同级 <code>.csv</code> 解析；若后续以 xlsx 为准且行数变化，归口行数与说明需同步修订。</li>
+<li><strong>「3个语言」与清单「4语言」：</strong>商务锚定模块名为「3个语言」，清单多处描述为「4语言」能力；本方案将多语言工程归口至「多语言」模块预算，不改变各模块锚定总额。</li>
+<li><strong>交叉能力：</strong>Telegram、多语言、支付、合规、对象存储/转码等横切能力在清单多板块重复出现，本方案按「主归口模块」计价一次，避免重复加总。</li>
+<li><strong>店长端：</strong>清单端口为「店长端」，商务锚定列表未单列；已并入「其他」模块（121 行）。若需单列预算，建议从「其他」锚定中切分并同步调整总包。</li>
+</ul></div>
+<h2>三、汇总</h2>
+<table><thead><tr><th>项目</th><th class=num>金额（元）</th></tr></thead><tbody>
+<tr><td>各模块小计合计（锚定口径）</td><td class=num>¥915,000</td></tr>
+<tr><td>风险缓冲（10%，<strong>本表已包含</strong>）</td><td class=num>¥91,500</td></tr>
+<tr><th>含税前开发报价参考总计（含 10% 风险缓冲）</th><th class=num>¥1,006,500</th></tr>
+</tbody></table>
+<p><small>注：三方按量计费（短信、云直播、对象存储、模型推理等）不含在上述开发人天报价内，由甲方按实际用量向供应商结算。</small></p>
+<h2>四、实施阶段（建议）</h2>
+<table><thead><tr><th>阶段</th><th>周期建议</th><th>主要交付</th></tr></thead><tbody>
+<tr><td>Phase 1 基础平台</td><td>4–6 周</td><td>账户与权限、组织与分店模型、系统参数、公共多语言基座、订单支付主链路</td></tr>
+<tr><td>Phase 2 教学核心</td><td>8–12 周</td><td>课程中心、在线学习/直播、考试中心、作业练习、证书主流程</td></tr>
+<tr><td>Phase 3 增长与智能</td><td>6–8 周</td><td>营销参与、Telegram 消息中心、本地知识库问答、AI 客服</td></tr>
+<tr><td>Phase 4 运营深化</td><td>4–6 周</td><td>家长端、教师端、分店教务、分机构总后台能力联调与报表、数据看板与财务结算深化</td></tr>
+</tbody></table>
+<p class="footer">本文件为自包含 HTML，可直接用 Chrome / Safari / Firefox 打开。<br/>打开方式：双击文件或通过浏览器「打开文件」选择本 HTML。</p>
+</div></body></html>

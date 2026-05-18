@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安心陪护 · 用户端小程序原型（住宿+陪诊 全页面交互版）</title>
+<style>
+  :root{
+    --bg:#eef5f2; --panel:#ffffff; --ink:#152226; --muted:#6b7a80; --line:#e1ebe6;
+    --green:#1f8a70; --green-2:#e3f4ee; --green-3:#10705a;
+    --blue:#2f6fed; --blue-2:#e8f0ff;
+    --orange:#f59e0b; --orange-2:#fff5e0;
+    --red:#e45454; --red-2:#fde7e7;
+    --shadow:0 24px 60px rgba(31,42,46,.12);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    min-height:100vh; color:var(--ink);
+    background:radial-gradient(circle at top left,#d8f1e7 0,transparent 32%),linear-gradient(135deg,#f7fbf9 0%,var(--bg) 100%);
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif;
+    padding:24px 18px 60px;
+  }
+  button,input,select,textarea{font:inherit;color:inherit}
+  button{cursor:pointer;border:0;background:transparent}
+  a{color:inherit;text-decoration:none}
+  .shell{max-width:1380px;margin:0 auto}
+  /* hero */
+  .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px;flex-wrap:wrap}
+  .eyebrow{color:var(--green);font-weight:700;letter-spacing:.08em;font-size:13px}
+  h1{margin:8px 0 6px;font-size:clamp(26px,3.6vw,42px);line-height:1.1;letter-spacing:-.03em}
+  .hero p{margin:0;color:var(--muted);max-width:760px;line-height:1.7}
+  .topnav{display:flex;gap:10px;flex-wrap:wrap}
+  .topnav a{padding:10px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:600;font-size:13px;box-shadow:0 4px 10px rgba(0,0,0,.04)}
+  .topnav a.active{background:var(--green);color:#fff;border-color:var(--green)}
+  /* layout */
+  .workspace{display:grid;grid-template-columns:430px 1fr;gap:28px;align-items:start}
+  .phone-wrap{position:sticky;top:20px}
+  .phone{
+    width:390px;min-height:844px;margin:0 auto;padding:14px;
+    border-radius:50px;background:#0e1a1d;box-shadow:var(--shadow);
+    position:relative;
+  }
+  .phone::before{
+    content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);
+    width:120px;height:32px;border-radius:18px;background:#0a1416;z-index:5;
+  }
+  .screen{
+    overflow:hidden;height:816px;border-radius:38px;background:#f4f8f6;
+    position:relative;display:flex;flex-direction:column;
+  }
+  .statusbar{height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 24px;font-size:13px;font-weight:700;flex-shrink:0}
+  /* dynamic header */
+  .app-header{padding:6px 18px 14px;flex-shrink:0;background:linear-gradient(180deg,#e8f6ef,transparent);position:relative;z-index:1}
+  .app-header.plain{background:#fff;border-bottom:1px solid var(--line)}
+  .app-header .row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .app-header .title{font-size:20px;font-weight:900;letter-spacing:-.03em}
+  .app-header .back{width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:18px;display:flex;align-items:center;justify-content:center}
+  .app-header .actions{display:flex;gap:8px;align-items:center}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--green-2);color:var(--green);font-size:12px;font-weight:700}
+  .pill.warn{background:var(--orange-2);color:var(--orange)}
+  .pill.blue{background:var(--blue-2);color:var(--blue)}
+  .pill.red{background:var(--red-2);color:var(--red)}
+  .search{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#fff;border:1px solid var(--line);border-radius:16px;color:var(--muted);font-size:13px;margin-top:10px}
+  /* content */
+  .content{flex:1;padding:14px 16px 90px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scroll-behavior:smooth}
+  .content::-webkit-scrollbar{width:4px}
+  .content::-webkit-scrollbar-thumb{background:#cad8d3;border-radius:8px}
+  /* bottom nav */
+  .bottom-nav{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:8px 8px 14px;background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(14px);z-index:4}
+  .bottom-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:14px;color:var(--muted);font-size:11px;font-weight:600}
+  .bottom-nav button .ico{font-size:20px;line-height:1}
+  .bottom-nav button.active{color:var(--green)}
+  /* common */
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+  .card.flat{border:0;box-shadow:0 4px 14px rgba(31,42,46,.05)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .col{display:flex;flex-direction:column;gap:6px}
+  .muted{color:var(--muted);font-size:13px;line-height:1.55}
+  .small{font-size:12px}
+  .price{color:var(--green);font-weight:900;font-size:18px}
+  .price .unit{font-size:12px;color:var(--muted);font-weight:400;margin-left:2px}
+  .tag{display:inline-block;padding:3px 8px;border-radius:8px;background:#f1f5f4;color:var(--muted);font-size:11px;margin:0 4px 4px 0}
+  .tag.green{background:var(--green-2);color:var(--green)}
+  .tag.blue{background:var(--blue-2);color:var(--blue)}
+  .tag.orange{background:var(--orange-2);color:var(--orange)}
+  .tag.red{background:var(--red-2);color:var(--red)}
+  .btn{min-height:44px;padding:0 18px;border-radius:14px;background:var(--green);color:#fff;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 18px rgba(31,138,112,.18);transition:transform .12s ease}
+  .btn:active{transform:scale(.97)}
+  .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn.warn{background:var(--orange);box-shadow:0 8px 18px rgba(245,158,11,.22)}
+  .btn.danger{background:var(--red);box-shadow:0 8px 18px rgba(228,84,84,.18)}
+  .btn.ghost{background:transparent;color:var(--green);box-shadow:none;border:1px dashed var(--green)}
+  .btn.full{width:100%}
+  .btn.lg{min-height:50px;font-size:16px;border-radius:16px}
+  .image-box{height:130px;border-radius:14px;background:linear-gradient(135deg,#cfe9dc,#edf8f2);display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:10px;position:relative;overflow:hidden}
+  .image-box .corner{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;padding:3px 8px;border-radius:8px;font-size:11px}
+  .image-box.h80{height:90px;font-size:36px}
+  .image-box.h160{height:170px;font-size:60px}
+  .seg{display:flex;gap:6px;margin-bottom:12px;overflow:auto;padding-bottom:2px;flex-wrap:nowrap}
+  .seg button{flex:0 0 auto;min-height:36px;padding:0 14px;border-radius:999px;background:#fff;color:var(--muted);border:1px solid var(--line);font-size:13px}
+  .seg button.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 10px}
+  .filter-bar select{flex:1;min-height:32px;border:0;background:transparent;color:var(--ink);font-size:13px;outline:none}
+  .form{display:flex;flex-direction:column;gap:12px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 4px;font-weight:600}
+  .field input,.field select,.field textarea{width:100%;min-height:44px;border-radius:13px;border:1px solid var(--line);background:#fff;padding:0 12px;color:var(--ink);outline:none;font-size:14px}
+  .field textarea{padding:10px 12px;min-height:80px;resize:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(31,138,112,.1)}
+  .stepper{display:flex;gap:6px;margin:12px 0}
+  .step{flex:1;text-align:center;font-size:11px;color:var(--muted)}
+  .step::before{content:"";display:block;width:10px;height:10px;margin:0 auto 6px;border-radius:50%;background:#cad8d3;position:relative}
+  .step.done{color:var(--green);font-weight:700}
+  .step.done::before{background:var(--green)}
+  .step.now{color:var(--green);font-weight:700}
+  .step.now::before{background:var(--green);box-shadow:0 0 0 5px rgba(31,138,112,.18)}
+  .progress-line{height:8px;border-radius:999px;background:#e7eeeb;overflow:hidden;margin:8px 0 12px}
+  .progress-line span{display:block;height:100%;background:var(--green)}
+  .toast{position:absolute;left:22px;right:22px;bottom:90px;padding:13px 14px;border-radius:14px;background:#0e1a1d;color:#fff;box-shadow:0 16px 32px rgba(0,0,0,.22);transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s ease;font-size:13px;z-index:50}
+  .toast.show{transform:translateY(0);opacity:1}
+  .drawer{position:absolute;inset:auto 0 0 0;background:#fff;border-radius:24px 24px 0 0;padding:18px;box-shadow:0 -20px 60px rgba(31,42,46,.2);transform:translateY(110%);transition:.28s ease;z-index:30;max-height:80%;overflow:auto}
+  .drawer.show{transform:translateY(0)}
+  .drawer h3{margin:0 0 10px;font-size:17px}
+  .drawer .handle{width:36px;height:4px;border-radius:99px;background:#cfd9d4;margin:-8px auto 12px}
+  .modal{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(14,26,29,.45);opacity:0;pointer-events:none;transition:.2s ease;z-index:40}
+  .modal.show{opacity:1;pointer-events:auto}
+  .modal-card{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:320px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3)}
+  .mask{position:absolute;inset:0;background:rgba(14,26,29,.35);opacity:0;pointer-events:none;transition:.2s ease;z-index:25}
+  .mask.show{opacity:1;pointer-events:auto}
+  .empty{padding:48px 0;text-align:center;color:var(--muted)}
+  .empty .ico{font-size:48px;margin-bottom:8px;opacity:.6}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .service-card{min-height:96px;border-radius:18px;padding:12px;color:#fff;text-align:left;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 12px 24px rgba(0,0,0,.08)}
+  .service-card .ico{font-size:26px}
+  .service-card strong{font-size:15px;display:block;margin-top:6px}
+  .service-card span{font-size:11px;opacity:.92}
+  .quick-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center;font-size:12px}
+  .quick-card .ico{font-size:24px;display:block;margin-bottom:4px}
+  .banner{background:linear-gradient(135deg,#1f8a70,#54b399);color:#fff;border-radius:16px;padding:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .banner b{font-size:16px;display:block}
+  .banner span{font-size:12px;opacity:.9}
+  .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .qty button{width:30px;height:30px;font-weight:800;color:var(--green)}
+  .qty span{min-width:30px;text-align:center;font-size:14px;font-weight:700}
+  .map-mock{height:160px;border-radius:14px;background:linear-gradient(135deg,#dde9e3,#f1f7f3);position:relative;overflow:hidden;margin-bottom:10px;border:1px solid var(--line);background-image:repeating-linear-gradient(45deg,rgba(31,138,112,.06) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(31,138,112,.06) 0 2px,transparent 2px 14px)}
+  .map-mock .pin{position:absolute;font-size:24px}
+  .map-mock .pin.user{top:60%;left:30%}
+  .map-mock .pin.nurse{top:25%;right:18%;animation:bounce 1.6s infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .map-mock .label{position:absolute;bottom:8px;right:10px;background:rgba(255,255,255,.9);padding:4px 10px;border-radius:99px;font-size:11px;color:var(--ink)}
+  .order-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+  .order-card .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px}
+  .star{color:#f5b400}
+  .rating{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+  .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:8px;background:#f1f5f4;color:var(--muted);font-size:11px}
+  .nurse-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;gap:12px;margin-bottom:10px}
+  .avatar{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#cfe9dc,#edf8f2);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+  .review{padding:12px 0;border-bottom:1px dashed var(--line)}
+  .review:last-child{border-bottom:0}
+  .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:12px 0}
+  .calendar .h{text-align:center;font-size:11px;color:var(--muted);font-weight:700;padding:6px 0}
+  .calendar .d{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;border:1px solid transparent}
+  .calendar .d.disabled{color:#cfd9d4;cursor:not-allowed}
+  .calendar .d.in-range{background:var(--green-2);color:var(--green)}
+  .calendar .d.start,.calendar .d.end{background:var(--green);color:#fff}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{padding:6px 10px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--muted);cursor:pointer}
+  .chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .pay-method{display:flex;align-items:center;gap:10px;padding:14px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff}
+  .pay-method.active{border-color:var(--green);background:var(--green-2)}
+  .pay-method .ico{font-size:26px}
+  .chat-msg{display:flex;gap:8px;margin-bottom:12px;align-items:flex-start}
+  .chat-msg.me{flex-direction:row-reverse}
+  .chat-msg .bubble{max-width:74%;padding:10px 12px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:13px;line-height:1.5}
+  .chat-msg.me .bubble{background:var(--green);color:#fff;border-color:var(--green)}
+  .chat-input{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 12px;display:flex;gap:8px;align-items:center;z-index:5}
+  .chat-input input{flex:1;min-height:38px;border-radius:99px;border:1px solid var(--line);padding:0 14px;background:#f5faf8;outline:none}
+  /* side panel */
+  .side-panel{display:flex;flex-direction:column;gap:18px}
+  .panel-card{background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 18px 44px rgba(31,42,46,.08);backdrop-filter:blur(12px)}
+  .panel-card h2{margin:0 0 12px;font-size:20px;letter-spacing:-.02em}
+  .panel-card h3{margin:14px 0 10px;font-size:15px}
+  .pages-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .pages-grid button{padding:10px 12px;border-radius:12px;background:#fff;border:1px solid var(--line);text-align:left;font-size:12px;color:var(--ink);font-weight:600;display:flex;align-items:center;gap:6px;transition:.15s ease}
+  .pages-grid button:hover{border-color:var(--green);background:var(--green-2);color:var(--green)}
+  .pages-grid button .num{display:inline-flex;width:22px;height:22px;border-radius:8px;background:var(--green-2);color:var(--green);font-size:10px;align-items:center;justify-content:center;font-weight:800}
+  .module-title{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font-size:13px;color:var(--green);font-weight:800}
+  .module-title::before{content:"";width:14px;height:2px;background:var(--green)}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .info-grid .info{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .info-grid .info span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .info-grid .info b{font-size:14px}
+  .demo-script{font-size:13px;line-height:1.7;color:var(--ink)}
+  .demo-script ol{padding-left:20px;margin:0}
+  .demo-script li{margin-bottom:6px}
+  /* responsive */
+  @media (max-width:1080px){
+    .workspace{grid-template-columns:1fr}
+    .phone-wrap{position:relative;top:0}
+    .phone{width:min(390px,100%)}
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">USER MINI PROGRAM · INTERACTIVE PROTOTYPE</div>
+      <h1>安心陪护 · 用户端小程序<br/>全页面交互原型</h1>
+      <p>覆盖<b>住宿预订（8 页）</b>、<b>陪同就医（8 页）</b>、<b>通用模块（3 页）</b> 共 19 个页面，支持完整下单链路、订单跟踪、客服互动等可点击交互。</p>
+    </div>
+    <nav class="topnav" aria-label="切换原型">
+      <a href="index.html">总览</a>
+      <a href="01-用户端小程序原型.html" class="active">用户端</a>
+      <a href="02-陪诊师端小程序原型.html">陪诊师端</a>
+      <a href="03-平台管理后台原型.html">PC 后台</a>
+    </nav>
+  </section>
+
+  <section class="workspace">
+    <!-- 手机模拟器 -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen" id="screen">
+          <div class="statusbar">
+            <span id="clock">8:44</span>
+            <span>·····</span>
+            <span>5G ▮▮▮ 100%</span>
+          </div>
+          <div class="app-header" id="appHeader"></div>
+          <div class="content" id="appContent"></div>
+          <nav class="bottom-nav" id="bottomNav"></nav>
+          <div class="mask" id="mask" onclick="closeAll()"></div>
+          <div class="drawer" id="drawer"></div>
+          <div class="modal" id="modal"><div class="modal-card" id="modalCard"></div></div>
+          <div class="toast" id="toast">操作成功</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:10px;color:var(--muted);font-size:12px">
+        iPhone 15 Pro Max 模拟（390×844）· 点击任意按钮均可触发交互
+      </div>
+    </div>
+
+    <!-- 右侧面板：页面索引 + 演示脚本 -->
+    <aside class="side-panel">
+      <div class="panel-card">
+        <h2>📱 全部页面索引（19 页）</h2>
+        <p class="muted small" style="margin:0 0 4px">点击直达任意页面，便于客户演示与评审。</p>
+
+        <div class="module-title">住宿预订模块（8 页）</div>
+        <div class="pages-grid">
+          <button onclick="go('home')"><span class="num">1</span>首页</button>
+          <button onclick="go('hotel-list')"><span class="num">2</span>房型列表</button>
+          <button onclick="go('hotel-detail')"><span class="num">3</span>房型详情</button>
+          <button onclick="go('hotel-date')"><span class="num">4</span>日期选择</button>
+          <button onclick="go('hotel-confirm')"><span class="num">5</span>订单确认</button>
+          <button onclick="go('hotel-pay')"><span class="num">6</span>订单支付</button>
+          <button onclick="go('hotel-orders')"><span class="num">7</span>订单列表</button>
+          <button onclick="go('hotel-order-detail')"><span class="num">8</span>订单详情</button>
+        </div>
+
+        <div class="module-title">陪同就医模块（8 页）</div>
+        <div class="pages-grid">
+          <button onclick="go('care-services')"><span class="num">9</span>服务项目</button>
+          <button onclick="go('care-nurses')"><span class="num">10</span>陪诊师列表</button>
+          <button onclick="go('care-nurse-detail')"><span class="num">11</span>陪诊师详情</button>
+          <button onclick="go('care-book')"><span class="num">12</span>预约下单</button>
+          <button onclick="go('care-pay')"><span class="num">13</span>订单支付</button>
+          <button onclick="go('care-progress')"><span class="num">14</span>服务进度</button>
+          <button onclick="go('care-orders')"><span class="num">15</span>订单列表</button>
+          <button onclick="go('care-order-detail')"><span class="num">16</span>订单详情/评价</button>
+        </div>
+
+        <div class="module-title">通用模块（3 页）</div>
+        <div class="pages-grid">
+          <button onclick="go('profile')"><span class="num">17</span>个人中心</button>
+          <button onclick="go('chat')"><span class="num">18</span>在线客服</button>
+          <button onclick="go('login')"><span class="num">19</span>登录注册</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>🎬 客户演示脚本（约 4 分钟）</h2>
+        <div class="demo-script">
+          <ol>
+            <li><b>开场（30s）：</b>「张先生 67 岁，需要异地三甲医院就诊，子女在外地。打开微信小程序——」展示首页两大服务入口与适老化设计。</li>
+            <li><b>住宿预订（75s）：</b>首页 → 住宿预订 → 房型列表 → 房型详情 → 日期选择 → 订单确认 → 支付成功 → 订单详情，强调"房态自动锁定 + 一键导航"。</li>
+            <li><b>陪同就医（90s）：</b>陪诊服务 → 陪诊师列表（筛选评分） → 陪诊师详情（查看评价/资质） → 预约下单 → 支付 → 服务进度（实时位置）→ 完成评价。订单由后台派单；演示时可切至陪诊师端查看「派单任务」与进度上报。</li>
+            <li><b>收尾（30s）：</b>切到个人中心查看「订单总览」，再演示在线客服对话；强调适老化设计、住宿+陪诊一站式闭环。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>🛠 编辑入口（开发即设计）</h2>
+        <div class="info-grid">
+          <div class="info"><span>主题色 / 字号</span><b>顶部 :root 变量</b></div>
+          <div class="info"><span>页面文案 / 数据</span><b>pages 函数内 mock 常量</b></div>
+          <div class="info"><span>新增页面</span><b>pages.xxx = ()=>`html` </b></div>
+          <div class="info"><span>支付/Toast 反馈</span><b>pay() / toast()</b></div>
+        </div>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script>
+/* =========================================================
+ *  状态 & 路由
+ * ========================================================= */
+const state = {
+  page: 'home',
+  prev: [],
+  hotelOrder: { name:'陪护家庭套房', price:238, nights:6, dateIn:'2026-05-12', dateOut:'2026-05-18', contact:'李女士 138****6688' },
+  careOrder: { service:'全程陪诊 4 小时', nurse:'王护理师', price:268, time:'2026-05-11 08:30', dept:'省人民医院 心内科', patient:'张先生 67岁' },
+  hotelPaid: false,
+  carePaid: false,
+  selectedDateRange: { in: 12, out: 18 },
+};
+
+const TABS = [
+  { key:'home',     icon:'🏡', label:'首页' },
+  { key:'hotel-list', icon:'🏠', label:'住宿' },
+  { key:'care-services', icon:'🩺', label:'陪诊' },
+  { key:'cs-orders', icon:'📋', label:'订单' },
+  { key:'profile',  icon:'👤', label:'我的' },
+];
+
+const $ = (id) => document.getElementById(id);
+
+function toast(text){
+  const el=$('toast'); el.textContent=text;
+  el.classList.add('show');
+  clearTimeout(window.__t);
+  window.__t = setTimeout(()=>el.classList.remove('show'),2200);
+}
+function showDrawer(html){ $('drawer').innerHTML=html; $('mask').classList.add('show'); $('drawer').classList.add('show'); }
+function closeDrawer(){ $('mask').classList.remove('show'); $('drawer').classList.remove('show'); }
+function showModal(html){ $('modalCard').innerHTML=html; $('modal').classList.add('show'); }
+function closeModal(){ $('modal').classList.remove('show'); }
+function closeAll(){ closeDrawer(); closeModal(); }
+
+function go(page, opts={}){
+  if(!pages[page]) { toast('该页面正在开发中'); return; }
+  if(state.page !== page) state.prev.push(state.page);
+  state.page = page;
+  closeAll();
+  render();
+  $('content') && ($('content').scrollTop = 0);
+}
+function back(){
+  if(state.prev.length===0){ go('home'); return; }
+  state.page = state.prev.pop();
+  render();
+}
+
+function pay(type){
+  if(type==='hotel') state.hotelPaid = true;
+  if(type==='care') state.carePaid = true;
+  closeDrawer();
+  showModal(`
+    <div style="font-size:48px;margin-bottom:8px">✅</div>
+    <h3 style="margin:0 0 6px">支付成功</h3>
+    <p class="muted" style="margin:0 0 16px">订单已生成，可在「订单」中查看</p>
+    <button class="btn full" onclick="closeModal();go('${type==='hotel'?'hotel-order-detail':'care-progress'}')">查看订单详情</button>
+  `);
+}
+
+/* =========================================================
+ *  Header / Bottom Nav
+ * ========================================================= */
+function renderHeader(meta){
+  if(meta.hideHeader){ $('appHeader').innerHTML=''; $('appHeader').className='app-header'; return; }
+  $('appHeader').className = 'app-header' + (meta.plain ? ' plain':'');
+  const showBack = !meta.isTab;
+  $('appHeader').innerHTML = `
+    <div class="row">
+      ${showBack ? `<button class="back" onclick="back()">‹</button>` : `<div></div>`}
+      <div class="title">${meta.title || '安心陪护'}</div>
+      <div class="actions">${meta.actions||''}</div>
+    </div>
+    ${meta.subtitle ? `<div class="muted small" style="margin-top:4px;text-align:center">${meta.subtitle}</div>`:''}
+    ${meta.search ? `<div class="search">🔎 ${meta.search}</div>`:''}
+  `;
+}
+function renderBottomNav(){
+  const isTab = TABS.some(t=>t.key===state.page);
+  if(!isTab){ $('bottomNav').style.display='none'; return; }
+  $('bottomNav').style.display='grid';
+  $('bottomNav').innerHTML = TABS.map(t=>`
+    <button class="${state.page===t.key?'active':''}" onclick="go('${t.key}')">
+      <span class="ico">${t.icon}</span>${t.label}
+    </button>
+  `).join('');
+}
+function isTabPage(p){ return TABS.some(t=>t.key===p); }
+
+/* =========================================================
+ *  页面定义
+ * ========================================================= */
+const HOTELS = [
+  { id:'h1', name:'陪护家庭套房', desc:'距省人民医院 680m · 可做饭 · 电梯房', distance:'680m', price:238, icon:'🏡', tags:['可短租','支持月租','医院旁'], rating:4.9, reviews:128, stock:6 },
+  { id:'h2', name:'康养单人间',   desc:'距省人民医院 1.2km · 安静楼层 · 含早', distance:'1.2km', price:168, icon:'🛏️', tags:['月租优惠','含早餐'], rating:4.8, reviews:96, stock:3 },
+  { id:'h3', name:'家属双床房',   desc:'距省人民医院 850m · 可做饭 · 24h 热水', distance:'850m', price:198, icon:'🏨', tags:['可做饭','24h热水'], rating:4.7, reviews:74, stock:5 },
+  { id:'h4', name:'适老化无障碍房', desc:'距省人民医院 500m · 轮椅通行 · 紧急呼叫', distance:'500m', price:288, icon:'♿', tags:['无障碍','紧急呼叫'], rating:5.0, reviews:53, stock:2 },
+];
+const NURSES = [
+  { id:'n1', name:'王护理师', avatar:'👩‍⚕️', exp:'6 年护理', rating:4.9, orders:326, price:268, badges:['资质认证','三甲医院'], desc:'熟悉省人民医院流程，普通话/河北话', avail:'明早 08:00 起可约' },
+  { id:'n2', name:'刘陪诊师', avatar:'🧑‍⚕️', exp:'4 年陪诊', rating:4.8, orders:212, price:228, badges:['路线熟悉','可接急单'], desc:'擅长心内科/骨科陪诊，温和耐心', avail:'今晚 20:00 可约' },
+  { id:'n3', name:'张护理师', avatar:'👩‍⚕️', exp:'8 年 ICU 经验', rating:5.0, orders:421, price:328, badges:['ICU 经验','高级护理'], desc:'专业 ICU 背景，老人护理首选', avail:'明日 14:00 可约' },
+  { id:'n4', name:'陈陪诊师', avatar:'🧑‍⚕️', exp:'3 年陪诊', rating:4.7, orders:152, price:198, badges:['性价比'], desc:'价格亲民，沟通顺畅', avail:'明早 09:00 可约' },
+];
+const SERVICES = [
+  { id:'s1', name:'全程陪诊 4 小时', desc:'挂号 / 取号 / 检查引导 / 缴费 / 取药', price:268, icon:'🩺' },
+  { id:'s2', name:'检查陪同 2 小时', desc:'仅检查环节陪同，含搬运陪护', price:158, icon:'🧪' },
+  { id:'s3', name:'代办取药 1 小时', desc:'家属无法到场，代办取药并送达', price:88, icon:'💊' },
+  { id:'s4', name:'住院陪护 12 小时', desc:'夜间值班 / 翻身 / 喂药 / 沟通医生', price:398, icon:'🛏️' },
+];
+
+/* ---------- 通用：服务卡片 / 推荐 ---------- */
+function serviceCard(g){
+  return `<button class="service-card" style="background:linear-gradient(135deg,${g.bg1},${g.bg2})" onclick="go('${g.target}')">
+    <span class="ico">${g.ico}</span>
+    <div><strong>${g.title}</strong><span>${g.desc}</span></div>
+  </button>`;
+}
+
+/* =========================================================
+ *  页面：1. 首页
+ * ========================================================= */
+const pages = {};
+
+pages.home = ()=>({
+  meta:{ title:'安心陪护', isTab:true, search:'搜索医院、房源或陪诊服务',
+    actions:`<span class="pill">📍 杭州</span>` },
+  body:`
+    <div class="banner">
+      <div><b>一站式陪护服务</b><span>住宿 + 陪诊 · 适老化设计</span></div>
+      <button class="btn" style="background:rgba(255,255,255,.22);box-shadow:none" onclick="toast('已切换到适老化大字体模式')">🔠 大字体</button>
+    </div>
+    <div class="grid-2">
+      ${serviceCard({ico:'🏠',title:'住宿预订',desc:'医院周边房源 · 步行可达',target:'hotel-list',bg1:'#1f8a70',bg2:'#54b399'})}
+      ${serviceCard({ico:'🩺',title:'陪同就医',desc:'专业陪诊陪护 · 全程陪伴',target:'care-services',bg1:'#2f6fed',bg2:'#78a4ff'})}
+    </div>
+
+    <div class="grid-4" style="margin-top:14px">
+      <button class="quick-card" onclick="go('cs-orders')"><span class="ico">📋</span>我的订单</button>
+      <button class="quick-card" onclick="go('chat')"><span class="ico">💬</span>在线客服</button>
+      <button class="quick-card" onclick="toast('适老化模式已开启')"><span class="ico">🔊</span>语音助手</button>
+      <button class="quick-card" onclick="go('profile')"><span class="ico">📍</span>我的地址</button>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="row" style="margin-bottom:10px">
+        <h3 style="margin:0;font-size:15px">⏳ 正在进行的服务</h3>
+        <button class="btn ghost" style="min-height:32px;padding:0 10px" onclick="go('care-progress')">查看详情</button>
+      </div>
+      <div class="stepper">
+        <div class="step done">已预约</div>
+        <div class="step done">平台已指派</div>
+        <div class="step now">前往中</div>
+        <div class="step">服务完成</div>
+      </div>
+      <p class="muted small" style="margin:0">王护理师距门诊大厅 1.2km，预计 12 分钟到达</p>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:8px">
+        <h3 style="margin:0;font-size:15px">🏆 今日推荐房源</h3>
+        <button onclick="go('hotel-list')" style="color:var(--green);font-weight:700;font-size:12px">查看全部 ›</button>
+      </div>
+      <div class="image-box h160">${HOTELS[0].icon}<div class="corner">距医院 ${HOTELS[0].distance}</div></div>
+      <div class="row">
+        <div><b>${HOTELS[0].name}</b><div class="muted small">${HOTELS[0].desc}</div></div>
+        <div class="price">¥${HOTELS[0].price}<span class="unit">/晚</span></div>
+      </div>
+      <button class="btn full" style="margin-top:10px" onclick="go('hotel-detail')">立即预订</button>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:15px">🛡 适老化提示</h3>
+      <p class="muted small" style="margin:0">本平台已开启大按钮、高对比度、少步骤下单与人工客服协助。如需子女代下单，可在「我的」页面切换"代下单模式"。</p>
+    </div>
+  `
+});
+
+/* =========================================================
+ *  住宿预订模块（8 页）
+ * ========================================================= */
+pages['hotel-list'] = ()=>({
+  meta:{ title:'住宿房源', isTab:true, search:'医院/小区/路名' },
+  body:`
+    <div class="filter-bar">
+      <button onclick="go('hotel-date')" style="font-weight:700;font-size:13px">📅 ${state.selectedDateRange.in}日-${state.selectedDateRange.out}日</button>
+      <span style="color:var(--line)">|</span>
+      <select onchange="toast('已按价格排序')"><option>智能排序</option><option>距离最近</option><option>价格最低</option><option>评分最高</option></select>
+      <button onclick="toast('打开高级筛选')" style="color:var(--green);font-weight:700">筛选 ⚙</button>
+    </div>
+    <div class="seg">
+      <button class="active">全部</button>
+      <button onclick="toast('已筛选可短租房源')">可短租</button>
+      <button onclick="toast('已筛选月租优惠')">月租优惠</button>
+      <button onclick="toast('已筛选无障碍')">无障碍</button>
+      <button onclick="toast('已筛选可做饭')">可做饭</button>
+    </div>
+    ${HOTELS.map(h=>`
+      <div class="card">
+        <div class="image-box">${h.icon}<div class="corner">距医院 ${h.distance}</div></div>
+        <div class="row">
+          <div style="flex:1">
+            <b>${h.name}</b>
+            <div class="muted small" style="margin:4px 0">${h.desc}</div>
+            <div>${h.tags.map(t=>`<span class="tag green">${t}</span>`).join('')}</div>
+            <div class="rating" style="margin-top:6px"><span class="star">★</span>${h.rating} · ${h.reviews}条评价 · 余 ${h.stock} 间</div>
+          </div>
+          <div style="text-align:right">
+            <div class="price">¥${h.price}<span class="unit">/晚</span></div>
+          </div>
+        </div>
+        <button class="btn full" style="margin-top:10px" onclick="go('hotel-detail','${h.id}')">查看详情 / 预订</button>
+      </div>
+    `).join('')}
+  `
+});
+
+pages['hotel-detail'] = ()=>{
+  const h = HOTELS[0];
+  return ({
+    meta:{ title:'房型详情', actions:`<button class="back" onclick="toast('已分享到微信')">↗</button>` },
+    body:`
+      <div class="image-box h160">${h.icon}<div class="corner">距医院 ${h.distance}</div></div>
+      <div class="card">
+        <div class="row"><b style="font-size:17px">${h.name}</b><div class="price">¥${h.price}<span class="unit">/晚</span></div></div>
+        <div class="muted small" style="margin:6px 0">${h.desc}</div>
+        <div>${h.tags.map(t=>`<span class="tag green">${t}</span>`).join('')}</div>
+        <div class="rating" style="margin-top:6px"><span class="star">★★★★★</span> ${h.rating} · 共 ${h.reviews} 条评价</div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px;font-size:15px">🏠 房型信息</h3>
+        <div class="grid-2">
+          <div><span class="muted small">面积</span><div><b>45 ㎡</b></div></div>
+          <div><span class="muted small">床型</span><div><b>1.8m 大床 + 沙发床</b></div></div>
+          <div><span class="muted small">入住人数</span><div><b>2-4 人</b></div></div>
+          <div><span class="muted small">配套</span><div><b>独卫 / 厨房 / 洗衣机</b></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px;font-size:15px">📍 位置 · 去医院更近</h3>
+        <div class="map-mock"><div class="pin" style="top:30%;left:32%">🏥</div><div class="pin user">🏠</div><div class="label">步行 8 分钟到省人民医院</div></div>
+        <button class="btn secondary full" onclick="toast('正在打开微信地图导航')">🧭 一键导航</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 8px;font-size:15px">💬 用户评价（${h.reviews}）</h3>
+        <div class="review">
+          <div class="row"><b>李** </b><span class="muted small">2 天前</span></div>
+          <div class="rating"><span class="star">★★★★★</span> 5.0</div>
+          <p style="margin:6px 0 0;font-size:13px">离医院真的很近，老人不便走远，房间整洁有厨房，可以煮粥。</p>
+        </div>
+        <div class="review">
+          <div class="row"><b>王** </b><span class="muted small">5 天前</span></div>
+          <div class="rating"><span class="star">★★★★★</span> 4.8</div>
+          <p style="margin:6px 0 0;font-size:13px">房东人很好，可以协助接送，对家属很贴心。</p>
+        </div>
+      </div>
+
+      <div style="height:60px"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:5">
+        <button class="btn secondary" onclick="toast('已收藏房源')" style="flex:0 0 90px">⭐ 收藏</button>
+        <button class="btn lg" style="flex:1" onclick="go('hotel-date')">选日期 · 立即预订</button>
+      </div>
+    `
+  });
+};
+
+pages['hotel-date'] = ()=>({
+  meta:{ title:'选择入住日期', subtitle:'请依次点选入住日 与 退房日' },
+  body:(()=>{
+    const days=[];
+    for(let i=0;i<35;i++){
+      const d = i-2;
+      const isInMonth = d>=1 && d<=31;
+      let cls='d';
+      if(!isInMonth) cls+=' disabled';
+      else {
+        if(d===state.selectedDateRange.in) cls+=' start';
+        else if(d===state.selectedDateRange.out) cls+=' end';
+        else if(d>state.selectedDateRange.in && d<state.selectedDateRange.out) cls+=' in-range';
+      }
+      days.push(`<div class="${cls}" ${isInMonth?`onclick="pickDate(${d})"`:''}>${isInMonth?d:''}</div>`);
+    }
+    return `
+      <div class="card">
+        <div class="row" style="margin-bottom:6px">
+          <button onclick="toast('上个月')" style="font-size:18px">‹</button>
+          <b>2026年 5月</b>
+          <button onclick="toast('下个月')" style="font-size:18px">›</button>
+        </div>
+        <div class="calendar">
+          <div class="h">日</div><div class="h">一</div><div class="h">二</div><div class="h">三</div><div class="h">四</div><div class="h">五</div><div class="h">六</div>
+          ${days.join('')}
+        </div>
+        <div class="muted small">已选：5月${state.selectedDateRange.in}日 入住 · 5月${state.selectedDateRange.out}日 退房 · 共 ${state.selectedDateRange.out-state.selectedDateRange.in} 晚</div>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 8px;font-size:14px">💡 入住建议</h3>
+        <p class="muted small" style="margin:0">连续预订 ≥ 7 晚自动享受月租 9 折；超过 30 晚联系客服可签长租协议。</p>
+      </div>
+      <div style="height:60px"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;z-index:5">
+        <button class="btn full lg" onclick="go('hotel-confirm')">确认日期 · 进入订单</button>
+      </div>
+    `;
+  })()
+});
+
+window.pickDate = (d)=>{
+  // 简单交互：点击在 in/out 之间切换
+  if(d <= state.selectedDateRange.in){ state.selectedDateRange.in = d; }
+  else if(d >= state.selectedDateRange.out){ state.selectedDateRange.out = d; }
+  else { state.selectedDateRange.out = d; }
+  if(state.selectedDateRange.out <= state.selectedDateRange.in) state.selectedDateRange.out = state.selectedDateRange.in + 1;
+  state.hotelOrder.nights = state.selectedDateRange.out - state.selectedDateRange.in;
+  render();
+};
+
+pages['hotel-confirm'] = ()=>({
+  meta:{ title:'订单确认' },
+  body:`
+    <div class="card">
+      <div class="row">
+        <div style="font-size:36px">🏡</div>
+        <div style="flex:1">
+          <b>${state.hotelOrder.name}</b>
+          <div class="muted small">${state.hotelOrder.dateIn} → ${state.hotelOrder.dateOut} · ${state.hotelOrder.nights} 晚</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">联系人信息</h3>
+      <div class="form">
+        <div class="field"><label>入住人姓名</label><input value="李女士"></div>
+        <div class="field"><label>手机号（接收订单短信）</label><input value="138****6688"></div>
+        <div class="field"><label>身份证号</label><input value="3301**********0928"></div>
+        <div class="field"><label>就诊医院</label><input value="浙江省人民医院"></div>
+        <div class="field"><label>特殊需求</label><textarea>需要轮椅可上下楼，希望靠近电梯</textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">费用明细</h3>
+      <div class="row" style="margin-bottom:6px"><span>房费 ¥${state.hotelOrder.price} × ${state.hotelOrder.nights} 晚</span><b>¥${(state.hotelOrder.price*state.hotelOrder.nights).toFixed(2)}</b></div>
+      <div class="row" style="margin-bottom:6px"><span>清洁费</span><b>¥30.00</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted">月租优惠 -10%</span><b style="color:var(--orange)">-¥${(state.hotelOrder.price*state.hotelOrder.nights*0.1).toFixed(2)}</b></div>
+      <div class="row" style="border-top:1px dashed var(--line);padding-top:8px;margin-top:8px"><b>应付合计</b><div class="price">¥${(state.hotelOrder.price*state.hotelOrder.nights*0.9+30).toFixed(2)}</div></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:15px">📜 入住须知</h3>
+      <p class="muted small" style="margin:0">入住前请出示身份证；如需取消，入住前 24 小时全额退款；商家将在支付后 5 分钟内确认。</p>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;z-index:5">
+      <div style="flex:1"><div class="price">¥${(state.hotelOrder.price*state.hotelOrder.nights*0.9+30).toFixed(2)}</div><div class="muted small">月租优惠已抵扣</div></div>
+      <button class="btn lg" style="flex:0 0 150px" onclick="go('hotel-pay')">提交订单 · 去支付</button>
+    </div>
+  `
+});
+
+pages['hotel-pay'] = ()=>({
+  meta:{ title:'订单支付' },
+  body:`
+    <div class="card" style="text-align:center;padding:24px 14px">
+      <div class="muted small">应付金额</div>
+      <div class="price" style="font-size:36px;margin:8px 0">¥${(state.hotelOrder.price*state.hotelOrder.nights*0.9+30).toFixed(2)}</div>
+      <div class="muted small">订单号：HT202605100018</div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">选择支付方式</h3>
+      <div class="pay-method active" onclick="document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));this.classList.add('active');toast('已选择微信支付')">
+        <span class="ico">💚</span><div style="flex:1"><b>微信支付</b><div class="muted small">推荐 · 安全便捷</div></div><span>●</span>
+      </div>
+      <div class="pay-method" onclick="document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));this.classList.add('active');toast('已选择信用卡')">
+        <span class="ico">💳</span><div style="flex:1"><b>信用卡</b><div class="muted small">支持主流银行</div></div><span>○</span>
+      </div>
+      <div class="pay-method" onclick="document.querySelectorAll('.pay-method').forEach(x=>x.classList.remove('active'));this.classList.add('active');toast('已选择代付')">
+        <span class="ico">👨‍👩‍👧</span><div style="flex:1"><b>子女代付</b><div class="muted small">分享支付链接给家人</div></div><span>○</span>
+      </div>
+    </div>
+    <div class="card">
+      <p class="muted small" style="margin:0">⏱ 订单将在 <b style="color:var(--red)">14:59</b> 内未支付自动取消</p>
+    </div>
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;z-index:5">
+      <button class="btn full lg" onclick="pay('hotel')">立即支付 ¥${(state.hotelOrder.price*state.hotelOrder.nights*0.9+30).toFixed(2)}</button>
+    </div>
+  `
+});
+
+pages['hotel-orders'] = ()=>({
+  meta:{ title:'我的住宿订单' },
+  body:`
+    <div class="seg">
+      <button class="active">全部</button>
+      <button onclick="toast('已筛选 待支付')">待支付</button>
+      <button onclick="toast('已筛选 待入住')">待入住</button>
+      <button onclick="toast('已筛选 已完成')">已完成</button>
+    </div>
+    ${state.hotelPaid?`
+      <div class="order-card" onclick="go('hotel-order-detail')" style="cursor:pointer">
+        <div class="meta"><span>订单号 HT202605100018</span><span class="pill">待入住</span></div>
+        <div class="row">
+          <div style="font-size:36px">🏡</div>
+          <div style="flex:1">
+            <b>${state.hotelOrder.name}</b>
+            <div class="muted small">${state.hotelOrder.dateIn} → ${state.hotelOrder.dateOut} · ${state.hotelOrder.nights} 晚</div>
+          </div>
+          <div class="price">¥${(state.hotelOrder.price*state.hotelOrder.nights*0.9+30).toFixed(2)}</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn secondary" style="flex:1" onclick="event.stopPropagation();toast('已联系商家')">联系商家</button>
+          <button class="btn" style="flex:1" onclick="event.stopPropagation();toast('正在打开导航')">🧭 导航</button>
+        </div>
+      </div>
+    `:''}
+    <div class="order-card">
+      <div class="meta"><span>订单号 HT202605030092</span><span class="pill green" style="background:#e8f4ea;color:#3c8d3c">已完成</span></div>
+      <div class="row">
+        <div style="font-size:36px">🛏️</div>
+        <div style="flex:1">
+          <b>康养单人间</b>
+          <div class="muted small">2026-05-01 → 2026-05-03 · 2 晚</div>
+        </div>
+        <div class="price">¥336.00</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn secondary" style="flex:1" onclick="toast('已申请开发票')">申请发票</button>
+        <button class="btn ghost" style="flex:1" onclick="toast('已加入收藏，下次快速订房')">再次预订</button>
+      </div>
+    </div>
+    ${!state.hotelPaid?`
+      <div class="empty"><div class="ico">📦</div>暂无更多订单<br><span class="small">去 <a style="color:var(--green)" onclick="go('hotel-list')">房源列表</a> 看看</span></div>
+    `:''}
+  `
+});
+
+pages['hotel-order-detail'] = ()=>({
+  meta:{ title:'订单详情' },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e3f4ee,#fff)">
+      <div class="row">
+        <div>
+          <div class="pill">${state.hotelPaid?'待入住':'已支付'}</div>
+          <h3 style="margin:8px 0 4px;font-size:17px">${state.hotelOrder.name}</h3>
+          <div class="muted small">5月12日 入住 · 5月18日 退房 · 6 晚</div>
+        </div>
+        <div style="font-size:48px">🏡</div>
+      </div>
+      <div class="stepper">
+        <div class="step done">已下单</div>
+        <div class="step done">已支付</div>
+        <div class="step now">已锁房</div>
+        <div class="step">待入住</div>
+        <div class="step">已完成</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:6px"><span class="muted small">订单号</span><b>HT202605100018</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">下单时间</span><b>2026-05-10 19:24</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">联系人</span><b>李女士 138****6688</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">就诊医院</span><b>浙江省人民医院</b></div>
+      <div class="row"><span class="muted small">特殊需求</span><b style="text-align:right;font-size:12px">需轮椅可上下楼，靠近电梯</b></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:14px">📍 房源位置</h3>
+      <div class="map-mock"><div class="pin" style="top:30%;left:32%">🏥</div><div class="pin user">🏠</div><div class="label">距省人民医院 680m</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn secondary" style="flex:1" onclick="toast('已复制地址')">📋 复制地址</button>
+        <button class="btn" style="flex:1" onclick="toast('正在打开微信地图导航')">🧭 一键导航</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:14px">💰 费用明细</h3>
+      <div class="row" style="margin-bottom:4px"><span class="muted small">房费 6 晚</span><span>¥1,428.00</span></div>
+      <div class="row" style="margin-bottom:4px"><span class="muted small">清洁费</span><span>¥30.00</span></div>
+      <div class="row" style="margin-bottom:4px"><span class="muted small">月租优惠</span><span style="color:var(--orange)">-¥142.80</span></div>
+      <div class="row" style="border-top:1px dashed var(--line);padding-top:6px;margin-top:6px"><b>实付合计</b><div class="price">¥1,315.20</div></div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="go('chat')">💬 客服</button>
+      <button class="btn danger" style="flex:1" onclick="showModal('<h3>申请退订</h3><p class=\\'muted small\\'>入住前 24 小时取消可全额退款，确认要退订吗？</p><div style=\\'display:flex;gap:8px;margin-top:14px\\'><button class=\\'btn secondary full\\' onclick=\\'closeModal()\\'>再想想</button><button class=\\'btn danger full\\' onclick=\\'closeModal();toast(&quot;退订申请已提交&quot;)\\'>确认退订</button></div>')">申请退订</button>
+      <button class="btn" style="flex:1.4" onclick="toast('正在打开导航')">🧭 去房源</button>
+    </div>
+  `
+});
+
+/* =========================================================
+ *  陪同就医模块（8 页）
+ * ========================================================= */
+pages['care-services'] = ()=>({
+  meta:{ title:'陪同就医', isTab:true, search:'搜索服务、医院、症状' },
+  body:`
+    <div class="banner" style="background:linear-gradient(135deg,#2f6fed,#78a4ff)">
+      <div><b>专业陪诊 · 让就医更安心</b><span>挂号·检查·缴费·取药一站式陪同</span></div>
+      <button class="btn" style="background:rgba(255,255,255,.22);box-shadow:none" onclick="toast('查看服务介绍')">？</button>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h3 style="margin:0;font-size:15px">🩺 服务项目</h3>
+        <span class="pill blue">${SERVICES.length} 项可选</span>
+      </div>
+      ${SERVICES.map(s=>`
+        <div class="card flat" style="margin-bottom:8px;cursor:pointer" onclick="go('care-nurses','${s.id}')">
+          <div class="row">
+            <div style="font-size:32px">${s.icon}</div>
+            <div style="flex:1">
+              <b>${s.name}</b>
+              <div class="muted small">${s.desc}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="price">¥${s.price}</div>
+              <button class="btn" style="min-height:30px;padding:0 10px;font-size:12px;margin-top:4px">选陪诊师 ›</button>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 8px;font-size:14px">💡 怎么挑陪诊师？</h3>
+      <p class="muted small" style="margin:0">优先看：① 评分 4.8+；② 路线/医院熟悉；③ 已完成服务单 ≥100；④ 资质已认证。下单后由平台指派陪诊师，可在「服务进度」查看位置。</p>
+    </div>
+  `
+});
+
+pages['care-nurses'] = ()=>({
+  meta:{ title:'选择陪诊师', search:'按医院/科室/姓名搜索' },
+  body:`
+    <div class="filter-bar">
+      <select onchange="toast('已切换排序')"><option>智能排序</option><option>评分最高</option><option>价格最低</option><option>距离最近</option></select>
+      <span style="color:var(--line)">|</span>
+      <button onclick="toast('打开高级筛选')" style="color:var(--green);font-weight:700">筛选 ⚙</button>
+    </div>
+    <div class="seg">
+      <button class="active">全部</button>
+      <button onclick="toast('已筛选 资质认证')">资质认证</button>
+      <button onclick="toast('已筛选 急单可接')">急单可接</button>
+      <button onclick="toast('已筛选 5 年以上')">5年+</button>
+      <button onclick="toast('已筛选 ICU 经验')">ICU经验</button>
+    </div>
+    ${NURSES.map(n=>`
+      <div class="nurse-card" onclick="go('care-nurse-detail','${n.id}')" style="cursor:pointer">
+        <div class="avatar">${n.avatar}</div>
+        <div style="flex:1">
+          <div class="row"><b>${n.name}</b><div class="price" style="font-size:16px">¥${n.price}<span class="unit">/次</span></div></div>
+          <div class="rating"><span class="star">★</span>${n.rating} · ${n.exp} · 已服务 ${n.orders} 单</div>
+          <div style="margin-top:4px">${n.badges.map(b=>`<span class="tag green">${b}</span>`).join('')}</div>
+          <div class="muted small" style="margin-top:4px">⏰ ${n.avail}</div>
+        </div>
+      </div>
+    `).join('')}
+  `
+});
+
+pages['care-nurse-detail'] = ()=>{
+  const n = NURSES[0];
+  return ({
+    meta:{ title:'陪诊师详情', actions:`<button class="back" onclick="toast('已收藏')">⭐</button>` },
+    body:`
+      <div class="card" style="text-align:center;padding:20px 14px;background:linear-gradient(135deg,#e3f4ee,#fff)">
+        <div class="avatar" style="margin:0 auto 10px;width:72px;height:72px;font-size:36px">${n.avatar}</div>
+        <h3 style="margin:0 0 4px">${n.name}</h3>
+        <div class="muted small">${n.desc}</div>
+        <div class="rating" style="justify-content:center;margin-top:8px"><span class="star">★★★★★</span> ${n.rating} · 服务 ${n.orders} 单</div>
+        <div style="margin-top:8px">${n.badges.map(b=>`<span class="tag green">${b}</span>`).join('')}</div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:14px">📋 资质证书</h3>
+        <div class="grid-2">
+          <div class="image-box h80">📜</div>
+          <div class="image-box h80">🏥</div>
+        </div>
+        <p class="muted small" style="margin:8px 0 0">护士资格证 · 院感培训证书 · 健康证（已通过平台审核）</p>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:14px">🗓 服务时段（明天可约）</h3>
+        <div class="chip-row">
+          <div class="chip active">08:30</div>
+          <div class="chip" onclick="this.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));this.classList.add('active');toast('已选择 10:00')">10:00</div>
+          <div class="chip" onclick="this.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));this.classList.add('active');toast('已选择 14:00')">14:00</div>
+          <div class="chip" onclick="this.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));this.classList.add('active');toast('已选择 16:00')">16:00</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:14px">💬 用户评价（${n.orders}）</h3>
+        <div class="review">
+          <div class="row"><b>李** </b><span class="muted small">2 天前</span></div>
+          <div class="rating"><span class="star">★★★★★</span> 5.0</div>
+          <p style="margin:6px 0 0;font-size:13px">非常专业，全程陪同我父亲检查，老人家很安心。</p>
+        </div>
+        <div class="review">
+          <div class="row"><b>王** </b><span class="muted small">5 天前</span></div>
+          <div class="rating"><span class="star">★★★★★</span> 4.9</div>
+          <p style="margin:6px 0 0;font-size:13px">熟悉医院流程，不用排长队，省心！</p>
+        </div>
+      </div>
+
+      <div style="height:60px"></div>
+      <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:center;z-index:5">
+        <button class="btn secondary" style="flex:0 0 80px" onclick="toast('已咨询陪诊师')">💬 咨询</button>
+        <button class="btn lg" style="flex:1" onclick="go('care-book')">立即预约 · ¥${n.price}</button>
+      </div>
+    `
+  });
+};
+
+pages['care-book'] = ()=>({
+  meta:{ title:'预约下单' },
+  body:`
+    <div class="card">
+      <div class="row">
+        <div style="font-size:32px">🩺</div>
+        <div style="flex:1">
+          <b>${state.careOrder.service}</b>
+          <div class="muted small">陪诊师：${state.careOrder.nurse}（评分 4.9）</div>
+        </div>
+        <div class="price">¥${state.careOrder.price}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">📋 就诊人信息</h3>
+      <div class="form">
+        <div class="field"><label>姓名</label><input value="张先生"></div>
+        <div class="field"><label>年龄 / 性别</label><input value="67岁 / 男"></div>
+        <div class="field"><label>联系电话</label><input value="138****8888"></div>
+        <div class="field"><label>病历号（可选）</label><input value="A2026051200032"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">📅 预约时间 · 医院</h3>
+      <div class="form">
+        <div class="field"><label>预约日期</label><input type="date" value="2026-05-11"></div>
+        <div class="field"><label>到达时间</label><input value="08:30 门诊大厅会合"></div>
+        <div class="field"><label>就诊医院 / 科室</label><input value="浙江省人民医院 · 心内科"></div>
+        <div class="field"><label>就诊事项</label><textarea>挂号 → 抽血 → 心电图 → 缴费 → 取药</textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">💬 沟通备注</h3>
+      <div class="field"><textarea>父亲耳背，需要大声说话；轮椅可上下楼</textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="row"><b>服务费</b><div class="price">¥${state.careOrder.price}</div></div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:10px;align-items:center;z-index:5">
+      <div style="flex:1"><div class="price">¥${state.careOrder.price}</div></div>
+      <button class="btn lg" style="flex:0 0 150px" onclick="go('care-pay')">提交订单 · 去支付</button>
+    </div>
+  `
+});
+
+pages['care-pay'] = ()=>({
+  meta:{ title:'订单支付' },
+  body:`
+    <div class="card" style="text-align:center;padding:24px 14px">
+      <div class="muted small">应付金额</div>
+      <div class="price" style="font-size:36px;margin:8px 0">¥${state.careOrder.price}.00</div>
+      <div class="muted small">订单号：CR202605100066</div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">选择支付方式</h3>
+      <div class="pay-method active"><span class="ico">💚</span><div style="flex:1"><b>微信支付</b><div class="muted small">推荐</div></div><span>●</span></div>
+      <div class="pay-method" onclick="toast('已选择 子女代付')"><span class="ico">👨‍👩‍👧</span><div style="flex:1"><b>子女代付</b><div class="muted small">分享支付链接给家人</div></div><span>○</span></div>
+    </div>
+    <div class="card">
+      <p class="muted small" style="margin:0">⏱ 支付成功后平台将为您指派陪诊师，一般在 30 分钟内确认（高峰期可能略有延迟）</p>
+    </div>
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;z-index:5">
+      <button class="btn full lg" onclick="pay('care')">立即支付 ¥${state.careOrder.price}.00</button>
+    </div>
+  `
+});
+
+pages['care-progress'] = ()=>({
+  meta:{ title:'服务进度', actions:`<button class="back" onclick="toast('已通话陪诊师')">📞</button>` },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e8f0ff,#fff)">
+      <div class="row">
+        <div>
+          <div class="pill blue">${state.carePaid?'前往中':'待指派'}</div>
+          <h3 style="margin:6px 0 4px">${state.careOrder.service}</h3>
+          <div class="muted small">${state.careOrder.dept}</div>
+        </div>
+        <div style="font-size:48px">🩺</div>
+      </div>
+      <div class="stepper">
+        <div class="step done">已支付</div>
+        <div class="step done">平台已指派</div>
+        <div class="step now">前往中</div>
+        <div class="step">服务中</div>
+        <div class="step">完成</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📍 实时位置（每 30s 更新）</h3>
+      <div class="map-mock"><div class="pin user">🏥</div><div class="pin nurse">🚶</div><div class="label">王护理师距门诊大厅 1.2km · 约 12 分钟</div></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn secondary" style="flex:1" onclick="toast('已拨打陪诊师电话')">📞 联系陪诊师</button>
+        <button class="btn" style="flex:1" onclick="toast('已发送实时位置给家人')">📤 分享位置</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📋 服务节点</h3>
+      <div class="col">
+        <div class="row"><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> 已确认就诊人信息</span><span class="muted small">08:25</span></div>
+        <div class="row"><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">●</span> 已抵达医院附近</span><span class="muted small">08:42</span></div>
+        <div class="row"><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--orange)">○</span> 在门诊大厅会合</span><span class="muted small">预计 08:55</span></div>
+        <div class="row"><span style="display:flex;align-items:center;gap:8px;color:var(--muted)"><span>○</span> 完成挂号 / 取号</span><span class="muted small">--</span></div>
+        <div class="row"><span style="display:flex;align-items:center;gap:8px;color:var(--muted)"><span>○</span> 检查 / 取药陪同</span><span class="muted small">--</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">👤 陪诊师</h3>
+      <div class="row">
+        <div class="avatar">${NURSES[0].avatar}</div>
+        <div style="flex:1">
+          <b>${state.careOrder.nurse}</b>
+          <div class="muted small">护理 6 年 · 评分 4.9</div>
+        </div>
+        <button class="btn ghost" style="min-height:36px" onclick="toast('正在查看资质')">查看资质</button>
+      </div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="go('chat')">💬 平台客服</button>
+      <button class="btn" style="flex:1.4" onclick="showModal('<div style=\\'font-size:48px\\'>✅</div><h3>确认服务完成？</h3><p class=\\'muted small\\'>确认后将进入评价环节，并自动结算给陪诊师</p><div style=\\'display:flex;gap:8px;margin-top:14px\\'><button class=\\'btn secondary full\\' onclick=\\'closeModal()\\'>稍等</button><button class=\\'btn full\\' onclick=\\'closeModal();go(&quot;care-order-detail&quot;)\\'>确认完成</button></div>')">确认服务完成</button>
+    </div>
+  `
+});
+
+pages['care-orders'] = ()=>({
+  meta:{ title:'我的陪诊订单' },
+  body:`
+    <div class="seg">
+      <button class="active">全部</button>
+      <button onclick="toast('已筛选 待服务')">待服务</button>
+      <button onclick="toast('已筛选 服务中')">服务中</button>
+      <button onclick="toast('已筛选 已完成')">已完成</button>
+      <button onclick="toast('已筛选 待评价')">待评价</button>
+    </div>
+
+    ${state.carePaid?`
+      <div class="order-card" onclick="go('care-progress')" style="cursor:pointer">
+        <div class="meta"><span>订单号 CR202605100066</span><span class="pill blue">服务中</span></div>
+        <div class="row">
+          <div class="avatar">${NURSES[0].avatar}</div>
+          <div style="flex:1">
+            <b>${state.careOrder.service}</b>
+            <div class="muted small">${NURSES[0].name} · ${state.careOrder.time}</div>
+          </div>
+          <div class="price">¥${state.careOrder.price}</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn secondary" style="flex:1" onclick="event.stopPropagation();go('chat')">💬 客服</button>
+          <button class="btn" style="flex:1" onclick="event.stopPropagation();go('care-progress')">查看进度</button>
+        </div>
+      </div>
+    `:''}
+
+    <div class="order-card" onclick="go('care-order-detail')" style="cursor:pointer">
+      <div class="meta"><span>订单号 CR202604280018</span><span class="pill orange">待评价</span></div>
+      <div class="row">
+        <div class="avatar">${NURSES[1].avatar}</div>
+        <div style="flex:1">
+          <b>检查陪同 2 小时</b>
+          <div class="muted small">${NURSES[1].name} · 2026-04-28 09:00</div>
+        </div>
+        <div class="price">¥158</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn ghost" style="flex:1" onclick="event.stopPropagation();toast('已加入再次预约')">再次预约</button>
+        <button class="btn" style="flex:1" onclick="event.stopPropagation();go('care-order-detail')">⭐ 立即评价</button>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="meta"><span>订单号 CR202604200023</span><span class="pill green">已完成</span></div>
+      <div class="row">
+        <div class="avatar">${NURSES[2].avatar}</div>
+        <div style="flex:1">
+          <b>住院陪护 12 小时</b>
+          <div class="muted small">${NURSES[2].name} · 2026-04-20 20:00</div>
+        </div>
+        <div class="price">¥398</div>
+      </div>
+      <div class="rating" style="margin-top:6px"><span class="star">★★★★★</span> 5.0 已评价</div>
+    </div>
+  `
+});
+
+pages['care-order-detail'] = ()=>({
+  meta:{ title:'陪诊订单详情' },
+  body:`
+    <div class="card" style="background:linear-gradient(135deg,#e3f4ee,#fff)">
+      <div class="row">
+        <div>
+          <div class="pill">${state.carePaid?'服务中':'已完成'}</div>
+          <h3 style="margin:8px 0 4px">${state.careOrder.service}</h3>
+          <div class="muted small">${state.careOrder.dept} · ${state.careOrder.time}</div>
+        </div>
+        <div style="font-size:48px">🩺</div>
+      </div>
+      <div class="stepper">
+        <div class="step done">已下单</div>
+        <div class="step done">平台已指派</div>
+        <div class="step done">服务中</div>
+        <div class="step done">服务完成</div>
+        <div class="step now">待评价</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">👤 陪诊师</h3>
+      <div class="row">
+        <div class="avatar">${NURSES[0].avatar}</div>
+        <div style="flex:1">
+          <b>${state.careOrder.nurse}</b>
+          <div class="muted small">护理 6 年 · 评分 4.9</div>
+        </div>
+        <button class="btn secondary" style="min-height:36px" onclick="toast('已咨询陪诊师')">💬</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📋 服务详情</h3>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">就诊人</span><b>${state.careOrder.patient}</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">医院科室</span><b>${state.careOrder.dept}</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">服务时长</span><b>4 小时</b></div>
+      <div class="row" style="margin-bottom:6px"><span class="muted small">完成时间</span><b>12:36</b></div>
+      <div class="row"><span class="muted small">实付金额</span><div class="price">¥${state.careOrder.price}.00</div></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">⭐ 服务评价</h3>
+      <div style="font-size:32px;text-align:center;margin:8px 0">
+        <span class="star" onclick="this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.opacity=i<5?'1':'.3');toast('已选择 5 星')">★</span>
+        <span class="star" onclick="this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.opacity=i<5?'1':'.3');toast('已选择 5 星')">★</span>
+        <span class="star" onclick="this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.opacity=i<5?'1':'.3');toast('已选择 5 星')">★</span>
+        <span class="star" onclick="this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.opacity=i<5?'1':'.3');toast('已选择 5 星')">★</span>
+        <span class="star" onclick="this.parentElement.querySelectorAll('span').forEach((s,i)=>s.style.opacity=i<5?'1':'.3');toast('已选择 5 星')">★</span>
+      </div>
+      <div class="chip-row" style="margin-bottom:10px">
+        <div class="chip active">🌟 专业耐心</div>
+        <div class="chip" onclick="this.classList.toggle('active');toast('已添加 路线熟悉')">✅ 路线熟悉</div>
+        <div class="chip" onclick="this.classList.toggle('active');toast('已添加 沟通顺畅')">💬 沟通顺畅</div>
+        <div class="chip" onclick="this.classList.toggle('active');toast('已添加 服务周到')">😊 服务周到</div>
+      </div>
+      <div class="field"><textarea>王护理师非常专业，全程陪伴老父亲，沟通耐心，下次还会预约。</textarea></div>
+    </div>
+
+    <div style="height:60px"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;z-index:5">
+      <button class="btn secondary" style="flex:1" onclick="toast('已申请发票')">申请发票</button>
+      <button class="btn" style="flex:1.4" onclick="showModal('<div style=\\'font-size:48px\\'>🌟</div><h3>感谢您的评价！</h3><p class=\\'muted small\\'>您的反馈将帮助更多家庭</p><button class=\\'btn full\\' style=\\'margin-top:14px\\' onclick=\\'closeModal();go(&quot;home&quot;)\\'>返回首页</button>')">提交评价</button>
+    </div>
+  `
+});
+
+/* =========================================================
+ *  通用模块（3 页）
+ * ========================================================= */
+pages.profile = ()=>({
+  meta:{ title:'我的', isTab:true, hideHeader:false, plain:true,
+    actions:`<button class="back" onclick="go('login')">⚙</button>` },
+  body:`
+    <div class="card flat" style="background:linear-gradient(135deg,#1f8a70,#54b399);color:#fff;border:0">
+      <div class="row">
+        <div style="font-size:42px">👤</div>
+        <div style="flex:1">
+          <b style="font-size:18px">李女士</b>
+          <div style="opacity:.85;font-size:12px;margin-top:2px">138****6688 · 子女陪护账号</div>
+        </div>
+        <button onclick="toast('编辑资料')" style="background:rgba(255,255,255,.22);color:#fff;padding:6px 12px;border-radius:99px;font-size:12px">编辑</button>
+      </div>
+      <div class="grid-3" style="margin-top:14px;gap:6px">
+        <div style="text-align:center"><b style="font-size:18px">12</b><div style="opacity:.85;font-size:11px">总订单</div></div>
+        <div style="text-align:center"><b style="font-size:18px">¥3,288</b><div style="opacity:.85;font-size:11px">累计消费</div></div>
+        <div style="text-align:center"><b style="font-size:18px">128</b><div style="opacity:.85;font-size:11px">积分</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:14px">📋 我的订单</h3>
+      <div class="grid-3">
+        <button class="quick-card" onclick="go('hotel-orders')"><span class="ico">🏠</span>住宿</button>
+        <button class="quick-card" onclick="go('care-orders')"><span class="ico">🩺</span>陪诊</button>
+        <button class="quick-card" onclick="go('cs-orders')"><span class="ico">📋</span>全部</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 4px;font-size:14px">📍 收货地址</h3>
+      <div class="row" style="margin:8px 0"><div><b>李女士 138****6688</b><div class="muted small">省人民医院旁 · 康养公寓 8栋1203</div></div><span class="pill">默认</span></div>
+      <div class="row" style="margin:8px 0"><div><b>张大爷 139****6688</b><div class="muted small">浙大二院旁 · 健康公寓 12栋803</div></div><button onclick="toast('设为默认')" style="color:var(--green);font-weight:700;font-size:12px">设默认</button></div>
+      <button class="btn ghost full" style="margin-top:6px" onclick="toast('新增地址')">+ 新增收货地址</button>
+    </div>
+
+    <div class="card">
+      <button class="row" style="width:100%;padding:6px 0" onclick="go('chat')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">💬</span>在线客服</span><span class="muted small">7×24h ›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="toast('打开常见问题')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">❓</span>常见问题</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="toast('打开发票管理')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🧾</span>发票管理</span><span>›</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="toast('已打开适老化设置')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🔠</span>适老化设置</span><span class="pill">已开启</span></button>
+      <div style="border-top:1px solid var(--line);margin:8px 0"></div>
+      <button class="row" style="width:100%;padding:6px 0" onclick="go('login')"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:20px">🔓</span>切换账号 / 退出登录</span><span>›</span></button>
+    </div>
+  `
+});
+
+pages.chat = ()=>({
+  meta:{ title:'在线客服', subtitle:'平台客服 · 7×24h 在线' },
+  body:`
+    <div class="chat-msg">
+      <div class="avatar" style="width:36px;height:36px;font-size:18px">🛎️</div>
+      <div class="bubble">您好，我是您的专属客服小安，请问有什么可以帮您？</div>
+    </div>
+    <div class="chat-msg me">
+      <div class="bubble">陪诊师还有多久到？</div>
+    </div>
+    <div class="chat-msg">
+      <div class="avatar" style="width:36px;height:36px;font-size:18px">🛎️</div>
+      <div class="bubble">您好，已查询到王护理师距门诊大厅 1.2km，预计 12 分钟到达。可在「服务进度」实时查看。</div>
+    </div>
+    <div class="chat-msg me">
+      <div class="bubble">老人耳背，能否提醒她大声一些？</div>
+    </div>
+    <div class="chat-msg">
+      <div class="avatar" style="width:36px;height:36px;font-size:18px">🛎️</div>
+      <div class="bubble">已为您备注，王护理师收到后会主动调整沟通方式。如还有其他需要可发我哦。</div>
+    </div>
+    <div style="text-align:center;margin:8px 0">
+      <span class="badge" onclick="toast('已转人工')">🧑‍💼 转人工</span>
+      <span class="badge" onclick="toast('订单查询')">📋 订单查询</span>
+      <span class="badge" onclick="toast('退款流程')">↩️ 退款流程</span>
+    </div>
+    <div class="chat-input">
+      <input placeholder="输入消息..." onkeydown="if(event.key==='Enter'){this.value='';toast('消息已发送，客服将在30s内回复')}">
+      <button onclick="toast('已发送语音')" style="font-size:22px">🎤</button>
+      <button onclick="toast('已发送图片')" style="font-size:22px">📷</button>
+    </div>
+  `
+});
+
+pages.login = ()=>({
+  meta:{ hideHeader:true },
+  body:`
+    <div style="text-align:center;padding:40px 20px 20px">
+      <div style="font-size:64px">🛎️</div>
+      <h2 style="margin:12px 0 4px">安心陪护</h2>
+      <p class="muted small" style="margin:0">一站式医院周边住宿 · 陪同就医服务</p>
+    </div>
+    <div class="card" style="margin:30px 16px">
+      <h3 style="margin:0 0 12px;text-align:center">欢迎登录</h3>
+      <div class="form">
+        <div class="field"><label>手机号</label><input value="138 0000 0000"></div>
+        <div class="field" style="position:relative"><label>验证码</label><input value="6 位短信验证码" style="padding-right:80px"><button onclick="toast('已发送验证码')" style="position:absolute;right:6px;top:24px;color:var(--green);padding:8px 12px;font-weight:700">获取</button></div>
+      </div>
+      <button class="btn full lg" style="margin-top:14px" onclick="showModal('<div style=&quot;font-size:48px&quot;>🎉</div><h3>登录成功</h3><p class=&quot;muted small&quot;>欢迎使用安心陪护</p><button class=&quot;btn full&quot; style=&quot;margin-top:14px&quot; onclick=&quot;closeModal();go(&apos;home&apos;)&quot;>开始使用</button>')">登录 · 注册</button>
+      <button class="btn secondary full" style="margin-top:8px" onclick="toast('微信一键登录')">💚 微信一键登录</button>
+      <p class="muted small" style="margin:14px 0 0;text-align:center">登录即代表同意《用户协议》《隐私政策》</p>
+    </div>
+    <div style="text-align:center;color:var(--muted);font-size:12px;margin-top:30px">
+      <button onclick="toast('已切换为陪诊师入驻')" style="color:var(--green);font-weight:700">我是陪诊师 · 入驻申请 ›</button>
+    </div>
+  `
+});
+
+/* =========================================================
+ *  订单总览（聚合住宿 / 陪诊订单）
+ * ========================================================= */
+pages['cs-orders'] = ()=>({
+  meta:{ title:'我的订单', isTab:true, search:'按订单号、房源、陪诊师搜索' },
+  body:`
+    <div class="grid-2" style="margin-bottom:14px">
+      <button class="card flat" style="text-align:left" onclick="go('hotel-orders')">
+        <div style="font-size:24px">🏠</div><b style="display:block;margin:6px 0">住宿订单</b><span class="muted small">${state.hotelPaid?'1 单待入住':'暂无'}</span>
+      </button>
+      <button class="card flat" style="text-align:left" onclick="go('care-orders')">
+        <div style="font-size:24px">🩺</div><b style="display:block;margin:6px 0">陪诊订单</b><span class="muted small">${state.carePaid?'1 单服务中':'暂无'}</span>
+      </button>
+    </div>
+
+    <div class="seg">
+      <button class="active">全部</button>
+      <button onclick="toast('筛选 进行中')">进行中</button>
+      <button onclick="toast('筛选 待评价')">待评价</button>
+      <button onclick="toast('筛选 已完成')">已完成</button>
+    </div>
+
+    ${state.hotelPaid?`
+      <div class="order-card" onclick="go('hotel-order-detail')" style="cursor:pointer">
+        <div class="meta"><span>🏠 住宿 · HT202605100018</span><span class="pill">待入住</span></div>
+        <div class="row">
+          <div style="font-size:32px">🏡</div>
+          <div style="flex:1"><b>${state.hotelOrder.name}</b><div class="muted small">5/12-5/18 · 6 晚</div></div>
+          <div class="price">¥1,315</div>
+        </div>
+      </div>
+    `:''}
+
+    ${state.carePaid?`
+      <div class="order-card" onclick="go('care-progress')" style="cursor:pointer">
+        <div class="meta"><span>🩺 陪诊 · CR202605100066</span><span class="pill blue">服务中</span></div>
+        <div class="row">
+          <div class="avatar" style="width:42px;height:42px;font-size:22px">${NURSES[0].avatar}</div>
+          <div style="flex:1"><b>${state.careOrder.service}</b><div class="muted small">${NURSES[0].name} · 5/11 08:30</div></div>
+          <div class="price">¥${state.careOrder.price}</div>
+        </div>
+      </div>
+    `:''}
+
+    <div class="order-card">
+      <div class="meta"><span>🩺 陪诊 · CR202604280018</span><span class="pill orange">待评价</span></div>
+      <div class="row">
+        <div class="avatar" style="width:42px;height:42px;font-size:22px">${NURSES[1].avatar}</div>
+        <div style="flex:1"><b>检查陪同 2 小时</b><div class="muted small">${NURSES[1].name} · 4/28 09:00</div></div>
+        <div class="price">¥158</div>
+      </div>
+    </div>
+
+    <div class="order-card">
+      <div class="meta"><span>🏠 住宿 · HT202605030092</span><span class="pill green">已完成</span></div>
+      <div class="row">
+        <div style="font-size:32px">🛏️</div>
+        <div style="flex:1"><b>康养单人间</b><div class="muted small">5/1-5/3 · 2 晚</div></div>
+        <div class="price">¥336</div>
+      </div>
+    </div>
+  `
+});
+
+/* =========================================================
+ *  渲染主流程
+ * ========================================================= */
+function render(){
+  const def = pages[state.page] && pages[state.page]();
+  if(!def){ go('home'); return; }
+  renderHeader(def.meta || {});
+  $('appContent').innerHTML = def.body || '';
+  renderBottomNav();
+}
+
+/* clock */
+function tickClock(){
+  const d = new Date();
+  $('clock').textContent = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+setInterval(tickClock, 30000);
+tickClock();
+
+render();
+</script>
+</body>
+</html>

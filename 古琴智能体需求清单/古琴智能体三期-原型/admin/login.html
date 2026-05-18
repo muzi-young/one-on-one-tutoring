@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>管理后台登录 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+  body{background:#0d0f1a;min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden;}
+  body::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%, rgba(162,102,244,.3), transparent 50%),radial-gradient(circle at 80% 70%, rgba(176,137,73,.2), transparent 50%);}
+  .admin-box{position:relative;z-index:1;width:420px;background:rgba(20,22,40,.85);border:1px solid rgba(162,102,244,.3);border-radius:14px;padding:36px 34px;backdrop-filter:blur(20px);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+  .admin-box h2{font-family:'Noto Serif SC',serif;font-size:22px;margin:0;}
+  .admin-box .sub{color:#8d7d8e;font-size:13px;margin:6px 0 24px;}
+  .admin-box input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;}
+  .admin-box input:focus{border-color:#a266f4;box-shadow:0 0 0 3px rgba(162,102,244,.2);}
+  .sec-banner{background:rgba(162,102,244,.1);border:1px solid rgba(162,102,244,.3);color:#c9a8f5;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6;margin-bottom:20px;display:flex;gap:10px;}
+  .step{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:8px;background:rgba(255,255,255,.04);margin-bottom:8px;border:1px solid transparent;}
+  .step.done{background:rgba(35,160,107,.1);border-color:rgba(35,160,107,.3);color:#5dd9a8;}
+  .step.current{background:rgba(162,102,244,.15);border-color:rgba(162,102,244,.5);}
+  .step.locked{opacity:.4;}
+  .step .ic{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+  .step.done .ic{background:#23a06b;}
+  .step.current .ic{background:#a266f4;}
+</style></head>
+<body>
+
+<div class="admin-box">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+    <span style="width:36px;height:36px;background:linear-gradient(135deg,#a266f4,#7333d4);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:18px;">琴</span>
+    <div>
+      <div style="font-size:13px;font-weight:600;">古琴智能体</div>
+      <div style="font-size:11px;color:#8d7d8e;">管理后台 · Admin Console</div>
+    </div>
+    <span style="margin-left:auto;background:rgba(255,165,0,.15);color:#ffaa3d;padding:3px 8px;border-radius:99px;font-size:10px;">🔒 受限访问</span>
+  </div>
+
+  <h2>系统管理员登录</h2>
+  <p class="sub">三阶段双因素认证 · 所有操作记入审计日志</p>
+
+  <div class="sec-banner">
+    <span style="font-size:16px;">🛡</span>
+    <span>本次登录将记录 IP、设备指纹与位置；异常登录将触发管理员告警。</span>
+  </div>
+
+  <!-- 步骤指示 -->
+  <div id="steps">
+    <div class="step current" data-step="1">
+      <span class="ic">1</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;">企业 SSO 身份验证</div>
+        <div style="font-size:11px;color:#8d7d8e;">使用企业账号统一登录</div>
+      </div>
+      <span style="font-size:18px;">›</span>
+    </div>
+    <div class="step locked" data-step="2">
+      <span class="ic">2</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;">动态令牌 (TOTP)</div>
+        <div style="font-size:11px;color:#8d7d8e;">输入身份验证器 6 位码</div>
+      </div>
+    </div>
+    <div class="step locked" data-step="3">
+      <span class="ic">3</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;">硬件密钥 (可选)</div>
+        <div style="font-size:11px;color:#8d7d8e;">YubiKey / 指纹</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 当前表单 -->
+  <div id="form-1" style="margin-top:20px;">
+    <label class="field"><span class="lbl" style="color:#8d7d8e;">企业账号</span><input type="text" value="zhang.admin@guqin.com"/></label>
+    <label class="field"><span class="lbl" style="color:#8d7d8e;">密码</span><input type="password" value="••••••••••"/></label>
+    <button onclick="nextStep(1)" data-silent class="btn primary" style="width:100%;justify-content:center;background:#a266f4;border-color:#a266f4;padding:12px;">下一步 · 验证身份</button>
+  </div>
+
+  <div id="form-2" style="display:none;margin-top:20px;">
+    <label class="field"><span class="lbl" style="color:#8d7d8e;">动态令牌 (6 位)</span>
+      <input type="text" maxlength="6" placeholder="000000" style="letter-spacing:8px;text-align:center;font-size:18px;font-family:'Menlo',monospace;" id="totp"/>
+    </label>
+    <p style="font-size:11px;color:#8d7d8e;margin:0 0 14px;">⏱ 剩余 <span id="ttl">28</span> 秒，请在身份验证器查看</p>
+    <button onclick="nextStep(2)" data-silent class="btn primary" style="width:100%;justify-content:center;background:#a266f4;border-color:#a266f4;padding:12px;">验证并登录</button>
+  </div>
+
+  <div id="form-3" style="display:none;margin-top:20px;text-align:center;">
+    <div style="font-size:48px;margin:20px 0;">✓</div>
+    <p style="color:#5dd9a8;">认证完成，正在跳转...</p>
+  </div>
+
+  <p style="font-size:11px;color:#5a5d70;text-align:center;margin:20px 0 0;">
+    遇到问题？联系 <a style="color:#a266f4;">系统管理组</a> · 工单系统
+  </p>
+</div>
+
+<script src="../assets/interact.js"></script>
+<script>
+  function nextStep(n){
+    const steps = document.querySelectorAll('#steps .step');
+    steps[n-1].classList.remove('current');
+    steps[n-1].classList.add('done');
+    steps[n-1].querySelector('.ic').textContent = '✓';
+    document.getElementById('form-'+n).style.display = 'none';
+    if(n<3){
+      steps[n].classList.remove('locked');
+      steps[n].classList.add('current');
+      document.getElementById('form-'+(n+1)).style.display = '';
+      if(n===1){
+        window.toast('身份已验证 ✓','success');
+        let t = 28;
+        const it = setInterval(()=>{ t--; const el=document.getElementById('ttl'); if(el) el.textContent=t; if(t<=0){ clearInterval(it); } },1000);
+      }
+    }
+    if(n===2){
+      // 第二步完成 → 显示 form-3 成功界面并自动跳转
+      window.toast('双因素认证通过','success');
+      setTimeout(()=>{ window.toast('登录成功，欢迎回来','success'); setTimeout(()=>location.href='index.html', 800); }, 1000);
+    }
+  }
+  // 第二步直接走完
+  // 模拟自动填充 + 完成跳转
+</script>
+</body></html>

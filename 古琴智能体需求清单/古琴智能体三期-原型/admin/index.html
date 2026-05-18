@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>管理首页 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:22px;">🗂 管理后台 · 系统总览</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">系统级配置、数据洞察、AI 能力监控；超级管理员视角</p>
+    </div>
+    <span class="tag tag-purple" style="font-size:13px;padding:6px 14px;">🛡 超级管理员模式</span>
+  </div>
+
+  <!-- 系统健康度 -->
+  <div class="card" style="margin-bottom:18px;background:linear-gradient(90deg,#f5edff,#fff);border-color:#a266f4;">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h3 style="margin:0;color:#7333d4;">🛡 系统健康度</h3>
+        <p style="margin:4px 0 0;color:#666;font-size:13px;">所有核心服务运行正常</p>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:32px;font-weight:bold;color:#23a06b;">99.2%</div>
+        <div style="font-size:12px;color:#888;">本月可用度</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px;">
+      <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ece4d3;">
+        <div style="font-size:11px;color:#888;">数字人驱动</div>
+        <div style="font-size:14px;font-weight:600;color:#23a06b;">● 正常</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ece4d3;">
+        <div style="font-size:11px;color:#888;">弹幕意图识别</div>
+        <div style="font-size:14px;font-weight:600;color:#23a06b;">● 正常</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ece4d3;">
+        <div style="font-size:11px;color:#888;">异常降级</div>
+        <div style="font-size:14px;font-weight:600;color:#d99a2b;">● 守护中</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ece4d3;">
+        <div style="font-size:11px;color:#888;">曲目特征库</div>
+        <div style="font-size:14px;font-weight:600;color:#23a06b;">● 正常</div>
+      </div>
+      <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ece4d3;">
+        <div style="font-size:11px;color:#888;">哼唱识曲</div>
+        <div style="font-size:14px;font-weight:600;color:#23a06b;">● 正常</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v">12,430</div><div class="l">本月观看人次</div><div class="d up">↑ 18.4%</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">¥ 11.8万</div><div class="l">本月转化收入</div><div class="d up">↑ 22.1%</div></div>
+    <div class="stat-card"><div class="v">4</div><div class="l">数字人资产</div><div class="d down">⚠ 1 即将到期</div></div>
+    <div class="stat-card"><div class="v" style="color:#e74c3c;">86</div><div class="l">今日弹幕拦截</div><div class="d">敏感词 + 刷屏</div></div>
+  </div>
+
+  <!-- 管理入口 -->
+  <h3 class="ink-title" style="font-size:16px;margin:0 0 12px;">管理模块</h3>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;">
+    <a class="card" href="stats.html" style="cursor:pointer;color:inherit;border-top:3px solid #a266f4;">
+      <div style="font-size:32px;">📈</div>
+      <h3 style="margin:10px 0 4px;">直播转化统计</h3>
+      <p style="margin:0;font-size:12px;color:#888;line-height:1.6;">观看 → 互动 → 点击 → 报名 漏斗分析、渠道与数字人表现对比</p>
+      <div style="margin-top:12px;font-size:12px;color:#a266f4;font-weight:600;">查看数据 →</div>
+    </a>
+    <a class="card" href="avatar.html" style="cursor:pointer;color:inherit;border-top:3px solid #a266f4;">
+      <div style="font-size:32px;">🧑‍🎤</div>
+      <h3 style="margin:10px 0 4px;">数字人资产</h3>
+      <p style="margin:0;font-size:12px;color:#888;line-height:1.6;">形象 / 声音 / 授权管理；过期或停用资产不可用于新直播</p>
+      <div style="margin-top:12px;font-size:12px;color:#a266f4;font-weight:600;">管理资产 →</div>
+    </a>
+    <a class="card" href="audit.html" style="cursor:pointer;color:inherit;border-top:3px solid #a266f4;">
+      <div style="font-size:32px;">🛡</div>
+      <h3 style="margin:10px 0 4px;">弹幕审核规则</h3>
+      <p style="margin:0;font-size:12px;color:#888;line-height:1.6;">敏感词库 / 刷屏限制 / 禁言策略 / 拦截记录恢复</p>
+      <div style="margin-top:12px;font-size:12px;color:#a266f4;font-weight:600;">配置规则 →</div>
+    </a>
+    <a class="card" href="ai-monitor.html" style="cursor:pointer;color:inherit;border-top:3px solid #a266f4;">
+      <div style="font-size:32px;">🤖</div>
+      <h3 style="margin:10px 0 4px;">AI 能力监控</h3>
+      <p style="margin:0;font-size:12px;color:#888;line-height:1.6;">数字人驱动 / 意图识别 / 异常降级 / 曲目库 / 哼唱识曲</p>
+      <div style="margin-top:12px;font-size:12px;color:#a266f4;font-weight:600;">查看监控 →</div>
+    </a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+    <div class="card">
+      <h3>⚠ 系统告警</h3>
+      <div style="font-size:13px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1ead7;">
+          <span class="tag tag-yellow">资产</span>
+          <div style="flex:1;"><b>清音 数字人授权 77 天到期</b><div style="color:#888;font-size:11px;">2026-08-01 到期，建议续约</div></div>
+          <a href="avatar.html" class="btn sm">处理</a>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1ead7;">
+          <span class="tag tag-red">合规</span>
+          <div style="flex:1;"><b>今日拦截量较昨日 +24%</b><div style="color:#888;font-size:11px;">建议复核敏感词库阈值</div></div>
+          <a href="audit.html" class="btn sm">查看</a>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;">
+          <span class="tag tag-blue">AI</span>
+          <div style="flex:1;"><b>哼唱识曲 5 条样本不足</b><div style="color:#888;font-size:11px;">建议补充冷门曲目样本</div></div>
+          <a href="ai-monitor.html" class="btn sm">详情</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>📋 操作日志</h3>
+      <div style="font-size:13px;">
+        <div style="padding:8px 0;border-bottom:1px solid #f1ead7;">
+          <div style="display:flex;justify-content:space-between;"><b>运营·李 · 提交脚本审核</b><span style="color:#888;font-size:11px;">5min 前</span></div>
+          <div style="color:#888;font-size:11px;margin-top:2px;">《琴弦保养答疑》脚本 v1</div>
+        </div>
+        <div style="padding:8px 0;border-bottom:1px solid #f1ead7;">
+          <div style="display:flex;justify-content:space-between;"><b>运营·王 · 创建直播</b><span style="color:#888;font-size:11px;">2h 前</span></div>
+          <div style="color:#888;font-size:11px;margin-top:2px;">《广陵散》赏析夜话 5/17</div>
+        </div>
+        <div style="padding:8px 0;border-bottom:1px solid #f1ead7;">
+          <div style="display:flex;justify-content:space-between;"><b>系统 · 自动降级</b><span style="color:#888;font-size:11px;">17:45</span></div>
+          <div style="color:#888;font-size:11px;margin-top:2px;">数字人生成超时 → 人工接管 1 段</div>
+        </div>
+        <div style="padding:8px 0;">
+          <div style="display:flex;justify-content:space-between;"><b>管理员·张 · 更新审核规则</b><span style="color:#888;font-size:11px;">昨天</span></div>
+          <div style="color:#888;font-size:11px;margin-top:2px;">新增 12 条敏感词</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="admin/index.html" data-crumbs="<b>管理后台</b> / 总览" data-depth="1"></script>
+</body></html>

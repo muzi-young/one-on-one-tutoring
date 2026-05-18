@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>创建直播 · 运营端</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">创建直播</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">配置主题、数字人、关联课程，提交审核后即可发布</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn">取消</button>
+      <button class="btn">保存草稿</button>
+      <a href="script.html" class="btn primary">下一步：编排脚本 →</a>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:18px;">
+    <!-- 表单主体 -->
+    <div class="card">
+      <h3>基础信息</h3>
+      <label class="field"><span class="lbl">直播主题 <span style="color:#e74c3c;">*</span></span><input value="《流水》技法直播课"/></label>
+      <label class="field"><span class="lbl">直播简介</span><textarea rows="2" style="resize:vertical;">名家亲授滚拂技法，配合数字人答疑助教，限时 7 折</textarea></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <label class="field"><span class="lbl">开播时间 *</span><input type="datetime-local" value="2026-05-17T20:00"/></label>
+        <label class="field"><span class="lbl">预计时长</span><select><option>60 分钟</option><option>90 分钟</option></select></label>
+        <label class="field"><span class="lbl">直播分类</span><select><option>技法教学</option><option>曲目赏析</option><option>答疑互动</option></select></label>
+      </div>
+
+      <h3 style="margin-top:18px;">数字人配置</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <label style="display:block;cursor:pointer;border:2px solid var(--gold);border-radius:10px;padding:10px;text-align:center;background:#fffaf0;">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#d6b06b,#8b6a36);margin:0 auto;"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:6px;">阿琴</div>
+          <div style="font-size:10px;color:#23a06b;">✓ 已选</div>
+        </label>
+        <label style="display:block;cursor:pointer;border:1px solid #ddd;border-radius:10px;padding:10px;text-align:center;">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f0a5a5,#c56d6d);margin:0 auto;"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:6px;">清音</div>
+          <div style="font-size:10px;color:#d99a2b;">⚠ 8/1 到期</div>
+        </label>
+        <label style="display:block;cursor:pointer;border:1px solid #ddd;border-radius:10px;padding:10px;text-align:center;">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#a0e0c0,#5ba686);margin:0 auto;"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:6px;">逸尘</div>
+          <div style="font-size:10px;color:#888;">可用</div>
+        </label>
+        <label style="display:block;cursor:not-allowed;border:1px dashed #ddd;border-radius:10px;padding:10px;text-align:center;opacity:.5;">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ccc,#999);margin:0 auto;"></div>
+          <div style="font-size:13px;font-weight:600;margin-top:6px;">素心</div>
+          <div style="font-size:10px;color:#e74c3c;">✕ 授权过期</div>
+        </label>
+      </div>
+      <p style="font-size:12px;color:#888;margin:10px 0 0;">💡 数字人来自 <a href="../admin/avatar.html" style="color:var(--gold);">管理后台「数字人资产管理」</a>，按授权状态展示</p>
+
+      <h3 style="margin-top:18px;">关联课程 / 引流入口 <span style="color:#e74c3c;">*</span></h3>
+      <div style="background:#fffaf0;border:1px solid var(--gold);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px;">
+        <div style="width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,#d6b06b,#8b6a36);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Songti SC',serif;font-size:20px;">琴</div>
+        <div style="flex:1;">
+          <b>《流水》系统课</b>
+          <div style="font-size:12px;color:#888;">原价 ¥1280 · 直播专享价 ¥896</div>
+        </div>
+        <button class="btn sm">更换</button>
+      </div>
+
+      <h3 style="margin-top:18px;">直播间封面</h3>
+      <div style="display:flex;gap:10px;">
+        <div style="width:160px;height:90px;border-radius:8px;background:linear-gradient(135deg,#3a2f1e,#7a5a2c);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;">已上传</div>
+        <button class="btn" style="height:90px;">+ 重新上传</button>
+        <div style="flex:1;font-size:12px;color:#888;line-height:1.6;padding-left:8px;">
+          推荐尺寸 1280×720<br/>
+          支持 JPG / PNG，&lt; 2MB<br/>
+          🎨 可使用模板库快速生成
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>直播间预览</h3>
+        <div style="background:linear-gradient(135deg,#3a2f1e,#7a5a2c);color:#fff;border-radius:8px;padding:14px;height:160px;position:relative;">
+          <span style="background:#e74c3c;color:#fff;font-size:10px;padding:2px 8px;border-radius:99px;">● LIVE</span>
+          <div style="position:absolute;bottom:10px;left:14px;right:14px;">
+            <div class="ink-title" style="font-weight:bold;font-size:14px;">《流水》技法直播课</div>
+            <div style="font-size:11px;opacity:.9;">阿琴 数字人 · 5/17 20:00</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:#888;margin:10px 0 0;">用户端直播入口、预约页将自动同步该封面与信息。</p>
+      </div>
+
+      <div class="card" style="background:#fff5e1;border-color:#d6b06b;">
+        <h3 style="color:#8b6a36;">⚠ 发布前必检</h3>
+        <ul style="margin:0;padding-left:20px;font-size:13px;color:#7a5b22;line-height:1.9;">
+          <li>✅ 已选择有效数字人</li>
+          <li>✅ 已关联课程或引流入口</li>
+          <li>⚠ 脚本未编排 → 下一步</li>
+          <li>⚠ 脚本未审核 → 不可正式开播</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="ops/live-create.html" data-crumbs="运营端 / 直播管理 / <b>创建直播</b>" data-depth="1"></script>
+</body></html>

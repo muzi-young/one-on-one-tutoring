@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陪护住宿陪同就医小程序 · 产品方案与项目报价单</title>
+  <style>
+    @page{size:A4 portrait;margin:0}
+    :root{
+      --primary:#b46a2b;
+      --primary-light:#d9a46d;
+      --primary-dark:#8b4e1e;
+      --secondary:#24404f;
+      --accent:#e8c48d;
+      --accent2:#7e9f8f;
+      --dark:#111827;
+      --text:#2f3a44;
+      --text-light:#6b7280;
+      --bg:#f7f5f2;
+      --white:#fff;
+      --border:#d4c8b8;
+      --alt:#f1ece6;
+      --gold:#d7b078;
+      --gold-soft:#f4ddbb;
+      --r:10px;
+      --rl:16px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei","PingFang SC","Noto Sans SC",sans-serif;
+      color:var(--text);background:#c8c4be;line-height:1.72;width:210mm;margin:0 auto;
+    }
+    a{text-decoration:none;color:inherit}
+    .page{width:210mm;min-height:297mm;padding:18mm;background:var(--bg);position:relative;overflow:hidden}
+    .page-alt{background:var(--alt)}
+    .page-cover{
+      padding:0;height:297mm;min-height:297mm;color:#fff;background:
+      radial-gradient(circle at 18% 78%,rgba(215,176,120,.12),transparent 22%),
+      radial-gradient(circle at 84% 18%,rgba(215,176,120,.08),transparent 24%),
+      linear-gradient(135deg,#10161d 0%,#18232d 38%,#223744 100%);
+      display:flex;flex-direction:column;
+    }
+    .page-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--primary-light));z-index:2}
+    .page-alt .page-accent{background:linear-gradient(90deg,var(--secondary),var(--accent2))}
+    .sec-bar{width:48px;height:3px;border-radius:2px;margin-bottom:10px;background:linear-gradient(90deg,var(--primary),var(--accent))}
+    .center-fill{display:flex;flex-direction:column;justify-content:center;min-height:221mm;gap:24px}
+    .page-relaxed .sec-title{font-size:32px}
+    .page-compact .m-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .page-compact .m-head{padding:12px 14px}
+    .page-compact .m-body{padding:12px 14px}
+    .page-compact .fl{grid-template-columns:1fr}
+    .page-compact .fl li{font-size:11px}
+    .hero-topbar{background:rgba(8,14,19,.56);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+    .hero-topbar-inner{padding:10px 18mm;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .opening-line{font-family:"Noto Serif SC","Songti SC",serif;font-size:15px;font-weight:700;letter-spacing:.16em;color:var(--gold-soft);white-space:nowrap}
+    .hero-top-meta{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .hero-top-meta span{display:inline-flex;align-items:center;min-height:34px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);font-size:11px;color:rgba(255,255,255,.86)}
+    .hero{flex:1;display:flex;align-items:center;justify-content:center;padding:50px 18mm 60px;position:relative;overflow:hidden}
+    .hero::before,.hero::after{content:"";position:absolute;border-radius:50%}
+    .hero::before{width:420px;height:420px;right:-120px;top:-160px;background:radial-gradient(circle,rgba(215,176,120,.18) 0%,transparent 68%)}
+    .hero::after{width:340px;height:340px;left:-90px;bottom:-140px;background:radial-gradient(circle,rgba(215,176,120,.12) 0%,transparent 68%)}
+    .hero-inner{position:relative;z-index:1;width:100%}
+    .hero-shell{display:flex;flex-direction:column;gap:34px}
+    .hero-kicker{display:block;margin-bottom:14px;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+    .hero h1{
+      font-family:"Noto Serif SC","Songti SC",serif;font-size:34px;line-height:1.16;font-weight:900;margin-bottom:16px;
+      background:linear-gradient(135deg,#fff 0%,#f7ebd8 36%,#d7b078 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{font-size:18px;letter-spacing:.08em;color:rgba(255,255,255,.82);margin-bottom:18px}
+    .hero-note{color:rgba(255,255,255,.66);font-size:13px;line-height:2.05;margin-bottom:28px}
+    .hero-side{display:grid;gap:12px}
+    .hero-side-intro{padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.78);font-size:13px;line-height:1.85}
+    .hero-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .meta-chip,.contact-chip{padding:14px 16px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.09);min-height:68px}
+    .meta-chip dt,.contact-chip strong{display:block;font-size:10px;letter-spacing:.16em;color:rgba(255,255,255,.44);margin-bottom:6px;text-transform:uppercase}
+    .meta-chip dd,.contact-chip span{font-size:14px;font-weight:700;color:rgba(255,255,255,.96);line-height:1.4}
+    .sec-num{font-size:12px;font-weight:700;letter-spacing:3px;color:var(--primary);text-transform:uppercase;margin-bottom:6px}
+    .sec-title{font-family:"Noto Serif SC","Songti SC",serif;font-size:26px;color:var(--dark);margin-bottom:8px}
+    .sec-desc{max-width:100%;color:var(--text-light);font-size:13px;margin-bottom:18px}
+    .toc-grid{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+    .toc-item{display:flex;align-items:center;gap:16px;padding:18px 24px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border)}
+    .toc-n{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0}
+    .toc-t{font-size:16px;font-weight:600}
+    .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+    .sc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .sc .num{font-family:"Noto Serif SC","Songti SC",serif;font-size:26px;font-weight:900;color:var(--primary);line-height:1.2}
+    .sc .unit{font-size:13px;color:var(--text-light);font-weight:500}
+    .sc .desc{font-size:11px;color:var(--text-light);margin-top:4px}
+    .nb{background:#fff;border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:0 var(--rl) var(--rl) 0;padding:18px 20px;margin-top:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .nb h4{font-size:14px;color:var(--secondary);margin-bottom:10px}
+    .nl{list-style:none;counter-reset:item}
+    .nl li{position:relative;padding:5px 0 5px 26px;color:var(--text);font-size:12px}
+    .nl li::before{counter-increment:item;content:counter(item);position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:50%;background:var(--alt);font-size:9px;font-weight:700;color:var(--primary-dark);display:flex;align-items:center;justify-content:center}
+    .tech-table{width:100%;border-collapse:collapse;margin:14px 0;border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .tech-table thead th{background:var(--secondary);color:#fff;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px}
+    .tech-table tbody td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--border);background:var(--white);vertical-align:top}
+    .tech-table tbody tr:nth-child(even) td{background:#faf8f5}
+    .tech-table tbody td:first-child{font-weight:600;color:var(--secondary);white-space:nowrap}
+    .m-grid{display:grid;gap:14px;margin-top:20px}
+    .m-card{background:#fff;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .m-head{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .m-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0}
+    .m1{background:linear-gradient(135deg,#b46a2b,#e8c48d)}.m2{background:linear-gradient(135deg,#24404f,#7e9f8f)}.m3{background:linear-gradient(135deg,#965d38,#d9a46d)}.m4{background:linear-gradient(135deg,#1f4f7a,#6ea9d7)}
+    .m5{background:linear-gradient(135deg,#37525b,#85aa9c)}.m6{background:linear-gradient(135deg,#47685a,#96baa7)}.m7{background:linear-gradient(135deg,#7d5b43,#c79b79)}.m8{background:linear-gradient(135deg,#283845,#5d7887)}
+    .m-head h3{font-size:15px;color:var(--dark)}
+    .tag{margin-left:auto;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+    .tag-core{background:rgba(180,106,43,.12);color:var(--primary-dark)}
+    .tag-flow{background:rgba(36,64,79,.1);color:var(--secondary)}
+    .tag-fin{background:rgba(126,159,143,.15);color:#47685a}
+    .m-body{padding:16px 20px}
+    .fg{margin-bottom:12px}.fg:last-child{margin-bottom:0}
+    .fg-title{font-size:12px;font-weight:700;color:var(--secondary);margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--border)}
+    .fl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 12px}
+    .fl li{position:relative;padding-left:14px;font-size:12px;color:var(--text)}
+    .fl li::before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--primary)}
+    .arch{background:linear-gradient(135deg,#18232d,#243845);border-radius:var(--rl);padding:24px;margin-top:20px;color:#fff}
+    .arch-row{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .arch-row:last-child{border-bottom:none}
+    .arch-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+    .arch-tags{display:flex;flex-wrap:wrap;gap:8px}
+    .arch-tag{padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.92)}
+    .tl{position:relative;margin-top:20px;padding-left:28px}
+    .tl::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--primary),var(--accent2))}
+    .tl-item{position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .tl-item::before{content:"";position:absolute;left:-22px;top:20px;width:10px;height:10px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 3px var(--bg)}
+    .tl-phase{font-size:10px;letter-spacing:2px;font-weight:700;color:var(--primary);text-transform:uppercase}
+    .tl-title{font-size:14px;font-weight:700;color:var(--dark);margin:2px 0 5px}
+    .tl-dur{display:inline-block;padding:3px 10px;border-radius:999px;background:rgba(180,106,43,.1);color:var(--primary-dark);font-size:11px;font-weight:700;margin-bottom:8px}
+    .tl-tasks{list-style:none}
+    .tl-tasks li{position:relative;padding-left:14px;font-size:12px;color:var(--text);margin-bottom:2px}
+    .tl-tasks li::before{content:"→";position:absolute;left:0;color:var(--primary)}
+    .qt-wrap{margin-top:16px;overflow-x:auto}
+    .qt{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    .qt thead th{padding:10px 12px;background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;text-align:left;font-size:11px;letter-spacing:1px}
+    .qt thead th:last-child,.qt thead th:nth-child(5),.qt thead th:nth-child(6){text-align:right}
+    .qt tbody td{padding:8px 12px;border-bottom:1px solid var(--border);background:#fff;font-size:12px;vertical-align:top}
+    .qt tbody td:last-child,.qt tbody td:nth-child(5),.qt tbody td:nth-child(6){text-align:right;font-variant-numeric:tabular-nums}
+    .qt .gh td{background:#efe7dd;color:var(--secondary);font-weight:700;border-left:4px solid var(--primary);font-size:12px}
+    .qt .st td{background:#faf4ec;color:var(--primary-dark);font-weight:700}
+    .qt .gt2 td{background:linear-gradient(135deg,var(--dark),var(--secondary));color:#fff;font-size:14px;font-weight:700;padding:12px}
+    .footer-page{background:#18232d;color:rgba(255,255,255,.62);display:flex;align-items:center;justify-content:center;text-align:center}
+    .footer-brand{font-family:"Noto Serif SC","Songti SC",serif;font-size:26px;font-weight:800;color:var(--gold-soft);margin-bottom:18px}
+    .footer-page p{font-size:12px;line-height:2}
+    @media screen{.page{margin:24px auto;box-shadow:0 4px 24px rgba(0,0,0,.18)}}
+    @media print{
+      *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+      html,body{width:210mm;margin:0;padding:0;background:#fff}
+      .page{width:210mm;height:297mm;min-height:297mm;margin:0;box-shadow:none;overflow:hidden;break-after:page;page-break-after:always;background:#f7f5f2!important}
+      .page:last-child{break-after:auto;page-break-after:auto}
+      .page-alt{background:#f1ece6!important}.page-cover,.footer-page{height:297mm;min-height:297mm;background:#18232d!important}
+      thead{display:table-header-group}tr,.m-card,.nb,.arch,.tl-item,.sc,.qt-wrap{break-inside:avoid;page-break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <div class="page page-cover">
+    <div class="hero-topbar">
+      <div class="hero-topbar-inner">
+        <div class="opening-line">铁肩担荣耀，妙手筑梦想</div>
+        <div class="hero-top-meta">
+          <span>商务：李岩</span>
+          <span>报价单位：郑州八角信息技术有限公司</span>
+          <span>联系电话：18116339746</span>
+        </div>
+      </div>
+    </div>
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-shell">
+          <div class="hero-copy">
+            <span class="hero-kicker">项目方案封面</span>
+            <h1>陪护住宿陪同就医小程序</h1>
+            <p class="hero-sub">住宿预订 · 陪诊预约 · 订单支付 · 后台运营</p>
+            <p class="hero-note">项目面向医院周边患者及家属，围绕短租住宿、陪同就医、陪诊师服务管理和后台运营形成闭环。报价范围按最终确认口径执行：仅包含微信小程序、陪诊师小程序和平台管理后台，暂不包含蔬菜配送模块。</p>
+          </div>
+          <div class="hero-side">
+            <div class="hero-side-intro">本报价单覆盖产品需求分析、功能清单、技术选型、技术难点、实施方案、排期计划、项目报价与商务条款。项目总价按意向价格锁定为 65,700 元，开发工期为 30 个工作日。</div>
+            <div class="hero-info-grid">
+              <div class="meta-chip"><dt>文档类型</dt><dd>产品方案 &amp; 报价单</dd></div>
+              <div class="meta-chip"><dt>版本</dt><dd>V1.0</dd></div>
+              <div class="meta-chip"><dt>日期</dt><dd>2026-05-10</dd></div>
+              <div class="meta-chip"><dt>交付形态</dt><dd>微信小程序 + PC后台</dd></div>
+              <div class="contact-chip"><strong>报价单位</strong><span>郑州八角信息技术有限公司</span></div>
+              <div class="contact-chip"><strong>联系电话</strong><span>18116339746</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="page page-relaxed">
+    <div class="page-accent"></div>
+    <div class="center-fill">
+      <div>
+        <div class="sec-bar"></div>
+        <div class="sec-num">CONTENTS</div>
+        <h2 class="sec-title">目录导航</h2>
+      </div>
+      <div class="toc-grid">
+        <a class="toc-item" href="#s1"><span class="toc-n">01</span><span class="toc-t">产品概述</span></a>
+        <a class="toc-item" href="#s2"><span class="toc-n">02</span><span class="toc-t">需求分析</span></a>
+        <a class="toc-item" href="#s3"><span class="toc-n">03</span><span class="toc-t">功能清单</span></a>
+        <a class="toc-item" href="#s4"><span class="toc-n">04</span><span class="toc-t">技术选型</span></a>
+        <a class="toc-item" href="#s5"><span class="toc-n">05</span><span class="toc-t">技术难点与方案</span></a>
+        <a class="toc-item" href="#s6"><span class="toc-n">06</span><span class="toc-t">技术实施方案</span></a>
+        <a class="toc-item" href="#s7"><span class="toc-n">07</span><span class="toc-t">实施排期</span></a>
+        <a class="toc-item" href="#s8"><span class="toc-n">08</span><span class="toc-t">项目报价清单</span></a>
+        <a class="toc-item" href="#s9"><span class="toc-n">09</span><span class="toc-t">商务条款说明</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page page-relaxed" id="s1">
+    <div class="page-accent"></div>
+    <div class="center-fill">
+      <div>
+        <div class="sec-bar"></div>
+        <div class="sec-num">Part 01</div>
+        <h2 class="sec-title">产品概述</h2>
+        <p class="sec-desc">项目定位为医院周边便民服务小程序，通过住宿房源预订、陪诊服务预约、陪诊师服务履约和平台后台管理，降低患者及家属在就医期间的住宿与陪同沟通成本。</p>
+      </div>
+      <div class="sg">
+        <div class="sc"><div class="num">8<span class="unit"> 个</span></div><div class="desc">核心业务模块</div></div>
+        <div class="sc"><div class="num">34<span class="unit"> 页</span></div><div class="desc">小程序与后台页面</div></div>
+        <div class="sc"><div class="num">30<span class="unit"> 天</span></div><div class="desc">预计开发工期</div></div>
+        <div class="sc"><div class="num">65,700<span class="unit"> 元</span></div><div class="desc">项目总价</div></div>
+      </div>
+      <div class="nb">
+        <h4>建设目标</h4>
+        <ul class="nl">
+          <li>建立用户从服务浏览、预约下单、微信支付、订单跟踪到评价反馈的完整线上流程。</li>
+          <li>建立陪诊师入驻、资料维护、订单查看、服务进度更新与收入记录能力。</li>
+          <li>建立平台后台对房源、房态、陪诊师、订单、退款、营收统计等运营对象的集中管理。</li>
+          <li>通过微信登录、微信支付、微信客服和地图导航能力降低首期开发与推广成本。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="page page-alt" id="s2">
+    <div class="page-accent"></div>
+    <div class="sec-bar"></div>
+    <div class="sec-num">Part 02</div>
+    <h2 class="sec-title">需求分析</h2>
+    <p class="sec-desc">本期范围聚焦住宿与陪诊两条主线，蔬菜配送模块暂不纳入开发报价。</p>
+    <table class="tech-table">
+      <thead><tr><th>分析项</th><th>内容</th><th>业务说明</th></tr></thead>
+      <tbody>
+        <tr><td>需求背景</td><td>患者及家属在医院就诊期间存在短租住宿、陪同挂号问诊、路线导航和服务跟踪需求。</td><td>系统以医院周边场景为入口，优先解决刚需服务的线上化下单与运营管理。</td></tr>
+        <tr><td>核心诉求</td><td>用户快速找到附近住宿与陪诊服务；平台可统一管理订单、房源、陪诊师和营收数据。</td><td>首期以交易闭环和后台运营为核心，不扩展非必要业务线。</td></tr>
+        <tr><td>目标用户</td><td>患者家属、异地就医用户、陪诊服务人员、平台运营管理员。</td><td>用户端重视下单效率，陪诊师端重视订单与履约，后台重视审核、分派和统计。</td></tr>
+        <tr><td>交付边界</td><td>包含用户小程序、陪诊师小程序、平台管理后台；暂不包含蔬菜配送和独立配送员端。</td><td>配送业务后续可作为二期模块扩展，不影响本期架构。</td></tr>
+        <tr><td>结算方式</td><td>用户订单支持微信支付；陪诊师收入记录由后台维护，提现采用线下结算。</td><td>不接入商家转账到零钱，降低首期资质和审核复杂度。</td></tr>
+      </tbody>
+    </table>
+    <table class="tech-table">
+      <thead><tr><th>非功能需求</th><th>要求</th><th>实现口径</th></tr></thead>
+      <tbody>
+        <tr><td>性能</td><td>首页、列表、订单页在常规网络下保持稳定加载。</td><td>图片压缩、分页加载、后台接口统一分页与筛选。</td></tr>
+        <tr><td>安全</td><td>用户手机号、订单、支付状态、陪诊师资质资料需权限隔离。</td><td>后端统一鉴权，后台角色权限控制，敏感接口记录操作日志。</td></tr>
+        <tr><td>兼容</td><td>适配主流微信版本和常见 iOS/Android 机型。</td><td>按微信小程序规范开发并进行真机联调。</td></tr>
+        <tr><td>可维护</td><td>业务模块清晰分层，支持二期加入配送模块。</td><td>订单、用户、房源、陪诊师、支付等能力按模块拆分。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page page-compact" id="s3">
+    <div class="page-accent"></div>
+    <div class="sec-bar"></div>
+    <div class="sec-num">Part 03</div>
+    <h2 class="sec-title">功能清单</h2>
+    <p class="sec-desc">功能拆分覆盖用户操作、系统响应、数据流转与后台管理。</p>
+    <div class="m-grid">
+      <div class="m-card"><div class="m-head"><div class="m-icon m1">01</div><h3>首页与账户</h3><span class="tag tag-core">用户端</span></div><div class="m-body"><div class="fg"><div class="fg-title">服务入口</div><ul class="fl"><li>自动定位当前医院</li><li>展示附近房源入口</li><li>展示陪诊服务入口</li><li>进入订单与个人中心</li></ul></div><div class="fg"><div class="fg-title">登录资料</div><ul class="fl"><li>微信一键登录</li><li>授权手机号</li><li>查看头像昵称</li><li>修改手机号</li></ul></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m2">02</div><h3>住宿预订</h3><span class="tag tag-core">用户端</span></div><div class="m-body"><div class="fg"><div class="fg-title">房源浏览</div><ul class="fl"><li>按日期筛选房源</li><li>按价格区间筛选</li><li>查看房型实景图</li><li>查看短租与月租价</li></ul></div><div class="fg"><div class="fg-title">订单交易</div><ul class="fl"><li>选择入住退房日期</li><li>校验房态冲突</li><li>提交住宿订单</li><li>微信支付并锁定房态</li></ul></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m3">03</div><h3>住宿订单</h3><span class="tag tag-flow">交易闭环</span></div><div class="m-body"><div class="fg"><div class="fg-title">订单管理</div><ul class="fl"><li>查看全部住宿订单</li><li>按待支付/待入住/完成/取消筛选</li><li>进入订单详情</li><li>复制房源地址</li><li>调用微信地图导航</li></ul></div></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m4">04</div><h3>陪诊服务预约</h3><span class="tag tag-core">用户端</span></div><div class="m-body"><div class="fg"><div class="fg-title">服务选择</div><ul class="fl"><li>浏览陪诊套餐</li><li>查看价格与服务时长</li><li>筛选陪诊师</li><li>查看陪诊师资质评价</li></ul></div><div class="fg"><div class="fg-title">预约下单</div><ul class="fl"><li>选择服务日期时间</li><li>填写就诊人信息</li><li>填写医院科室事项</li><li>提交并微信支付</li></ul></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m5">05</div><h3>陪诊履约与评价</h3><span class="tag tag-flow">交易闭环</span></div><div class="m-body"><div class="fg"><div class="fg-title">服务追踪</div><ul class="fl"><li>查看服务进度</li><li>查看陪诊师位置</li><li>查看预计到达时间</li><li>确认服务完成</li><li>提交星级与文字评价</li></ul></div></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m6">06</div><h3>陪诊师端</h3><span class="tag tag-fin">陪诊师</span></div><div class="m-body"><div class="fg"><div class="fg-title">入驻履约</div><ul class="fl"><li>提交入驻申请</li><li>上传资质证书</li><li>维护个人资料</li><li>查看后台派单订单</li><li>更新开始/服务中/完成状态</li><li>查看收入明细</li></ul></div></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m7">07</div><h3>平台管理后台</h3><span class="tag tag-core">PC后台</span></div><div class="m-body"><div class="fg"><div class="fg-title">运营管理</div><ul class="fl"><li>经营数据概览</li><li>房源新增编辑删除</li><li>房态日历管理</li><li>住宿订单筛选导出</li><li>陪诊师审核驳回</li><li>陪诊订单人工派单</li></ul></div></div></div></div>
+      <div class="m-card"><div class="m-head"><div class="m-icon m8">08</div><h3>客服与统计</h3><span class="tag tag-fin">支撑能力</span></div><div class="m-body"><div class="fg"><div class="fg-title">运营支撑</div><ul class="fl"><li>接入微信客服能力</li><li>维护服务价格</li><li>处理退款申请</li><li>导出订单数据</li><li>统计住宿与陪诊营收</li><li>查看待处理事项</li></ul></div></div></div></div>
+    </div>
+  </div>
+
+  <div class="page page-alt" id="s4">
+    <div class="page-accent"></div>
+    <div class="sec-bar"></div>
+    <div class="sec-num">Part 04</div>
+    <h2 class="sec-title">技术选型</h2>
+    <p class="sec-desc">技术选型仅列开发语言与端侧形态，三方能力优先适配国内合规供应商。</p>
+    <table class="tech-table">
+      <thead><tr><th>类别</th><th>选型</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>后端</td><td>PHP</td><td>符合报价单价口径，适合中小型交易类小程序后台、订单支付、后台管理和接口开发。</td></tr>
+        <tr><td>用户/陪诊师端</td><td>uni-app 小程序</td><td>面向微信小程序交付，统一实现用户端与陪诊师端页面、表单、订单、支付和地图能力。</td></tr>
+        <tr><td>管理后台</td><td>Vue</td><td>适合 PC 后台的表格、筛选、审核、统计、导出等管理型页面。</td></tr>
+        <tr><td>UI设计</td><td>移动端与后台关键页面设计</td><td>覆盖核心交易页面、陪诊师页面和后台管理页面，控制在前端工时一半以内。</td></tr>
+      </tbody>
+    </table>
+    <table class="tech-table">
+      <thead><tr><th>三方能力</th><th>推荐供应商</th><th>使用范围</th></tr></thead>
+      <tbody>
+        <tr><td>微信生态</td><td>微信开放平台 / 微信小程序</td><td>微信登录、手机号授权、小程序发布、订阅消息。</td></tr>
+        <tr><td>支付</td><td>微信支付</td><td>住宿订单与陪诊订单在线支付、支付回调、超时取消。</td></tr>
+        <tr><td>地图定位</td><td>腾讯地图</td><td>医院定位、房源导航、陪诊服务位置展示。</td></tr>
+        <tr><td>对象存储</td><td>腾讯云 COS</td><td>房源图片、陪诊师资质证书、评价图片等文件存储。</td></tr>
+        <tr><td>在线客服</td><td>微信客服能力</td><td>小程序客服入口、图文咨询、常见问题承接。</td></tr>
+      </tbody>
+    </table>
+    <div class="nb"><h4>费用说明</h4><p style="font-size:12px">开发报价包含上述三方能力的接口对接工时；微信支付手续费、云资源、对象存储、地图调用量等供应商按量费用由甲方按实际用量向对应平台支付。</p></div>
+  </div>
+
+  <div class="page page-relaxed" id="s5">
+    <div class="page-accent"></div>
+    <div class="center-fill">
+      <div>
+        <div class="sec-bar"></div>
+        <div class="sec-num">Part 05</div>
+        <h2 class="sec-title">技术难点与解决方案</h2>
+      </div>
+      <table class="tech-table">
+        <thead><tr><th>技术难点</th><th>影响</th><th>解决方案</th></tr></thead>
+        <tbody>
+          <tr><td>房态与支付锁定</td><td>同一房源日期段可能被重复下单。</td><td>订单提交前校验房态，支付中短时锁定库存；15 分钟未支付释放房态。</td></tr>
+          <tr><td>陪诊师可服务时间</td><td>重复预约会影响履约。</td><td>按日期、时段、订单状态维护可约规则，后台派单时二次校验。</td></tr>
+          <tr><td>位置同步</td><td>频繁定位会增加耗电与调用量。</td><td>仅服务中开启位置更新，建议约 30 秒同步一次，并在用户端展示最近更新时间。</td></tr>
+          <tr><td>微信支付回调</td><td>支付状态异常会影响订单履约。</td><td>后端以支付回调为准更新订单状态，前端轮询或主动查询兜底。</td></tr>
+          <tr><td>后台审核与权限</td><td>房源、陪诊师资质和订单处理涉及敏感操作。</td><td>后台按角色控制菜单和操作，关键操作记录日志。</td></tr>
+          <tr><td>二期扩展配送</td><td>后续新增配送模块可能影响订单结构。</td><td>首期将订单类型、支付、用户、后台统计做通用抽象，保留配送模块扩展位置。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page page-relaxed" id="s6">
+    <div class="page-accent"></div>
+    <div class="center-fill">
+      <div>
+        <div class="sec-bar"></div>
+        <div class="sec-num">Part 06</div>
+        <h2 class="sec-title">技术实施方案</h2>
+        <p class="sec-desc">系统采用前后端分离架构，小程序端、陪诊师端、PC后台通过后端接口访问统一业务数据。</p>
+      </div>
+      <div class="arch">
+        <div class="arch-row"><div class="arch-label">表现层</div><div class="arch-tags"><span class="arch-tag">用户微信小程序</span><span class="arch-tag">陪诊师微信小程序</span><span class="arch-tag">PC 管理后台</span></div></div>
+        <div class="arch-row"><div class="arch-label">服务层</div><div class="arch-tags"><span class="arch-tag">PHP 接口服务</span><span class="arch-tag">订单服务</span><span class="arch-tag">支付回调</span><span class="arch-tag">后台权限</span></div></div>
+        <div class="arch-row"><div class="arch-label">数据层</div><div class="arch-tags"><span class="arch-tag">用户数据</span><span class="arch-tag">房源房态</span><span class="arch-tag">陪诊师资料</span><span class="arch-tag">订单支付</span><span class="arch-tag">评价统计</span></div></div>
+        <div class="arch-row"><div class="arch-label">交付层</div><div class="arch-tags"><span class="arch-tag">微信小程序发布</span><span class="arch-tag">服务器部署</span><span class="arch-tag">后台账号交付</span><span class="arch-tag">上线验收</span></div></div>
+      </div>
+      <div class="nb">
+        <h4>核心数据流</h4>
+        <ul class="nl">
+          <li>用户登录后选择住宿或陪诊服务，提交订单并调用微信支付。</li>
+          <li>支付成功后后端更新订单状态，住宿订单锁定房态，陪诊订单进入待派单或待服务状态。</li>
+          <li>后台处理房源、房态、陪诊师审核、订单派单、退款与营收统计。</li>
+          <li>陪诊师端更新服务进度，用户端同步展示并在完成后评价。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="s7">
+    <div class="page-accent"></div>
+    <div class="sec-bar"></div>
+    <div class="sec-num">Part 07</div>
+    <h2 class="sec-title">实施排期</h2>
+    <p class="sec-desc">总工期按 30 个工作日安排，采用需求确认、设计开发、联调测试、上线验收四阶段推进。</p>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-phase">Phase 01</div><div class="tl-title">需求确认与原型/UI设计</div><span class="tl-dur">5 个工作日</span><ul class="tl-tasks"><li>确认住宿与陪诊业务边界</li><li>输出核心页面原型与视觉稿</li><li>确认后台字段、订单状态和支付规则</li></ul></div>
+      <div class="tl-item"><div class="tl-phase">Phase 02</div><div class="tl-title">小程序端与后台基础开发</div><span class="tl-dur">10 个工作日</span><ul class="tl-tasks"><li>开发用户端首页、住宿、陪诊、订单、个人中心</li><li>开发陪诊师端入驻、订单、进度、收入页面</li><li>开发后台基础权限、房源、陪诊师和订单模块</li></ul></div>
+      <div class="tl-item"><div class="tl-phase">Phase 03</div><div class="tl-title">后端接口与业务联调</div><span class="tl-dur">10 个工作日</span><ul class="tl-tasks"><li>完成登录、支付、订单、房态、派单、评价接口</li><li>对接微信支付、微信客服、腾讯地图和文件上传</li><li>完成后台统计、导出、退款处理和权限联调</li></ul></div>
+      <div class="tl-item"><div class="tl-phase">Phase 04</div><div class="tl-title">测试修正与上线交付</div><span class="tl-dur">5 个工作日</span><ul class="tl-tasks"><li>完成多端真机测试和支付回调测试</li><li>修复验收问题并整理交付账号</li><li>协助小程序提审、后台部署与正式上线</li></ul></div>
+    </div>
+  </div>
+
+  <div class="page page-alt" id="s8">
+    <div class="page-accent"></div>
+    <div class="sec-bar"></div>
+    <div class="sec-num">Part 08</div>
+    <h2 class="sec-title">项目报价清单</h2>
+    <p class="sec-desc">总价按最终确认意向价 65,700 元闭合，分项人天按 UI、前端、后端单价倒推分配。</p>
+    <div class="qt-wrap">
+      <table class="qt">
+        <thead><tr><th>序号</th><th>功能点/工作项</th><th>工作内容说明</th><th>人天</th><th>单价</th><th>报价</th></tr></thead>
+        <tbody>
+          <tr class="gh"><td colspan="6">一、UI 设计</td></tr>
+          <tr><td>1</td><td>用户小程序核心页面设计</td><td>首页、住宿、陪诊、订单、个人中心等核心页面视觉设计。</td><td>2.50</td><td>¥1,000</td><td>¥2,500</td></tr>
+          <tr><td>2</td><td>陪诊师端与后台关键页面设计</td><td>陪诊师入驻、订单、服务进度、后台首页、列表与表单页面。</td><td>3.00</td><td>¥1,000</td><td>¥3,000</td></tr>
+          <tr><td>3</td><td>交互规范与切图标注</td><td>关键状态、按钮、弹窗、表单校验、列表组件与交付标注。</td><td>2.00</td><td>¥1,000</td><td>¥2,000</td></tr>
+          <tr class="st"><td colspan="3">UI 小计</td><td>7.50</td><td></td><td>¥7,500</td></tr>
+
+          <tr class="gh"><td colspan="6">二、前端开发</td></tr>
+          <tr><td>4</td><td>用户端住宿与陪诊页面</td><td>首页、房源列表详情、日期选择、陪诊套餐、陪诊师详情、预约下单。</td><td>7.00</td><td>¥1,200</td><td>¥8,400</td></tr>
+          <tr><td>5</td><td>陪诊师端页面</td><td>首页、订单、订单详情、服务进度、资料管理、收入明细、入驻申请。</td><td>3.50</td><td>¥1,200</td><td>¥4,200</td></tr>
+          <tr><td>6</td><td>PC 管理后台页面</td><td>数据概览、房源房态、订单、陪诊师审核、陪诊订单、营收统计。</td><td>6.50</td><td>¥1,200</td><td>¥7,800</td></tr>
+          <tr><td>7</td><td>支付、地图、客服前端联调</td><td>微信支付拉起、地图导航、位置展示、微信客服入口与状态回显。</td><td>3.00</td><td>¥1,200</td><td>¥3,600</td></tr>
+          <tr><td>8</td><td>组件适配与真机兼容</td><td>表单、弹窗、筛选、列表、空状态、加载状态与主流机型适配。</td><td>2.50</td><td>¥1,200</td><td>¥3,000</td></tr>
+          <tr class="st"><td colspan="3">前端小计</td><td>22.50</td><td></td><td>¥27,000</td></tr>
+
+          <tr class="gh"><td colspan="6">三、后端开发与上线</td></tr>
+          <tr><td>9</td><td>账户与权限接口</td><td>微信登录、手机号授权、用户/陪诊师/后台管理员基础权限。</td><td>3.00</td><td>¥1,200</td><td>¥3,600</td></tr>
+          <tr><td>10</td><td>住宿房源与订单接口</td><td>房源、房态、日期校验、订单生成、支付锁定、超时取消。</td><td>5.00</td><td>¥1,200</td><td>¥6,000</td></tr>
+          <tr><td>11</td><td>陪诊服务与履约接口</td><td>服务项目、陪诊师筛选、预约订单、进度更新、评价记录、位置同步。</td><td>6.00</td><td>¥1,200</td><td>¥7,200</td></tr>
+          <tr><td>12</td><td>陪诊师入驻与线下结算</td><td>资质上传、审核驳回、服务价格、收入明细、线下结算记录。</td><td>3.50</td><td>¥1,200</td><td>¥4,200</td></tr>
+          <tr><td>13</td><td>后台统计、导出与配置</td><td>订单筛选、退款处理、营收统计、数据导出、运营配置。</td><td>3.00</td><td>¥1,200</td><td>¥3,600</td></tr>
+          <tr><td>14</td><td>三方能力对接</td><td>微信支付、微信客服、腾讯地图、文件上传、订阅通知基础对接。</td><td>3.00</td><td>¥1,200</td><td>¥3,600</td></tr>
+          <tr><td>15</td><td>联调测试与上线部署</td><td>接口联调、测试修复、服务器部署、小程序提审协助和交付验收。</td><td>2.50</td><td>¥1,200</td><td>¥3,000</td></tr>
+          <tr class="st"><td colspan="3">后端小计</td><td>26.00</td><td></td><td>¥31,200</td></tr>
+          <tr class="gt2"><td colspan="3">项目总计</td><td>56.00</td><td></td><td>¥65,700</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="num">65,700<span class="unit"> 元</span></div><div class="desc">含税包干总价</div></div>
+      <div class="sc"><div class="num">30<span class="unit"> 天</span></div><div class="desc">预计工期</div></div>
+      <div class="sc"><div class="num">56<span class="unit"> 人天</span></div><div class="desc">折算工作量</div></div>
+      <div class="sc"><div class="num">3<span class="unit"> 个月</span></div><div class="desc">免费质保期</div></div>
+    </div>
+  </div>
+
+  <div class="page" id="s9">
+    <div class="page-accent"></div>
+    <div class="center-fill">
+      <div>
+        <div class="sec-bar"></div>
+        <div class="sec-num">Part 09</div>
+        <h2 class="sec-title">商务条款说明</h2>
+        <p class="sec-desc">以下条款用于报价说明，最终以双方签署合同为准。</p>
+      </div>
+      <div class="nb"><h4>付款方式</h4><ul class="nl"><li>合同签署后支付 50%，即 ¥32,850，用于项目启动与设计开发排期。</li><li>核心功能联调完成并进入验收前支付 30%，即 ¥19,710。</li><li>项目上线交付并验收后支付 20%，即 ¥13,140。</li></ul></div>
+      <div class="nb"><h4>交付清单</h4><ul class="nl"><li>用户微信小程序、陪诊师微信小程序、PC 管理后台。</li><li>后台部署环境、管理账号、接口联调记录与基础操作说明。</li><li>微信支付、微信客服、地图导航等三方能力的对接配置说明。</li></ul></div>
+      <div class="nb"><h4>范围边界</h4><ul class="nl"><li>本期不包含蔬菜配送、配送员端、直营网约式派单算法、营销分销、会员积分等扩展模块。</li><li>云服务器、域名、SSL、短信、地图、对象存储、微信支付手续费等三方实付费用不包含在开发报价内。</li><li>陪诊师提现采用后台线下结算记录，不包含商家转账到零钱接口。</li></ul></div>
+      <div class="nb"><h4>质保售后</h4><ul class="nl"><li>项目验收后提供 3 个月免费质保，覆盖已交付功能的缺陷修复。</li><li>新增需求、规则调整、第三方平台政策变化导致的改造按双方确认的补充工作量另行计费。</li></ul></div>
+    </div>
+  </div>
+
+  <div class="page footer-page">
+    <div>
+      <div class="footer-brand">郑州八角信息技术有限公司</div>
+      <p>陪护住宿陪同就医小程序 · 产品方案与项目报价单</p>
+      <p>商务：李岩 · 联系电话：18116339746</p>
+      <p>文档版本 V1.0 ｜ 2026-05-10 ｜ 报价有效期 30 天</p>
+    </div>
+  </div>
+</body>
+</html>

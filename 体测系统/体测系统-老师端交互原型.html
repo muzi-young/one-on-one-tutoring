@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>学校体测成绩系统 - 老师端交互原型</title>
+  <style>
+    :root {
+      --bg: #f5f1e9;
+      --phone: #111827;
+      --surface: #fffdf8;
+      --surface-soft: #f9f5ed;
+      --ink: #1f2933;
+      --muted: #667085;
+      --line: #eadfce;
+      --accent: #0f766e;
+      --accent-2: #f59e0b;
+      --accent-soft: #dcf5ef;
+      --danger: #b42318;
+      --success: #147a4c;
+      --shadow: 0 24px 70px rgba(31, 41, 51, .16);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 8%, rgba(15, 118, 110, .16), transparent 30%),
+        radial-gradient(circle at 84% 18%, rgba(245, 158, 11, .14), transparent 28%),
+        var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 3px solid rgba(15, 118, 110, .28);
+      outline-offset: 2px;
+    }
+
+    .stage {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+      gap: 48px;
+      align-items: center;
+      padding: 48px;
+    }
+
+    .phone {
+      max-width: 410px;
+      width: 100%;
+      min-height: 812px;
+      margin: auto;
+      padding: 14px;
+      border-radius: 44px;
+      background: var(--phone);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .screen {
+      height: 784px;
+      border-radius: 34px;
+      overflow: hidden;
+      background: var(--surface);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+    }
+
+    .status {
+      height: 32px;
+      padding: 10px 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #44515e;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .top {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 253, 248, .94);
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: #102a2a;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+    }
+
+    .top h1 {
+      margin: 14px 0 6px;
+      font-size: 27px;
+      letter-spacing: -.04em;
+      line-height: 1.12;
+    }
+
+    .top p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #0b5f59;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .body {
+      overflow: auto;
+      padding: 18px 16px 24px;
+      scroll-behavior: smooth;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+      animation: fadeIn .18s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: white;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 26px rgba(31, 41, 51, .05);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card h2, .card h3 {
+      margin: 0;
+      letter-spacing: -.02em;
+    }
+
+    .card h2 {
+      font-size: 18px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+    }
+
+    .card p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .class-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .class-card {
+      min-height: 104px;
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .class-card:hover {
+      transform: translateY(-2px);
+      background: #ffffff;
+      box-shadow: 0 12px 24px rgba(31, 41, 51, .08);
+    }
+
+    .class-card.active {
+      border-color: rgba(15, 118, 110, .5);
+      background: #edfbf7;
+    }
+
+    .class-card strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .class-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .btn {
+      min-height: 44px;
+      border-radius: 999px;
+      padding: 0 16px;
+      background: #102a2a;
+      color: white;
+      font-weight: 800;
+      transition: .18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: #0f766e;
+      transform: translateY(-1px);
+    }
+
+    .btn.secondary {
+      background: white;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .btn.secondary:hover {
+      background: var(--surface-soft);
+    }
+
+    .btn.full {
+      width: 100%;
+    }
+
+    .btn:disabled {
+      background: #d9d3ca;
+      color: #8a8176;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #475467;
+    }
+
+    input, select {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 12px;
+      background: white;
+      color: var(--ink);
+      width: 100%;
+    }
+
+    .student {
+      display: grid;
+      gap: 14px;
+    }
+
+    .student-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .student-name {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .num {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: #102a2a;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+    }
+
+    .student-name strong {
+      display: block;
+      font-size: 20px;
+    }
+
+    .student-name span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .score-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .score-box {
+      border-radius: 18px;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      padding: 14px;
+    }
+
+    .score-box span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .score-box strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 28px;
+      letter-spacing: -.04em;
+    }
+
+    .score-box.good {
+      background: #eaf8ef;
+      border-color: #c7ebd4;
+      color: var(--success);
+    }
+
+    .score-box.warn {
+      background: #fff5e0;
+      border-color: #f7dfaa;
+      color: #a15c00;
+    }
+
+    .step-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #ece4d8;
+      margin-top: 10px;
+    }
+
+    .bar {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), #14b8a6);
+      transition: width .28s ease;
+    }
+
+    .table-like {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      min-height: 52px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      display: grid;
+      grid-template-columns: 1.1fr .8fr .8fr;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .row strong {
+      font-size: 14px;
+    }
+
+    .row span {
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .badge.good {
+      background: #e8f7ef;
+      color: var(--success);
+    }
+
+    .badge.info {
+      background: #e7f3ff;
+      color: #075985;
+    }
+
+    .badge.warn {
+      background: #fff4df;
+      color: #a15c00;
+    }
+
+    .chart {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .chart-row {
+      display: grid;
+      grid-template-columns: 56px 1fr 38px;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .chart-track {
+      height: 12px;
+      border-radius: 999px;
+      background: #eee6da;
+      overflow: hidden;
+    }
+
+    .chart-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    .bottom-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: 8px 12px 12px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 253, 248, .96);
+    }
+
+    .bottom-nav button {
+      min-height: 52px;
+      border-radius: 18px;
+      background: transparent;
+      color: #7b7268;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .bottom-nav button.active {
+      background: #102a2a;
+      color: white;
+    }
+
+    .deck {
+      max-width: 760px;
+    }
+
+    .deck h2 {
+      margin: 0 0 14px;
+      font-size: clamp(32px, 5vw, 62px);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+
+    .deck > p {
+      margin: 0 0 28px;
+      color: #55616f;
+      font-size: 17px;
+      line-height: 1.8;
+      max-width: 620px;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .feature {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(234, 223, 206, .92);
+      background: rgba(255, 253, 248, .76);
+      backdrop-filter: blur(12px);
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .feature span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 84px;
+      z-index: 5;
+      padding: 13px 14px;
+      border-radius: 18px;
+      color: white;
+      background: #102a2a;
+      box-shadow: 0 18px 36px rgba(16, 42, 42, .22);
+      display: none;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toast.show {
+      display: block;
+      animation: toastIn .2s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 980px) {
+      .stage {
+        grid-template-columns: 1fr;
+        padding: 28px 18px;
+      }
+      .deck {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stage {
+        padding: 0;
+        display: block;
+      }
+      .phone {
+        max-width: none;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 0;
+      }
+      .screen {
+        height: 100vh;
+        border-radius: 0;
+      }
+      .deck {
+        display: none;
+      }
+      .class-grid, .feature-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="phone" aria-label="老师端手机原型">
+      <div class="screen">
+        <div class="status">
+          <span>19:17</span>
+          <span>教育网</span>
+        </div>
+
+        <header class="top">
+          <div class="top-row">
+            <div class="avatar">杨</div>
+            <span class="pill" id="currentClassPill">六年级一班</span>
+          </div>
+          <h1 id="pageTitle">我的班级</h1>
+          <p id="pageDesc">只显示管理员分配给当前老师的班级，避免误录其他班级。</p>
+        </header>
+
+        <div class="body">
+          <section class="page active" id="homePage">
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>负责班级</h2>
+                  <p>点击班级后，可发起项目测试或查看历史记录。</p>
+                </div>
+                <span class="badge info">3 个班</span>
+              </div>
+
+              <div class="class-grid">
+                <button class="class-card active" data-class="六年级一班" data-count="46">
+                  <strong>六年级一班</strong>
+                  <span>46 人 · 本周 5 个项目待完成</span>
+                </button>
+                <button class="class-card" data-class="六年级二班" data-count="44">
+                  <strong>六年级二班</strong>
+                  <span>44 人 · 跳绳已完成</span>
+                </button>
+                <button class="class-card" data-class="五年级六班" data-count="48">
+                  <strong>五年级六班</strong>
+                  <span>48 人 · 等待发起测试</span>
+                </button>
+                <button class="class-card" data-class="四年级三班" data-count="0">
+                  <strong>四年级三班</strong>
+                  <span>未分配 · 只读示意</span>
+                </button>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>快捷操作</h2>
+                  <p>客户最关心的是录得快、分数立刻出来、能导出。</p>
+                </div>
+              </div>
+              <button class="btn full" data-go="testPage">发起项目测试</button>
+              <div class="step-actions">
+                <button class="btn secondary" data-go="recordsPage">查看测试记录</button>
+                <button class="btn secondary" data-go="analysisPage">看数据分析</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="page" id="testPage">
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>发起测试</h2>
+                  <p>选择班级和项目后，系统自动匹配评分标准。</p>
+                </div>
+              </div>
+              <div class="field">
+                <label for="classSelect">测试班级</label>
+                <select id="classSelect">
+                  <option>六年级一班</option>
+                  <option>六年级二班</option>
+                  <option>五年级六班</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="projectSelect">测试项目</label>
+                <select id="projectSelect">
+                  <option>肺活量</option>
+                  <option>一分钟跳绳</option>
+                  <option>50米跑</option>
+                  <option>坐位体前屈</option>
+                  <option>立定跳远</option>
+                  <option>仰卧起坐</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="standardSelect">评分标准</label>
+                <select id="standardSelect">
+                  <option>六年级男/女体测标准</option>
+                  <option>五年级男/女体测标准</option>
+                </select>
+              </div>
+              <button class="btn full" id="startInput">开始录入成绩</button>
+            </article>
+
+            <article class="card">
+              <h3>规则提示</h3>
+              <p>如果管理员没有配置评分标准，系统应提示“请联系管理员维护标准”，避免老师录入后无法自动评分。</p>
+            </article>
+          </section>
+
+          <section class="page" id="inputPage">
+            <article class="card student">
+              <div class="student-main">
+                <div class="student-name">
+                  <div class="num" id="studentNum">1</div>
+                  <div>
+                    <strong id="studentName">丁若一</strong>
+                    <span id="studentMeta">男 · 六年级一班</span>
+                  </div>
+                </div>
+                <span class="badge info" id="inputProgress">1 / 5</span>
+              </div>
+
+              <div class="field">
+                <label for="rawScore" id="rawScoreLabel">肺活量成绩（毫升）</label>
+                <input id="rawScore" inputmode="decimal" value="2400" aria-describedby="scoreHint" />
+                <small id="scoreHint" style="color: var(--muted);">请输入肺活量原始成绩，单位：毫升。示例：2400。</small>
+              </div>
+
+              <div class="score-panel">
+                <div class="score-box good" id="scoreBox">
+                  <span>自动得分</span>
+                  <strong id="autoScore">80</strong>
+                </div>
+                <div class="score-box" id="levelBox">
+                  <span>评价结果</span>
+                  <strong id="autoLevel">良好</strong>
+                </div>
+              </div>
+
+              <div>
+                <div class="progress" aria-label="录入进度">
+                  <div class="bar" id="progressBar"></div>
+                </div>
+                <p id="missingTip">本次测试还有 4 名学生未录入。</p>
+              </div>
+
+              <div class="step-actions">
+                <button class="btn secondary" id="skipStudent">跳过学生</button>
+                <button class="btn" id="nextStudent">保存并下一位</button>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>已录入名单</h3>
+              <div class="table-like" id="enteredRows">
+                <div class="row">
+                  <strong>暂无</strong>
+                  <span>请先保存成绩</span>
+                  <span class="badge warn">待录入</span>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="page" id="recordsPage">
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>测试记录</h2>
+                  <p>支持继续编辑历史成绩，避免现场录错无法修正。</p>
+                </div>
+                <span class="badge warn">4 人未测</span>
+              </div>
+              <div class="table-like">
+                <div class="row">
+                  <strong>肺活量</strong>
+                  <span>42 / 46 人</span>
+                  <span class="badge warn">录入中</span>
+                </div>
+                <div class="row">
+                  <strong>一分钟跳绳</strong>
+                  <span>46 / 46 人</span>
+                  <span class="badge good">已完成</span>
+                </div>
+                <div class="row">
+                  <strong>50米跑</strong>
+                  <span>40 / 46 人</span>
+                  <span class="badge warn">录入中</span>
+                </div>
+                <div class="row">
+                  <strong>坐位体前屈</strong>
+                  <span>46 / 46 人</span>
+                  <span class="badge good">已完成</span>
+                </div>
+                <div class="row">
+                  <strong>立定跳远</strong>
+                  <span>12 / 46 人</span>
+                  <span class="badge warn">录入中</span>
+                </div>
+                <div class="row">
+                  <strong>仰卧起坐</strong>
+                  <span>0 / 46 人</span>
+                  <span class="badge info">未开始</span>
+                </div>
+              </div>
+              <div class="step-actions">
+                <button class="btn secondary" data-go="inputPage">继续录入</button>
+                <button class="btn" id="exportOne">导出本班成绩</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="page" id="analysisPage">
+            <article class="card">
+              <div class="card-head">
+                <div>
+                  <h2>数据分析</h2>
+                  <p>一期先做老师能看懂的简单统计，不做复杂大屏。</p>
+                </div>
+              </div>
+
+              <div class="score-panel">
+                <div class="score-box good">
+                  <span>已测人数</span>
+                  <strong>42</strong>
+                </div>
+                <div class="score-box warn">
+                  <span>未测人数</span>
+                  <strong>4</strong>
+                </div>
+              </div>
+
+              <div class="chart">
+                <div class="chart-row">
+                  <span>优秀</span>
+                  <div class="chart-track"><div class="chart-fill" style="width: 26%;"></div></div>
+                  <strong>11</strong>
+                </div>
+                <div class="chart-row">
+                  <span>良好</span>
+                  <div class="chart-track"><div class="chart-fill" style="width: 45%;"></div></div>
+                  <strong>19</strong>
+                </div>
+                <div class="chart-row">
+                  <span>及格</span>
+                  <div class="chart-track"><div class="chart-fill" style="width: 24%;"></div></div>
+                  <strong>10</strong>
+                </div>
+                <div class="chart-row">
+                  <span>未达线</span>
+                  <div class="chart-track"><div class="chart-fill" style="width: 5%; background: var(--accent-2);"></div></div>
+                  <strong>2</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <h3>可导出结果</h3>
+              <p>可按名单顺序导出，也可按成绩从高到低导出，方便发家长群或内部统计。</p>
+              <div class="step-actions">
+                <button class="btn secondary" id="exportNameOrder">名单顺序</button>
+                <button class="btn" id="exportScoreOrder">成绩排序</button>
+              </div>
+            </article>
+          </section>
+        </div>
+
+        <nav class="bottom-nav" aria-label="老师端底部导航">
+          <button class="active" data-go="homePage">班级</button>
+          <button data-go="testPage">测试</button>
+          <button data-go="recordsPage">记录</button>
+          <button data-go="analysisPage">分析</button>
+        </nav>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <aside class="deck">
+      <h2>老师端核心交互原型</h2>
+      <p>这份 HTML 用来给客户演示“一线老师怎么用”。流程从选择班级开始，到发起测试、录入成绩、自动评分、查看统计、导出 Excel，覆盖一期最关键的使用闭环。</p>
+
+      <div class="feature-list">
+        <div class="feature">
+          <strong>只看自己班级</strong>
+          <span>老师登录后只看到管理员分配的班级，权限边界清楚。</span>
+        </div>
+        <div class="feature">
+          <strong>成绩即时评分</strong>
+          <span>支持肺活量、跳绳、50 米跑、坐位体前屈、立定跳远、仰卧起坐等项目。</span>
+        </div>
+        <div class="feature">
+          <strong>未测学生提示</strong>
+          <span>记录已测和未测人数，避免漏录和重复录入。</span>
+        </div>
+        <div class="feature">
+          <strong>一键导出表格</strong>
+          <span>支持名单顺序和成绩排序两种导出方式。</span>
+        </div>
+      </div>
+
+      <button class="btn" id="openAdmin">打开管理端原型</button>
+    </aside>
+  </main>
+
+  <script>
+    const pages = document.querySelectorAll(".page");
+    const navButtons = document.querySelectorAll("[data-go]");
+    const title = document.getElementById("pageTitle");
+    const desc = document.getElementById("pageDesc");
+    const toast = document.getElementById("toast");
+    const currentClassPill = document.getElementById("currentClassPill");
+
+    const pageCopy = {
+      homePage: ["我的班级", "只显示管理员分配给当前老师的班级，避免误录其他班级。"],
+      testPage: ["发起测试", "选择班级和项目后，系统自动匹配评分标准。"],
+      inputPage: ["成绩录入", "输入原始成绩后，系统立即计算得分和评价。"],
+      recordsPage: ["测试记录", "查看历史项目、继续编辑成绩，并导出班级结果。"],
+      analysisPage: ["数据分析", "用简单统计看清已测人数、未测人数和分数分布。"]
+    };
+
+    const students = [
+      { name: "丁若一", gender: "男", score: 2400 },
+      { name: "马一萌", gender: "女", score: 2180 },
+      { name: "王晓泽", gender: "男", score: 1760 },
+      { name: "李明轩", gender: "男", score: 2630 },
+      { name: "赵雨桐", gender: "女", score: 2050 }
+    ];
+
+    const projectConfig = {
+      "肺活量": {
+        unit: "毫升",
+        hint: "示例：2400。",
+        mode: "min",
+        samples: [2400, 2180, 1760, 2630, 2050],
+        thresholds: [
+          { limit: 2600, score: 90, level: "优秀" },
+          { limit: 2400, score: 80, level: "良好" },
+          { limit: 2100, score: 70, level: "及格" },
+          { limit: 1800, score: 60, level: "及格线" }
+        ]
+      },
+      "一分钟跳绳": {
+        unit: "次",
+        hint: "示例：168。",
+        mode: "min",
+        samples: [168, 152, 126, 181, 139],
+        thresholds: [
+          { limit: 180, score: 90, level: "优秀" },
+          { limit: 160, score: 80, level: "良好" },
+          { limit: 140, score: 70, level: "及格" },
+          { limit: 120, score: 60, level: "及格线" }
+        ]
+      },
+      "50米跑": {
+        unit: "秒",
+        hint: "示例：8.6，数值越小成绩越好。",
+        mode: "max",
+        samples: [8.6, 9.1, 10.4, 8.2, 9.7],
+        thresholds: [
+          { limit: 8.4, score: 90, level: "优秀" },
+          { limit: 9.0, score: 80, level: "良好" },
+          { limit: 9.6, score: 70, level: "及格" },
+          { limit: 10.2, score: 60, level: "及格线" }
+        ]
+      },
+      "坐位体前屈": {
+        unit: "厘米",
+        hint: "示例：14.8。",
+        mode: "min",
+        samples: [14.8, 11.2, 7.5, 16.1, 9.8],
+        thresholds: [
+          { limit: 16, score: 90, level: "优秀" },
+          { limit: 12, score: 80, level: "良好" },
+          { limit: 8, score: 70, level: "及格" },
+          { limit: 5, score: 60, level: "及格线" }
+        ]
+      },
+      "立定跳远": {
+        unit: "厘米",
+        hint: "示例：198。",
+        mode: "min",
+        samples: [198, 186, 172, 205, 180],
+        thresholds: [
+          { limit: 205, score: 90, level: "优秀" },
+          { limit: 195, score: 80, level: "良好" },
+          { limit: 180, score: 70, level: "及格" },
+          { limit: 165, score: 60, level: "及格线" }
+        ]
+      },
+      "仰卧起坐": {
+        unit: "次",
+        hint: "示例：42。",
+        mode: "min",
+        samples: [42, 36, 28, 46, 31],
+        thresholds: [
+          { limit: 45, score: 90, level: "优秀" },
+          { limit: 38, score: 80, level: "良好" },
+          { limit: 32, score: 70, level: "及格" },
+          { limit: 25, score: 60, level: "及格线" }
+        ]
+      }
+    };
+
+    let currentClass = "六年级一班";
+    let selectedProject = "肺活量";
+    let currentIndex = 0;
+    let entered = [];
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    function go(pageId) {
+      pages.forEach(page => page.classList.toggle("active", page.id === pageId));
+      document.querySelectorAll(".bottom-nav [data-go]").forEach(button => {
+        button.classList.toggle("active", button.dataset.go === pageId);
+      });
+      if (pageCopy[pageId]) {
+        title.textContent = pageCopy[pageId][0];
+        desc.textContent = pageCopy[pageId][1];
+      }
+      document.querySelector(".body").scrollTop = 0;
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => go(button.dataset.go));
+    });
+
+    document.querySelectorAll(".class-card").forEach(card => {
+      card.addEventListener("click", () => {
+        if (card.dataset.count === "0") {
+          showToast("四年级三班未分配给当前老师，一期建议直接隐藏；这里保留为权限示意。");
+          return;
+        }
+        document.querySelectorAll(".class-card").forEach(item => item.classList.remove("active"));
+        card.classList.add("active");
+        currentClass = card.dataset.class;
+        currentClassPill.textContent = currentClass;
+        document.getElementById("classSelect").value = currentClass;
+        showToast(`已切换到${currentClass}。`);
+      });
+    });
+
+    function calculateScore(raw) {
+      const value = Number(raw);
+      const config = projectConfig[selectedProject];
+      if (Number.isNaN(value) || value <= 0) return { score: "待录入", level: "未评分", tone: "warn" };
+      const matched = config.thresholds.find(rule => (
+        config.mode === "max" ? value <= rule.limit : value >= rule.limit
+      ));
+      if (matched) {
+        return {
+          score: matched.score,
+          level: matched.level,
+          tone: matched.score >= 80 ? "good" : "warn"
+        };
+      }
+      return { score: "待补测", level: "未达线", tone: "warn" };
+    }
+
+    function updateProjectUI() {
+      selectedProject = document.getElementById("projectSelect").value;
+      const config = projectConfig[selectedProject];
+      document.getElementById("rawScoreLabel").textContent = `${selectedProject}成绩（${config.unit}）`;
+      document.getElementById("scoreHint").textContent = `请输入${selectedProject}原始成绩，单位：${config.unit}。${config.hint}`;
+      if (document.getElementById("inputPage").classList.contains("active")) {
+        renderStudent();
+      }
+    }
+
+    function renderStudent() {
+      const student = students[currentIndex];
+      const config = projectConfig[selectedProject];
+      document.getElementById("studentNum").textContent = currentIndex + 1;
+      document.getElementById("studentName").textContent = student.name;
+      document.getElementById("studentMeta").textContent = `${student.gender} · ${currentClass}`;
+      document.getElementById("inputProgress").textContent = `${currentIndex + 1} / ${students.length}`;
+      document.getElementById("rawScore").value = config.samples[currentIndex] ?? student.score;
+      renderScore();
+      updateProgress();
+    }
+
+    function renderScore() {
+      const raw = document.getElementById("rawScore").value;
+      const result = calculateScore(raw);
+      const scoreBox = document.getElementById("scoreBox");
+      const levelBox = document.getElementById("levelBox");
+      document.getElementById("autoScore").textContent = result.score;
+      document.getElementById("autoLevel").textContent = result.level;
+      scoreBox.className = `score-box ${result.tone === "good" ? "good" : "warn"}`;
+      levelBox.className = `score-box ${result.tone === "good" ? "good" : "warn"}`;
+    }
+
+    function updateProgress() {
+      const done = entered.length;
+      const percent = Math.round((done / students.length) * 100);
+      document.getElementById("progressBar").style.width = `${percent}%`;
+      document.getElementById("missingTip").textContent = `本次测试还有 ${Math.max(students.length - done, 0)} 名学生未录入。`;
+    }
+
+    function renderEnteredRows() {
+      const container = document.getElementById("enteredRows");
+      if (entered.length === 0) {
+        container.innerHTML = `
+          <div class="row">
+            <strong>暂无</strong>
+            <span>请先保存成绩</span>
+            <span class="badge warn">待录入</span>
+          </div>
+        `;
+        return;
+      }
+      container.innerHTML = entered.map(item => `
+        <div class="row">
+          <strong>${item.name}</strong>
+          <span>${item.project} · ${item.raw}${item.unit} · ${item.score}分</span>
+          <span class="badge ${item.level.includes("未") ? "warn" : "good"}">${item.level}</span>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("startInput").addEventListener("click", () => {
+      currentClass = document.getElementById("classSelect").value;
+      updateProjectUI();
+      currentClassPill.textContent = currentClass;
+      currentIndex = 0;
+      entered = [];
+      renderEnteredRows();
+      renderStudent();
+      go("inputPage");
+      showToast(`已创建${selectedProject}测试，评分标准已自动匹配。`);
+    });
+
+    document.getElementById("projectSelect").addEventListener("change", () => {
+      updateProjectUI();
+      showToast(`已切换为${selectedProject}，录入单位和示例成绩已更新。`);
+    });
+
+    document.getElementById("rawScore").addEventListener("input", renderScore);
+
+    document.getElementById("nextStudent").addEventListener("click", () => {
+      const raw = document.getElementById("rawScore").value;
+      const result = calculateScore(raw);
+      const student = students[currentIndex];
+      const config = projectConfig[selectedProject];
+      entered = entered.filter(item => item.name !== student.name);
+      entered.push({ name: student.name, project: selectedProject, unit: config.unit, raw, score: result.score, level: result.level });
+      renderEnteredRows();
+
+      if (currentIndex < students.length - 1) {
+        currentIndex += 1;
+        renderStudent();
+        showToast("已保存成绩，进入下一位学生。");
+      } else {
+        updateProgress();
+        showToast("本次示例名单已录入完成，可进入数据分析或导出。");
+        go("analysisPage");
+      }
+    });
+
+    document.getElementById("skipStudent").addEventListener("click", () => {
+      if (currentIndex < students.length - 1) {
+        currentIndex += 1;
+        renderStudent();
+        showToast("已跳过当前学生，后续可在测试记录中补录。");
+      } else {
+        showToast("已经是最后一位学生。");
+      }
+    });
+
+    ["exportOne", "exportNameOrder", "exportScoreOrder"].forEach(id => {
+      document.getElementById(id).addEventListener("click", () => {
+        showToast(`已生成${selectedProject} Excel 导出任务。原型中不实际下载文件，正式系统会下载表格。`);
+      });
+    });
+
+    document.getElementById("openAdmin").addEventListener("click", () => {
+      window.location.href = "体测系统-管理端交互原型.html";
+    });
+
+    updateProjectUI();
+    renderStudent();
+    renderEnteredRows();
+  </script>
+</body>
+</html>

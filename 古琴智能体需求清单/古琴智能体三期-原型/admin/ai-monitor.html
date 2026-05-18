@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>AI 能力监控 · 管理后台</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+.donut{width:120px;height:120px;border-radius:50%;background:conic-gradient(#23a06b 0% 42%, #5b8def 42% 60%, #d99a2b 60% 75%, #a266f4 75% 96%, #888 96% 100%);margin:0 auto;position:relative;}
+.donut::before{content:"";position:absolute;inset:18px;background:#fff;border-radius:50%;}
+.donut::after{content:"100%";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#444;font-weight:600;}
+</style></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">AI 能力监控</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">数字人直播驱动 / 弹幕意图识别 / 异常降级 / 曲目特征库 / 哼唱识曲</p>
+    </div>
+    <span class="tag tag-green" style="font-size:13px;padding:6px 14px;">● 全部服务运行中</span>
+  </div>
+
+  <!-- 三期核心能力 -->
+  <h3 class="ink-title" style="font-size:16px;margin:0 0 12px;">三期核心 AI 能力</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px;">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;">🎙 数字人直播驱动</h3>
+        <span class="tag tag-green">运行中</span>
+      </div>
+      <p style="color:#888;font-size:12px;margin:0 0 10px;line-height:1.6;">按脚本节点驱动数字人音视频输出，并根据互动队列插入答疑。</p>
+      <div style="font-size:13px;line-height:2;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">当前场次</span><span>《流水》技法课</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">脚本进度</span><span>节点 4 / 12</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">音视频生成</span><span style="color:#23a06b;">820 ms · 正常</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">本场资源成本</span><span style="font-weight:600;">¥ 86.40</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">本月累计成本</span><span>¥ 3,128</span></div>
+      </div>
+      <div style="background:#fff5e1;border:1px solid #d6b06b;color:#7a5b22;font-size:11px;padding:8px 10px;border-radius:6px;margin-top:10px;">⚠ 三期核心能力 · 建议直播前进行算力预扩容</div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;">🔍 弹幕意图识别</h3>
+        <span class="tag tag-blue">置信度 0.92</span>
+      </div>
+      <p style="color:#888;font-size:12px;margin:0 0 10px;line-height:1.6;">识别课程咨询 / 曲目 / 价格 / 闲聊 / 违规，自动分发到回答、转化或审核流程。</p>
+      <div class="donut"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;margin-top:12px;">
+        <div><span style="display:inline-block;width:8px;height:8px;background:#23a06b;border-radius:50%;"></span> 课程咨询 42%</div>
+        <div><span style="display:inline-block;width:8px;height:8px;background:#5b8def;border-radius:50%;"></span> 曲目 18%</div>
+        <div><span style="display:inline-block;width:8px;height:8px;background:#d99a2b;border-radius:50%;"></span> 价格 15%</div>
+        <div><span style="display:inline-block;width:8px;height:8px;background:#a266f4;border-radius:50%;"></span> 闲聊 21%</div>
+        <div><span style="display:inline-block;width:8px;height:8px;background:#888;border-radius:50%;"></span> 违规 4%</div>
+      </div>
+      <p style="font-size:11px;color:#888;margin:10px 0 0;">💡 低置信度（<0.6）自动转人工 · 复用一期知识库</p>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3 style="margin:0;">🛡 直播异常降级</h3>
+        <span class="tag tag-yellow">守护中</span>
+      </div>
+      <p style="color:#888;font-size:12px;margin:0 0 10px;line-height:1.6;">数字人 / 问答 / 互动异常时，切换预设话术、人工接管或回放内容。</p>
+      <div style="font-size:13px;line-height:2;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">本月可用度</span><span style="color:#23a06b;font-weight:600;">99.2%</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">本月触发降级</span><span>14 次</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">人工接管</span><span>3 次</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">兜底话术使用</span><span>11 次</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;">
+        <div style="background:#dcf6f0;border-left:3px solid #23a06b;padding:6px 10px;border-radius:4px;margin-bottom:4px;color:#0f8a72;">✓ 18:08 网络波动 12s · 已恢复</div>
+        <div style="background:#fff3c7;border-left:3px solid #d99a2b;padding:6px 10px;border-radius:4px;color:#a06400;">⚠ 17:45 生成超时 · 人工接管</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 二期能力延展 -->
+  <h3 class="ink-title" style="font-size:16px;margin:0 0 12px;">二期 AI 能力（三期延续复用）</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+    <div class="card">
+      <h3>🎼 曲目特征库</h3>
+      <p style="color:#888;font-size:12px;margin:0 0 10px;line-height:1.6;">几千首古琴曲音频整理为可识别匹配的曲目特征库；不合格音频进入异常清单。</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;font-size:12px;">
+        <div class="stat-card"><div class="v" style="font-size:18px;">3,128</div><div class="l">已入库</div></div>
+        <div class="stat-card"><div class="v" style="font-size:18px;color:#d99a2b;">42</div><div class="l">异常待处理</div></div>
+        <div class="stat-card"><div class="v" style="font-size:18px;">98.4%</div><div class="l">样本覆盖</div></div>
+        <div class="stat-card"><div class="v" style="font-size:18px;">12</div><div class="l">本周新增</div></div>
+      </div>
+      <button class="btn sm" style="margin-top:10px;">查看异常清单 →</button>
+    </div>
+    <div class="card">
+      <h3>🎙 哼唱识曲匹配服务</h3>
+      <p style="color:#888;font-size:12px;margin:0 0 10px;line-height:1.6;">用户哼唱或上传音频与曲目特征库比对返回候选；匹配不足时给出相似候选而非强制命中。</p>
+      <div style="font-size:13px;line-height:2;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">本周请求量</span><span>4,820 次</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">识别成功率</span><span style="color:#23a06b;">87.3%</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">用户纠错率</span><span>5.1%</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:#888;">平均耗时</span><span>1.4 s</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 异常日志 -->
+  <div class="card">
+    <h3>近期 AI 异常日志</h3>
+    <table class="tbl">
+      <thead><tr><th>时间</th><th>服务</th><th>类型</th><th>说明</th><th>降级动作</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>18:08:42</td><td>数字人直播驱动</td><td><span class="tag tag-yellow">网络波动</span></td><td>音视频包延迟 3.2s</td><td>切换预设话术 12s</td><td style="color:#23a06b;">✓ 已恢复</td></tr>
+        <tr><td>17:45:08</td><td>数字人直播驱动</td><td><span class="tag tag-red">生成超时</span></td><td>渲染节点超过 5s</td><td>转人工接管 1 段</td><td style="color:#23a06b;">✓ 已恢复</td></tr>
+        <tr><td>14:22:31</td><td>弹幕意图识别</td><td><span class="tag tag-blue">低置信度</span></td><td>「嵇康为何写广陵散」置信度 0.42</td><td>转人工待处理</td><td>处理中</td></tr>
+        <tr><td>5/15 20:18</td><td>数字人直播驱动</td><td><span class="tag tag-yellow">资源吃紧</span></td><td>并发场次 3 个，GPU 使用率 92%</td><td>自动扩容 +2 卡</td><td style="color:#23a06b;">✓ 已恢复</td></tr>
+        <tr><td>5/14 19:32</td><td>哼唱识曲</td><td><span class="tag tag-gray">样本不足</span></td><td>曲目「冷门曲A」样本数 &lt; 3</td><td>返回相似候选</td><td>已标记补样本</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="admin/ai-monitor.html" data-crumbs="管理后台 / <b>AI 能力监控</b>" data-depth="1"></script>
+</body></html>

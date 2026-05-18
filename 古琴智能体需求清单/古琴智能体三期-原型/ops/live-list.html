@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>直播管理 · 运营端</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">直播管理</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">管理所有数字人直播活动，支持状态筛选与快捷操作</p>
+    </div>
+    <a href="live-create.html" class="btn primary">+ 创建直播</a>
+  </div>
+
+  <!-- 状态统计卡 -->
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v" style="color:#e74c3c;">2</div><div class="l">直播中</div><div class="d up">实时在线 1,243 人</div></div>
+    <div class="stat-card"><div class="v">8</div><div class="l">已预约 / 待开播</div><div class="d up">↑ 较昨日 +2</div></div>
+    <div class="stat-card"><div class="v">36</div><div class="l">已结束（本月）</div><div class="d">累计观看 12.4 万</div></div>
+    <div class="stat-card"><div class="v" style="color:#d99a2b;">3</div><div class="l">脚本待审核</div><div class="d down">待您处理</div></div>
+  </div>
+
+  <!-- 筛选 -->
+  <div class="card" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+    <div style="display:flex;gap:6px;">
+      <button class="btn primary sm">全部</button>
+      <button class="btn sm">直播中</button>
+      <button class="btn sm">待开播</button>
+      <button class="btn sm">已结束</button>
+      <button class="btn sm">已下架</button>
+    </div>
+    <div style="flex:1;"></div>
+    <input type="text" placeholder="🔍 搜索直播主题 / 数字人 / 关联课程" style="width:280px;"/>
+    <select style="width:140px;"><option>本月</option><option>本周</option><option>近 7 天</option></select>
+  </div>
+
+  <!-- 直播列表 -->
+  <table class="tbl">
+    <thead><tr>
+      <th>直播主题</th><th>状态</th><th>数字人</th><th>关联课程</th><th>开播时间</th><th>预约 / 观看</th><th>报名</th><th style="width:180px;">操作</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><b>《流水》技法直播课</b><br/><span style="color:#888;font-size:11px;">脚本 v3 · 审核通过</span></td>
+        <td><span class="tag tag-red">● 直播中</span></td>
+        <td>阿琴</td>
+        <td>《流水》系统课</td>
+        <td>5/16 19:00</td>
+        <td>👁 1,243</td>
+        <td><b style="color:#e74c3c;">23</b></td>
+        <td><a href="console.html" class="btn primary sm">进入控制台</a> <button class="btn sm">详情</button></td>
+      </tr>
+      <tr>
+        <td><b>《广陵散》赏析夜话</b><br/><span style="color:#888;font-size:11px;">脚本 v2 · 审核通过</span></td>
+        <td><span class="tag tag-blue">待开播</span></td>
+        <td>张老师·名家直播</td>
+        <td>《广陵散》精修班</td>
+        <td>5/17 20:00</td>
+        <td>⭐ 328 预约</td>
+        <td>—</td>
+        <td><a href="script.html" class="btn sm">编排脚本</a> <button class="btn sm">编辑</button></td>
+      </tr>
+      <tr>
+        <td><b>琴弦保养答疑直播</b><br/><span style="color:#d99a2b;font-size:11px;">脚本 v1 · ⚠ 待审核</span></td>
+        <td><span class="tag tag-yellow">脚本审核中</span></td>
+        <td>阿琴</td>
+        <td>—（无引流）</td>
+        <td>5/19 19:30</td>
+        <td>⭐ 102 预约</td>
+        <td>—</td>
+        <td><button class="btn primary sm">提交审核</button> <button class="btn sm">编辑</button></td>
+      </tr>
+      <tr>
+        <td><b>《阳关三叠》入门直播课</b><br/><span style="color:#888;font-size:11px;">脚本 v4 · 已结束</span></td>
+        <td><span class="tag tag-gray">已结束</span></td>
+        <td>阿琴</td>
+        <td>《阳关三叠》入门课</td>
+        <td>5/13 20:00</td>
+        <td>👁 8,256</td>
+        <td><b>132</b> <span style="color:#23a06b;font-size:11px;">¥ 11.8万</span></td>
+        <td><button class="btn sm">数据复盘</button> <button class="btn sm">回放</button></td>
+      </tr>
+      <tr>
+        <td><b>《梅花三弄》专场</b><br/><span style="color:#888;font-size:11px;">脚本 v2 · 已结束</span></td>
+        <td><span class="tag tag-gray">已结束</span></td>
+        <td>清音</td>
+        <td>《梅花三弄》系统课</td>
+        <td>5/10 20:00</td>
+        <td>👁 6,182</td>
+        <td><b>89</b></td>
+        <td><button class="btn sm">数据复盘</button> <button class="btn sm">回放</button></td>
+      </tr>
+      <tr>
+        <td><b>新春古琴雅集</b><br/><span style="color:#888;font-size:11px;">脚本 v5 · 已下架</span></td>
+        <td><span class="tag tag-gray">已下架</span></td>
+        <td>素心 ⚠ 授权过期</td>
+        <td>—</td>
+        <td>2/14 19:30</td>
+        <td>👁 3,420</td>
+        <td><b>56</b></td>
+        <td><button class="btn sm">归档</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;color:#888;font-size:13px;">
+    <span>共 46 条记录</span>
+    <div style="display:flex;gap:6px;">
+      <button class="btn sm">‹</button>
+      <button class="btn primary sm">1</button><button class="btn sm">2</button><button class="btn sm">3</button><button class="btn sm">4</button>
+      <button class="btn sm">›</button>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="ops/live-list.html" data-crumbs="运营端 / <b>直播管理</b>" data-depth="1"></script>
+</body></html>

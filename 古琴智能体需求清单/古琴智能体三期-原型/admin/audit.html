@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>弹幕审核规则 · 管理后台</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;">弹幕审核规则</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">配置敏感词、刷屏限制、禁言策略；管理拦截记录与误拦截恢复</p>
+    </div>
+    <button class="btn primary">保存规则</button>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="v">1,284</div><div class="l">敏感词库总数</div></div>
+    <div class="stat-card"><div class="v" style="color:#e74c3c;">86</div><div class="l">今日拦截</div></div>
+    <div class="stat-card"><div class="v" style="color:#d99a2b;">12</div><div class="l">已禁言用户</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">3</div><div class="l">误拦截已恢复</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+    <div class="card">
+      <h3>敏感词库</h3>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <input placeholder="输入敏感词后回车添加" style="flex:1;"/>
+        <button class="btn">导入</button>
+        <button class="btn">导出</button>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <span class="tag tag-red">违规词1 ✕</span>
+        <span class="tag tag-red">违规词2 ✕</span>
+        <span class="tag tag-red">广告词1 ✕</span>
+        <span class="tag tag-red">广告词2 ✕</span>
+        <span class="tag tag-red">竞品名 ✕</span>
+        <span class="tag tag-red">外链 ✕</span>
+        <span class="tag tag-red">脏话1 ✕</span>
+        <span class="tag tag-gray">+1,277 条</span>
+      </div>
+      <div style="font-size:12px;color:#888;margin-top:12px;line-height:1.7;">
+        💡 敏感词分类：政治 412 / 涉黄 287 / 广告 314 / 竞品 86 / 其它 185<br/>
+        命中后默认动作：<b>拦截不发送</b>（可在下方调整）
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>策略配置</h3>
+      <label class="field"><span class="lbl">刷屏限制（同一用户）</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input value="10" style="width:80px;"/> 秒内不超过 <input value="3" style="width:80px;"/> 条
+        </div>
+      </label>
+      <label class="field"><span class="lbl">禁言策略</span>
+        <select><option>违规 3 次 → 禁言 24 小时</option><option>违规 1 次 → 警告</option><option>违规 5 次 → 永久禁言</option></select>
+      </label>
+      <label class="field"><span class="lbl">敏感词触发动作</span>
+        <select><option>拦截不发送（推荐）</option><option>替换为 ***</option><option>转人工审核</option></select>
+      </label>
+      <label class="field"><span class="lbl">人工审核开关</span>
+        <div style="display:flex;gap:14px;font-size:13px;">
+          <label><input type="radio" name="hr" checked style="width:auto;"/> 开启（低置信度转人工）</label>
+          <label><input type="radio" name="hr" style="width:auto;"/> 关闭</label>
+        </div>
+      </label>
+      <label class="field"><span class="lbl">直播间自定义规则</span>
+        <select><option>使用全局规则</option><option>《广陵散》直播 - 自定义</option></select>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="display:flex;justify-content:space-between;align-items:center;">
+      <span>拦截记录</span>
+      <div style="display:flex;gap:6px;">
+        <button class="btn primary sm">全部</button>
+        <button class="btn sm">敏感词</button>
+        <button class="btn sm">刷屏</button>
+        <button class="btn sm">已恢复</button>
+        <input placeholder="搜索用户 / 直播" style="width:200px;"/>
+      </div>
+    </h3>
+    <table class="tbl">
+      <thead><tr><th>时间</th><th>用户</th><th>直播间</th><th>内容</th><th>拦截原因</th><th>状态</th><th>操作</th></tr></thead>
+      <tbody>
+        <tr><td>18:26</td><td>用户#771</td><td>《流水》技法课</td><td><span style="color:#888;text-decoration:line-through;">[***敏感词1***]</span></td><td><span class="tag tag-red">敏感词</span></td><td>已拦截</td><td><button class="btn sm">恢复</button> <button class="btn sm">禁言</button></td></tr>
+        <tr><td>18:24</td><td>用户#552</td><td>《流水》技法课</td><td>哈哈哈 / 哈哈哈 / 哈哈哈（10s 内 6 条）</td><td><span class="tag tag-yellow">刷屏</span></td><td>禁言 1min</td><td><button class="btn sm">解除</button></td></tr>
+        <tr><td>18:18</td><td>用户#208</td><td>《流水》技法课</td><td>加微信 ***</td><td><span class="tag tag-red">广告</span></td><td>已拦截</td><td><button class="btn sm">恢复</button></td></tr>
+        <tr><td>17:58</td><td>用户#091</td><td>《流水》技法课</td><td>这个曲子真不错（含同音敏感词）</td><td><span class="tag tag-yellow">疑似</span></td><td style="color:#23a06b;">已恢复</td><td><span style="color:#888;font-size:12px;">运营·李 17:59 恢复</span></td></tr>
+        <tr><td>14:32</td><td>用户#420</td><td>《广陵散》预告</td><td>[***违规***]</td><td><span class="tag tag-red">违规</span></td><td>已拦截</td><td><button class="btn sm">恢复</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="admin/audit.html" data-crumbs="管理后台 / <b>弹幕审核规则</b>" data-depth="1"></script>
+</body></html>

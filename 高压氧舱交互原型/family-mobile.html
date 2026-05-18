@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Family — HBOT</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --phone: #0f172a;
+      --surface: #ffffff;
+      --text: #111827;
+      --muted: #64748b;
+      --line: #e5e7eb;
+      --accent: #4338ca;
+      --accent-soft: #eef2ff;
+      --danger: #dc2626;
+      --warn: #b45309;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px 32px;
+    }
+    .topbar {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .topbar a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .lang {
+      display: flex;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px;
+    }
+    .lang button {
+      border: 0;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .lang button.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      background: var(--phone);
+      border-radius: 36px;
+      padding: 12px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+    }
+    .phone-inner {
+      background: var(--surface);
+      border-radius: 28px;
+      overflow: hidden;
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+    }
+    .status {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #9ca3af;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .app-header {
+      padding: 12px 18px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .app-header p { margin: 4px 0 0; font-size: 0.8rem; color: var(--muted); }
+
+    .screens { flex: 1; position: relative; overflow: hidden; }
+    .screen {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+      padding: 14px 16px 72px;
+      overflow-y: auto;
+    }
+    .screen.active { display: flex; }
+
+    .page-title { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+    .section-label { font-size: 0.7rem; font-weight: 600; color: var(--muted); letter-spacing: 0.04em; margin: 0 0 8px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card h3 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+    .card .meta { font-size: 0.75rem; color: var(--muted); }
+    .pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+    .pill.ok { background: #d1fae5; color: #047857; }
+    .pill.off { background: #fee2e2; color: #b91c1c; }
+    .pill.use { background: #fef3c7; color: #92400e; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 1px 2px rgba(67, 56, 202, 0.12); }
+    .btn-ghost { background: var(--surface); border: 1px solid var(--line); color: var(--text); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn:focus-visible, .nav button:focus-visible, .link-row:focus-visible, .tabs button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    input.invalid { border-color: var(--danger); }
+    .err { color: var(--danger); font-size: 0.75rem; margin: -6px 0 8px; display: none; }
+    .err.show { display: block; }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .tabs button {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .tabs button.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+    .nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      padding: 6px 4px 10px;
+    }
+    .nav button {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      font-size: 0.65rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 2px;
+    }
+    .nav button.active { color: var(--accent); font-weight: 600; }
+
+    .modal-back {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 18, 24, 0.45);
+      z-index: 50;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-back.show { display: flex; }
+    .modal {
+      background: #fff;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 20px 20px 12px 12px;
+      padding: 20px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .modal h2 { margin: 0 0 12px; font-size: 1.05rem; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .modal-actions .btn { flex: 1; }
+
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #111827;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 60;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.85rem;
+    }
+    .list-item:last-child { border-bottom: 0; }
+    .list-item.click { cursor: pointer; }
+    .list-item.click:active { opacity: 0.85; }
+
+    .nav-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .nav-wrap::-webkit-scrollbar { display: none; }
+    .nav.scroll {
+      position: relative;
+      display: flex;
+      min-width: 100%;
+      padding: 6px 8px 10px;
+      gap: 2px;
+    }
+    .nav.scroll button {
+      flex: 1 0 auto;
+      min-width: 56px;
+      max-width: 88px;
+    }
+
+    .subhead { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 8px; }
+    .link-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: none;
+      border-left: 0;
+      border-right: 0;
+      border-top: 0;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      color: var(--text);
+    }
+    .link-row:last-child { border-bottom: 0; }
+    .link-row .chev { color: #cbd5e1; font-size: 1rem; }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.82rem;
+    }
+    .check-row:last-child { border-bottom: 0; }
+    .check-row input { width: auto; margin: 0; }
+
+    .meter {
+      height: 8px;
+      background: var(--line);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .meter > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+
+    .spark {
+      height: 48px;
+      margin-top: 10px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, var(--accent-soft) 0%, #fff 100%);
+      border: 1px dashed var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+
+    .plan-grid { display: grid; gap: 10px; }
+    .plan-card {
+      border: 2px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .plan-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+    .plan-card h4 { margin: 0 0 4px; font-size: 0.9rem; }
+    .plan-card .price { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+
+    .empty {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .empty button { margin-top: 12px; max-width: 220px; margin-left: auto; margin-right: auto; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; background: #f1f5f9; color: var(--muted); }
+
+    .notif-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.82rem;
+    }
+    .notif-item:last-child { border-bottom: 0; }
+    .notif-item time { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+
+    :root {
+      --space-1: 6px;
+      --space-2: 10px;
+      --space-3: 14px;
+      --space-4: 20px;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .phone-inner, .card, .modal, .btn { transition: box-shadow 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease); }
+    .screen { scroll-behavior: smooth; }
+
+    .skeleton-wrap { position: relative; min-height: 72px; }
+    .skeleton-wrap.loading .sk-row { opacity: 1; pointer-events: none; }
+    .skeleton-wrap:not(.loading) .sk-row { display: none; }
+    .skeleton-wrap.loading #home-device-real { display: none; }
+    .skeleton-wrap.loading #ana-real { display: none; }
+    .sk-row {
+      border-radius: 10px;
+      background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 40%, #f1f5f9 80%);
+      background-size: 200% 100%;
+      animation: sk 1.1s linear infinite;
+      height: 12px; margin-bottom: 10px;
+    }
+    .sk-row.w40 { width: 40%; } .sk-row.w70 { width: 70%; } .sk-row.w90 { width: 90%; }
+    @keyframes sk { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; margin-top: var(--space-3); padding-top: var(--space-2); }
+    .chart-bars .bar {
+      flex: 1; border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, var(--accent) 0%, #312e81 100%);
+      min-height: 8px; position: relative;
+    }
+    .chart-bars .bar span {
+      position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+      font-size: 0.6rem; color: var(--muted); white-space: nowrap;
+    }
+
+    .acc-item { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; overflow: hidden; background: #fff; }
+    .acc-hd {
+      width: 100%; text-align: left; padding: 12px 14px; font-size: 0.85rem; font-weight: 600;
+      border: 0; background: #fafbfc; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      font-family: inherit;
+    }
+    .acc-bd { display: none; padding: 0 14px 12px; font-size: 0.8rem; color: var(--muted); line-height: 1.45; }
+    .acc-item.open .acc-bd { display: block; }
+    .acc-item.open .acc-hd { background: var(--accent-soft); color: var(--accent); }
+
+    .wiz-overlay {
+      display: none; position: fixed; inset: 0; z-index: 70;
+      background: rgba(15, 23, 42, 0.55); align-items: center; justify-content: center; padding: 20px;
+    }
+    .wiz-overlay.show { display: flex; }
+    .wiz-box {
+      background: #fff; width: min(360px, 100%); border-radius: 20px; padding: var(--space-4);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+    .wiz-dots { display: flex; gap: 6px; margin-bottom: 14px; }
+    .wiz-dots i { width: 7px; height: 7px; border-radius: 99px; background: var(--line); }
+    .wiz-dots i.on { background: var(--accent); }
+
+    .pin-row { display: flex; gap: 8px; margin-top: 10px; }
+    .pin-row input { letter-spacing: 0.3em; text-align: center; font-weight: 700; }
+
+    .bt-states { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .bt-pill { font-size: 0.65rem; padding: 4px 8px; border-radius: 6px; background: #f1f5f9; color: var(--muted); }
+    .bt-pill.ok { background: #d1fae5; color: #047857; }
+    .bt-pill.warn { background: #fef3c7; color: #b45309; }
+
+    .fw-progress { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 12px 0; }
+    .fw-progress > i { display: block; height: 100%; width: 0%; background: var(--accent); border-radius: 99px; transition: width 0.4s var(--ease); }
+
+    .ref-card { border: 1px dashed var(--accent); background: var(--accent-soft); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; }
+
+    .manual-search { margin-bottom: 12px; }
+
+    .consent-list .list-item { font-size: 0.78rem; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .chip {
+      padding: 6px 12px; border-radius: 999px; font-size: 0.72rem; font-weight: 600;
+      border: 1px solid var(--line); background: #fff; cursor: pointer; color: var(--muted);
+    }
+    .chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .stat-cell {
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fafafa;
+    }
+    .stat-cell .lbl { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+    .stat-cell .val { font-size: 1.05rem; font-weight: 700; margin-top: 4px; color: var(--text); }
+
+    .usage-h { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; }
+    .usage-track { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+    .usage-track > i { display: block; height: 100%; width: 62%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), #6366f1); }
+
+    .benefits { margin: 12px 0 0; padding: 0; list-style: none; font-size: 0.82rem; color: var(--muted); }
+    .benefits li { padding: 8px 0; border-bottom: 1px solid var(--line); display: flex; gap: 8px; align-items: flex-start; }
+    .benefits li:last-child { border-bottom: 0; }
+    .benefits li::before { content: "✓"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+    .line-chart {
+      height: 100px; margin-top: 12px; border-radius: 12px;
+      background: linear-gradient(180deg, var(--accent-soft) 0%, #fff 100%);
+      border: 1px solid var(--line); position: relative; overflow: hidden;
+    }
+    .line-chart svg { width: 100%; height: 100%; display: block; }
+    .line-chart polyline { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .hist-cards { display: grid; gap: 10px; margin-top: 8px; }
+    .mini-card {
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 0.82rem; background: #fafafa;
+    }
+
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 14px 0; border-bottom: 1px solid var(--line); font-size: 0.85rem;
+    }
+    .toggle-row:last-child { border-bottom: 0; }
+    .switch {
+      width: 44px; height: 26px; border-radius: 99px; background: var(--line); position: relative;
+      border: 0; cursor: pointer; flex-shrink: 0; transition: background 0.2s;
+    }
+    .switch.on { background: var(--accent); }
+    .switch::after {
+      content: ""; position: absolute; width: 20px; height: 20px; border-radius: 99px; background: #fff;
+      top: 3px; left: 3px; box-shadow: var(--shadow-sm); transition: transform 0.2s;
+    }
+    .switch.on::after { transform: translateX(18px); }
+
+    .notif-skel .sk-row { display: block; height: 40px; border-radius: 10px; margin-bottom: 10px; }
+
+    .stack-chart { display: flex; height: 12px; border-radius: 99px; overflow: hidden; margin-top: 12px; border: 1px solid var(--line); }
+    .stack-chart i { flex: 1; }
+    .stack-chart i:nth-child(1) { background: var(--accent); flex: 0.42; }
+    .stack-chart i:nth-child(2) { background: #a5b4fc; flex: 0.28; }
+    .stack-chart i:nth-child(3) { background: var(--line); flex: 0.3; }
+    .stack-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; font-size: 0.68rem; color: var(--muted); }
+    .stack-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+    .stack-legend span:nth-child(1)::before { background: var(--accent); }
+    .stack-legend span:nth-child(2)::before { background: #a5b4fc; }
+    .stack-legend span:nth-child(3)::before { background: var(--line); }
+
+    #notif-skel.skeleton-wrap.loading ~ #notif-list-body { display: none; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="index.html" data-i18n="back_hub">← Hub</a>
+    <div class="lang">
+      <button type="button" id="l-en" class="active">EN</button>
+      <button type="button" id="l-zh">中文</button>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="phone-inner">
+      <div class="status">Prototype</div>
+      <div class="app-header">
+        <h1 data-i18n="app_title">My chamber</h1>
+        <p data-i18n="app_sub">Lease, sessions & billing</p>
+      </div>
+
+      <div class="screens">
+        <!-- Home -->
+        <section class="screen active" id="scr-home">
+          <div class="card skeleton-wrap" id="home-device-card">
+            <div class="sk-row w40"></div><div class="sk-row w70"></div><div class="sk-row w90"></div>
+            <div id="home-device-real">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <h3 data-i18n="dev_name">Chamber A-204</h3>
+                <span class="meta" data-i18n="dev_lease">Lease · Monthly</span>
+              </div>
+              <span class="pill ok" data-i18n="st_online">Online</span>
+            </div>
+            <p class="meta" style="margin-top:8px;" data-i18n="dev_sn">SN: HBOT-8891-CLN-02</p>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-primary" id="btn-session" data-i18n="btn_start">Start session</button>
+              <button type="button" class="btn btn-ghost" id="btn-home-refresh" data-i18n="btn_refresh">Refresh</button>
+            </div>
+            <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-bind-open" data-i18n="btn_bind">Bind another device</button>
+            </div>
+          </div>
+          <div class="card ref-card">
+            <h3 data-i18n="ref_title">Invite a caregiver</h3>
+            <p class="meta" data-i18n="ref_sub">Share your code — they get guided onboarding (demo).</p>
+            <p class="mono" id="ref-code">HBOT-FAM-7K2Q</p>
+            <button type="button" class="btn btn-ghost" id="btn-ref-copy" data-i18n="ref_copy">Copy code</button>
+          </div>
+          <div class="card">
+            <p class="subhead" data-i18n="home_quick">Shortcuts</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <button type="button" class="btn btn-ghost" id="btn-go-live" data-i18n="btn_live">Live status</button>
+              <button type="button" class="btn btn-ghost" id="btn-go-onboard" data-i18n="btn_safety">Safety checklist</button>
+              <button type="button" class="btn btn-ghost" id="btn-go-analytics" data-i18n="btn_analytics">Weekly insights</button>
+              <button type="button" class="btn btn-ghost" id="btn-go-notif" data-i18n="btn_notifs">Notifications</button>
+              <button type="button" class="btn btn-ghost" id="btn-go-diag" data-i18n="btn_diag">Diagnostics</button>
+              <button type="button" class="btn btn-ghost" id="btn-home-help" data-i18n="btn_help">Help & support</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3 data-i18n="next_pay">Next charge</h3>
+            <p class="meta"><span data-i18n="next_date">Due</span>: 2026-05-22 · <strong>$129.00</strong></p>
+            <button type="button" class="btn btn-ghost" id="btn-pay-open" data-i18n="btn_pay_now">Pay now</button>
+          </div>
+        </section>
+
+        <!-- History -->
+        <section class="screen" id="scr-history">
+          <div class="tabs">
+            <button type="button" class="active" data-tab="cal" data-i18n="tab_cal">Calendar</button>
+            <button type="button" data-tab="list" data-i18n="tab_list">List</button>
+            <button type="button" data-tab="insights" data-i18n="tab_insights">Insights</button>
+          </div>
+          <div class="card" id="panel-cal">
+            <p class="page-title" data-i18n="hist_cal_head">Session calendar</p>
+            <h3 data-i18n="may_title">May 2026</h3>
+            <div class="list-item click" data-sess="1" role="button" tabindex="0"><span data-i18n="sess_1">May 14 · 58 min</span><span class="pill ok" data-i18n="ok">OK</span></div>
+            <div class="list-item click" data-sess="2" role="button" tabindex="0"><span data-i18n="sess_2">May 12 · 60 min</span><span class="pill ok" data-i18n="ok">OK</span></div>
+            <div class="list-item click" data-sess="3" role="button" tabindex="0"><span data-i18n="sess_3">May 09 · 45 min</span><span class="pill use" data-i18n="short">Short</span></div>
+          </div>
+          <div class="card" id="panel-list" style="display:none;">
+            <p class="meta" data-i18n="report_hint">Purchased devices: simplified wellness report (demo).</p>
+            <button type="button" class="btn btn-ghost" id="btn-report" data-i18n="btn_report">Generate report</button>
+          </div>
+          <div class="card" id="panel-insights" style="display:none;">
+            <p class="page-title" data-i18n="ins_head">Treatment rhythm</p>
+            <p class="meta" data-i18n="ins_sub">CSS-only placeholders · not clinical advice.</p>
+            <div class="hist-cards">
+              <div class="mini-card"><strong data-i18n="ins_streak">Current streak</strong><br/><span class="meta">12 <span data-i18n="ins_days">days</span> · <span data-i18n="ins_goal">Goal 14</span></span></div>
+              <div class="mini-card"><strong data-i18n="ins_adherence">Plan adherence</strong><br/><span class="meta">86% <span data-i18n="ins_rolling">rolling 30d</span></span></div>
+            </div>
+            <div class="line-chart" role="img" aria-label="Trend">
+              <svg viewBox="0 0 280 80" preserveAspectRatio="none">
+                <polyline points="0,60 40,45 80,50 120,30 160,35 200,25 240,40 280,20" />
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contract & bills -->
+        <section class="screen" id="scr-contract">
+          <div class="tabs" id="contract-tabs">
+            <button type="button" class="active" data-ctab="lease" data-i18n="tab_lease">Lease</button>
+            <button type="button" data-ctab="orders" data-i18n="tab_orders">Orders</button>
+          </div>
+          <div id="ct-lease" class="card">
+            <p class="page-title" data-i18n="sub_plan_head">Subscription</p>
+            <h3 data-i18n="lease_title">Current plan</h3>
+            <p class="meta" data-i18n="lease_body">Monthly · Auto-renew · Next billing May 22</p>
+            <div style="margin-top:14px;">
+              <p class="usage-h" data-i18n="use_head">Included minutes · this cycle</p>
+              <div class="usage-track"><i></i></div>
+              <p class="meta" style="margin-top:8px;" data-i18n="use_body">248 / 400 min · resets June 1</p>
+            </div>
+            <p class="section-label" style="margin-top:16px;" data-i18n="ben_head">What's included</p>
+            <ul class="benefits">
+              <li data-i18n="ben_1">Priority firmware lane & telemetry export</li>
+              <li data-i18n="ben_2">Caregiver seats (up to 3)</li>
+              <li data-i18n="ben_3">Session summaries & receipt inbox</li>
+            </ul>
+            <label data-i18n="lbl_card">Card on file</label>
+            <input type="text" value="•••• 4242" readonly style="background:#f9fafb;" />
+            <p class="meta" data-i18n="lease_lock">If payment fails, features lock after a 3-day grace (assumption).</p>
+          </div>
+          <div id="ct-orders" class="card" style="display:none;">
+            <div class="list-item"><span data-i18n="ord_1">Apr 22 · Paid</span><strong>$129</strong></div>
+            <div class="list-item"><span data-i18n="ord_2">Mar 22 · Paid</span><strong>$129</strong></div>
+            <button type="button" class="btn btn-ghost" data-i18n="btn_dl">Download receipt</button>
+          </div>
+        </section>
+
+        <!-- Profile -->
+        <section class="screen" id="scr-profile">
+          <div class="card">
+            <p class="page-title" data-i18n="prof_head">Household</p>
+            <h3 data-i18n="prof_title">Account</h3>
+            <p class="meta">family.demo@example.com</p>
+            <button type="button" class="btn btn-ghost" id="btn-notif-pref" data-i18n="btn_notif">Notification prefs</button>
+            <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-go-settings" data-i18n="btn_prefs">Preferences</button>
+            <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-go-support" data-i18n="btn_help">Help & support</button>
+            <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-go-legal" data-i18n="btn_legal">Legal & consent</button>
+            <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-go-plans" data-i18n="btn_plans">Compare plans</button>
+          </div>
+        </section>
+
+        <!-- Settings -->
+        <section class="screen" id="scr-settings">
+          <div class="card">
+            <p class="page-title" data-i18n="set_head">Preferences</p>
+            <h3 data-i18n="set_title">Experience</h3>
+            <div class="toggle-row">
+              <span data-i18n="set_dark">Reduce motion UI</span>
+              <button type="button" class="switch" id="sw-motion" aria-pressed="false" aria-label="Reduce motion"></button>
+            </div>
+            <div class="toggle-row">
+              <span data-i18n="set_haptics">Haptics on alerts</span>
+              <button type="button" class="switch on" id="sw-haptic" aria-pressed="true"></button>
+            </div>
+            <label data-i18n="set_units">Pressure units</label>
+            <select id="sel-units">
+              <option value="ata">ATA</option>
+              <option value="bar">bar</option>
+            </select>
+            <label data-i18n="set_lang">App language</label>
+            <select id="sel-lang" disabled style="opacity:0.75;">
+              <option data-i18n="set_lang_sys">Follow hub (EN/中文)</option>
+            </select>
+            <p class="meta" data-i18n="set_lang_hint">Switch language from the Hub bar outside the phone frame.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-settings-save" data-i18n="set_save">Save preferences</button>
+          <button type="button" class="btn btn-ghost" style="margin-top:8px;" id="btn-settings-back" data-i18n="btn_back_prof">Back to profile</button>
+        </section>
+
+        <!-- Weekly analytics -->
+        <section class="screen" id="scr-analytics">
+          <div class="card skeleton-wrap" id="ana-card">
+            <div class="sk-row w40"></div><div class="sk-row w70"></div><div class="sk-row" style="height:80px;"></div>
+            <div id="ana-real">
+            <p class="page-title" data-i18n="dash_week">Dashboard</p>
+            <h3 data-i18n="ana_title">Weekly usage</h3>
+            <p class="meta" data-i18n="ana_sub">Mock analytics — sessions & minutes (CSS bars).</p>
+            <div class="chart-bars" role="img" aria-label="Weekly bars">
+              <div class="bar" style="height:35%"><span>M</span></div>
+              <div class="bar" style="height:52%"><span>T</span></div>
+              <div class="bar" style="height:48%"><span>W</span></div>
+              <div class="bar" style="height:70%"><span>T</span></div>
+              <div class="bar" style="height:62%"><span>F</span></div>
+              <div class="bar" style="height:88%"><span>S</span></div>
+              <div class="bar" style="height:40%"><span>S</span></div>
+            </div>
+            <p class="meta" style="margin-top:28px;" data-i18n="ana_sum">Total this week · 4 sessions · 232 min</p>
+            </div>
+          </div>
+          <div class="card">
+            <p class="page-title" data-i18n="mix_head">Session mix</p>
+            <h3 data-i18n="mix_title">Minutes vs stops</h3>
+            <p class="meta" data-i18n="mix_sub">Stacked ratio placeholder.</p>
+            <div class="stack-chart" role="presentation"><i></i><i></i><i></i></div>
+            <div class="stack-legend">
+              <span data-i18n="lg_full">Full sessions</span>
+              <span data-i18n="lg_short">Short / paused</span>
+              <span data-i18n="lg_idle">Idle window</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn btn-ghost" style="flex:1;" id="btn-ana-refresh" data-i18n="btn_ana_ref">Reload charts</button>
+            <button type="button" class="btn btn-ghost" id="btn-ana-back" data-i18n="btn_back_home">Back to home</button>
+          </div>
+        </section>
+
+        <!-- Live treatment (mock) -->
+        <section class="screen" id="scr-live">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <h3 data-i18n="live_title">Live session</h3>
+              <span class="pill ok" data-i18n="live_run">Running</span>
+            </div>
+            <p class="meta" data-i18n="live_sub">Mock telemetry · not connected to real hardware</p>
+            <p class="meta" style="margin-top:8px;"><span data-i18n="live_elapsed">Elapsed</span>: <strong id="live-timer">00:12</strong></p>
+            <div class="meter"><i style="width:22%;"></i></div>
+            <p class="meta" style="margin-top:10px;" data-i18n="live_press">Pressure target · 1.3 ATA (demo)</p>
+            <div class="spark" data-i18n="live_spark">Sparkline placeholder</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;">
+              <button type="button" class="btn btn-ghost" id="btn-estop-open" style="border-color:#fecaca;color:var(--danger);font-weight:600;" data-i18n="btn_estop">Emergency stop</button>
+              <button type="button" class="btn btn-ghost" id="btn-parent-open" data-i18n="btn_parent">Parental gate</button>
+            </div>
+            <p class="meta" style="margin-top:10px;font-size:0.72rem;" data-i18n="live_safe">Demo only — does not command hardware.</p>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-live-back" data-i18n="btn_back_home">Back to home</button>
+        </section>
+
+        <!-- Onboarding / safety -->
+        <section class="screen" id="scr-onboard">
+          <div class="card">
+            <h3 data-i18n="on_title">Before each session</h3>
+            <p class="meta" data-i18n="on_sub">Checklist required (demo validation).</p>
+            <div class="check-row"><input type="checkbox" id="c1" /><label for="c1" style="margin:0;font-weight:400;" data-i18n="on_c1">No metallic objects inside chamber</label></div>
+            <div class="check-row"><input type="checkbox" id="c2" /><label for="c2" style="margin:0;font-weight:400;" data-i18n="on_c2">Door seal inspected</label></div>
+            <div class="check-row"><input type="checkbox" id="c3" /><label for="c3" style="margin:0;font-weight:400;" data-i18n="on_c3">Emergency valve reachable</label></div>
+            <span class="err" id="on-err" style="margin-top:8px;" data-i18n="on_err">Check all items</span>
+            <button type="button" class="btn btn-primary" style="margin-top:14px;" id="btn-on-confirm" data-i18n="on_confirm">Confirm & continue</button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-on-back" data-i18n="btn_back">Back</button>
+        </section>
+
+        <!-- Session detail -->
+        <section class="screen" id="scr-sessdetail">
+          <div class="card">
+            <p class="page-title" data-i18n="sd_head">Session detail</p>
+            <h3 id="sd-title">Session detail</h3>
+            <div class="badge-row">
+              <span class="tag" id="sd-date">May 14, 2026</span>
+              <span class="tag" id="sd-dur">58 min</span>
+              <span class="pill ok" id="sd-st">OK</span>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-cell"><div class="lbl" data-i18n="sd_mx">Max ATA</div><div class="val" id="sd-stat-mx">1.34</div></div>
+              <div class="stat-cell"><div class="lbl" data-i18n="sd_o2">Avg O₂%</div><div class="val" id="sd-stat-o2">94</div></div>
+              <div class="stat-cell"><div class="lbl" data-i18n="sd_temp">Cabin peak °C</div><div class="val" id="sd-stat-temp">26</div></div>
+              <div class="stat-cell"><div class="lbl" data-i18n="sd_al">Alerts</div><div class="val" id="sd-stat-al">0</div></div>
+            </div>
+            <p class="meta" style="margin-top:12px;" data-i18n="sd_body">Average pressure profile within range. No alerts during session.</p>
+            <div class="spark" data-i18n="sd_chart">Curve placeholder</div>
+            <button type="button" class="btn btn-ghost" style="margin-top:12px;" id="btn-sd-export" data-i18n="btn_sd_pdf">Export PDF summary</button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-sd-back" data-i18n="btn_back_hist">Back to history</button>
+        </section>
+
+        <!-- Notifications -->
+        <section class="screen" id="scr-notif">
+          <div class="card" id="notif-card-wrap">
+            <p class="page-title" data-i18n="inbox_head">Inbox</p>
+            <h3 data-i18n="notif_title">Notifications</h3>
+            <div class="chips" id="notif-chips">
+              <button type="button" class="chip on" data-flt="all" data-i18n="nf_all">All</button>
+              <button type="button" class="chip" data-flt="bill" data-i18n="nf_bill">Billing</button>
+              <button type="button" class="chip" data-flt="sess" data-i18n="nf_sess">Sessions</button>
+              <button type="button" class="chip" data-flt="sys" data-i18n="nf_sys">System</button>
+            </div>
+            <div class="notif-skel skeleton-wrap" id="notif-skel" style="min-height:120px;">
+              <div class="sk-row"></div><div class="sk-row"></div><div class="sk-row"></div>
+            </div>
+            <div id="notif-list-body">
+            <div class="notif-item" data-cat="bill"><span data-i18n="n1">Payment receipt available</span><time>2026-05-14 09:02</time></div>
+            <div class="notif-item" data-cat="sess"><span data-i18n="n2">Session completed · 58 min</span><time>2026-05-14 08:10</time></div>
+            <div class="notif-item" data-cat="sys"><span data-i18n="n3">Maintenance window Sat 02:00</span><time>2026-05-13</time></div>
+            <div class="notif-item" data-cat="sess"><span data-i18n="n4">Weekly insight ready</span><time>2026-05-12</time></div>
+            </div>
+          </div>
+          <div class="empty" id="notif-empty" style="display:none;">
+            <p data-i18n="notif_empty">You're all caught up.</p>
+            <button type="button" class="btn btn-ghost" id="btn-mark-read" data-i18n="notif_demo">Mark demo as read</button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-notif-back" data-i18n="btn_back">Back</button>
+        </section>
+
+        <!-- Support -->
+        <section class="screen" id="scr-support">
+          <div class="card">
+            <h3 data-i18n="sup_title">Help center</h3>
+            <label class="meta" for="manual-q" data-i18n="sup_man_lbl">Device manual (search)</label>
+            <input class="manual-search" type="search" id="manual-q" autocomplete="off" data-i18n-ph="sup_man_ph" placeholder="" />
+            <div id="manual-items">
+              <div class="list-item man-row" data-kw="door seal pressure"><span data-i18n="man_1">Door seal & pressure loss</span></div>
+              <div class="list-item man-row" data-kw="cleaning mask"><span data-i18n="man_2">Cleaning the mask assembly</span></div>
+              <div class="list-item man-row" data-kw="bluetooth pairing"><span data-i18n="man_3">Bluetooth pairing troubleshooting</span></div>
+              <div class="list-item man-row" data-kw="emergency valve alarm"><span data-i18n="man_4">Emergency valve & alarms</span></div>
+            </div>
+            <p class="subhead" style="margin-top:14px;" data-i18n="sup_faq_head">FAQ</p>
+            <div class="acc-item" id="acc-1">
+              <button type="button" class="acc-hd" data-acc="acc-1"><span data-i18n="faq_q1">First session checklist</span><span class="chev">▼</span></button>
+              <div class="acc-bd" data-i18n="faq_a1">Remove metallic items, confirm door seal, keep emergency valve accessible.</div>
+            </div>
+            <div class="acc-item" id="acc-2">
+              <button type="button" class="acc-hd" data-acc="acc-2"><span data-i18n="faq_q2">When to stop a session</span><span class="chev">▼</span></button>
+              <div class="acc-bd" data-i18n="faq_a2">Use emergency stop for discomfort, unusual sounds, or if instructed by your clinician.</div>
+            </div>
+            <div class="acc-item" id="acc-3">
+              <button type="button" class="acc-hd" data-acc="acc-3"><span data-i18n="faq_q3">Data & privacy</span><span class="chev">▼</span></button>
+              <div class="acc-bd" data-i18n="faq_a3">Telemetry is encrypted in transit; retention follows the policy version you accepted.</div>
+            </div>
+            <button type="button" class="link-row" id="sup-chat" style="margin-top:12px;"><span data-i18n="sup_chat">Chat with support (mock)</span><span class="chev">›</span></button>
+            <button type="button" class="link-row" id="sup-call"><span data-i18n="sup_call">Call hotline</span><span class="chev">›</span></button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-sup-back" data-i18n="btn_back_prof">Back to profile</button>
+        </section>
+
+        <!-- Diagnostics read-only -->
+        <section class="screen" id="scr-diag">
+          <div class="card">
+            <h3 data-i18n="diag_title">Device diagnostics</h3>
+            <p class="meta" data-i18n="diag_sub">Read-only · last sync 2 min ago</p>
+            <div class="list-item"><span data-i18n="diag_fw">Firmware</span><strong id="fw-ver">2.6.1</strong></div>
+            <button type="button" class="btn btn-ghost" id="btn-fw-open" data-i18n="btn_fw">Check for updates</button>
+            <p class="subhead" style="margin-top:12px;" data-i18n="diag_bt_h">Bluetooth</p>
+            <div class="bt-states" id="bt-pills">
+              <span class="bt-pill ok" id="bt-status" data-i18n="bt_paired">Paired · Room hub</span>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-ghost" id="bt-sim-scan" data-i18n="bt_sim_scan">Simulate scan</button>
+              <button type="button" class="btn btn-ghost" id="bt-sim-drop" data-i18n="bt_sim_drop">Simulate disconnect</button>
+            </div>
+            <div class="list-item" style="margin-top:12px;"><span data-i18n="diag_sim">SIM / signal</span><strong>-67 dBm</strong></div>
+            <div class="list-item"><span data-i18n="diag_o2">O₂ sensor drift</span><span class="pill ok" data-i18n="diag_ok">Normal</span></div>
+            <div class="list-item"><span data-i18n="diag_fan">Fan hours</span><strong>1,204 h</strong></div>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-diag-back" data-i18n="btn_back">Back</button>
+        </section>
+
+        <!-- Plan comparison -->
+        <section class="screen" id="scr-plans">
+          <div class="card">
+            <h3 data-i18n="plans_title">Plans</h3>
+            <p class="meta" data-i18n="plans_sub">Tap to select (demo). Aligns with Excel lease tiers.</p>
+            <div class="plan-grid" id="plan-grid">
+              <div class="plan-card selected" data-plan="m" tabindex="0" role="button">
+                <h4 data-i18n="plan_m">Monthly</h4>
+                <div class="price">$129<span style="font-size:0.75rem;font-weight:500;color:var(--muted);" data-i18n="plan_mo">/mo</span></div>
+                <p class="meta" data-i18n="plan_m_d">Flexible cancel</p>
+              </div>
+              <div class="plan-card" data-plan="y" tabindex="0" role="button">
+                <h4 data-i18n="plan_y">Yearly</h4>
+                <div class="price">$1,290<span style="font-size:0.75rem;font-weight:500;color:var(--muted);" data-i18n="plan_yr">/yr</span></div>
+                <p class="meta" data-i18n="plan_y_d">Save ~17%</p>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" style="margin-top:14px;" id="btn-plan-save" data-i18n="plans_cta">Continue with selection</button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-plans-back" data-i18n="btn_back_prof">Back to profile</button>
+        </section>
+
+        <!-- Legal stub -->
+        <section class="screen" id="scr-legal">
+          <div class="card">
+            <h3 data-i18n="leg_title">Legal & consent</h3>
+            <p class="meta" data-i18n="leg_sub">Stub links for privacy, terms, health data (demo).</p>
+            <p class="subhead" data-i18n="leg_hist_h">Consent history</p>
+            <div class="consent-list">
+              <div class="list-item"><span data-i18n="leg_h1">Privacy · v1.4</span><span class="meta">2026-04-02</span></div>
+              <div class="list-item"><span data-i18n="leg_h2">Health data · v1.1</span><span class="meta">2026-03-18</span></div>
+              <div class="list-item"><span data-i18n="leg_h3">Terms · v2.0</span><span class="meta">2025-11-09</span></div>
+            </div>
+            <button type="button" class="link-row" id="leg-priv"><span data-i18n="leg_priv">Privacy policy</span><span class="chev">›</span></button>
+            <button type="button" class="link-row" id="leg-terms"><span data-i18n="leg_terms">Terms of service</span><span class="chev">›</span></button>
+            <button type="button" class="link-row" id="leg-health"><span data-i18n="leg_health">Health data consent</span><span class="chev">›</span></button>
+            <div class="check-row" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px;">
+              <input type="checkbox" id="leg-ack" />
+              <label for="leg-ack" style="margin:0;font-weight:400;" data-i18n="leg_ack">I have reviewed the key notices</label>
+            </div>
+            <span class="err" id="leg-err" style="margin-top:8px;" data-i18n="leg_err">Please confirm</span>
+            <button type="button" class="btn btn-primary" style="margin-top:12px;" id="btn-leg-save" data-i18n="leg_save">Save acknowledgment</button>
+          </div>
+          <button type="button" class="btn btn-ghost" id="btn-leg-back" data-i18n="btn_back_prof">Back to profile</button>
+        </section>
+
+        <div class="nav-wrap">
+        <nav class="nav scroll" aria-label="Main">
+          <button type="button" data-nav="home" class="active" data-i18n="nav_home">Home</button>
+          <button type="button" data-nav="history" data-i18n="nav_hist">History</button>
+          <button type="button" data-nav="contract" data-i18n="nav_plan">Plan</button>
+          <button type="button" data-nav="profile" data-i18n="nav_me">Me</button>
+          <button type="button" data-nav="more" id="nav-more" data-i18n="nav_more">More</button>
+        </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bind modal -->
+  <div class="modal-back" id="modal-bind" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="m_bind_title">Bind device</h2>
+      <p class="meta" data-i18n="m_bind_sub">Scan or enter the QR payload (demo).</p>
+      <label for="qr" data-i18n="lbl_qr">Device code</label>
+      <input id="qr" type="text" placeholder="HBOT-XXXX" autocomplete="off" />
+      <span class="err" id="qr-err" data-i18n="err_qr">Enter a code starting with HBOT-</span>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="bind-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="bind-save" data-i18n="save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pay modal -->
+  <div class="modal-back" id="modal-pay">
+    <div class="modal">
+      <h2 data-i18n="m_pay_title">Pay invoice</h2>
+      <label data-i18n="lbl_cardnum">Card number</label>
+      <input id="cardnum" type="text" inputmode="numeric" placeholder="4242424242424242" maxlength="19" />
+      <span class="err" id="card-err" data-i18n="err_card">16 digits required</span>
+      <label data-i18n="lbl_exp">Expiry</label>
+      <input id="exp" type="text" placeholder="MM/YY" maxlength="5" />
+      <span class="err" id="exp-err" data-i18n="err_exp">Use MM/YY</span>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="pay-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="pay-go" data-i18n="pay">Pay $129</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- More menu -->
+  <div class="modal-back" id="modal-more" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="more_title">More</h2>
+      <p class="meta" data-i18n="more_sub">Secondary destinations</p>
+      <button type="button" class="link-row" data-go="settings"><span data-i18n="btn_prefs">Preferences</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="analytics"><span data-i18n="btn_analytics">Weekly insights</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="live"><span data-i18n="btn_live">Live status</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="onboard"><span data-i18n="btn_safety">Safety checklist</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="notif"><span data-i18n="btn_notifs">Notifications</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="support"><span data-i18n="btn_help">Help & support</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="diag"><span data-i18n="btn_diag">Diagnostics</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="plans"><span data-i18n="btn_plans">Compare plans</span><span class="chev">›</span></button>
+      <button type="button" class="link-row" data-go="legal"><span data-i18n="btn_legal">Legal & consent</span><span class="chev">›</span></button>
+      <button type="button" class="btn btn-ghost" style="margin-top:12px;" id="more-close" data-i18n="cancel">Close</button>
+    </div>
+  </div>
+
+  <!-- Notification preferences -->
+  <div class="modal-back" id="modal-prefs" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="pref_title">Notification preferences</h2>
+      <p class="meta" data-i18n="pref_sub">Choose channels (demo toggles).</p>
+      <div class="toggle-row">
+        <span data-i18n="pref_email">Email · receipts & invoices</span>
+        <button type="button" class="switch on" data-pref="email" aria-pressed="true"></button>
+      </div>
+      <div class="toggle-row">
+        <span data-i18n="pref_push">Push · session milestones</span>
+        <button type="button" class="switch on" data-pref="push" aria-pressed="true"></button>
+      </div>
+      <div class="toggle-row">
+        <span data-i18n="pref_sms">SMS · critical alerts only</span>
+        <button type="button" class="switch" data-pref="sms" aria-pressed="false"></button>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="pref-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="pref-save" data-i18n="pref_save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick safety checklist -->
+  <div class="modal-back" id="modal-safety" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="safe_modal_t">Safety check</h2>
+      <p class="meta" data-i18n="safe_modal_b">Fast gate before starting · full checklist still available.</p>
+      <div class="check-row"><input type="checkbox" id="s1" /><label for="s1" style="margin:0;font-weight:400;" data-i18n="safe_q1">Chamber clear of hazards</label></div>
+      <div class="check-row"><input type="checkbox" id="s2" /><label for="s2" style="margin:0;font-weight:400;" data-i18n="safe_q2">Participant cleared by protocol</label></div>
+      <span class="err" id="safe-err" data-i18n="safe_err">Complete quick check</span>
+      <button type="button" class="btn btn-ghost" style="margin-top:12px;" id="safe-full" data-i18n="safe_full">Full checklist…</button>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="safe-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="safe-done" data-i18n="safe_done">Mark OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- First-run wizard -->
+  <div class="wiz-overlay" id="wiz-first" role="dialog" aria-modal="true">
+    <div class="wiz-box">
+      <div class="wiz-dots" id="wiz-dots"><i class="on"></i><i></i><i></i><i></i></div>
+      <div id="wiz-body">
+        <h2 style="margin:0 0 8px;font-size:1.1rem;" data-i18n="wiz_welcome_t">Welcome</h2>
+        <p class="meta" data-i18n="wiz_welcome_b">Let’s tailor safety prompts and notifications for your household.</p>
+      </div>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button type="button" class="btn btn-ghost" id="wiz-skip" data-i18n="wiz_skip">Skip</button>
+        <button type="button" class="btn btn-primary" id="wiz-next-step" data-i18n="wiz_next_btn">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency stop -->
+  <div class="modal-back" id="modal-estop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="estop_t">Emergency stop</h2>
+      <p class="meta" data-i18n="estop_b">This sends a simulated stop request to HQ and logs the event. Confirm for demo.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="estop-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="estop-confirm" style="background:var(--danger);border-color:var(--danger);" data-i18n="estop_go">Confirm stop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parental gate -->
+  <div class="modal-back" id="modal-parent" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="parent_t">Parental gate</h2>
+      <p class="meta" data-i18n="parent_b">Enter demo PIN <strong>1234</strong> to unlock advanced controls.</p>
+      <label for="pin-in" data-i18n="parent_lbl">PIN</label>
+      <input id="pin-in" type="password" maxlength="6" inputmode="numeric" autocomplete="off" />
+      <span class="err" id="pin-err" data-i18n="parent_err">Incorrect PIN</span>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="parent-cancel" data-i18n="cancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="parent-ok" data-i18n="parent_unlock">Unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firmware -->
+  <div class="modal-back" id="modal-fw" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h2 data-i18n="fw_t">Firmware update</h2>
+      <p class="meta" id="fw-msg" data-i18n="fw_idle">Ready to check.</p>
+      <div class="fw-progress"><i id="fw-bar"></i></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="fw-close" data-i18n="cancel">Close</button>
+        <button type="button" class="btn btn-primary" id="fw-start" data-i18n="fw_start">Download & install</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const S = {
+      en: {
+        back_hub: "← Hub",
+        app_title: "My chamber",
+        app_sub: "Lease, sessions & billing",
+        dev_name: "Chamber A-204",
+        dev_lease: "Lease · Monthly",
+        st_online: "Online",
+        dev_sn: "SN: HBOT-8891-CLN-02",
+        btn_start: "Start session",
+        btn_bind: "Bind another device",
+        next_pay: "Next charge",
+        next_date: "Due",
+        btn_pay_now: "Pay now",
+        tab_cal: "Calendar",
+        tab_list: "List",
+        may_title: "May 2026",
+        sess_1: "May 14 · 58 min",
+        sess_2: "May 12 · 60 min",
+        sess_3: "May 09 · 45 min",
+        ok: "OK",
+        short: "Short",
+        report_hint: "Purchased devices: simplified wellness report (demo).",
+        btn_report: "Generate report",
+        tab_lease: "Lease",
+        tab_orders: "Orders",
+        lease_title: "Current plan",
+        lease_body: "Monthly · Auto-renew · Next billing May 22",
+        lbl_card: "Card on file",
+        lease_lock: "If payment fails, features lock after a 3-day grace (assumption).",
+        ord_1: "Apr 22 · Paid",
+        ord_2: "Mar 22 · Paid",
+        btn_dl: "Download receipt",
+        prof_title: "Account",
+        btn_notif: "Notification prefs",
+        nav_home: "Home",
+        nav_hist: "History",
+        nav_plan: "Plan",
+        nav_me: "Me",
+        nav_more: "More",
+        more_title: "More",
+        more_sub: "Secondary destinations",
+        home_quick: "Shortcuts",
+        btn_live: "Live status",
+        btn_safety: "Safety checklist",
+        btn_notifs: "Notifications",
+        btn_diag: "Diagnostics",
+        btn_help: "Help & support",
+        btn_legal: "Legal & consent",
+        btn_plans: "Compare plans",
+        live_title: "Live session",
+        live_run: "Running",
+        live_sub: "Mock telemetry · not connected to real hardware",
+        live_elapsed: "Elapsed",
+        live_press: "Pressure target · 1.3 ATA (demo)",
+        live_spark: "Sparkline placeholder",
+        btn_back_home: "Back to home",
+        on_title: "Before each session",
+        on_sub: "Checklist required (demo validation).",
+        on_c1: "No metallic objects inside chamber",
+        on_c2: "Door seal inspected",
+        on_c3: "Emergency valve reachable",
+        on_err: "Check all items",
+        on_confirm: "Confirm & continue",
+        btn_back: "Back",
+        sd_title: "Session detail",
+        sd_body: "Average pressure profile within range. No alerts during session.",
+        sd_chart: "Curve placeholder",
+        btn_back_hist: "Back to history",
+        tag_d1: "May 14, 2026",
+        tag_du1: "58 min",
+        tag_d2: "May 12, 2026",
+        tag_du2: "60 min",
+        tag_d3: "May 9, 2026",
+        tag_du3: "45 min",
+        notif_title: "Notifications",
+        n1: "Payment receipt available",
+        n2: "Session completed · 58 min",
+        n3: "Maintenance window Sat 02:00",
+        notif_empty: "You're all caught up.",
+        notif_demo: "Mark demo as read",
+        btn_back_prof: "Back to profile",
+        sup_title: "Help center",
+        btn_refresh: "Refresh",
+        ref_title: "Invite a caregiver",
+        ref_sub: "Share your code — guided onboarding (demo).",
+        ref_copy: "Copy code",
+        btn_analytics: "Weekly insights",
+        ana_title: "Weekly usage",
+        ana_sub: "Mock analytics — sessions & minutes.",
+        ana_sum: "Total this week · 4 sessions · 232 min",
+        btn_estop: "Emergency stop",
+        btn_parent: "Parental gate",
+        live_safe: "Demo only — does not command hardware.",
+        sup_man_lbl: "Device manual (search)",
+        sup_man_ph: "Search topics (e.g. seal, bluetooth)",
+        man_1: "Door seal & pressure loss",
+        man_2: "Cleaning the mask assembly",
+        man_3: "Bluetooth pairing troubleshooting",
+        man_4: "Emergency valve & alarms",
+        sup_faq_head: "FAQ",
+        faq_q1: "First session checklist",
+        faq_a1: "Remove metallic items, confirm door seal, keep emergency valve accessible.",
+        faq_q2: "When to stop a session",
+        faq_a2: "Use emergency stop for discomfort, unusual sounds, or if instructed by your clinician.",
+        faq_q3: "Data & privacy",
+        faq_a3: "Telemetry is encrypted in transit; retention follows the policy version you accepted.",
+        btn_fw: "Check for updates",
+        diag_bt_h: "Bluetooth",
+        bt_paired: "Paired · Room hub",
+        bt_scanning: "Scanning…",
+        bt_disconnected: "Disconnected",
+        bt_sim_scan: "Simulate scan",
+        bt_sim_drop: "Simulate disconnect",
+        leg_hist_h: "Consent history",
+        leg_h1: "Privacy · v1.4",
+        leg_h2: "Health data · v1.1",
+        leg_h3: "Terms · v2.0",
+        wiz_welcome_t: "Welcome",
+        wiz_welcome_b: "Tailor safety prompts and notifications for your household.",
+        wiz_safe_t: "Safety defaults",
+        wiz_safe_b: "We’ll surface checklists before sessions and optional escalation to caregivers.",
+        wiz_notif_t: "Notifications",
+        wiz_notif_b: "Session summaries, billing receipts, and maintenance windows — toggle anytime later.",
+        wiz_done_t: "You’re set",
+        wiz_done_b: "You can replay this guide from Help › (demo).",
+        wiz_skip: "Skip",
+        wiz_next_btn: "Next",
+        wiz_done_btn: "Done",
+        estop_t: "Emergency stop",
+        estop_b: "Simulated stop request + HQ log entry.",
+        estop_go: "Confirm stop",
+        parent_t: "Parental gate",
+        parent_b: "Demo PIN is 1234.",
+        parent_lbl: "PIN",
+        parent_err: "Incorrect PIN",
+        parent_unlock: "Unlock",
+        fw_t: "Firmware update",
+        fw_idle: "Tap download to simulate install progress.",
+        fw_start: "Download & install",
+        fw_doing: "Installing… do not power off (demo).",
+        fw_done: "Updated to 2.7.0 (demo).",
+        toast_estop: "E-stop logged (demo)",
+        toast_parent: "Controls unlocked (demo)",
+        toast_ref: "Code copied",
+        toast_home_sync: "Device status refreshed (demo)",
+        toast_fw: "Firmware install complete (demo)",
+        toast_wiz_done: "First-run guide saved",
+        sup_faq: "FAQ · getting started",
+        sup_chat: "Chat with support (mock)",
+        sup_call: "Call hotline",
+        diag_title: "Device diagnostics",
+        toast_stub: "Stub page (demo)",
+        diag_sub: "Read-only · last sync 2 min ago",
+        diag_fw: "Firmware",
+        diag_sim: "SIM / signal",
+        diag_o2: "O₂ sensor drift",
+        diag_ok: "Normal",
+        diag_fan: "Fan hours",
+        plans_title: "Plans",
+        plans_sub: "Tap to select (demo). Aligns with Excel lease tiers.",
+        plan_m: "Monthly",
+        plan_mo: "/mo",
+        plan_m_d: "Flexible cancel",
+        plan_y: "Yearly",
+        plan_yr: "/yr",
+        plan_y_d: "Save ~17%",
+        plans_cta: "Continue with selection",
+        leg_title: "Legal & consent",
+        leg_sub: "Stub links for privacy, terms, health data (demo).",
+        leg_priv: "Privacy policy",
+        leg_terms: "Terms of service",
+        leg_health: "Health data consent",
+        leg_ack: "I have reviewed the key notices",
+        leg_err: "Please confirm",
+        leg_save: "Save acknowledgment",
+        m_bind_title: "Bind device",
+        m_bind_sub: "Scan or enter the QR payload (demo).",
+        lbl_qr: "Device code",
+        err_qr: "Code must start with HBOT-",
+        cancel: "Cancel",
+        save: "Save",
+        m_pay_title: "Pay invoice",
+        lbl_cardnum: "Card number",
+        err_card: "16 digits required",
+        lbl_exp: "Expiry (MM/YY)",
+        err_exp: "Use MM/YY",
+        pay: "Pay $129",
+        toast_sess: "Session started (demo timer 3s)",
+        toast_bind: "Binding request queued",
+        toast_pay: "Payment successful",
+        toast_rep: "Report ready (demo)",
+        toast_notif: "Prefs saved",
+        toast_dl: "Receipt downloaded (demo)",
+        toast_on: "Checklist saved",
+        toast_sup: "Opening (demo)",
+        toast_plan: "Plan preference saved",
+        toast_leg: "Acknowledgment saved",
+        toast_notif_clear: "All read",
+        toast_sd_pdf: "PDF queued (demo)",
+        toast_safe_quick: "Quick safety logged",
+        tab_insights: "Insights",
+        hist_cal_head: "Session calendar",
+        ins_head: "Treatment rhythm",
+        ins_sub: "CSS placeholders · not medical guidance.",
+        ins_streak: "Current streak",
+        ins_days: "days",
+        ins_goal: "Goal 14",
+        ins_adherence: "Plan adherence",
+        ins_rolling: "rolling 30d",
+        sub_plan_head: "Subscription",
+        use_head: "Included minutes · this cycle",
+        use_body: "248 / 400 min · resets June 1",
+        ben_head: "What's included",
+        ben_1: "Priority firmware lane & telemetry export",
+        ben_2: "Caregiver seats (up to 3)",
+        ben_3: "Session summaries & receipt inbox",
+        prof_head: "Household",
+        btn_prefs: "Preferences",
+        set_head: "Preferences",
+        set_title: "Experience",
+        set_dark: "Reduce motion UI",
+        set_haptics: "Haptics on alerts",
+        set_units: "Pressure units",
+        set_lang: "App language",
+        set_lang_sys: "Follow hub (EN / 中文)",
+        set_lang_hint: "Switch language from the Hub bar outside the phone frame.",
+        set_save: "Save preferences",
+        dash_week: "Dashboard",
+        mix_head: "Session mix",
+        mix_title: "Minutes vs stops",
+        mix_sub: "Stacked ratio placeholder.",
+        lg_full: "Full sessions",
+        lg_short: "Short / paused",
+        lg_idle: "Idle window",
+        btn_ana_ref: "Reload charts",
+        toast_ana: "Charts refreshed",
+        sd_head: "Session detail",
+        sd_mx: "Max ATA",
+        sd_o2: "Avg O₂%",
+        sd_temp: "Cabin peak °C",
+        sd_al: "Alerts",
+        btn_sd_pdf: "Export PDF summary",
+        inbox_head: "Inbox",
+        nf_all: "All",
+        nf_bill: "Billing",
+        nf_sess: "Sessions",
+        nf_sys: "System",
+        n4: "Weekly insight ready",
+        pref_title: "Notification preferences",
+        pref_sub: "Choose channels (demo toggles).",
+        pref_email: "Email · receipts & invoices",
+        pref_push: "Push · session milestones",
+        pref_sms: "SMS · critical alerts only",
+        pref_save: "Save",
+        safe_modal_t: "Safety check",
+        safe_modal_b: "Fast gate before starting · full checklist still available.",
+        safe_q1: "Chamber clear of hazards",
+        safe_q2: "Participant cleared by protocol",
+        safe_err: "Complete quick check",
+        safe_full: "Full checklist…",
+        safe_done: "Mark OK",
+        toast_pref: "Preferences saved",
+        toast_set: "Experience saved",
+        toast_safe_nav: "Opening full checklist…"
+      },
+      zh: {
+        back_hub: "← 入口",
+        app_title: "我的氧舱",
+        app_sub: "租约、治疗与账单",
+        dev_name: "氧舱 A-204",
+        dev_lease: "租赁 · 月付",
+        st_online: "在线",
+        dev_sn: "序列号: HBOT-8891-CLN-02",
+        btn_start: "开始治疗",
+        btn_bind: "绑定新设备",
+        next_pay: "下期扣款",
+        next_date: "到期日",
+        btn_pay_now: "立即支付",
+        tab_cal: "日历",
+        tab_list: "列表",
+        may_title: "2026年5月",
+        sess_1: "5月14日 · 58 分钟",
+        sess_2: "5月12日 · 60 分钟",
+        sess_3: "5月9日 · 45 分钟",
+        ok: "正常",
+        short: "偏短",
+        report_hint: "已购设备：可生成简易健康使用报告（演示）。",
+        btn_report: "生成报告",
+        tab_lease: "租约",
+        tab_orders: "订单",
+        lease_title: "当前方案",
+        lease_body: "月付 · 自动续费 · 下次扣款 5月22日",
+        lbl_card: "绑定卡片",
+        lease_lock: "假设：扣款失败后 3 天宽限期，随后功能锁定。",
+        ord_1: "4月22日 · 已支付",
+        ord_2: "3月22日 · 已支付",
+        btn_dl: "下载电子收据",
+        prof_title: "账户",
+        btn_notif: "通知偏好",
+        nav_home: "首页",
+        nav_hist: "记录",
+        nav_plan: "合约",
+        nav_me: "我的",
+        nav_more: "更多",
+        more_title: "更多",
+        more_sub: "次要入口",
+        home_quick: "快捷入口",
+        btn_live: "实时状态",
+        btn_safety: "安全清单",
+        btn_notifs: "通知",
+        btn_diag: "设备自检",
+        btn_help: "帮助与支持",
+        btn_legal: "法律与同意",
+        btn_plans: "方案对比",
+        live_title: "实时治疗",
+        live_run: "进行中",
+        live_sub: "模拟遥测 · 未连接真实硬件",
+        live_elapsed: "已进行",
+        live_press: "目标压力 · 1.3 ATA（演示）",
+        live_spark: "曲线占位",
+        btn_back_home: "返回首页",
+        on_title: "每次治疗前",
+        on_sub: "需完成清单（演示校验）。",
+        on_c1: "舱内无金属异物",
+        on_c2: "舱门密封已检查",
+        on_c3: "应急阀可触及",
+        on_err: "请勾选全部项",
+        on_confirm: "确认并继续",
+        btn_back: "返回",
+        sd_title: "治疗记录详情",
+        sd_body: "压力曲线在范围内，本次无告警。",
+        sd_chart: "曲线占位",
+        btn_back_hist: "返回记录",
+        tag_d1: "2026-05-14",
+        tag_du1: "58 分钟",
+        tag_d2: "2026-05-12",
+        tag_du2: "60 分钟",
+        tag_d3: "2026-05-09",
+        tag_du3: "45 分钟",
+        notif_title: "通知",
+        n1: "支付收据已生成",
+        n2: "治疗完成 · 58 分钟",
+        n3: "维护窗口 周六 02:00",
+        notif_empty: "暂无新通知",
+        notif_demo: "标记演示为已读",
+        btn_back_prof: "返回我的",
+        sup_title: "帮助中心",
+        btn_refresh: "刷新",
+        ref_title: "邀请照护成员",
+        ref_sub: "分享邀请码，对方将体验引导式 onboarding（演示）。",
+        ref_copy: "复制邀请码",
+        btn_analytics: "周洞察",
+        ana_title: "本周使用",
+        ana_sub: "演示分析 · 次数与分钟。",
+        ana_sum: "本周合计 · 4 次 · 232 分钟",
+        btn_estop: "紧急停止",
+        btn_parent: "家长验证",
+        live_safe: "演示用途 — 不会真地控制硬件。",
+        sup_man_lbl: "设备说明书（搜索）",
+        sup_man_ph: "搜索关键词（如：密封、蓝牙）",
+        man_1: "舱门密封与失压",
+        man_2: "面罩组件清洁",
+        man_3: "蓝牙配对故障排查",
+        man_4: "应急阀与告警",
+        sup_faq_head: "常见问题",
+        faq_q1: "首次治疗前清单",
+        faq_a1: "取出金属物、确认舱门密封、应急阀可触及。",
+        faq_q2: "何时应停止治疗",
+        faq_a2: "不适应、异常声响或遵医嘱时使用急停。",
+        faq_q3: "数据与隐私",
+        faq_a3: "遥测传输加密；保存期限以您同意的策略版本为准。",
+        btn_fw: "检查更新",
+        diag_bt_h: "蓝牙",
+        bt_paired: "已配对 · 房间 Hub",
+        bt_scanning: "扫描中…",
+        bt_disconnected: "已断开",
+        bt_sim_scan: "模拟扫描",
+        bt_sim_drop: "模拟断开",
+        leg_hist_h: "同意书记录",
+        leg_h1: "隐私 · v1.4",
+        leg_h2: "健康数据 · v1.1",
+        leg_h3: "条款 · v2.0",
+        wiz_welcome_t: "欢迎",
+        wiz_welcome_b: "我们将为家庭场景优化安全提示与通知。",
+        wiz_safe_t: "安全默认",
+        wiz_safe_b: "治疗前展示清单，并可通知照护人（演示）。",
+        wiz_notif_t: "通知",
+        wiz_notif_b: "治疗摘要、账单与维护窗口 — 稍后可在设置调整。",
+        wiz_done_t: "完成",
+        wiz_done_b: "可稍后在帮助中心 replay 该向导（演示）。",
+        wiz_skip: "跳过",
+        wiz_next_btn: "下一步",
+        wiz_done_btn: "完成",
+        estop_t: "紧急停止",
+        estop_b: "演示：向总部记录一次急停请求。",
+        estop_go: "确认停止",
+        parent_t: "家长验证",
+        parent_b: "演示 PIN 为 1234。",
+        parent_lbl: "PIN",
+        parent_err: "PIN 错误",
+        parent_unlock: "解锁",
+        fw_t: "固件更新",
+        fw_idle: "点击下方开始模拟下载与安装进度。",
+        fw_start: "下载并安装",
+        fw_doing: "安装中… 请勿断电（演示）。",
+        fw_done: "已更新至 2.7.0（演示）。",
+        toast_estop: "已记录急停（演示）",
+        toast_parent: "已解锁高级控制（演示）",
+        toast_ref: "邀请码已复制",
+        toast_home_sync: "设备状态已刷新（演示）",
+        toast_fw: "固件安装完成（演示）",
+        toast_wiz_done: "首次引导已保存",
+        sup_faq: "常见问题 · 入门",
+        sup_chat: "在线客服（演示）",
+        sup_call: "电话热线",
+        diag_title: "设备诊断",
+        diag_sub: "只读 · 上次同步 2 分钟前",
+        diag_fw: "固件",
+        diag_sim: "SIM / 信号",
+        diag_o2: "氧传感器漂移",
+        diag_ok: "正常",
+        diag_fan: "风扇累计小时",
+        plans_title: "方案",
+        plans_sub: "点击选择（演示）。与 Excel 租约档位对齐。",
+        plan_m: "月付",
+        plan_mo: "/月",
+        plan_m_d: "灵活取消",
+        plan_y: "年付",
+        plan_yr: "/年",
+        plan_y_d: "约省 17%",
+        plans_cta: "使用所选方案继续",
+        leg_title: "法律与同意",
+        leg_sub: "隐私、条款、健康数据等占位链接（演示）。",
+        leg_priv: "隐私政策",
+        leg_terms: "服务条款",
+        leg_health: "健康数据授权",
+        leg_ack: "我已阅读关键提示",
+        leg_err: "请确认",
+        leg_save: "保存确认",
+        m_bind_title: "绑定设备",
+        m_bind_sub: "扫码或输入设备码（演示）。",
+        lbl_qr: "设备码",
+        err_qr: "需以 HBOT- 开头",
+        cancel: "取消",
+        save: "保存",
+        m_pay_title: "支付账单",
+        lbl_cardnum: "卡号",
+        err_card: "需要 16 位数字",
+        lbl_exp: "有效期 MM/YY",
+        err_exp: "格式 MM/YY",
+        pay: "支付 $129",
+        toast_sess: "已开始治疗（演示 3 秒）",
+        toast_bind: "绑定请求已提交",
+        toast_pay: "支付成功",
+        toast_rep: "报告已生成（演示）",
+        toast_notif: "偏好已保存",
+        toast_dl: "收据已下载（演示）",
+        toast_on: "清单已保存",
+        toast_sup: "正在打开（演示）",
+        toast_plan: "方案偏好已保存",
+        toast_leg: "确认已保存",
+        toast_notif_clear: "已全部标记已读",
+        toast_sd_pdf: "PDF 已排队（演示）",
+        toast_safe_quick: "快速安检已记录",
+        tab_insights: "洞察",
+        hist_cal_head: "治疗日历",
+        ins_head: "治疗节奏",
+        ins_sub: "CSS 占位 · 非医疗建议。",
+        ins_streak: "连续坚持",
+        ins_days: "天",
+        ins_goal: "目标 14",
+        ins_adherence: "方案依从度",
+        ins_rolling: "近 30 天",
+        sub_plan_head: "订阅",
+        use_head: "本周期含时分钟",
+        use_body: "248 / 400 分钟 · 6 月 1 日重置",
+        ben_head: "包含权益",
+        ben_1: "优先固件通道与遥测导出",
+        ben_2: "照护席位（最多 3 人）",
+        ben_3: "治疗摘要与收据收件箱",
+        prof_head: "家庭",
+        btn_prefs: "偏好设置",
+        set_head: "偏好",
+        set_title: "体验",
+        set_dark: "减弱动态效果",
+        set_haptics: "告警时触感反馈",
+        set_units: "压力单位",
+        set_lang: "应用语言",
+        set_lang_sys: "跟随入口（EN / 中文）",
+        set_lang_hint: "请在手机外框上方 Hub 切换语言。",
+        set_save: "保存偏好",
+        dash_week: "仪表盘",
+        mix_head: "治疗构成",
+        mix_title: "时长与中断",
+        mix_sub: "堆叠比例占位。",
+        lg_full: "完整治疗",
+        lg_short: "偏短 / 暂停",
+        lg_idle: "空闲窗口",
+        btn_ana_ref: "刷新图表",
+        toast_ana: "图表已刷新",
+        sd_head: "治疗详情",
+        sd_mx: "峰值 ATA",
+        sd_o2: "平均 O₂%",
+        sd_temp: "舱内峰值 °C",
+        sd_al: "告警",
+        btn_sd_pdf: "导出 PDF 摘要",
+        inbox_head: "收件箱",
+        nf_all: "全部",
+        nf_bill: "账单",
+        nf_sess: "治疗",
+        nf_sys: "系统",
+        n4: "周洞察已就绪",
+        pref_title: "通知偏好",
+        pref_sub: "选择渠道（演示开关）。",
+        pref_email: "邮件 · 收据与发票",
+        pref_push: "推送 · 治疗节点",
+        pref_sms: "短信 · 仅紧急告警",
+        pref_save: "保存",
+        safe_modal_t: "安全检查",
+        safe_modal_b: "快速确认后再开始 · 仍可打开完整清单。",
+        safe_q1: "舱内无安全隐患",
+        safe_q2: "参与者符合规程",
+        safe_err: "请完成快速确认",
+        safe_full: "完整清单…",
+        safe_done: "标记完成",
+        toast_pref: "偏好已保存",
+        toast_set: "体验设置已保存",
+        toast_safe_nav: "正在打开完整清单…"
+        toast_stub: "占位页面（演示）"
+      }
+    };
+
+    let __lastSid = null;
+    const lang = () => localStorage.getItem("hbot_lang") || "en";
+    function applyL() {
+      const L = S[lang()];
+      document.documentElement.lang = lang() === "zh" ? "zh-Hans" : "en";
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const k = el.getAttribute("data-i18n");
+        if (L[k]) el.textContent = L[k];
+      });
+      document.getElementById("l-en").classList.toggle("active", lang() === "en");
+      document.getElementById("l-zh").classList.toggle("active", lang() === "zh");
+      if (typeof __lastSid === "string" && document.getElementById("scr-sessdetail").classList.contains("active")) {
+        fillSessionDetail(__lastSid);
+      }
+      document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+        const k = el.getAttribute("data-i18n-ph");
+        if (L[k]) el.setAttribute("placeholder", L[k]);
+      });
+      if (typeof window.hbotRefreshI18n === "function") window.hbotRefreshI18n();
+    }
+    document.getElementById("l-en").onclick = () => { localStorage.setItem("hbot_lang", "en"); applyL(); };
+    document.getElementById("l-zh").onclick = () => { localStorage.setItem("hbot_lang", "zh"); applyL(); };
+    applyL();
+
+    function toast(msgKey) {
+      const t = document.getElementById("toast");
+      t.textContent = S[lang()][msgKey] || msgKey;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    const MORE_SCREENS = ["live", "onboard", "sessdetail", "notif", "support", "diag", "plans", "legal", "analytics", "settings"];
+
+    function openSafetyModal() {
+      document.getElementById("modal-safety").classList.add("show");
+      ["s1", "s2"].forEach((id) => { document.getElementById(id).checked = false; });
+      document.getElementById("safe-err").classList.remove("show");
+    }
+
+    document.body.addEventListener("click", (e) => {
+      const sw = e.target.closest(".switch");
+      if (!sw) return;
+      sw.classList.toggle("on");
+      sw.setAttribute("aria-pressed", sw.classList.contains("on") ? "true" : "false");
+    });
+
+    function syncNav(id) {
+      document.querySelectorAll(".nav button").forEach((b) => {
+        const n = b.dataset.nav;
+        if (n === "more") b.classList.toggle("active", MORE_SCREENS.includes(id));
+        else b.classList.toggle("active", n === id && !MORE_SCREENS.includes(id));
+      });
+    }
+
+    let liveTick = null;
+    let liveSecs = 12;
+    function stopLiveTick() {
+      if (liveTick) { clearInterval(liveTick); liveTick = null; }
+    }
+    function startLiveTick() {
+      stopLiveTick();
+      liveSecs = 12;
+      const el = document.getElementById("live-timer");
+      const fmt = () => {
+        const m = String(Math.floor(liveSecs / 60)).padStart(2, "0");
+        const s = String(liveSecs % 60).padStart(2, "0");
+        el.textContent = m + ":" + s;
+      };
+      fmt();
+      liveTick = setInterval(() => { liveSecs++; fmt(); }, 1000);
+    }
+
+    function showScreen(id) {
+      stopLiveTick();
+      document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+      document.getElementById("scr-" + id).classList.add("active");
+      syncNav(id);
+      if (id === "live") startLiveTick();
+      if (id === "notif") {
+        const sk = document.getElementById("notif-skel");
+        sk.classList.add("loading");
+        setTimeout(() => sk.classList.remove("loading"), 520);
+      }
+    }
+
+    function openSecondary(go) {
+      document.getElementById("modal-more").classList.remove("show");
+      if (go === "onboard") {
+        openSafetyModal();
+        return;
+      }
+      showScreen(go);
+    }
+
+    document.querySelectorAll(".nav button").forEach((b) => {
+      b.onclick = () => {
+        if (b.dataset.nav === "more") {
+          document.getElementById("modal-more").classList.add("show");
+          return;
+        }
+        showScreen(b.dataset.nav);
+      };
+    });
+
+    const modalMore = document.getElementById("modal-more");
+    document.getElementById("more-close").onclick = () => modalMore.classList.remove("show");
+    modalMore.addEventListener("click", (e) => { if (e.target === modalMore) modalMore.classList.remove("show"); });
+    modalMore.querySelectorAll("[data-go]").forEach((row) => {
+      row.onclick = () => openSecondary(row.getAttribute("data-go"));
+    });
+
+    document.getElementById("btn-go-live").onclick = () => showScreen("live");
+    document.getElementById("btn-go-onboard").onclick = () => openSafetyModal();
+    document.getElementById("btn-go-analytics").onclick = () => showScreen("analytics");
+    document.getElementById("btn-ana-back").onclick = () => showScreen("home");
+    document.getElementById("btn-go-notif").onclick = () => showScreen("notif");
+    document.getElementById("btn-go-diag").onclick = () => showScreen("diag");
+    document.getElementById("btn-go-support").onclick = () => showScreen("support");
+    document.getElementById("btn-home-help").onclick = () => showScreen("support");
+    document.getElementById("btn-go-legal").onclick = () => showScreen("legal");
+    document.getElementById("btn-go-plans").onclick = () => showScreen("plans");
+    document.getElementById("btn-go-settings").onclick = () => showScreen("settings");
+
+    const modalPrefs = document.getElementById("modal-prefs");
+    document.getElementById("btn-notif-pref").onclick = () => modalPrefs.classList.add("show");
+    document.getElementById("pref-cancel").onclick = () => modalPrefs.classList.remove("show");
+    document.getElementById("pref-save").onclick = () => {
+      modalPrefs.classList.remove("show");
+      toast("toast_pref");
+    };
+    modalPrefs.addEventListener("click", (e) => { if (e.target === modalPrefs) modalPrefs.classList.remove("show"); });
+
+    const modalSafe = document.getElementById("modal-safety");
+    document.getElementById("safe-cancel").onclick = () => modalSafe.classList.remove("show");
+    document.getElementById("safe-full").onclick = () => {
+      modalSafe.classList.remove("show");
+      toast("toast_safe_nav");
+      showScreen("onboard");
+    };
+    document.getElementById("safe-done").onclick = () => {
+      const ok = ["s1", "s2"].every((id) => document.getElementById(id).checked);
+      document.getElementById("safe-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      modalSafe.classList.remove("show");
+      toast("toast_safe_quick");
+    };
+    modalSafe.addEventListener("click", (e) => { if (e.target === modalSafe) modalSafe.classList.remove("show"); });
+
+    document.getElementById("btn-settings-save").onclick = () => toast("toast_set");
+    document.getElementById("btn-settings-back").onclick = () => showScreen("profile");
+
+    document.getElementById("btn-ana-refresh").onclick = () => {
+      const w = document.getElementById("ana-card");
+      w.classList.add("loading");
+      setTimeout(() => {
+        w.classList.remove("loading");
+        toast("toast_ana");
+      }, 720);
+    };
+
+    document.getElementById("btn-sd-export").onclick = () => toast("toast_sd_pdf");
+
+    document.getElementById("notif-chips").addEventListener("click", (e) => {
+      const b = e.target.closest(".chip[data-flt]");
+      if (!b) return;
+      document.querySelectorAll("#notif-chips .chip").forEach((c) => c.classList.remove("on"));
+      b.classList.add("on");
+      const flt = b.getAttribute("data-flt");
+      document.querySelectorAll("#notif-list-body .notif-item").forEach((row) => {
+        const cat = row.getAttribute("data-cat");
+        row.style.display = flt === "all" || cat === flt ? "" : "none";
+      });
+    });
+
+    document.getElementById("btn-home-refresh").onclick = () => {
+      const w = document.getElementById("home-device-card");
+      w.classList.add("loading");
+      setTimeout(() => { w.classList.remove("loading"); toast("toast_home_sync"); }, 900);
+    };
+
+    document.getElementById("btn-ref-copy").onclick = async () => {
+      const code = document.getElementById("ref-code").textContent;
+      try { await navigator.clipboard.writeText(code); } catch (e) {}
+      toast("toast_ref");
+    };
+
+    document.getElementById("manual-q").addEventListener("input", (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll(".man-row").forEach((row) => {
+        const kw = (row.getAttribute("data-kw") || "") + " " + row.textContent.toLowerCase();
+        row.style.display = !q || kw.includes(q) ? "" : "none";
+      });
+    });
+
+    document.querySelectorAll(".acc-hd").forEach((h) => {
+      h.addEventListener("click", () => {
+        const id = h.getAttribute("data-acc");
+        document.getElementById(id).classList.toggle("open");
+      });
+    });
+
+    let wizStep = 1;
+    const wizOver = document.getElementById("wiz-first");
+    function renderWiz() {
+      const L = S[lang()];
+      const keys = [
+        ["wiz_welcome_t", "wiz_welcome_b"],
+        ["wiz_safe_t", "wiz_safe_b"],
+        ["wiz_notif_t", "wiz_notif_b"],
+        ["wiz_done_t", "wiz_done_b"]
+      ];
+      document.querySelectorAll("#wiz-dots i").forEach((d, i) => d.classList.toggle("on", i === wizStep - 1));
+      const pair = keys[wizStep - 1];
+      document.getElementById("wiz-body").innerHTML = `<h2 style="margin:0 0 8px;font-size:1.1rem;">${L[pair[0]]}</h2><p class="meta">${L[pair[1]]}</p>`;
+      document.getElementById("wiz-next-step").textContent = wizStep >= 4 ? L.wiz_done_btn : L.wiz_next_btn;
+    }
+    function closeWiz(saved) {
+      wizOver.classList.remove("show");
+      localStorage.setItem("hbot_family_wizard_done", "1");
+      if (saved) toast("toast_wiz_done");
+    }
+    document.getElementById("wiz-skip").onclick = () => closeWiz(false);
+    document.getElementById("wiz-next-step").onclick = () => {
+      if (wizStep < 4) { wizStep++; renderWiz(); return; }
+      closeWiz(true);
+      wizStep = 1;
+      renderWiz();
+    };
+    if (!localStorage.getItem("hbot_family_wizard_done")) {
+      renderWiz();
+      wizOver.classList.add("show");
+    }
+
+    const mEst = document.getElementById("modal-estop");
+    const mPar = document.getElementById("modal-parent");
+    document.getElementById("btn-estop-open").onclick = () => { mEst.classList.add("show"); };
+    document.getElementById("estop-cancel").onclick = () => mEst.classList.remove("show");
+    document.getElementById("estop-confirm").onclick = () => { mEst.classList.remove("show"); toast("toast_estop"); };
+    mEst.addEventListener("click", (e) => { if (e.target === mEst) mEst.classList.remove("show"); });
+
+    document.getElementById("btn-parent-open").onclick = () => {
+      mPar.classList.add("show");
+      document.getElementById("pin-in").value = "";
+      document.getElementById("pin-err").classList.remove("show");
+    };
+    document.getElementById("parent-cancel").onclick = () => mPar.classList.remove("show");
+    document.getElementById("parent-ok").onclick = () => {
+      const ok = document.getElementById("pin-in").value.trim() === "1234";
+      document.getElementById("pin-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      mPar.classList.remove("show");
+      toast("toast_parent");
+    };
+    mPar.addEventListener("click", (e) => { if (e.target === mPar) mPar.classList.remove("show"); });
+
+    const mFw = document.getElementById("modal-fw");
+    document.getElementById("btn-fw-open").onclick = () => {
+      mFw.classList.add("show");
+      const L = S[lang()];
+      document.getElementById("fw-msg").textContent = L.fw_idle;
+      document.getElementById("fw-bar").style.width = "0%";
+    };
+    document.getElementById("fw-close").onclick = () => mFw.classList.remove("show");
+    mFw.addEventListener("click", (e) => { if (e.target === mFw) mFw.classList.remove("show"); });
+    document.getElementById("fw-start").onclick = () => {
+      const L = S[lang()];
+      document.getElementById("fw-msg").textContent = L.fw_doing;
+      let p = 0;
+      const bar = document.getElementById("fw-bar");
+      const id = setInterval(() => {
+        p += 8;
+        bar.style.width = Math.min(p, 100) + "%";
+        if (p >= 100) {
+          clearInterval(id);
+          document.getElementById("fw-msg").textContent = L.fw_done;
+          document.getElementById("fw-ver").textContent = "2.7.0";
+          toast("toast_fw");
+        }
+      }, 220);
+    };
+
+    let btMode = "paired";
+    function renderBt() {
+      const L = S[lang()];
+      const el = document.getElementById("bt-status");
+      el.className = "bt-pill " + (btMode === "paired" ? "ok" : btMode === "scanning" ? "warn" : "");
+      el.textContent = btMode === "paired" ? L.bt_paired : btMode === "scanning" ? L.bt_scanning : L.bt_disconnected;
+    }
+    renderBt();
+    document.getElementById("bt-sim-scan").onclick = () => {
+      btMode = "scanning";
+      renderBt();
+      setTimeout(() => { btMode = "paired"; renderBt(); }, 1600);
+    };
+    document.getElementById("bt-sim-drop").onclick = () => { btMode = "drop"; renderBt(); };
+
+    document.getElementById("btn-live-back").onclick = () => showScreen("home");
+    document.getElementById("btn-on-back").onclick = () => showScreen("home");
+    document.getElementById("btn-sd-back").onclick = () => showScreen("history");
+    document.getElementById("btn-notif-back").onclick = () => showScreen("home");
+    document.getElementById("btn-sup-back").onclick = () => showScreen("profile");
+    document.getElementById("btn-diag-back").onclick = () => showScreen("home");
+    document.getElementById("btn-plans-back").onclick = () => showScreen("profile");
+    document.getElementById("btn-leg-back").onclick = () => showScreen("profile");
+
+    function fillSessionDetail(sid) {
+      __lastSid = sid;
+      const L = S[lang()];
+      document.getElementById("sd-title").textContent = L["sess_" + sid];
+      document.getElementById("sd-date").textContent = L["tag_d" + sid];
+      document.getElementById("sd-dur").textContent = L["tag_du" + sid];
+      const pill = document.getElementById("sd-st");
+      pill.textContent = sid === "3" ? L.short : L.ok;
+      pill.className = "pill " + (sid === "3" ? "use" : "ok");
+      document.getElementById("sd-stat-mx").textContent = sid === "3" ? "1.28" : "1.34";
+      document.getElementById("sd-stat-o2").textContent = sid === "3" ? "92" : "94";
+      document.getElementById("sd-stat-temp").textContent = sid === "3" ? "27" : "26";
+      document.getElementById("sd-stat-al").textContent = sid === "3" ? "1" : "0";
+    }
+    function openSessionDetail(sid) {
+      fillSessionDetail(sid);
+      showScreen("sessdetail");
+    }
+    document.querySelectorAll("#panel-cal .list-item.click").forEach((row) => {
+      row.onclick = () => openSessionDetail(row.getAttribute("data-sess"));
+      row.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); row.click(); } };
+    });
+
+    document.getElementById("btn-on-confirm").onclick = () => {
+      const ok = ["c1", "c2", "c3"].every((id) => document.getElementById(id).checked);
+      const err = document.getElementById("on-err");
+      err.classList.toggle("show", !ok);
+      if (!ok) return;
+      toast("toast_on");
+      showScreen("home");
+    };
+
+    document.getElementById("btn-mark-read").onclick = () => {
+      document.getElementById("notif-card-wrap").style.display = "none";
+      document.getElementById("notif-empty").style.display = "block";
+      toast("toast_notif_clear");
+    };
+
+    document.getElementById("sup-chat").onclick = () => toast("toast_sup");
+    document.getElementById("sup-call").onclick = () => toast("toast_stub");
+
+    document.querySelectorAll("#plan-grid .plan-card").forEach((card) => {
+      card.onclick = () => {
+        document.querySelectorAll("#plan-grid .plan-card").forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+      };
+    });
+    document.getElementById("btn-plan-save").onclick = () => {
+      toast("toast_plan");
+      showScreen("profile");
+    };
+
+    document.getElementById("btn-leg-save").onclick = () => {
+      const ok = document.getElementById("leg-ack").checked;
+      document.getElementById("leg-err").classList.toggle("show", !ok);
+      if (!ok) return;
+      toast("toast_leg");
+      showScreen("profile");
+    };
+    ["leg-priv", "leg-terms", "leg-health"].forEach((id) => {
+      document.getElementById(id).onclick = () => toast("toast_stub");
+    });
+
+    document.querySelector("#scr-history .tabs").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-tab]");
+      if (!btn) return;
+      document.querySelectorAll("#scr-history .tabs button").forEach((x) => x.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      document.getElementById("panel-cal").style.display = tab === "cal" ? "block" : "none";
+      document.getElementById("panel-list").style.display = tab === "list" ? "block" : "none";
+      document.getElementById("panel-insights").style.display = tab === "insights" ? "block" : "none";
+    });
+
+    document.getElementById("contract-tabs").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-ctab]");
+      if (!btn) return;
+      document.querySelectorAll("#contract-tabs button").forEach((x) => x.classList.remove("active"));
+      btn.classList.add("active");
+      const t = btn.dataset.ctab;
+      document.getElementById("ct-lease").style.display = t === "lease" ? "block" : "none";
+      document.getElementById("ct-orders").style.display = t === "orders" ? "block" : "none";
+    });
+
+    const modalBind = document.getElementById("modal-bind");
+    document.getElementById("btn-bind-open").onclick = () => { modalBind.classList.add("show"); document.getElementById("qr").value = ""; };
+    document.getElementById("bind-cancel").onclick = () => modalBind.classList.remove("show");
+    document.getElementById("bind-save").onclick = () => {
+      const v = document.getElementById("qr").value.trim().toUpperCase();
+      const err = document.getElementById("qr-err");
+      const inp = document.getElementById("qr");
+      if (!v.startsWith("HBOT-")) {
+        inp.classList.add("invalid");
+        err.classList.add("show");
+        return;
+      }
+      inp.classList.remove("invalid");
+      err.classList.remove("show");
+      modalBind.classList.remove("show");
+      toast("toast_bind");
+    };
+
+    document.getElementById("btn-session").onclick = () => {
+      const b = document.getElementById("btn-session");
+      b.disabled = true;
+      toast("toast_sess");
+      setTimeout(() => { b.disabled = false; }, 3000);
+    };
+
+    const modalPay = document.getElementById("modal-pay");
+    document.getElementById("btn-pay-open").onclick = () => {
+      modalPay.classList.add("show");
+      document.getElementById("cardnum").value = "";
+      document.getElementById("exp").value = "";
+      document.querySelectorAll("#modal-pay .err").forEach((e) => e.classList.remove("show"));
+      document.querySelectorAll("#modal-pay input").forEach((i) => i.classList.remove("invalid"));
+    };
+    document.getElementById("pay-cancel").onclick = () => modalPay.classList.remove("show");
+    document.getElementById("pay-go").onclick = () => {
+      const num = document.getElementById("cardnum").value.replace(/\D/g, "");
+      const exp = document.getElementById("exp").value.trim();
+      const okNum = num.length === 16;
+      const okExp = /^\d{2}\/\d{2}$/.test(exp);
+      document.getElementById("card-err").classList.toggle("show", !okNum);
+      document.getElementById("exp-err").classList.toggle("show", !okExp);
+      document.getElementById("cardnum").classList.toggle("invalid", !okNum);
+      document.getElementById("exp").classList.toggle("invalid", !okExp);
+      if (!okNum || !okExp) return;
+      modalPay.classList.remove("show");
+      toast("toast_pay");
+    };
+
+    document.getElementById("btn-report").onclick = () => toast("toast_rep");
+    document.querySelector("#ct-orders .btn").onclick = () => toast("toast_dl");
+
+    modalBind.addEventListener("click", (e) => { if (e.target === modalBind) modalBind.classList.remove("show"); });
+    modalPay.addEventListener("click", (e) => { if (e.target === modalPay) modalPay.classList.remove("show"); });
+
+    window.hbotRefreshI18n = function() {
+      if (document.getElementById("wiz-first").classList.contains("show")) renderWiz();
+      renderBt();
+    };
+  </script>
+</body>
+</html>

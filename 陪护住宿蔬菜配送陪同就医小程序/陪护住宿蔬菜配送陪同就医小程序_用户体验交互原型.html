@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陪护住宿+蔬菜配送+陪同就医小程序用户体验交互原型</title>
+  <style>
+    :root {
+      --bg: #eef5f2;
+      --panel: #ffffff;
+      --ink: #1f2a2e;
+      --muted: #6b7a80;
+      --line: #dfe9e5;
+      --green: #1f8a70;
+      --green-2: #e3f4ee;
+      --blue: #2f6fed;
+      --orange: #f59e0b;
+      --red: #e45454;
+      --shadow: 0 24px 60px rgba(31, 42, 46, 0.12);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #d8f1e7 0, transparent 34%), linear-gradient(135deg, #f7fbf9 0%, var(--bg) 100%);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; border: 0; }
+    .page-shell { max-width: 1320px; margin: 0 auto; padding: 28px; }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+    .eyebrow { color: var(--green); font-weight: 700; letter-spacing: 0.08em; font-size: 13px; }
+    h1 { margin: 8px 0 8px; font-size: clamp(28px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.04em; }
+    .hero p { margin: 0; color: var(--muted); max-width: 760px; line-height: 1.7; }
+    .mode-tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 8px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(31,42,46,.06);
+      white-space: nowrap;
+    }
+    .mode-tabs button {
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      transition: .2s ease;
+    }
+    .mode-tabs button.active { color: #fff; background: var(--green); box-shadow: 0 8px 18px rgba(31,138,112,.24); }
+    .workspace { display: grid; grid-template-columns: 430px 1fr; gap: 28px; align-items: start; }
+    .phone-wrap { position: sticky; top: 24px; }
+    .phone {
+      width: 390px;
+      min-height: 812px;
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: 46px;
+      background: #142023;
+      box-shadow: var(--shadow);
+    }
+    .screen {
+      overflow: hidden;
+      min-height: 784px;
+      border-radius: 34px;
+      background: #f7faf8;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .statusbar { height: 34px; display:flex; align-items:center; justify-content:space-between; padding: 0 22px; font-size: 12px; font-weight: 700; }
+    .app-header { padding: 12px 20px 16px; background: linear-gradient(180deg, #e8f6ef 0%, #f7faf8 100%); }
+    .app-header .top { display:flex; justify-content:space-between; align-items:center; margin-bottom: 14px; }
+    .title { font-size: 22px; font-weight: 900; letter-spacing: -0.03em; }
+    .pill { display:inline-flex; align-items:center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: var(--green-2); color: var(--green); font-size: 12px; font-weight: 700; }
+    .search { display:flex; align-items:center; gap: 8px; padding: 12px 14px; background:#fff; border:1px solid var(--line); border-radius: 18px; color: var(--muted); font-size: 14px; }
+    .content { flex:1; padding: 16px 18px 96px; overflow:auto; scrollbar-width: thin; }
+    .bottom-nav { position:absolute; left:0; right:0; bottom:0; display:grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 10px 14px 16px; background: rgba(255,255,255,.94); border-top:1px solid var(--line); backdrop-filter: blur(14px); }
+    .bottom-nav button { background:transparent; color: var(--muted); border-radius:16px; padding:8px 2px; font-size:12px; }
+    .bottom-nav button.active { color: var(--green); background: var(--green-2); font-weight:800; }
+    .service-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .service-card { min-height: 104px; border-radius: 22px; padding: 14px 12px; color:#fff; text-align:left; box-shadow: 0 14px 26px rgba(31,42,46,.12); }
+    .service-card strong { display:block; font-size:16px; margin:8px 0 4px; }
+    .service-card span { font-size:12px; opacity:.9; line-height:1.4; }
+    .home-card { border:1px solid var(--line); background:#fff; border-radius: 22px; padding: 16px; margin-bottom: 14px; }
+    .home-card h3, .section-title { margin:0 0 12px; font-size:17px; }
+    .row { display:flex; align-items:center; justify-content:space-between; gap: 12px; }
+    .muted { color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .btn { min-height: 44px; padding: 0 16px; border-radius: 15px; background: var(--green); color:#fff; font-weight:800; box-shadow: 0 8px 18px rgba(31,138,112,.18); }
+    .btn.secondary { background:#fff; color: var(--ink); border:1px solid var(--line); box-shadow:none; }
+    .btn.warn { background: var(--orange); }
+    .btn.full { width:100%; }
+    .list { display:flex; flex-direction:column; gap: 12px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius: 22px; padding: 14px; }
+    .image-box { height: 112px; border-radius: 18px; background: linear-gradient(135deg, #cfe9dc, #edf8f2); display:flex; align-items:center; justify-content:center; font-size: 42px; margin-bottom: 12px; }
+    .price { color: var(--green); font-weight:900; font-size:18px; }
+    .tag { display:inline-flex; padding: 4px 8px; border-radius: 999px; background:#f1f5f4; color: var(--muted); font-size: 12px; margin-right: 4px; }
+    .seg { display:flex; gap: 8px; margin-bottom: 14px; overflow:auto; padding-bottom: 2px; }
+    .seg button { flex: 0 0 auto; min-height:38px; padding: 0 14px; border-radius: 999px; background:#fff; color: var(--muted); border:1px solid var(--line); }
+    .seg button.active { background: var(--green); color:#fff; border-color: var(--green); }
+    .form { display:flex; flex-direction:column; gap: 12px; }
+    .field label { display:block; font-size: 13px; color: var(--muted); margin:0 0 6px 4px; }
+    .field input, .field select { width:100%; min-height:46px; border-radius: 15px; border:1px solid var(--line); background:#fff; padding: 0 12px; color:var(--ink); outline: none; }
+    .field input:focus, .field select:focus { border-color: var(--green); box-shadow: 0 0 0 4px rgba(31,138,112,.1); }
+    .stepper { display:flex; gap: 8px; margin: 14px 0; }
+    .step { flex:1; text-align:center; font-size:12px; color: var(--muted); }
+    .step::before { content:""; display:block; width:12px; height:12px; margin:0 auto 6px; border-radius:50%; background:#cad8d3; }
+    .step.done { color: var(--green); font-weight:700; }
+    .step.done::before { background: var(--green); }
+    .progress-line { height: 8px; border-radius:999px; background:#e7eeeb; overflow:hidden; margin:10px 0 14px; }
+    .progress-line span { display:block; height:100%; width:68%; background: var(--green); }
+    .toast { position:absolute; left:22px; right:22px; bottom:92px; padding: 13px 14px; border-radius: 16px; background:#132225; color:#fff; box-shadow:0 16px 32px rgba(0,0,0,.22); transform: translateY(20px); opacity:0; pointer-events:none; transition:.25s ease; font-size:14px; }
+    .toast.show { transform: translateY(0); opacity:1; }
+    .drawer { position:absolute; inset:auto 0 0 0; background:#fff; border-radius: 26px 26px 0 0; padding: 18px; box-shadow: 0 -20px 60px rgba(31,42,46,.2); transform: translateY(110%); transition:.28s ease; z-index:3; }
+    .drawer.show { transform: translateY(0); }
+    .mask { position:absolute; inset:0; background:rgba(19,34,37,.35); opacity:0; pointer-events:none; transition:.2s ease; z-index:2; }
+    .mask.show { opacity:1; pointer-events:auto; }
+    .side-panel { display:flex; flex-direction:column; gap: 18px; }
+    .panel-card { background:rgba(255,255,255,.78); border:1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: 0 18px 44px rgba(31,42,46,.08); backdrop-filter: blur(12px); }
+    .panel-card h2 { margin:0 0 12px; font-size: 22px; letter-spacing:-.03em; }
+    .flow-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .flow-item { border:1px solid var(--line); border-radius: 18px; padding: 14px; background:#fff; }
+    .flow-item b { display:block; margin-bottom:6px; }
+    .flow-item p { margin:0; color:var(--muted); font-size:13px; line-height:1.6; }
+    .table { width:100%; border-collapse: collapse; overflow:hidden; border-radius: 16px; font-size:13px; }
+    .table th, .table td { padding: 12px; border-bottom:1px solid var(--line); text-align:left; }
+    .table th { background:#f2f7f5; color:#526066; }
+    .admin-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .metric { background:#fff; border:1px solid var(--line); border-radius: 18px; padding: 16px; }
+    .metric span { color:var(--muted); font-size:13px; }
+    .metric strong { display:block; margin-top:8px; font-size:24px; }
+    .hidden { display:none !important; }
+    @media (max-width: 980px) {
+      .hero { display:block; }
+      .mode-tabs { margin-top: 18px; width:100%; overflow:auto; }
+      .workspace { grid-template-columns: 1fr; }
+      .phone-wrap { position:relative; top:0; }
+      .phone { width:min(390px, 100%); }
+      .flow-grid, .admin-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">INTERACTIVE MINI PROGRAM PROTOTYPE</div>
+        <h1>陪护住宿 + 蔬菜配送 + 陪同就医<br/>小程序体验原型</h1>
+        <p>面向中老年患者及家属，围绕“医院周边住得下、食材送得到、就医有人陪”设计一站式服务体验。此 HTML 支持点击演示、订单状态反馈和端侧切换。</p>
+      </div>
+      <nav class="mode-tabs" aria-label="端侧切换">
+        <button class="active" data-mode="user">用户小程序端</button>
+        <button data-mode="nurse">陪诊师小程序端</button>
+        <button data-mode="admin">平台管理后台</button>
+      </nav>
+    </section>
+
+    <section class="workspace">
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen">
+            <div class="statusbar"><span>8:44</span><span>5G 100%</span></div>
+            <div class="app-header">
+              <div class="top"><div class="title" id="appTitle">安心陪护</div><span class="pill" id="rolePill">适老化服务</span></div>
+              <div class="search" id="searchBox">🔎 搜索医院、房源、蔬菜或陪诊服务</div>
+            </div>
+            <div class="content" id="appContent"></div>
+            <nav class="bottom-nav" id="bottomNav"></nav>
+            <div class="mask" id="mask"></div>
+            <div class="drawer" id="drawer"></div>
+            <div class="toast" id="toast">操作成功</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <div class="panel-card">
+          <h2>演示说明</h2>
+          <div class="flow-grid">
+            <div class="flow-item"><b>住宿预订</b><p>筛选房型、查看详情、填写联系人、模拟微信支付、生成待入住订单。</p></div>
+            <div class="flow-item"><b>蔬菜配送</b><p>分类筛选、加入购物车、确认配送时段、支付后展示配送进度。</p></div>
+            <div class="flow-item"><b>陪同就医</b><p>选择服务与陪诊师、预约下单、进度追踪；订单由后台派单，陪诊端履约上报联动。</p></div>
+          </div>
+        </div>
+        <div class="panel-card">
+          <h2>核心交互路径</h2>
+          <table class="table">
+            <thead><tr><th>路径</th><th>关键动作</th><th>系统反馈</th></tr></thead>
+            <tbody>
+              <tr><td>住宿</td><td>选日期 → 订房 → 支付</td><td>房态锁定、订单生成、导航入口</td></tr>
+              <tr><td>配送</td><td>选商品 → 加购 → 支付</td><td>库存校验、待配送订单、预计送达</td></tr>
+              <tr><td>陪诊</td><td>选服务 → 选陪诊师 → 追踪</td><td>后台指派陪诊师、位置进度、完成评价</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel-card" id="adminPanel">
+          <h2>后台经营概览</h2>
+          <div class="admin-grid">
+            <div class="metric"><span>今日订单</span><strong>128</strong></div>
+            <div class="metric"><span>今日营收</span><strong>¥36,820</strong></div>
+            <div class="metric"><span>待处理</span><strong>17</strong></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+<script>
+const state = { mode: 'user', tab: 'home', service: 'hotel', cart: 0, paid: false, nurseAccepted: false };
+const $ = (id) => document.getElementById(id);
+
+const navs = {
+  user: [['home','首页'], ['hotel','住宿'], ['food','买菜'], ['care','陪诊']],
+  nurse: [['nHome','首页'], ['nOrders','订单'], ['nIncome','收入'], ['nProfile','我的']],
+  admin: [['aHome','概览'], ['aHotel','住宿'], ['aFood','配送'], ['aCare','陪诊']]
+};
+
+function toast(text){ const el=$('toast'); el.textContent=text; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 2200); }
+function showDrawer(html){ $('drawer').innerHTML=html; $('mask').classList.add('show'); $('drawer').classList.add('show'); }
+function closeDrawer(){ $('mask').classList.remove('show'); $('drawer').classList.remove('show'); }
+$('mask').onclick = closeDrawer;
+
+function pay(type){
+  state.paid = true;
+  closeDrawer();
+  toast('微信支付成功，订单已生成');
+  if(type==='hotel') renderHotelOrder();
+  if(type==='food') renderFoodOrder();
+  if(type==='care') renderCareProgress();
+}
+
+function renderNav(){
+  $('bottomNav').innerHTML = navs[state.mode].map(([key,label]) => `<button class="${state.tab===key?'active':''}" onclick="setTab('${key}')">${label}</button>`).join('');
+}
+function setTab(tab){ state.tab = tab; render(); }
+function setMode(mode){
+  state.mode = mode;
+  state.tab = navs[mode][0][0];
+  document.querySelectorAll('.mode-tabs button').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  render();
+}
+document.querySelectorAll('.mode-tabs button').forEach(btn => btn.onclick = () => setMode(btn.dataset.mode));
+
+function render(){
+  renderNav();
+  const title = {user:'安心陪护', nurse:'陪诊师工作台', admin:'平台管理'}[state.mode];
+  const pill = {user:'适老化服务', nurse:'后台派单履约', admin:'经营管控'}[state.mode];
+  $('appTitle').textContent = title; $('rolePill').textContent = pill;
+  if(state.mode==='user') renderUser();
+  if(state.mode==='nurse') renderNurse();
+  if(state.mode==='admin') renderAdmin();
+}
+
+function renderUser(){
+  const c = $('appContent');
+  if(state.tab==='home') c.innerHTML = `
+    <div class="service-grid">
+      <button class="service-card" style="background:linear-gradient(135deg,#1f8a70,#54b399)" onclick="setTab('hotel')">🏠<strong>住宿预订</strong><span>医院周边房源</span></button>
+      <button class="service-card" style="background:linear-gradient(135deg,#6aa84f,#9cc36d)" onclick="setTab('food')">🥬<strong>蔬菜配送</strong><span>食材送到住处</span></button>
+      <button class="service-card" style="background:linear-gradient(135deg,#2f6fed,#78a4ff)" onclick="setTab('care')">🩺<strong>陪同就医</strong><span>专业陪诊陪护</span></button>
+    </div>
+    <div class="home-card"><div class="row"><div><h3>今日推荐房源</h3><p class="muted">距省人民医院 680m，支持短租/月租</p></div><button class="btn secondary" onclick="setTab('hotel')">查看</button></div></div>
+    <div class="home-card"><h3>服务进度</h3><div class="stepper"><div class="step done">已预约</div><div class="step done">平台已指派</div><div class="step">服务中</div><div class="step">完成</div></div><p class="muted">王护理师将在明天 08:30 前往门诊大厅会合。</p></div>
+    <div class="home-card"><div class="row"><div><h3>适老化提示</h3><p class="muted">大按钮、高对比度、少步骤下单，支持客服协助。</p></div><span class="pill">已开启</span></div></div>`;
+  if(state.tab==='hotel') renderHotel();
+  if(state.tab==='food') renderFood();
+  if(state.tab==='care') renderCare();
+}
+
+function renderHotel(){ $('appContent').innerHTML = `
+  <div class="seg"><button class="active">可订房源</button><button onclick="toast('已切换到月租优惠')">月租优惠</button><button onclick="toast('已筛选近医院房源')">近医院</button></div>
+  <div class="card form">
+    <div class="field"><label>入住日期</label><input type="date" value="2026-05-12"></div>
+    <div class="field"><label>退房日期</label><input type="date" value="2026-05-18"></div>
+    <button class="btn full" onclick="toast('已筛选出 8 套可订房源')">筛选可订房源</button>
+  </div>
+  <div class="list" style="margin-top:14px">
+    ${hotelCard('陪护家庭套房','距医院680m · 可做饭 · 电梯房','¥238/晚','🏡')}
+    ${hotelCard('康养单人间','距医院1.2km · 安静楼层','¥168/晚','🛏️')}
+  </div>`; }
+function hotelCard(name,desc,price,icon){ return `<div class="card"><div class="image-box">${icon}</div><div class="row"><div><b>${name}</b><p class="muted">${desc}</p><span class="tag">可短租</span><span class="tag">支持月租</span></div><div class="price">${price}</div></div><button class="btn full" style="margin-top:12px" onclick="openHotelOrder('${name}','${price}')">立即预订</button></div>`; }
+function openHotelOrder(name,price){ showDrawer(`<h3>确认住宿订单</h3><p class="muted">${name}｜05月12日-05月18日｜联系人：李女士 138****6688</p><div class="row"><span>订单金额</span><b class="price">${price.replace('/晚','')} × 6晚</b></div><button class="btn full" style="margin-top:16px" onclick="pay('hotel')">微信支付并锁定房态</button><button class="btn secondary full" style="margin-top:10px" onclick="closeDrawer()">取消</button>`); }
+function renderHotelOrder(){ $('appContent').innerHTML = `<div class="card"><h3>住宿订单已确认</h3><div class="stepper"><div class="step done">已支付</div><div class="step done">已锁房</div><div class="step">待入住</div><div class="step">已完成</div></div><p class="muted">陪护家庭套房，入住 05月12日，退房 05月18日。房态已自动锁定。</p><button class="btn full" onclick="toast('正在打开微信地图导航')">一键导航到房源</button></div>`; }
+
+function renderFood(){ $('appContent').innerHTML = `
+  <div class="seg"><button class="active">蔬菜</button><button onclick="toast('已筛选肉蛋类')">肉蛋</button><button onclick="toast('已筛选营养套餐')">营养套餐</button></div>
+  <div class="list">
+    ${foodCard('清炒时蔬套餐','适合术后清淡饮食，含青菜/菌菇/豆腐','¥39.8','🥗')}
+    ${foodCard('新鲜番茄 500g','当日采购，支持备注成熟度','¥8.8','🍅')}
+    ${foodCard('土鸡蛋 10枚','高蛋白早餐搭配','¥18.8','🥚')}
+  </div>
+  <div class="card" style="margin-top:14px"><div class="row"><b>购物车 ${state.cart} 件</b><button class="btn" onclick="openFoodOrder()">去结算</button></div></div>`; }
+function foodCard(name,desc,price,icon){ return `<div class="card"><div class="row"><div style="font-size:38px">${icon}</div><div style="flex:1"><b>${name}</b><p class="muted">${desc}</p><span class="price">${price}</span></div><button class="btn secondary" onclick="state.cart++; toast('已加入购物车'); renderFood();">加购</button></div></div>`; }
+function openFoodOrder(){ if(state.cart===0){ toast('请先选择商品'); return; } showDrawer(`<h3>确认配送订单</h3><div class="form"><div class="field"><label>收货地址</label><input value="省人民医院旁 康养公寓 8栋1203"></div><div class="field"><label>配送时段</label><select><option>今天 16:00-17:00</option><option>今天 18:00-19:00</option></select></div></div><div class="row" style="margin-top:14px"><span>商品 ${state.cart} 件</span><b class="price">¥${(state.cart*39.8).toFixed(1)}</b></div><button class="btn full" style="margin-top:16px" onclick="pay('food')">微信支付并生成配送单</button>`); }
+function renderFoodOrder(){ $('appContent').innerHTML = `<div class="card"><h3>配送中</h3><div class="progress-line"><span></span></div><p class="muted">订单已打印，配送员张师傅正在备货，预计 16:40 送达。</p><button class="btn full" onclick="toast('已拨打配送员电话')">联系配送员</button></div>`; }
+
+function renderCare(){ $('appContent').innerHTML = `
+  <div class="seg"><button class="active">全程陪诊</button><button onclick="toast('已筛选检查陪同')">检查陪同</button><button onclick="toast('已筛选代办取药')">代办取药</button></div>
+  <div class="card"><h3>推荐服务</h3><p class="muted">全程陪诊 4小时：挂号、取号、检查引导、缴费协助、取药陪同。</p><div class="row"><span class="price">¥268/次</span><button class="btn" onclick="openCareOrder()">预约</button></div></div>
+  <div class="card"><div class="row"><div><b>王护理师</b><p class="muted">护理经验 6 年｜评分 4.9｜已服务 326 单</p><span class="tag">资质已认证</span><span class="tag">可约明早</span></div><div style="font-size:42px">👩‍⚕️</div></div></div>
+  <div class="card"><div class="row"><div><b>刘陪诊师</b><p class="muted">熟悉省人民医院流程｜评分 4.8</p><span class="tag">路线熟悉</span><span class="tag">可接急单</span></div><div style="font-size:42px">🧑‍⚕️</div></div></div>`; }
+function openCareOrder(){ showDrawer(`<h3>预约陪诊服务</h3><div class="form"><div class="field"><label>就诊人</label><input value="张先生 67岁"></div><div class="field"><label>预约时间</label><input value="2026-05-11 08:30"></div><div class="field"><label>医院科室</label><input value="省人民医院 心内科"></div></div><button class="btn full" style="margin-top:16px" onclick="pay('care')">微信支付 · 平台将指派陪诊师</button>`); }
+function renderCareProgress(){ $('appContent').innerHTML = `<div class="card"><h3>陪诊服务进度</h3><div class="stepper"><div class="step done">已支付</div><div class="step done">平台已指派</div><div class="step done">前往中</div><div class="step">服务完成</div></div><p class="muted">王护理师距门诊大厅约 1.2km，预计 12 分钟到达。位置每 30 秒更新一次。</p><button class="btn full" onclick="toast('已确认完成，可进入评价')">确认服务完成</button></div>`; }
+
+function renderNurse(){
+  const c=$('appContent');
+  if(state.tab==='nHome') c.innerHTML = `<div class="home-card"><h3>今日工作概览</h3><div class="admin-grid"><div class="metric"><span>待服务（派单）</span><strong>3</strong></div><div class="metric"><span>服务中</span><strong>1</strong></div><div class="metric"><span>今日收入</span><strong>¥536</strong></div></div></div><button class="btn full" onclick="setTab('nOrders')">查看派单任务</button>`;
+  if(state.tab==='nOrders') c.innerHTML = `<div class="list"><div class="card"><div class="row"><div><b>全程陪诊｜省人民医院</b><p class="muted">明天 08:30 心内科，张先生 67岁 · <span class="tag">平台已派单</span></p><span class="tag">¥268</span><span class="tag">距你 2.4km</span></div><button class="btn" onclick="state.nurseAccepted=true; toast('已进入服务，用户端将同步进度'); renderNurse();">进入服务</button></div></div><div class="card"><b>服务中订单</b><p class="muted">${state.nurseAccepted?'张先生订单履约中，请按时到达门诊大厅。':'暂无服务中订单'}</p><button class="btn secondary full" onclick="toast('已更新位置和服务状态')">更新服务进度</button></div></div>`;
+  if(state.tab==='nIncome') c.innerHTML = `<div class="card"><h3>收入明细</h3><p class="muted">总收入 ¥12,680｜待结算 ¥1,268｜已提现 ¥8,900</p><button class="btn full" onclick="toast('提现申请已提交')">提现到微信零钱</button></div>`;
+  if(state.tab==='nProfile') c.innerHTML = `<div class="card form"><h3>个人资料</h3><div class="field"><label>个人简介</label><input value="6年护理经验，熟悉三甲医院流程"></div><div class="field"><label>服务价格</label><input value="268元/次"></div><button class="btn full" onclick="toast('资料已保存，等待平台审核')">保存资料</button></div>`;
+}
+
+function renderAdmin(){
+  const c=$('appContent');
+  if(state.tab==='aHome') c.innerHTML = `<div class="admin-grid"><div class="metric"><span>今日订单</span><strong>128</strong></div><div class="metric"><span>营收</span><strong>¥36,820</strong></div><div class="metric"><span>待审核</span><strong>9</strong></div></div><div class="card" style="margin-top:14px"><h3>新订单提醒</h3><p class="muted">配送订单 #D20260510018 待打印；陪诊订单 #P20260510032 待分派。</p><button class="btn full" onclick="toast('语音提醒已播放，订单已标记处理')">播放语音提醒</button></div>`;
+  if(state.tab==='aHotel') c.innerHTML = `<div class="card"><h3>住宿房态管控</h3><p class="muted">陪护家庭套房：今日可订 6 间，已锁定 2 间。</p><button class="btn full" onclick="toast('房态已同步到用户端')">调整房态</button></div>`;
+  if(state.tab==='aFood') c.innerHTML = `<div class="card"><h3>配送订单管理</h3><p class="muted">待配送 12 单，配送中 8 单，退款待处理 2 单。</p><button class="btn full" onclick="toast('订单已打印')">打印新订单</button></div>`;
+  if(state.tab==='aCare') c.innerHTML = `<div class="card"><h3>陪诊师审核</h3><p class="muted">王护理师资质证书待复核，服务类型：全程陪诊/检查陪同。</p><button class="btn full" onclick="toast('审核通过，可接收平台派单')">通过审核</button></div>`;
+}
+
+render();
+</script>
+</body>
+</html>

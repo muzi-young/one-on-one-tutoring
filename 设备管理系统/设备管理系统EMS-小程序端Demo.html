@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EMS设备管理系统 - 小程序端Demo</title>
+  <style>
+    :root {
+      --bg: #eef3fb;
+      --phone: #f6f8fc;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e5e9f2;
+      --blue: #175cff;
+      --blue-soft: #eaf0ff;
+      --green: #0f9f6e;
+      --green-soft: #e8f8f2;
+      --orange: #b76e00;
+      --orange-soft: #fff4df;
+      --red: #cf2e2e;
+      --red-soft: #ffecec;
+      --shadow: 0 20px 60px rgba(16, 24, 40, .14);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) minmax(320px, 1fr);
+      gap: 28px;
+      padding: 28px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0 0, rgba(23,92,255,.14), transparent 34rem),
+        linear-gradient(135deg, #f8fbff, var(--bg));
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    button, input, select, textarea { font: inherit; }
+    button { border: 0; cursor: pointer; transition: .16s ease; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(23,92,255,.24);
+      outline-offset: 2px;
+    }
+    .phone-frame {
+      position: sticky;
+      top: 28px;
+      height: calc(100vh - 56px);
+      min-height: 760px;
+      padding: 14px;
+      border-radius: 42px;
+      background: #0b1220;
+      box-shadow: var(--shadow);
+    }
+    .phone {
+      height: 100%;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      border-radius: 30px;
+      background: var(--phone);
+    }
+    .status {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 18px 6px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #111827;
+      background: #fff;
+    }
+    .header {
+      padding: 10px 18px 14px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .header strong { display: block; font-size: 20px; letter-spacing: -.03em; }
+    .header span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .content { overflow: auto; padding: 14px; }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fade .14s ease-out; }
+    @keyframes fade { from { opacity: .4; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      padding: 8px 8px 10px;
+      background: #fff;
+      border-top: 1px solid var(--line);
+    }
+    .tab {
+      min-height: 46px;
+      border-radius: 14px;
+      background: transparent;
+      color: #667085;
+      font-size: 12px;
+    }
+    .tab.active { background: var(--blue-soft); color: var(--blue); font-weight: 900; }
+    .hero {
+      padding: 18px;
+      border-radius: 22px;
+      color: #fff;
+      background: linear-gradient(135deg, #175cff, #0f9f6e);
+    }
+    .hero h1 { margin: 0; font-size: 22px; letter-spacing: -.04em; }
+    .hero p { margin: 8px 0 0; color: rgba(255,255,255,.86); font-size: 13px; line-height: 1.55; }
+    .btn {
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--line);
+      font-weight: 800;
+    }
+    .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .btn.green { background: var(--green); color: #fff; border-color: var(--green); }
+    .btn.orange { background: #f5a000; color: #211400; border-color: #f5a000; }
+    .btn.ghost { background: transparent; }
+    .btn.block { width: 100%; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(16,24,40,.08); }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .quick {
+      min-height: 76px;
+      padding: 10px 6px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .quick b {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin: 0 auto 7px;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 2px 10px;
+    }
+    .section-title h2 { margin: 0; font-size: 16px; }
+    .section-title span { color: var(--muted); font-size: 12px; }
+    .card {
+      padding: 14px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 20px rgba(16,24,40,.04);
+    }
+    .card + .card { margin-top: 10px; }
+    .card strong { display: block; font-size: 15px; }
+    .card p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .badge.blue { background: var(--blue-soft); color: #174ea6; }
+    .badge.green { background: var(--green-soft); color: #067647; }
+    .badge.orange { background: var(--orange-soft); color: var(--orange); }
+    .badge.red { background: var(--red-soft); color: var(--red); }
+    .scan-box {
+      display: grid;
+      place-items: center;
+      width: 190px;
+      height: 190px;
+      margin: 18px auto;
+      border-radius: 28px;
+      background:
+        linear-gradient(90deg, #111 12px, transparent 12px) 0 0/24px 24px,
+        linear-gradient(#111 12px, transparent 12px) 0 0/24px 24px,
+        #fff;
+      border: 12px solid #fff;
+      box-shadow: 0 16px 40px rgba(16,24,40,.16);
+    }
+    .scan-line {
+      width: 150px;
+      height: 3px;
+      border-radius: 999px;
+      background: #0f9f6e;
+      box-shadow: 0 0 16px #0f9f6e;
+      animation: scan 1.8s infinite ease-in-out;
+    }
+    @keyframes scan { 0%,100% { transform: translateY(-68px); } 50% { transform: translateY(68px); } }
+    label { display: block; margin: 12px 0 6px; color: #344054; font-size: 13px; font-weight: 900; }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid #d8dee9;
+      background: #fff;
+      color: var(--text);
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    .form-actions { display: grid; gap: 10px; margin-top: 14px; }
+    .detail-hero {
+      padding: 18px;
+      border-radius: 22px;
+      background: #101828;
+      color: #fff;
+    }
+    .detail-hero h2 { margin: 0; font-size: 20px; letter-spacing: -.03em; }
+    .detail-hero p { margin: 8px 0 0; color: #cbd5e1; font-size: 12px; line-height: 1.55; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .metric { padding: 12px; border-radius: 16px; background: #fff; border: 1px solid var(--line); }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 6px; font-size: 18px; }
+    .timeline { display: grid; gap: 12px; }
+    .time-item { display: grid; grid-template-columns: 24px 1fr; gap: 9px; }
+    .dot { width: 11px; height: 11px; margin: 5px auto 0; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+    .time-item strong { display: block; font-size: 13px; }
+    .time-item span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .side {
+      min-width: 0;
+      display: grid;
+      align-content: start;
+      gap: 16px;
+    }
+    .demo-panel {
+      padding: 22px;
+      border: 1px solid rgba(229,233,242,.9);
+      border-radius: 24px;
+      background: rgba(255,255,255,.86);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .demo-panel h1 { margin: 0; font-size: clamp(26px, 2.6vw, 38px); letter-spacing: -.05em; color: #101828; }
+    .demo-panel h2 { margin: 0 0 10px; font-size: 18px; }
+    .demo-panel p, .demo-panel li { color: var(--muted); font-size: 14px; line-height: 1.65; }
+    .flow { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .flow .card { min-height: 104px; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 30;
+      display: none;
+      width: min(360px, calc(100vw - 40px));
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #101828;
+      color: #fff;
+      box-shadow: 0 18px 45px rgba(16,24,40,.24);
+      transform: translateX(-50%);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .toast.show { display: block; }
+    @media (max-width: 980px) {
+      body { grid-template-columns: 1fr; padding: 16px; }
+      .phone-frame { position: static; height: 780px; max-width: 430px; margin: 0 auto; }
+      .flow { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 430px) {
+      body { padding: 0; background: var(--phone); }
+      .side { display: none; }
+      .phone-frame { width: 100%; height: 100vh; min-height: 100vh; padding: 0; border-radius: 0; background: var(--phone); box-shadow: none; }
+      .phone { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <section class="phone-frame">
+    <div class="phone">
+      <div class="status"><span>18:45</span><span>微信小程序</span></div>
+      <header class="header"><strong id="pageTitle">EMS设备助手</strong><span id="pageDesc">现场扫码、报修、点检、领用、审批待办。</span></header>
+      <main class="content">
+        <section class="screen active" id="home">
+          <div class="hero">
+            <h1>晚上好，王班长</h1>
+            <p>今日有 3 项点检、2 项审批、1 条闲置调拨建议需要处理。</p>
+            <div style="height:14px"></div>
+            <button class="btn block" onclick="show('scan')">扫一扫设备二维码</button>
+          </div>
+          <div class="quick-grid">
+            <button class="quick" onclick="show('scan')"><b>扫</b>扫码</button>
+            <button class="quick" onclick="show('repair')"><b>修</b>报修</button>
+            <button class="quick" onclick="show('check')"><b>检</b>点检</button>
+            <button class="quick" onclick="show('approval')"><b>审</b>审批</button>
+          </div>
+          <div class="section-title"><h2>我的待办</h2><span>4 项</span></div>
+          <div class="card" onclick="show('approval')"><div class="row"><strong>平缝机请购审批</strong><span class="badge orange">待审批</span></div><p>三车间申请 5 台，系统命中 3 台可调拨设备。</p></div>
+          <div class="card" onclick="show('check')"><div class="row"><strong>蒸汽发生器点检</strong><span class="badge red">已超时</span></div><p>一车间设备 D-SH-01-016 本周点检未完成。</p></div>
+          <div class="card" onclick="show('asset')"><div class="row"><strong>闲置调拨建议</strong><span class="badge blue">建议处理</span></div><p>平缝机 A-SH-03-023 已闲置 38 天，建议调拨至二车间。</p></div>
+        </section>
+
+        <section class="screen" id="scan">
+          <div class="hero">
+            <h1>扫描设备二维码</h1>
+            <p>对准设备二维码即可打开档案，支持报修、点检、领用、归还。</p>
+          </div>
+          <div class="scan-box"><div class="scan-line"></div></div>
+          <button class="btn primary block" onclick="show('asset');toast('扫码成功：A-SH-03-023 杰克平缝机')">模拟扫码成功</button>
+          <div class="section-title"><h2>最近扫码</h2><span>3 条</span></div>
+          <div class="card"><strong>C-SH-02-007 真空包装机</strong><p>二车间 · 维修中 · 18:05</p></div>
+          <div class="card"><strong>D-SH-01-016 蒸汽发生器</strong><p>一车间 · 待点检 · 17:22</p></div>
+        </section>
+
+        <section class="screen" id="asset">
+          <div class="detail-hero">
+            <div class="row"><h2>A-SH-03-023</h2><span class="badge orange">闲置</span></div>
+            <p>杰克平缝机 · 三车间 · 责任人：王班长 · 已连续 38 天未领用。</p>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><span>采购金额</span><strong>¥4,800</strong></div>
+            <div class="metric"><span>维修次数</span><strong>3 次</strong></div>
+            <div class="metric"><span>维修成本</span><strong>¥620</strong></div>
+            <div class="metric"><span>账面价值</span><strong>¥3,960</strong></div>
+          </div>
+          <div class="quick-grid">
+            <button class="quick" onclick="show('repair')"><b>修</b>报修</button>
+            <button class="quick" onclick="show('check')"><b>检</b>点检</button>
+            <button class="quick" onclick="show('use')"><b>用</b>领用</button>
+            <button class="quick" onclick="toast('已提交调拨建议给后台管理员')"><b>调</b>调拨</button>
+          </div>
+          <div class="section-title"><h2>生命周期记录</h2><span>最近 4 条</span></div>
+          <div class="card">
+            <div class="timeline">
+              <div class="time-item"><div class="dot"></div><div><strong>2026-04-20 归还</strong><span>二车间归还至三车间，状态变为空闲。</span></div></div>
+              <div class="time-item"><div class="dot"></div><div><strong>2026-04-12 维修完成</strong><span>更换针杆组件，费用 ¥220。</span></div></div>
+              <div class="time-item"><div class="dot"></div><div><strong>2026-03-28 跨车间调拨</strong><span>一车间调拨至二车间。</span></div></div>
+              <div class="time-item"><div class="dot"></div><div><strong>2026-01-16 入库</strong><span>扫码绑定二维码并生成台账。</span></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="repair">
+          <div class="section-title"><h2>提交报修</h2><span>A-SH-03-023</span></div>
+          <div class="card">
+            <label>故障等级</label>
+            <select><option>一般故障</option><option>影响生产</option><option>停机故障</option></select>
+            <label>故障现象</label>
+            <textarea>针距异常，运行时有异响，需要维修人员检查。</textarea>
+            <label>是否影响生产</label>
+            <select><option>否</option><option>是，需要优先处理</option></select>
+            <div class="form-actions">
+              <button class="btn primary" onclick="show('messages');toast('报修单已提交，已通知班组长和维修人员')">提交报修</button>
+              <button class="btn" onclick="show('asset')">返回设备档案</button>
+            </div>
+          </div>
+          <div class="section-title"><h2>我的报修</h2><span>2 条</span></div>
+          <div class="card"><div class="row"><strong>真空包装机吸力不足</strong><span class="badge blue">已派单</span></div><p>维修组已收到，预计 30 分钟内到场。</p></div>
+        </section>
+
+        <section class="screen" id="check">
+          <div class="section-title"><h2>设备点检</h2><span>本周任务</span></div>
+          <div class="card">
+            <label>设备外观</label>
+            <select><option>正常</option><option>异常</option></select>
+            <label>运行状态</label>
+            <select><option>正常</option><option>异响/卡顿</option><option>无法启动</option></select>
+            <label>安全防护</label>
+            <select><option>正常</option><option>缺失/损坏</option></select>
+            <label>点检备注</label>
+            <textarea>运转平稳，未发现明显异常。</textarea>
+            <div class="form-actions">
+              <button class="btn green" onclick="show('messages');toast('点检已提交，设备状态已更新')">提交点检</button>
+              <button class="btn" onclick="show('home')">稍后处理</button>
+            </div>
+          </div>
+          <div class="section-title"><h2>点检任务</h2><span>3 项</span></div>
+          <div class="card"><div class="row"><strong>蒸汽发生器</strong><span class="badge red">超时</span></div><p>一车间 · 周点检 · 设备组</p></div>
+          <div class="card"><div class="row"><strong>吊挂系统</strong><span class="badge green">已完成</span></div><p>后整区 · 日点检 · 班组长</p></div>
+        </section>
+
+        <section class="screen" id="use">
+          <div class="section-title"><h2>领用 / 归还</h2><span>A-SH-03-023</span></div>
+          <div class="card">
+            <div class="row"><strong>当前状态</strong><span class="badge orange">闲置可领用</span></div>
+            <p>设备当前在三车间，可申请领用或调拨至其他车间。</p>
+            <label>目标车间</label>
+            <select><option>二车间</option><option>一车间</option><option>三车间</option><option>后整车间</option></select>
+            <label>使用原因</label>
+            <textarea>二车间工序排产需要补充平缝机。</textarea>
+            <div class="form-actions">
+              <button class="btn primary" onclick="show('messages');toast('领用申请已提交，等待班组长确认')">提交领用</button>
+              <button class="btn orange" onclick="show('messages');toast('调拨申请已提交，等待部门主管审批')">申请调拨</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="approval">
+          <div class="section-title"><h2>我的审批</h2><span>2 项待处理</span></div>
+          <div class="card">
+            <div class="row"><strong>平缝机请购审批</strong><span class="badge orange">命中闲置</span></div>
+            <p>三车间申请 5 台平缝机，系统建议从闲置设备中先调拨 2 台，剩余 3 台进入采购。</p>
+            <div class="form-actions">
+              <button class="btn green" onclick="show('messages');toast('已通过：采用调拨建议并继续采购剩余数量')">通过并采用调拨</button>
+              <button class="btn" onclick="toast('已退回：要求补充继续采购原因')">退回补充</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row"><strong>真空机请购审批</strong><span class="badge blue">财务复核</span></div>
+            <p>后整车间申请 2 台真空机，闲置校验无可用设备。</p>
+            <button class="btn primary block" onclick="toast('已通过真空机请购审批')">通过审批</button>
+          </div>
+        </section>
+
+        <section class="screen" id="messages">
+          <div class="section-title"><h2>消息中心</h2><span>钉钉主通道</span></div>
+          <div class="card"><div class="row"><strong>报修单已派单</strong><span class="badge blue">刚刚</span></div><p>设备 C-SH-02-007 已派给维修组，处理结果将回写设备档案。</p></div>
+          <div class="card"><div class="row"><strong>点检提交成功</strong><span class="badge green">1 分钟前</span></div><p>D-SH-01-016 点检记录已保存。</p></div>
+          <div class="card"><div class="row"><strong>请购审批提醒</strong><span class="badge orange">待处理</span></div><p>平缝机请购单 PR-20260501-001 等待审批。</p></div>
+          <div class="card"><div class="row"><strong>闲置调拨建议</strong><span class="badge blue">建议</span></div><p>三车间平缝机闲置 38 天，建议调拨至二车间。</p></div>
+        </section>
+      </main>
+      <nav class="tabs" aria-label="小程序底部导航">
+        <button class="tab active" data-screen="home">首页</button>
+        <button class="tab" data-screen="scan">扫码</button>
+        <button class="tab" data-screen="asset">设备</button>
+        <button class="tab" data-screen="approval">审批</button>
+        <button class="tab" data-screen="messages">消息</button>
+      </nav>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="demo-panel">
+      <h1>EMS 小程序端 Demo</h1>
+      <p>这个页面用于给客户演示一线员工、班组长和管理人员在手机上的真实使用路径。页面已拆离后台，重点突出现场扫码和移动处理。</p>
+      <button class="btn primary" onclick="playDemo()">一键演示小程序主流程</button>
+    </div>
+    <div class="demo-panel">
+      <h2>演示路径</h2>
+      <div class="flow">
+        <div class="card"><strong>1. 首页待办</strong><p>看到点检、审批、调拨建议。</p></div>
+        <div class="card"><strong>2. 扫码设备</strong><p>扫码进入设备档案。</p></div>
+        <div class="card"><strong>3. 设备操作</strong><p>报修、点检、领用、调拨。</p></div>
+        <div class="card"><strong>4. 审批处理</strong><p>请购命中闲置时采用调拨建议。</p></div>
+        <div class="card"><strong>5. 消息通知</strong><p>钉钉主通道，小程序内留消息记录。</p></div>
+        <div class="card"><strong>6. 台账回写</strong><p>所有操作同步到后台设备档案。</p></div>
+      </div>
+    </div>
+    <div class="demo-panel">
+      <h2>客户确认点</h2>
+      <ul>
+        <li>一线员工是否都通过微信小程序操作。</li>
+        <li>报修和点检是否需要按设备类型区分权限。</li>
+        <li>领用、归还、调拨是否都需要审批。</li>
+        <li>消息推送是否采用“钉钉主通道 + 短信兜底”。</li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const text = {
+      home: ["EMS设备助手", "现场扫码、报修、点检、领用、审批待办。"],
+      scan: ["扫一扫", "扫描设备二维码，快速进入设备档案。"],
+      asset: ["设备档案", "查看基础信息、成本、状态和生命周期记录。"],
+      repair: ["提交报修", "填写故障信息并通知班组长、维修人员。"],
+      check: ["设备点检", "按点检项填报结果，异常自动预警。"],
+      use: ["领用调拨", "申请领用、归还或跨车间调拨设备。"],
+      approval: ["我的审批", "处理请购、调拨、维修等移动审批。"],
+      messages: ["消息中心", "查看审批、报修、点检、调拨通知。"]
+    };
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => show(tab.dataset.screen)));
+    function show(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === id));
+      document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.screen === id));
+      document.getElementById("pageTitle").textContent = text[id][0];
+      document.getElementById("pageDesc").textContent = text[id][1];
+    }
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 3300);
+    }
+    function playDemo() {
+      const flow = ["home", "scan", "asset", "repair", "check", "use", "approval", "messages"];
+      let i = 0;
+      toast("开始演示小程序：待办 → 扫码 → 档案 → 报修/点检/领用 → 审批 → 消息");
+      const timer = setInterval(() => {
+        show(flow[i]);
+        i += 1;
+        if (i >= flow.length) {
+          clearInterval(timer);
+          toast("小程序演示完成：所有现场动作都会回写后台台账");
+        }
+      }, 1050);
+    }
+  </script>
+</body>
+</html>

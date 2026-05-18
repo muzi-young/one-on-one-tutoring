@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>实时控制台 · 运营端</title>
+<link rel="stylesheet" href="../assets/shell.css"/>
+<style>
+.live-panel{background:#0f1117;color:#fff;border-radius:10px;overflow:hidden;}
+.danmu-item{padding:8px 12px;border-bottom:1px solid #1f2330;font-size:13px;display:flex;gap:8px;align-items:flex-start;}
+.danmu-item:hover{background:#1a1d28;}
+</style></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:20px;display:flex;align-items:center;gap:10px;">
+        <span style="background:#e74c3c;color:#fff;font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;">● LIVE</span>
+        实时互动控制台
+      </h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">《流水》技法直播课 · 已开播 18 分 32 秒 · 数字人 阿琴</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn">⏸ 暂停播报</button>
+      <button class="btn danger">🛑 紧急终止</button>
+    </div>
+  </div>
+
+  <!-- 实时指标 -->
+  <div class="stat-row" style="margin-bottom:14px;">
+    <div class="stat-card"><div class="v">1,243</div><div class="l">实时在线 👁</div><div class="d up">↑ 较开播 +312</div></div>
+    <div class="stat-card"><div class="v" style="color:#23a06b;">86</div><div class="l">课程卡片点击</div><div class="d up">点击率 6.9%</div></div>
+    <div class="stat-card"><div class="v" style="color:#e74c3c;">23</div><div class="l">已报名 / 转化</div><div class="d up">¥ 20,608</div></div>
+    <div class="stat-card"><div class="v" style="color:#d99a2b;">5</div><div class="l">待人工处理 ⚠</div><div class="d down">需关注</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 380px;gap:18px;">
+    <!-- 左：弹幕实时流 -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3 style="display:flex;justify-content:space-between;align-items:center;">
+          <span>弹幕实时流</span>
+          <div style="display:flex;gap:6px;">
+            <button class="btn primary sm">全部</button>
+            <button class="btn sm">课程咨询 12</button>
+            <button class="btn sm">价格 8</button>
+            <button class="btn sm">⚠ 低置信度 5</button>
+            <button class="btn sm">违规 1</button>
+          </div>
+        </h3>
+        <div class="live-panel" style="max-height:380px;overflow-y:auto;">
+          <div class="danmu-item">
+            <span class="tag tag-blue" style="flex-shrink:0;">课程咨询</span>
+            <div style="flex:1;"><b style="color:#6cb2ff;">琴友A</b> <span style="color:#888;font-size:11px;">18:23</span><br/><span style="color:#ddd;">滚拂的发力点在腕部还是指尖？</span></div>
+            <button class="btn primary sm">数字人回答</button>
+          </div>
+          <div class="danmu-item">
+            <span class="tag tag-orange" style="flex-shrink:0;">已回答</span>
+            <div style="flex:1;"><b style="color:#ffb86c;">阿琴 ✦</b> <span style="color:#888;font-size:11px;">18:23</span><br/><span style="color:#ddd;">勾用指肚向内、挑用指甲向外，下一节我们专门示范。</span></div>
+            <span style="color:#23a06b;font-size:11px;">✓</span>
+          </div>
+          <div class="danmu-item">
+            <span class="tag tag-yellow" style="flex-shrink:0;">价格</span>
+            <div style="flex:1;"><b style="color:#6cb2ff;">小白</b> <span style="color:#888;font-size:11px;">18:24</span><br/><span style="color:#ddd;">直播价后续还会有吗？</span></div>
+            <button class="btn primary sm">数字人回答</button>
+          </div>
+          <div class="danmu-item" style="background:#3a1f0a;">
+            <span class="tag tag-red" style="flex-shrink:0;">⚠ 低置信度</span>
+            <div style="flex:1;"><b style="color:#6cb2ff;">古韵</b> <span style="color:#888;font-size:11px;">18:25</span><br/><span style="color:#ddd;">嵇康为什么写广陵散？这首曲子和流水有什么联系？</span></div>
+            <button class="btn danger sm">人工接管</button>
+          </div>
+          <div class="danmu-item">
+            <span class="tag tag-gray" style="flex-shrink:0;">闲聊</span>
+            <div style="flex:1;"><b style="color:#6cb2ff;">阿酱</b> <span style="color:#888;font-size:11px;">18:25</span><br/><span style="color:#ddd;">阿琴好可爱～</span></div>
+            <button class="btn sm" style="background:transparent;color:#888;border-color:#444;">忽略</button>
+          </div>
+          <div class="danmu-item" style="background:#3a0a0a;">
+            <span class="tag tag-red" style="flex-shrink:0;">已拦截</span>
+            <div style="flex:1;"><b style="color:#888;">用户#771</b> <span style="color:#888;font-size:11px;">18:26</span><br/><span style="color:#777;text-decoration:line-through;">[***敏感词***]</span></div>
+            <button class="btn sm" style="background:transparent;color:#888;border-color:#444;">恢复</button>
+          </div>
+          <div class="danmu-item">
+            <span class="tag tag-blue" style="flex-shrink:0;">课程咨询</span>
+            <div style="flex:1;"><b style="color:#6cb2ff;">青衫</b> <span style="color:#888;font-size:11px;">18:27</span><br/><span style="color:#ddd;">零基础可以学这门课吗？</span></div>
+            <button class="btn primary sm">数字人回答</button>
+          </div>
+          <div class="danmu-item">
+            <span class="tag tag-orange" style="flex-shrink:0;">数字人主动</span>
+            <div style="flex:1;"><b style="color:#ffb86c;">阿琴 ✦</b> <span style="color:#888;font-size:11px;">18:28</span><br/><span style="color:#ddd;">大家可以点击下方课程卡片，限时 7 折，仅剩 23 个名额～</span></div>
+            <span style="color:#23a06b;font-size:11px;">📌 转化</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右：直播状态 + 当前节点 -->
+    <div>
+      <div class="card" style="margin-bottom:14px;">
+        <h3>当前直播节点</h3>
+        <div style="background:#fffaf0;border-left:3px solid var(--gold);padding:10px;">
+          <div style="font-size:11px;color:#888;">②  知识讲解 · 18:00 - 23:00</div>
+          <b style="font-size:14px;">滚拂技法分解动画</b>
+          <div style="height:4px;background:#f1ead7;border-radius:2px;margin-top:8px;overflow:hidden;"><div style="width:75%;height:100%;background:var(--gold);"></div></div>
+          <div style="font-size:11px;color:#888;margin-top:4px;">还剩 1 分 28 秒，下一节点：课程介绍</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <button class="btn sm" style="flex:1;">⏮ 上一节</button>
+          <button class="btn sm" style="flex:1;">⏭ 跳过</button>
+          <button class="btn sm" style="flex:1;">⏸ 暂停</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:14px;">
+        <h3>数字人状态</h3>
+        <div style="font-size:13px;line-height:2;">
+          <div style="display:flex;justify-content:space-between;"><span>形象状态</span><span class="tag tag-green">正常播报</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>音视频生成耗时</span><span>820 ms</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>意图识别置信度</span><span style="color:#23a06b;">0.92</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>网络状态</span><span style="color:#23a06b;">●●●● 优秀</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="background:#fff5e1;border-color:#d6b06b;">
+        <h3 style="color:#8b6a36;">🛡 异常 / 拦截记录</h3>
+        <div style="font-size:12px;color:#7a5b22;line-height:1.8;">
+          <div>18:26 · 用户#771 触发敏感词「***」 <a style="color:var(--gold);">恢复</a></div>
+          <div>18:24 · 用户#552 刷屏 → 自动禁言 1min</div>
+          <div style="color:#23a06b;">18:08 · 网络波动 → 已自动切换预设话术</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="ops/console.html" data-crumbs="运营端 / <b>实时控制台</b>" data-depth="1"></script>
+</body></html>

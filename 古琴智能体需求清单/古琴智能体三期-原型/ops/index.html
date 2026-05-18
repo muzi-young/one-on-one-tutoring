@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"/><title>运营工作台 · 古琴智能体</title>
+<link rel="stylesheet" href="../assets/shell.css"/></head><body>
+<div id="app-shell">
+<div class="content">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+    <div>
+      <h2 class="ink-title" style="margin:0;font-size:22px;">🛠 运营工作台</h2>
+      <p style="color:#888;font-size:13px;margin:4px 0 0;">早上好，李运营 ✦ 您今天有 <b style="color:#23c4a7;">2 场直播</b> 待开播，<b style="color:#d99a2b;">1 个脚本</b> 待审核</p>
+    </div>
+    <a href="live-create.html" class="btn primary">+ 创建直播</a>
+  </div>
+
+  <div class="stat-row" style="margin-bottom:18px;">
+    <div class="stat-card" style="border-left:4px solid #e74c3c;"><div class="v" style="color:#e74c3c;">2</div><div class="l">直播中</div><div class="d up">实时在线 1,243 人</div></div>
+    <div class="stat-card" style="border-left:4px solid #5b8def;"><div class="v">8</div><div class="l">待开播</div><div class="d">距下一场 3h 12min</div></div>
+    <div class="stat-card" style="border-left:4px solid #d99a2b;"><div class="v" style="color:#d99a2b;">3</div><div class="l">脚本待审核</div><div class="d down">需您处理</div></div>
+    <div class="stat-card" style="border-left:4px solid #23a06b;"><div class="v" style="color:#23a06b;">¥ 11.8万</div><div class="l">本月转化</div><div class="d up">↑ 18% vs 上月</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px;">
+    <div class="card">
+      <h3 style="display:flex;justify-content:space-between;align-items:center;">
+        <span>🎬 今日直播日程</span>
+        <a href="live-list.html" style="font-size:12px;color:#23c4a7;">查看全部 →</a>
+      </h3>
+      <div style="border-left:2px solid #ece4d3;padding-left:18px;margin-left:6px;">
+        <div style="position:relative;margin-bottom:14px;">
+          <span style="position:absolute;left:-23px;width:14px;height:14px;background:#e74c3c;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px #e74c3c;"></span>
+          <div style="font-size:12px;color:#888;">19:00 · 直播中</div>
+          <b>《流水》技法直播课</b>
+          <div style="font-size:12px;color:#666;margin-top:2px;">阿琴 · 关联《流水》系统课 · 已转化 23 单</div>
+          <a href="console.html" class="btn primary sm" style="margin-top:6px;">进入控制台</a>
+        </div>
+        <div style="position:relative;margin-bottom:14px;">
+          <span style="position:absolute;left:-21px;width:10px;height:10px;background:#5b8def;border-radius:50%;border:2px solid #fff;"></span>
+          <div style="font-size:12px;color:#888;">明晚 20:00</div>
+          <b>《广陵散》赏析夜话</b>
+          <div style="font-size:12px;color:#666;margin-top:2px;">张老师·名家直播 · ⭐ 328 人预约</div>
+          <a href="script.html" class="btn sm" style="margin-top:6px;">编排脚本</a>
+        </div>
+        <div style="position:relative;">
+          <span style="position:absolute;left:-21px;width:10px;height:10px;background:#d99a2b;border-radius:50%;border:2px solid #fff;"></span>
+          <div style="font-size:12px;color:#888;">5/19 19:30 · 脚本待审核</div>
+          <b>琴弦保养答疑直播</b>
+          <div style="font-size:12px;color:#666;margin-top:2px;">阿琴 · ⭐ 102 人预约</div>
+          <button class="btn primary sm" style="margin-top:6px;">提交审核</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚡ 待处理任务</h3>
+      <div style="font-size:13px;">
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1ead7;">
+          <span class="tag tag-red">紧急</span>
+          <div style="flex:1;"><b>实时控制台 5 条待人工</b><div style="color:#888;font-size:11px;">《流水》直播中</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1ead7;">
+          <span class="tag tag-yellow">待审</span>
+          <div style="flex:1;"><b>《琴弦保养》脚本 v1</b><div style="color:#888;font-size:11px;">提交审核</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #f1ead7;">
+          <span class="tag tag-blue">提醒</span>
+          <div style="flex:1;"><b>清音 数字人授权 77 天到期</b><div style="color:#888;font-size:11px;">建议尽快续约</div></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;">
+          <span class="tag tag-green">优化</span>
+          <div style="flex:1;"><b>《广陵散》预约率超预期</b><div style="color:#888;font-size:11px;">建议加场</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="ink-title" style="font-size:16px;margin:0 0 12px;">快捷功能</h3>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;">
+    <a class="card" href="live-list.html" style="text-align:center;cursor:pointer;color:inherit;">
+      <div style="font-size:32px;">📋</div>
+      <h4 style="margin:8px 0 4px;font-size:14px;">直播列表</h4>
+      <div style="font-size:11px;color:#888;">管理所有直播</div>
+    </a>
+    <a class="card" href="live-create.html" style="text-align:center;cursor:pointer;color:inherit;background:linear-gradient(135deg,#dcf6f0,#fff);border-color:#23c4a7;">
+      <div style="font-size:32px;">➕</div>
+      <h4 style="margin:8px 0 4px;font-size:14px;">创建直播</h4>
+      <div style="font-size:11px;color:#888;">快速发起新场次</div>
+    </a>
+    <a class="card" href="script.html" style="text-align:center;cursor:pointer;color:inherit;">
+      <div style="font-size:32px;">📝</div>
+      <h4 style="margin:8px 0 4px;font-size:14px;">脚本编排</h4>
+      <div style="font-size:11px;color:#888;">时间轴节点</div>
+    </a>
+    <a class="card" href="console.html" style="text-align:center;cursor:pointer;color:inherit;">
+      <div style="font-size:32px;">🎛</div>
+      <h4 style="margin:8px 0 4px;font-size:14px;">实时控制台</h4>
+      <div style="font-size:11px;color:#888;">直播中控场</div>
+    </a>
+    <a class="card" href="promo.html" style="text-align:center;cursor:pointer;color:inherit;">
+      <div style="font-size:32px;">🎁</div>
+      <h4 style="margin:8px 0 4px;font-size:14px;">优惠活动</h4>
+      <div style="font-size:11px;color:#888;">配置专享价</div>
+    </a>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <h3>🔥 近 7 天表现</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;font-size:13px;">
+      <div><div style="color:#888;font-size:12px;">最高观看</div><b style="font-size:18px;">8,256</b><div style="color:#888;font-size:11px;">《阳关三叠》5/13</div></div>
+      <div><div style="color:#888;font-size:12px;">最高转化率</div><b style="font-size:18px;color:#23a06b;">1.85%</b><div style="color:#888;font-size:11px;">《流水》5/16</div></div>
+      <div><div style="color:#888;font-size:12px;">最受欢迎数字人</div><b style="font-size:18px;">阿琴</b><div style="color:#888;font-size:11px;">22 场 · 互动率 27%</div></div>
+      <div><div style="color:#888;font-size:12px;">单场最高收入</div><b style="font-size:18px;color:var(--gold);">¥ 11.8万</b><div style="color:#888;font-size:11px;">《阳关三叠》</div></div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="../assets/sidebar.js" data-active="ops/index.html" data-crumbs="<b>运营端</b> / 工作台" data-depth="1"></script>
+</body></html>
