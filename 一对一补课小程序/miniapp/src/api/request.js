@@ -1,6 +1,6 @@
 // 全局 baseURL - 真机调试需要替换为可访问的地址
 // 生产环境部署时，Vercel 会自动注入环境变量
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://one-on-one-tutoring.onrender.com/api';
 
 const TOKEN_KEY = 'token';
 export const getToken = () => uni.getStorageSync(TOKEN_KEY);
