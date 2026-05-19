@@ -1,0 +1,22 @@
+{
+  "name": "高分一对一",
+  "appid": "",
+  "description": "高中全科 · 名师 1V1 · 在线补课",
+  "versionName": "0.1.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "app-plus": { "usingComponents": true },
+  "mp-weixin": {
+    "appid": "",
+    "setting": { "urlCheck": false, "es6": true, "minified": true },
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": { "desc": "用于附近老师" }
+    }
+  },
+  "h5": {
+    "router": { "mode": "hash", "base": "./" },
+    "devServer": { "port": 5173, "https": false }
+  },
+  "vueVersion": "3"
+}

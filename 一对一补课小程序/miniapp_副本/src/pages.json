@@ -1,0 +1,39 @@
+{
+  "pages": [
+    { "path": "pages/index/index",        "style": { "navigationBarTitleText": "高分一对一" } },
+    { "path": "pages/login/index",        "style": { "navigationBarTitleText": "登录" } },
+    { "path": "pages/course/detail",      "style": { "navigationBarTitleText": "课程详情" } },
+    { "path": "pages/course/buy",         "style": { "navigationBarTitleText": "选择课包" } },
+    { "path": "pages/order/pay",          "style": { "navigationBarTitleText": "订单确认" } },
+    { "path": "pages/order/list",         "style": { "navigationBarTitleText": "我的订单" } },
+    { "path": "pages/booking/index",      "style": { "navigationBarTitleText": "预约课程" } },
+    { "path": "pages/booking/mine",       "style": { "navigationBarTitleText": "我的预约" } },
+    { "path": "pages/classroom/index",    "style": { "navigationBarTitleText": "在线课堂", "navigationStyle": "custom" } },
+    { "path": "pages/courseware/index",   "style": { "navigationBarTitleText": "课件" } },
+    { "path": "pages/answer/index",       "style": { "navigationBarTitleText": "随堂练习" } },
+    { "path": "pages/rate/index",         "style": { "navigationBarTitleText": "评价老师" } },
+    { "path": "pages/poster/index",       "style": { "navigationBarTitleText": "邀请有礼" } },
+    { "path": "pages/coupon/index",       "style": { "navigationBarTitleText": "我的卡券" } },
+    { "path": "pages/me/index",           "style": { "navigationBarTitleText": "我的", "navigationStyle": "custom" } },
+    { "path": "pages/teacher/home",       "style": { "navigationBarTitleText": "教师工作台", "navigationStyle": "custom" } },
+    { "path": "pages/teacher/createMeet", "style": { "navigationBarTitleText": "创建会议" } }
+  ],
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#4f7cff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index",     "text": "首页",     "iconPath": "static/tab/home.svg",  "selectedIconPath": "static/tab/home-a.svg" },
+      { "pagePath": "pages/booking/mine",    "text": "我的预约", "iconPath": "static/tab/order.svg", "selectedIconPath": "static/tab/order-a.svg" },
+      { "pagePath": "pages/courseware/index","text": "学习",     "iconPath": "static/tab/study.svg", "selectedIconPath": "static/tab/study-a.svg" },
+      { "pagePath": "pages/me/index",        "text": "我的",     "iconPath": "static/tab/me.svg",    "selectedIconPath": "static/tab/me-a.svg" }
+    ]
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "高分一对一",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f6f7fb"
+  }
+}
