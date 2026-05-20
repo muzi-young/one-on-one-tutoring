@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>学生端首页 · 交互原型</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --panel:#ffffff;
+      --text:#152033;
+      --muted:#6e7b91;
+      --primary:#3b6ef5;
+      --primary-2:#5f8bff;
+      --success:#18a06a;
+      --warn:#ffb020;
+      --line:#e7edf6;
+      --shadow:0 18px 45px rgba(28,56,110,.12);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#eef4ff 0%, #f7f9fd 35%, #f4f7fb 100%);color:var(--text)}
+    a{text-decoration:none;color:inherit}
+    .stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+    .phone-frame{width:min(100%,393px);height:852px;max-height:calc(100vh - 36px);background:#111827;border-radius:44px;padding:14px;box-shadow:0 24px 70px rgba(11,18,32,.24), inset 0 0 0 1px rgba(255,255,255,.08);display:flex;flex-direction:column}
+    .phone-top{width:126px;height:22px;background:#111827;border-radius:0 0 18px 18px;margin:0 auto 12px;position:relative;flex:none}
+    .phone-top:before{content:"";position:absolute;left:50%;top:10px;transform:translateX(-50%);width:44px;height:5px;border-radius:999px;background:#2b3445}
+    .phone-screen{background:linear-gradient(180deg,#eef4ff 0%, #f7f9fd 35%, #f4f7fb 100%);border-radius:34px;overflow:hidden;position:relative;flex:1;min-height:0}
+    .app{max-width:393px;margin:0 auto;min-height:100%;height:100%;padding:12px 12px 74px;position:relative;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+    .app::-webkit-scrollbar{display:none}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 14px}
+    .icon-btn{width:38px;height:38px;border:1px solid #dbe4f2;border-radius:12px;background:rgba(255,255,255,.88);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px rgba(23,39,77,.06);transition:.2s}
+    .icon-btn:active,.btn:active,.nav-item:active,.chip:active,.card:active{transform:scale(.98)}
+    .hello{display:flex;align-items:center;gap:12px}
+    .avatar{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,#cfdcff,#83a6ff);display:grid;place-items:center;color:#fff;font-weight:700;box-shadow:var(--shadow)}
+    .hello h1{margin:0;font-size:18px;line-height:1.2}
+    .hello p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .search{display:flex;gap:10px;margin:12px 0 14px}
+    .search-box{flex:1;background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:16px;padding:12px 14px;color:#8b97aa;box-shadow:0 10px 30px rgba(23,39,77,.05);cursor:pointer}
+    .banner{background:linear-gradient(135deg,#416df6 0%, #6d93ff 100%);color:#fff;border-radius:24px;padding:18px;box-shadow:0 18px 40px rgba(65,109,246,.24);position:relative;overflow:hidden}
+    .banner:before{content:"";position:absolute;inset:auto -20px -35px auto;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12)}
+    .banner:after{content:"";position:absolute;right:18px;top:18px;width:58px;height:58px;border-radius:18px;background:rgba(255,255,255,.16);backdrop-filter:blur(8px)}
+    .banner h2{margin:0;font-size:20px}
+    .banner p{margin:8px 0 14px;font-size:13px;opacity:.92;line-height:1.6;max-width:240px}
+    .banner-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:none;border-radius:14px;padding:11px 14px;font-weight:600;cursor:pointer;transition:.2s}
+    .btn.primary{background:#fff;color:var(--primary)}
+    .btn.ghost{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.22)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+    .stat{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:14px 12px;box-shadow:0 10px 24px rgba(23,39,77,.05);cursor:pointer}
+    .stat .v{font-size:18px;font-weight:800;color:#17305f}
+    .stat .l{margin-top:4px;font-size:12px;color:var(--muted)}
+    section{margin-top:14px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .section-head h3{margin:0;font-size:15px}
+    .section-head a{font-size:12px;color:var(--primary);cursor:pointer}
+    .card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:0 12px 30px rgba(23,39,77,.05);}
+    .course-card{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+    .course-cover{width:92px;height:92px;border-radius:18px;background:linear-gradient(135deg,#e8efff,#b9cbff);display:flex;align-items:center;justify-content:center;font-size:30px;flex:none}
+    .course-meta{flex:1}
+    .course-meta h4{margin:0 0 6px;font-size:16px}
+    .course-meta p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+    .progress{margin-top:12px;background:#edf3ff;border-radius:999px;height:10px;overflow:hidden}
+    .progress > span{display:block;height:100%;width:68%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--primary-2))}
+    .progress-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12px;color:var(--muted)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .mini-card{min-height:104px;cursor:pointer}
+    .mini-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .mini-title strong{font-size:14px}
+    .mini-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+    .chip-row{display:flex;gap:10px;overflow:auto;padding-bottom:2px;scrollbar-width:none}
+    .chip-row::-webkit-scrollbar{display:none}
+    .chip{flex:none;padding:10px 14px;border:1px solid var(--line);background:rgba(255,255,255,.9);border-radius:999px;font-size:12px;cursor:pointer;white-space:nowrap}
+    .chip.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent}
+    .list{display:grid;gap:10px}
+    .list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fff;cursor:pointer}
+    .list-item .left{display:flex;align-items:center;gap:12px}
+    .badge{padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700}
+    .badge.blue{background:#eaf1ff;color:#3b6ef5}
+    .badge.green{background:#e8f8f1;color:#18a06a}
+    .badge.orange{background:#fff4df;color:#b97700}
+    .arrow{color:#a6b2c4;font-size:18px}
+    .tabbar{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-top:1px solid #e6edf6;display:flex;justify-content:center;padding:8px 10px 14px;z-index:20;min-height:68px}
+    .tabbar-inner{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:430px}
+    .nav-item{border:none;background:transparent;padding:8px 6px;border-radius:16px;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px}
+    .nav-item.active{color:var(--primary);background:#eef4ff}
+    .nav-icon{font-size:18px;line-height:1}
+    .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(21,32,51,.92);color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 16px 34px rgba(0,0,0,.18);z-index:99}
+    .toast.show{opacity:1}
+    .anchor-jump{scroll-margin-top:14px}
+    .subtle{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone-frame">
+      <div class="phone-top"></div>
+      <div class="phone-screen">
+        <div class="app" id="top">
+    <div class="topbar">
+      <button class="icon-btn" id="btnBack" aria-label="返回">←</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="icon-btn" id="btnMsg" aria-label="消息">🔔</button>
+        <button class="icon-btn" id="btnMenu" aria-label="更多">⋯</button>
+      </div>
+    </div>
+
+    <div class="hello">
+      <div class="avatar">学</div>
+      <div>
+        <h1>你好，张同学</h1>
+        <p>今天有 2 个课程待继续学习，建议先完成上午的练习。</p>
+      </div>
+    </div>
+
+    <div class="search">
+      <div class="search-box" id="searchBox">搜索课程、老师、作业、通知</div>
+      <button class="icon-btn" id="btnFilter" aria-label="筛选">⌕</button>
+    </div>
+
+    <div class="banner">
+      <h2>继续学习《少儿英语启蒙》</h2>
+      <p>当前学习进度 68%，本节内容还剩 12 分钟，完成后即可解锁下一课。</p>
+      <div class="banner-actions">
+        <button class="btn primary" id="btnContinue">继续学习</button>
+        <button class="btn ghost" id="btnDetail">查看课程详情</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat" data-toast="今日已学习 36 分钟">36<br><span class="l">今日学习</span></div>
+      <div class="stat" data-toast="本周完成 3 次练习">3<br><span class="l">本周练习</span></div>
+      <div class="stat" data-toast="当前课程 5 门">5<br><span class="l">在学课程</span></div>
+    </div>
+
+    <section id="courses" class="anchor-jump">
+      <div class="section-head">
+        <h3>我的课程</h3>
+        <a href="#more-courses">查看更多</a>
+      </div>
+      <div class="card course-card" id="courseCard">
+        <div class="course-cover">📘</div>
+        <div class="course-meta">
+          <h4>少儿英语启蒙 · Level 2</h4>
+          <p>课程状态：学习中｜老师：王老师｜下次课：周四 19:30</p>
+          <div class="progress"><span></span></div>
+          <div class="progress-row"><span>课程进度 68%</span><span>剩余 7 课时</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h3>快捷入口</h3>
+        <a href="#top">返回顶部</a>
+      </div>
+      <div class="grid-2">
+        <div class="card mini-card" id="btnHomework">
+          <div class="mini-title"><strong>作业</strong><span class="badge blue">待完成 2</span></div>
+          <p>查看老师布置的作业，提交后可获得学习反馈。</p>
+        </div>
+        <div class="card mini-card" id="btnTest">
+          <div class="mini-title"><strong>测验</strong><span class="badge green">可开始</span></div>
+          <p>进入章节测验，检测本节掌握程度。</p>
+        </div>
+        <div class="card mini-card" id="btnRecord">
+          <div class="mini-title"><strong>学习记录</strong><span class="badge orange">最近</span></div>
+          <p>查看最近一次学习时间、完成情况和进度变化。</p>
+        </div>
+        <div class="card mini-card" id="btnNotice">
+          <div class="mini-title"><strong>学习提醒</strong><span class="badge blue">3 条</span></div>
+          <p>课程变更、老师通知、系统提醒统一在这里查看。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="more-courses" class="anchor-jump">
+      <div class="section-head">
+        <h3>推荐与关注</h3>
+        <a href="#courses">回到课程</a>
+      </div>
+      <div class="chip-row" aria-label="筛选标签">
+        <div class="chip active" data-filter="all">全部</div>
+        <div class="chip" data-filter="new">新课程</div>
+        <div class="chip" data-filter="hot">热门</div>
+        <div class="chip" data-filter="for-you">为你推荐</div>
+      </div>
+      <div style="height:10px"></div>
+      <div class="list">
+        <div class="list-item" data-toast="已打开课程推荐《儿童数学思维》">
+          <div class="left"><span class="badge blue">推荐</span><div><div>儿童数学思维</div><div class="subtle" style="font-size:12px;margin-top:2px;">适合当前进度衔接学习</div></div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="list-item" data-toast="已打开活动通知">
+          <div class="left"><span class="badge green">活动</span><div><div>周末直播公开课</div><div class="subtle" style="font-size:12px;margin-top:2px;">欢迎预约参与</div></div></div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="list-item" data-toast="已打开学习提醒">
+          <div class="left"><span class="badge orange">提醒</span><div><div>请按时提交作业</div><div class="subtle" style="font-size:12px;margin-top:2px;">距离截止还有 1 天</div></div></div>
+          <div class="arrow">›</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+        <div class="tabbar">
+          <div class="tabbar-inner">
+            <button class="nav-item active" data-nav="home"><div class="nav-icon">🏠</div><div>首页</div></button>
+            <button class="nav-item" data-nav="course"><div class="nav-icon">📚</div><div>课程</div></button>
+            <button class="nav-item" data-nav="msg"><div class="nav-icon">💬</div><div>消息</div></button>
+            <button class="nav-item" data-nav="mine"><div class="nav-icon">👤</div><div>个人中心</div></button>
+          </div>
+        </div>
+
+        <div class="toast" id="toast">已点击</div>
+
+        <script>
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toast.classList.remove('show'), 1500);
+    }
+
+    document.getElementById('btnBack').onclick = () => showToast('返回上一页');
+    document.getElementById('btnMsg').onclick = () => showToast('进入消息中心');
+    document.getElementById('btnMenu').onclick = () => showToast('打开更多操作');
+    document.getElementById('btnFilter').onclick = () => showToast('打开筛选条件');
+    document.getElementById('btnContinue').onclick = () => showToast('进入课程学习页');
+    document.getElementById('btnDetail').onclick = () => showToast('查看课程详情');
+    document.getElementById('btnHomework').onclick = () => showToast('进入作业列表');
+    document.getElementById('btnTest').onclick = () => showToast('进入测验页面');
+    document.getElementById('btnRecord').onclick = () => showToast('进入学习记录');
+    document.getElementById('btnNotice').onclick = () => showToast('进入学习提醒');
+    document.getElementById('searchBox').onclick = () => showToast('打开搜索');
+    document.getElementById('courseCard').onclick = () => showToast('打开课程详情');
+
+    document.querySelectorAll('[data-toast]').forEach(el => {
+      el.onclick = () => showToast(el.getAttribute('data-toast'));
+    });
+
+    document.querySelectorAll('.stat').forEach(el => {
+      el.onclick = () => showToast(el.getAttribute('data-toast'));
+    });
+
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.onclick = () => {
+        document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+        chip.classList.add('active');
+        showToast('已切换：' + chip.textContent.trim());
+      };
+    });
+
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.onclick = () => {
+        document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+        item.classList.add('active');
+        const map = {
+          home:'首页', course:'课程页', msg:'消息中心', mine:'个人中心'
+        };
+        showToast('切换到 ' + map[item.dataset.nav]);
+      };
+    });
+
+        window.addEventListener('keydown', (e) => {
+          if(e.key === 'Escape') showToast('返回上一层');
+        });
+      </script>
+    </div>
+  </div>
+</body>
+</html>

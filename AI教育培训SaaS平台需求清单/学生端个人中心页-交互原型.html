@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>学生端个人中心页 · 交互原型</title>
+  <style>
+    :root{--text:#152033;--muted:#6e7b91;--primary:#3b6ef5;--primary-2:#5f8bff;--line:#e7edf6}
+    *{box-sizing:border-box} html,body{height:100%} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(180deg,#eef4ff,#f7f9fd 35%,#f4f7fb);color:var(--text)} a{text-decoration:none;color:inherit}
+    .stage{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:28px 16px}.phone-frame{width:min(100%,393px);height:852px;max-height:calc(100vh - 36px);background:#111827;border-radius:44px;padding:14px;box-shadow:0 24px 70px rgba(11,18,32,.24), inset 0 0 0 1px rgba(255,255,255,.08);display:flex;flex-direction:column}.phone-top{width:126px;height:22px;background:#111827;border-radius:0 0 18px 18px;margin:0 auto 12px;position:relative;flex:none}.phone-top:before{content:"";position:absolute;left:50%;top:10px;transform:translateX(-50%);width:44px;height:5px;border-radius:999px;background:#2b3445}.phone-screen{background:linear-gradient(180deg,#eef4ff 0%, #f7f9fd 35%, #f4f7fb 100%);border-radius:34px;overflow:hidden;position:relative;flex:1;min-height:0}.app{height:100%;padding:12px 12px 74px;overflow-y:auto;scrollbar-width:none}.app::-webkit-scrollbar{display:none}.topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 14px}.icon-btn{width:38px;height:38px;border:1px solid #dbe4f2;border-radius:12px;background:rgba(255,255,255,.88);display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 20px rgba(23,39,77,.06)}.profile{display:flex;gap:14px;align-items:center;margin-bottom:12px}.avatar{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,#cfdcff,#83a6ff);display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;box-shadow:0 18px 30px rgba(59,110,245,.2)}.profile h1{margin:0 0 4px;font-size:20px}.profile p{margin:0;color:var(--muted);font-size:12px}.summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px;box-shadow:0 12px 30px rgba(23,39,77,.05);cursor:pointer}.card h3{margin:0 0 6px;font-size:14px}.card p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}.badge{display:inline-block;margin-top:8px;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:700}.blue{background:#eaf1ff;color:#3b6ef5}.green{background:#e8f8f1;color:#18a06a}.orange{background:#fff4df;color:#b97700}.menu{display:grid;gap:10px;margin-top:14px}.row{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid var(--line);border-radius:18px;background:#fff;cursor:pointer}.row .left{display:flex;align-items:center;gap:12px}.ico{width:38px;height:38px;border-radius:14px;background:#eef4ff;display:grid;place-items:center;color:#3b6ef5;font-weight:700}.sub{font-size:12px;color:var(--muted)}.tabbar{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-top:1px solid #e6edf6;display:flex;justify-content:center;padding:8px 10px 14px;min-height:68px}.tabbar-inner{width:100%;max-width:430px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.nav-item{border:none;background:transparent;padding:8px 6px;border-radius:16px;cursor:pointer;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px}.nav-item.active{color:var(--primary);background:#eef4ff}.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(21,32,51,.92);color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;pointer-events:none;transition:.25s}.toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="stage"><div class="phone-frame"><div class="phone-top"></div><div class="phone-screen"><div class="app">
+    <div class="topbar"><button class="icon-btn" id="back">←</button><button class="icon-btn" id="set">⚙</button></div>
+    <div class="profile"><div class="avatar">学</div><div><h1>个人中心</h1><p>查看学习成长、账户信息与常用设置。</p></div></div>
+    <div class="summary">
+      <div class="card" data-toast="打开今日任务"><h3>今日任务</h3><p>2 项待完成</p><span class="badge blue">去完成</span></div>
+      <div class="card" data-toast="打开成长徽章"><h3>成长徽章</h3><p>已获得 8 枚</p><span class="badge green">查看</span></div>
+      <div class="card" data-toast="打开打卡记录"><h3>连续打卡</h3><p>已连续 6 天</p><span class="badge orange">保持中</span></div>
+      <div class="card" data-toast="打开积分明细"><h3>积分中心</h3><p>当前 320 分</p><span class="badge blue">兑奖励</span></div>
+    </div>
+    <div class="menu">
+      <div class="row" data-toast="打开学习记录"><div class="left"><div class="ico">📈</div><div><div>学习记录</div><div class="sub">查看课程、作业、测验完成情况</div></div></div><div>›</div></div>
+      <div class="row" data-toast="打开我的资料"><div class="left"><div class="ico">👤</div><div><div>我的资料</div><div class="sub">头像、昵称、年级、联系方式</div></div></div><div>›</div></div>
+      <div class="row" data-toast="打开账户设置"><div class="left"><div class="ico">🔒</div><div><div>账户与安全</div><div class="sub">密码、登录设备与安全设置</div></div></div><div>›</div></div>
+      <div class="row" data-toast="打开帮助反馈"><div class="left"><div class="ico">💬</div><div><div>帮助与反馈</div><div class="sub">常见问题、意见反馈、联系客服</div></div></div><div>›</div></div>
+    </div>
+    <div class="tabbar"><div class="tabbar-inner"><button class="nav-item" data-nav="home"><div>🏠</div><div>首页</div></button><button class="nav-item" data-nav="course"><div>📚</div><div>课程</div></button><button class="nav-item" data-nav="msg"><div>💬</div><div>消息</div></button><button class="nav-item active" data-nav="mine"><div>👤</div><div>个人中心</div></button></div></div>
+    <div class="toast" id="toast">已点击</div>
+  </div></div></div></div>
+  <script>
+    const toast=document.getElementById('toast');let t;function show(s){toast.textContent=s;toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),1500)}
+    back.onclick=()=>show('返回首页');set.onclick=()=>show('打开设置');document.querySelectorAll('[data-toast]').forEach(el=>el.onclick=()=>show(el.dataset.toast));document.querySelectorAll('.nav-item').forEach(item=>item.onclick=()=>{document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));item.classList.add('active');show('切换到 '+item.innerText.trim())});
+  </script>
+</body>
+</html>

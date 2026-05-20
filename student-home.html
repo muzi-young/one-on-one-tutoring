@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生端 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f5f7fa;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部栏 */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .header-left:hover {
+            opacity: 0.8;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .user-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 主内容 */
+        .main-content {
+            padding: 80px 20px 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 欢迎横幅 */
+        .welcome-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .welcome-banner h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .welcome-banner p {
+            font-size: 13px;
+            opacity: 0.95;
+            line-height: 1.5;
+        }
+
+        /* 快速入口 */
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .quick-link {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .quick-link-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .quick-link-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 内容卡片 */
+        .card-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title-right {
+            font-size: 12px;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        /* 课程列表 */
+        .course-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.3s;
+            padding: 12px;
+            margin: -12px;
+            border-radius: 8px;
+        }
+
+        .course-item:hover {
+            background: #f8f9ff;
+        }
+
+        .course-item:last-child {
+            border-bottom: none;
+        }
+
+        .course-thumb {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .course-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .course-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .course-meta {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+
+        .course-progress {
+            width: 100%;
+            height: 4px;
+            background: #e8e8e8;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .course-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 65%;
+            border-radius: 2px;
+        }
+
+        /* 优惠券 */
+        .coupon-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .coupon-item {
+            background: linear-gradient(90deg, #fff9e6 0%, #fffbf0 100%);
+            border: 2px dashed #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .coupon-item:hover {
+            transform: translateX(4px);
+        }
+
+        .coupon-info {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .coupon-icon {
+            font-size: 32px;
+        }
+
+        .coupon-details h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .coupon-details p {
+            font-size: 12px;
+            color: #999;
+            margin: 4px 0 0 0;
+        }
+
+        .coupon-btn {
+            background: #ffc107;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .coupon-btn:hover {
+            background: #ffb300;
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            z-index: 99;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: #999;
+            transition: color 0.3s;
+            font-size: 12px;
+            border: none;
+            background: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item-icon {
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-item:hover {
+            color: #667eea;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .welcome-banner h2 {
+                font-size: 16px;
+            }
+
+            .card-title {
+                font-size: 14px;
+            }
+
+            .quick-links {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="header-left" onclick="goBack()">
+            <div class="user-avatar">👨‍🎓</div>
+            <div class="user-info">
+                <h3>李明</h3>
+                <p>学生</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="header-btn" onclick="showNotification()" title="消息">
+                🔔
+            </button>
+            <button class="header-btn" onclick="showMenu()" title="更多">
+                ⋮
+            </button>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <!-- 欢迎横幅 -->
+        <div class="welcome-banner">
+            <h2>欢迎回来！👋</h2>
+            <p>今天有1节课程待观看，2个待完成的作业。继续加油！</p>
+        </div>
+
+        <!-- 快速入口 -->
+        <div class="quick-links">
+            <a href="#" class="quick-link" onclick="navigateTo('browse-course')">
+                <span class="quick-link-icon">📚</span>
+                <span class="quick-link-text">浏览课程</span>
+            </a>
+            <a href="#" class="quick-link" onclick="navigateTo('learning-center')">
+                <span class="quick-link-icon">📖</span>
+                <span class="quick-link-text">学习中心</span>
+            </a>
+            <a href="#" class="quick-link" onclick="navigateTo('booking')">
+                <span class="quick-link-icon">📅</span>
+                <span class="quick-link-text">预约排课</span>
+            </a>
+        </div>
+
+        <!-- 正在学习的课程 -->
+        <div class="card-section">
+            <div class="card-title">
+                正在学习
+                <span class="card-title-right" onclick="navigateTo('my-courses')">查看全部 →</span>
+            </div>
+            <div class="course-item" onclick="navigateTo('course-detail')">
+                <div class="course-thumb">🌍</div>
+                <div class="course-info">
+                    <div class="course-name">初级英语会话</div>
+                    <div class="course-meta">已学习 13/20 节课</div>
+                    <div class="course-progress">
+                        <div class="course-progress-bar" style="width: 65%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="course-item" onclick="navigateTo('course-detail')">
+                <div class="course-thumb">🔢</div>
+                <div class="course-info">
+                    <div class="course-name">高中数学强化</div>
+                    <div class="course-meta">已学习 8/30 节课</div>
+                    <div class="course-progress">
+                        <div class="course-progress-bar" style="width: 26%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待完成作业 -->
+        <div class="card-section">
+            <div class="card-title">
+                待完成作业
+                <span class="card-title-right" onclick="navigateTo('homework')">查看全部 →</span>
+            </div>
+            <div class="course-item" onclick="navigateTo('homework-detail')">
+                <div class="course-thumb">✍️</div>
+                <div class="course-info">
+                    <div class="course-name">初级英语会话 - 第8单元</div>
+                    <div class="course-meta">截止时间：明天 20:00</div>
+                </div>
+            </div>
+            <div class="course-item" onclick="navigateTo('homework-detail')">
+                <div class="course-thumb">📝</div>
+                <div class="course-info">
+                    <div class="course-name">高中数学 - 导数部分练习</div>
+                    <div class="course-meta">截止时间：后天 18:00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 优惠券 -->
+        <div class="card-section">
+            <div class="card-title">我的优惠券</div>
+            <div class="coupon-list">
+                <div class="coupon-item" onclick="showCouponDetail(this)">
+                    <div class="coupon-info">
+                        <div class="coupon-icon">🎁</div>
+                        <div class="coupon-details">
+                            <h4>新学员专享折扣</h4>
+                            <p>满300元折50元 | 还有3天过期</p>
+                        </div>
+                    </div>
+                    <button class="coupon-btn">使用</button>
+                </div>
+                <div class="coupon-item" onclick="showCouponDetail(this)">
+                    <div class="coupon-info">
+                        <div class="coupon-icon">🎉</div>
+                        <div class="coupon-details">
+                            <h4>推荐有礼</h4>
+                            <p>邀请好友立送30元代金券</p>
+                        </div>
+                    </div>
+                    <button class="coupon-btn">分享</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <a class="nav-item active" onclick="setActive(this, 'home')">
+            <div class="nav-item-icon">🏠</div>
+            <div>首页</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('search'); setActive(this, 'search')">
+            <div class="nav-item-icon">🔍</div>
+            <div>搜索</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('favorites'); setActive(this, 'favorites')">
+            <div class="nav-item-icon">❤️</div>
+            <div>收藏</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('messages'); setActive(this, 'messages')">
+            <div class="nav-item-icon">💬</div>
+            <div>消息</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('profile'); setActive(this, 'profile')">
+            <div class="nav-item-icon">👤</div>
+            <div>我的</div>
+        </a>
+    </div>
+
+    <!-- 提示信息 -->
+    <div id="notification" class="modal" onclick="closeNotification(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span>消息通知</span>
+                <button class="modal-close" onclick="closeNotification()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>📢 系统通知</strong></p>
+                <p>您有1节课程将在今天18:00开始，请准时进入教室。</p>
+                <p style="margin-top: 15px;"><strong>📌 作业提醒</strong></p>
+                <p>您还有2个作业待完成，建议尽快完成。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 返回到首页选择
+        function goBack() {
+            window.location.href = 'file:///Users/liyan/Desktop/4月份项目/我的 AI 项目/乌兹别克教育APP原型-首页.html';
+        }
+
+        // 页面导航
+        function navigateTo(page) {
+            alert(`导航到: ${page}\n(开发中...)`);
+        }
+
+        // 设置活跃导航项
+        function setActive(element, tabName) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // 显示通知
+        function showNotification() {
+            document.getElementById('notification').classList.add('show');
+        }
+
+        function closeNotification(event) {
+            if (event && event.target.id !== 'notification') return;
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // 显示菜单
+        function showMenu() {
+            alert('菜单选项:\n• 我的订单\n• 账户设置\n• 帮助中心\n• 关于我们\n• 登出');
+        }
+
+        // 显示优惠券详情
+        function showCouponDetail(element) {
+            alert('优惠券详情:\n该优惠券可用于所有课程购买\n请在有效期内使用');
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('学生端首页加载成功');
+        });
+    </script>
+</body>
+</html>

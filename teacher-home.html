@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师端 - 首页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f5f7fa;
+            padding-bottom: 80px;
+        }
+
+        /* 顶部栏 */
+        .header {
+            background: linear-gradient(135deg, #43c6db 0%, #35a7d1 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .header-left:hover {
+            opacity: 0.8;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .user-info h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .online-badge {
+            width: 12px;
+            height: 12px;
+            background: #4caf50;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid white;
+        }
+
+        /* 主内容 */
+        .main-content {
+            padding: 80px 20px 0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 状态卡片 */
+        .status-banner {
+            background: linear-gradient(135deg, #43c6db 0%, #35a7d1 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(67, 198, 219, 0.2);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .status-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .status-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* 快速入口 */
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .quick-link {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            border-color: #43c6db;
+        }
+
+        .quick-link-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .quick-link-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* 内容卡片 */
+        .card-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title-right {
+            font-size: 12px;
+            color: #43c6db;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        /* 课表 */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-item {
+            padding: 12px;
+            border-left: 4px solid #43c6db;
+            background: #f8fbff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .schedule-item:hover {
+            background: #f0f8ff;
+            box-shadow: 0 4px 12px rgba(67, 198, 219, 0.15);
+        }
+
+        .schedule-time {
+            font-size: 13px;
+            font-weight: 600;
+            color: #43c6db;
+            margin-bottom: 4px;
+        }
+
+        .schedule-course {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .schedule-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .schedule-status {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: #43c6db;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* 学员列表 */
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .student-item:hover {
+            background: #f0f8ff;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #43c6db 0%, #35a7d1 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .student-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .student-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .student-meta {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .student-action {
+            background: #43c6db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .student-action:hover {
+            background: #35a7d1;
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            z-index: 99;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            color: #999;
+            transition: color 0.3s;
+            font-size: 12px;
+            border: none;
+            background: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item-icon {
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: #43c6db;
+        }
+
+        .nav-item:hover {
+            color: #43c6db;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .status-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+
+            .quick-links {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="header-left" onclick="goBack()">
+            <div class="user-avatar">
+                👨‍🏫
+                <span class="online-badge"></span>
+            </div>
+            <div class="user-info">
+                <h3>王老师</h3>
+                <p>在线</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="header-btn" onclick="showNotification()" title="消息">
+                🔔
+            </button>
+            <button class="header-btn" onclick="showMenu()" title="更多">
+                ⋮
+            </button>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <!-- 状态横幅 -->
+        <div class="status-banner">
+            <h2>👋 欢迎回来！</h2>
+            <div class="status-grid">
+                <div class="status-item">
+                    <span class="status-number">3</span>
+                    <span class="status-label">今天课程</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-number">24</span>
+                    <span class="status-label">待批改作业</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-number">4.8</span>
+                    <span class="status-label">平均评分</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速入口 -->
+        <div class="quick-links">
+            <a href="#" class="quick-link" onclick="navigateTo('live-teaching')">
+                <span class="quick-link-icon">🎥</span>
+                <span class="quick-link-text">直播授课</span>
+            </a>
+            <a href="#" class="quick-link" onclick="navigateTo('grading')">
+                <span class="quick-link-icon">📝</span>
+                <span class="quick-link-text">批改作业</span>
+            </a>
+            <a href="#" class="quick-link" onclick="navigateTo('student-mgmt')">
+                <span class="quick-link-icon">👥</span>
+                <span class="quick-link-text">学员管理</span>
+            </a>
+            <a href="#" class="quick-link" onclick="navigateTo('salary')">
+                <span class="quick-link-icon">💰</span>
+                <span class="quick-link-text">薪资查看</span>
+            </a>
+        </div>
+
+        <!-- 今日课程 -->
+        <div class="card-section">
+            <div class="card-title">
+                📅 今日课程
+                <span class="card-title-right" onclick="navigateTo('full-schedule')">查看全部 →</span>
+            </div>
+            <div class="schedule-list">
+                <div class="schedule-item" onclick="navigateTo('teach-detail')">
+                    <div class="schedule-time">09:00 - 10:00</div>
+                    <div class="schedule-course">初级英语会话 - 第8单元</div>
+                    <div class="schedule-meta">📍 教室A | 4位学生 | 小班课</div>
+                    <span class="schedule-status">🟢 即将开始</span>
+                </div>
+                <div class="schedule-item" onclick="navigateTo('teach-detail')">
+                    <div class="schedule-time">14:00 - 15:00</div>
+                    <div class="schedule-course">高中数学强化 - 导数</div>
+                    <div class="schedule-meta">📍 教室B | 1对1 | 一对一</div>
+                    <span class="schedule-status">⏳ 等待中</span>
+                </div>
+                <div class="schedule-item" onclick="navigateTo('teach-detail')">
+                    <div class="schedule-time">19:00 - 20:00</div>
+                    <div class="schedule-course">职业技能 - UI设计基础</div>
+                    <div class="schedule-meta">🌐 线上直播 | 12位学生 | 小班课</div>
+                    <span class="schedule-status">⏳ 等待中</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 待批改作业 -->
+        <div class="card-section">
+            <div class="card-title">
+                ✍️ 待批改作业
+                <span class="card-title-right" onclick="navigateTo('all-grading')">查看全部 →</span>
+            </div>
+            <div class="student-list">
+                <div class="student-item" onclick="navigateTo('grade-detail')">
+                    <div class="student-avatar">👦</div>
+                    <div class="student-info">
+                        <div class="student-name">张浩然</div>
+                        <div class="student-meta">初级英语 - 第8单元作业</div>
+                    </div>
+                    <button class="student-action" onclick="event.stopPropagation(); navigateTo('grade-detail')">批改</button>
+                </div>
+                <div class="student-item" onclick="navigateTo('grade-detail')">
+                    <div class="student-avatar">👧</div>
+                    <div class="student-info">
+                        <div class="student-name">李晓玲</div>
+                        <div class="student-meta">高中数学 - 导数练习</div>
+                    </div>
+                    <button class="student-action" onclick="event.stopPropagation(); navigateTo('grade-detail')">批改</button>
+                </div>
+                <div class="student-item" onclick="navigateTo('grade-detail')">
+                    <div class="student-avatar">👨</div>
+                    <div class="student-info">
+                        <div class="student-name">刘明轩</div>
+                        <div class="student-meta">UI设计 - 项目作业</div>
+                    </div>
+                    <button class="student-action" onclick="event.stopPropagation(); navigateTo('grade-detail')">批改</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 学员反馈 -->
+        <div class="card-section">
+            <div class="card-title">
+                💬 学员反馈
+                <span class="card-title-right" onclick="navigateTo('all-feedback')">查看全部 →</span>
+            </div>
+            <div class="student-list">
+                <div class="student-item" onclick="navigateTo('feedback-detail')">
+                    <div class="student-avatar">⭐</div>
+                    <div class="student-info">
+                        <div class="student-name">王小明</div>
+                        <div class="student-meta">"讲解非常清晰，受益匪浅！" • 5星</div>
+                    </div>
+                </div>
+                <div class="student-item" onclick="navigateTo('feedback-detail')">
+                    <div class="student-avatar">⭐</div>
+                    <div class="student-info">
+                        <div class="student-name">陈思语</div>
+                        <div class="student-meta">"很好的互动体验" • 4.5星</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav">
+        <a class="nav-item active" onclick="setActive(this, 'home')">
+            <div class="nav-item-icon">🏠</div>
+            <div>首页</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('schedule'); setActive(this, 'schedule')">
+            <div class="nav-item-icon">📅</div>
+            <div>课程表</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('students'); setActive(this, 'students')">
+            <div class="nav-item-icon">👥</div>
+            <div>学员</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('messages'); setActive(this, 'messages')">
+            <div class="nav-item-icon">💬</div>
+            <div>消息</div>
+        </a>
+        <a class="nav-item" onclick="navigateTo('profile'); setActive(this, 'profile')">
+            <div class="nav-item-icon">👤</div>
+            <div>我的</div>
+        </a>
+    </div>
+
+    <!-- 提示信息 -->
+    <div id="notification" class="modal" onclick="closeNotification(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span>课堂提醒</span>
+                <button class="modal-close" onclick="closeNotification()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>🔔 课前提醒</strong></p>
+                <p>您有一节课程将在30分钟后开始。</p>
+                <p>课程: 初级英语会话 - 第8单元</p>
+                <p>时间: 09:00 - 10:00</p>
+                <p>教室: A区</p>
+                <p style="margin-top: 15px;"><strong>⏰ 还有24份作业待批改</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 返回到首页选择
+        function goBack() {
+            window.location.href = 'file:///Users/liyan/Desktop/4月份项目/我的 AI 项目/乌兹别克教育APP原型-首页.html';
+        }
+
+        // 页面导航
+        function navigateTo(page) {
+            alert(`导航到: ${page}\n(开发中...)`);
+        }
+
+        // 设置活跃导航项
+        function setActive(element, tabName) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // 显示通知
+        function showNotification() {
+            document.getElementById('notification').classList.add('show');
+        }
+
+        function closeNotification(event) {
+            if (event && event.target.id !== 'notification') return;
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // 显示菜单
+        function showMenu() {
+            alert('菜单选项:\n• 教学统计\n• 账户设置\n• 帮助中心\n• 关于我们\n• 登出');
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('教师端首页加载成功');
+        });
+    </script>
+</body>
+</html>

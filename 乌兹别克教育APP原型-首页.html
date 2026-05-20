@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乌兹别克教育 - 主页选择</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin: 30px 0 15px 0;
+            padding-left: 10px;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-card {
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #f0f0f0;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            background: white;
+        }
+
+        .role-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
+        }
+
+        .role-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .role-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .role-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .role-desc {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+        }
+
+        .feature-list {
+            background: #f5f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+            margin-top: 10px;
+        }
+
+        .feature-list li {
+            list-style: none;
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .version-info {
+            text-align: center;
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .role-card {
+                padding: 15px;
+            }
+        }
+
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            }
+
+            .container {
+                background: #0f3460;
+                color: white;
+            }
+
+            .section-title {
+                color: #888;
+            }
+
+            .role-card {
+                background: #1a3a52;
+                border-color: #2a4a62;
+                color: white;
+            }
+
+            .role-card:hover {
+                border-color: #667eea;
+                background: #1f4570;
+            }
+
+            .role-title {
+                color: #fff;
+            }
+
+            .role-desc {
+                color: #aaa;
+            }
+
+            .feature-list {
+                background: #1a3a52;
+                color: #ccc;
+            }
+
+            .version-info {
+                border-top-color: #2a4a62;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🎓 乌兹别克教育平台</h1>
+            <p>OMO融合教学数字化平台原型</p>
+        </div>
+
+        <!-- 内容 -->
+        <div class="content">
+            <!-- 学生端和教师端 -->
+            <div class="section-title">📱 移动应用端</div>
+            <div class="role-grid">
+                <a href="student-home.html" class="role-card">
+                    <div class="role-icon">👨‍🎓</div>
+                    <div class="role-title">学生端</div>
+                    <div class="role-desc">学习中心、课程浏览、在线上课</div>
+                    <ul class="feature-list">
+                        <li>课程浏览与试听</li>
+                        <li>预约排课</li>
+                        <li>在线学习</li>
+                        <li>作业提交</li>
+                    </ul>
+                </a>
+
+                <a href="teacher-home.html" class="role-card">
+                    <div class="role-icon">👨‍🏫</div>
+                    <div class="role-title">教师端</div>
+                    <div class="role-desc">课表管理、直播授课、学员管理</div>
+                    <ul class="feature-list">
+                        <li>课表查看</li>
+                        <li>直播授课</li>
+                        <li>学员管理</li>
+                        <li>作业批改</li>
+                    </ul>
+                </a>
+            </div>
+
+            <!-- 管理后台 -->
+            <div class="section-title">⚙️ 管理后台</div>
+            <div class="role-grid">
+                <a href="admin-headquarter.html" class="role-card">
+                    <div class="role-icon">🏢</div>
+                    <div class="role-title">总部管理</div>
+                    <div class="role-desc">全局数据统计、战略决策</div>
+                    <ul class="feature-list">
+                        <li>门店管理</li>
+                        <li>课程管理</li>
+                        <li>教师管理</li>
+                        <li>财务统计</li>
+                    </ul>
+                </a>
+
+                <a href="admin-branch.html" class="role-card">
+                    <div class="role-icon">🏪</div>
+                    <div class="role-title">分店管理</div>
+                    <div class="role-desc">本店日常运营管理</div>
+                    <ul class="feature-list">
+                        <li>本店学员</li>
+                        <li>排班管理</li>
+                        <li>营收统计</li>
+                        <li>客户管理</li>
+                    </ul>
+                </a>
+            </div>
+
+            <!-- 说明文字 -->
+            <div class="section-title">📋 使用说明</div>
+            <div style="background: #f5f7fa; padding: 15px; border-radius: 8px; font-size: 13px; line-height: 1.6; color: #666;">
+                <p><strong>✨ 特性说明：</strong></p>
+                <ul style="margin-left: 15px; margin-top: 10px;">
+                    <li>✓ 完整业务流程演示</li>
+                    <li>✓ 所有按钮均可交互</li>
+                    <li>✓ 导航/返回功能完整</li>
+                    <li>✓ 响应式设计，适配多设备</li>
+                    <li>✓ 多语言界面支持</li>
+                </ul>
+            </div>
+
+            <div class="version-info">
+                <p>原型版本 v0.1 | 2026-05-19</p>
+                <p>OMO融合教学数字化平台</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加简单的交互反馈
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // 检查链接是否有效
+                const href = this.getAttribute('href');
+                if (!href.includes('.html')) {
+                    e.preventDefault();
+                    alert('该页面正在开发中，敬请期待！');
+                }
+            });
+        });
+
+        // 返回功能
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
